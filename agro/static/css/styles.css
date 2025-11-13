@@ -11,19 +11,19 @@ h1,h2,h3,h4,h5,h6{
    font-style: normal;
    font-variation-settings: "wdth" 100;
 }
-h1{ font-weight: 600; }
+h1{ font-weight: 300; font-size: 50px; }
 .text-white{ color: #fff !important; }
 #header{
   color:#fff;
-  background:#229ebd;
+  background:#001d3d;
 }
 #main-menu{
 
     color:#fff;
 }
-#main-menu a{ color:#fff; font-weight: 500; }
+#main-menu a{ color:#fff; font-weight: 400; }
 #menu_sidebar{
-  background: #229ebd;
+  background: #001d3d;
   color: #fff;
 }
 #menu_items li, #menu_items .list-group-item a{
@@ -69,20 +69,34 @@ h1{ font-weight: 600; }
    overflow: auto;
    margin-bottom: 20px;;
  }
- a.btn_edit {
-  color:#fb8502;
- }
-  a.btn_edit {
-  color:#fb8502;
- }
+.page-name{ font-weight: 600; color:#00296B; }
+
+.btn_new { background-color:#FDC500 !important; }
+.btn_new:hover { background-color:#e3b100 !important; }
+
+.btn_api { background-color:#E8DAA0 !important; }
+.btn_api:hover { background-color:#eadda9
+ !important; }
+
+a.btn_edit {
+  color:#FDC500;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+a.btn_delete {
+  color:#A70107;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
 .col_id, .col_id a{ color:#b7b7b7; }
-.col_view, .col_view a{ color:#229ebd; }
+.col_view, .col_view a{ color:#001d3d; }
 .tbl_wimp3 th{
-  background-color: #229ebd;
+  background-color: #001d3d;
   color: #fff;
   padding: 0.5rem;
 }
-.tbl_wimp3 th a{ color:#fff !important; }
+.tbl_wimp3 th a{ color:#fff !important; text-decoration: none !important; }
 .tbl_wimp3 td{
   padding: 0.5rem;
 }

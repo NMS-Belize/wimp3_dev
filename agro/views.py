@@ -3,10 +3,12 @@ from django.http import HttpResponse
 
 from django.template import loader
 
-from .models import CommodityType, CommodityCategory, District, PestAlertLevel, PestRiskEntryMainListing, PestRiskEntryDetails
+#from .models import CommodityType, CommodityCategory, District, PestAlertLevel, PestRiskEntryMainListing, PestRiskEntryDetails, DroughtAlertLevel, PestRiskAction, PestRiskEffect
+from .models import *
 
 from django_tables2 import RequestConfig
-from .tables import PestRiskListTable, PestRiskMainListTable, PestRiskDetailsTable
+#from .tables import PestRiskListTable, PestRiskMainListTable, PestRiskDetailsTable, PestAlertLevelsTable, ActionItemsTable, EffectItemsTable
+from .tables import *
 
 #from .serializers import CommodityTypeSerializer, CommodityCategorySerializer
 from . import serializers as sx
@@ -39,6 +41,7 @@ def pest_risk_list(request):
     RequestConfig(request).configure(table)
     return render(request, "pest_risk_list.html", {"table": table})
 
+#################### PEST RISK DETAILS - TABLE ####################
 def pest_risk_details_list(request, entry_id):
     qs = PestRiskEntryDetails.objects.filter(pest_risk_listing_id=entry_id)
     table = PestRiskDetailsTable(qs)
@@ -59,6 +62,8 @@ def pest_risk_entry_update(request, entry_id):
 
     return render(request, 'entry_form_pest_risk_update.html', {'form': form })
 
+def pest_risk_entry_edit(request, entry_id):
+    return render(request, 'entry_form_pest_risk_update.html', {'form': form })
 
 ########################## INITIALIZE A NEW FORM ##############################
 def pest_risk_entry_new(request):
@@ -72,8 +77,6 @@ def pest_risk_entry_new(request):
         form = PestRiskMainListingForm()
 
     return render(request, 'pest_risk_new.html', { 'form' : form })
-
-
 
 ########################## INSER RECORD / PEST RISK MAIN ENTRY ##############################
 def pest_risk_entry_add(request):
@@ -89,8 +92,6 @@ def pest_risk_entry_add(request):
         form = PestRiskMainListingForm()
 
     return render(request, 'pest_risk_new.html', {'form': form})
-
-
 
 def pest_risk_details(request, entry_id):
 
@@ -164,24 +165,81 @@ def pest_risk_add_details(request, entry_id):
 
 
 
-def pest_alert_level(request):
-    '''if request.method == 'POST':
-        form = PestAlertLevelForm(request.POST, entry_id=entry_id)
+############# TABLE LIST: PEST RISK VARIABlE - Commodity
+def commodity_list(request):
+    page_name = "Commodity"
+    qs = CommodityType.objects.all().order_by('id')
+    table = CommodityTable(qs)
+    RequestConfig(request).configure(table)
+    context = {
+        'page_name': page_name,
+        'table': table
+    }
+    return render(request, 'table_list_template.html', context)
+
+############# TABLE LIST: PEST RISK VARIABlE - Pest Alert Levels
+def pest_alert_level_list(request):
+    page_name = "Pest Alert Levels"
+    qs = PestAlertLevel.objects.all().order_by('id')
+    table = PestAlertLevelsTable(qs)
+    RequestConfig(request).configure(table)
+    context = {
+        'page_name': page_name,
+        'table': table,
+        #'back_url': "{{ object.get_absolute_url }}/agro-climat-services/"
+    }
+    return render(request, 'table_list_template.html', context)
+
+#################### DROUGHT ALERT LEVELS - TABLE ####################
+def drought_alert_level_list(request):
+    page_name = "Drought Alert Levels"
+    qs = DroughtAlertLevel.objects.all().order_by('id')
+    table = PestAlertLevelsTable(qs)
+    RequestConfig(request).configure(table)
+    context = {
+        'page_name': page_name,
+        'table': table
+    }
+    return render(request, 'table_list_template.html', context)
+
+#################### PEST RISK ACTION ITEMS - TABLE ####################
+def action_items_list(request):
+    page_name = "Action Items"
+    qs = PestRiskAction.objects.all().order_by('id')
+    table = ActionItemsTable(qs)
+    RequestConfig(request).configure(table)
+    context = {
+        'page_name': page_name,
+        'table': table
+    }
+    return render(request, 'table_list_template.html', context)
+
+#################### PEST RISK EFFECT ITEMS - TABLE ####################
+def effect_items_list(request):
+    page_name = "Effect Items"
+    qs = PestRiskEffect.objects.all().order_by('id')
+    table = EffectItemsTable(qs)
+    RequestConfig(request).configure(table)
+    context = {
+        'page_name': page_name,
+        'table': table
+    }
+    return render(request, 'table_list_template.html', context)
+
+#################### PEST ALERT LEVELS - UPDATE ####################
+def pest_alert_level_update(request, entry_id):
+    
+    entry = get_object_or_404(PestAlertLevel, id = entry_id)
+
+    if request.method == 'POST':
+        form = PestRiskMainListingForm(request.POST, instance=entry)
         if form.is_valid():
-            selected = form.cleaned_data.get('list_months')
-            return render(request, 'entry_form_pest_risk.html', { 
-                'selected': selected,
-                'form': form,
-                'pest_risk_start_id': entry_id
-            })
+            form.save()
+            return redirect('pest_risk_entry_update', entry_id = entry.id)
     else:
-        # initialize empty form on GET
-        form = PestAlertLevelForm(entry_id=entry_id)'''
+        form = PestRiskMainListingForm(instance=entry)  # <-- pre-fills the form
 
-    return render(request, 'entry_form_pest_risk.html', {
-        'form': form
-    })
-
+    return render(request, 'pest_alert_level_update.html', {'form': form })
 #################### Form Processing ####################
 
 

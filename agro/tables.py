@@ -5,8 +5,142 @@ import calendar
 from django.urls import reverse
 from django.utils.html import format_html
 
-from .models import PestRiskEntryMainListing, PestRiskEntryDetails, Months
+#from .models import PestRiskEntryMainListing, PestRiskEntryDetails, Months, PestAlertLevel, PestRiskAction, PestRiskEffect
+from .models import *
 
+class CommodityTable(tables.Table):
+    edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "col_edit"}, "td": {"style": "","class": "col_edit"}})
+    id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
+    description = tables.Column(attrs={"th": {"style": "width:700px;","class": ""}, "td": {"style": "","class": ""}})
+    commodity_category = tables.Column(verbose_name="Commodity Category", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+    delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
+
+    class Meta:
+        model = CommodityType
+        template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
+        fields = ("edit","id","description", "commodity_category","delete")
+
+        # Add table HTML id and CSS classes here
+        attrs = {
+            "id": "table_pest_alert_level",           # unique table ID
+            "class": "table table-striped table-condensed table-hover tbl_wimp3" # Bootstrap-friendly styling
+        }
+
+    def render_edit(self, record):
+        url = reverse("pest_alert_level_update", args=[record.id])
+        return format_html('<a href="{}" class="btn btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
+    
+    def render_delete(self, record):
+        url = reverse("pest_alert_level_update", args=[record.id])
+        return format_html('<a href="{}" class="btn btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
+    
+class PestAlertLevelsTable(tables.Table):
+    edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "col_edit"}, "td": {"style": "","class": "col_edit"}})
+    id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
+    description = tables.Column(verbose_name="Pest Risk Alert", attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "","class": ""}})
+    color_hex = tables.Column(verbose_name="Color Hex #")
+    delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
+
+    class Meta:
+        model = PestAlertLevel
+        template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
+        fields = ("edit","id","description", "color_hex","delete")
+
+        # Add table HTML id and CSS classes here
+        attrs = {
+            "id": "table_pest_alert_level",           # unique table ID
+            "class": "table table-striped table-condensed table-hover tbl_wimp3" # Bootstrap-friendly styling
+        }
+
+    def render_edit(self, record):
+        url = reverse("pest_alert_level_update", args=[record.id])
+        return format_html('<a href="{}" class="btn btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
+    
+    def render_delete(self, record):
+        url = reverse("pest_alert_level_update", args=[record.id])
+        return format_html('<a href="{}" class="btn btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
+    
+class DroughtAlertLevelsTable(tables.Table):
+    edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "col_edit"}, "td": {"style": "","class": "col_edit"}})
+    id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
+    description = tables.Column(verbose_name="Pest Risk Alert")  # override column header
+    color_hex = tables.Column(verbose_name="Color Hex #")  # override column header
+    delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
+
+    class Meta:
+        model = PestAlertLevel
+        template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
+        fields = ("id","description", "color_hex")
+
+        # Add table HTML id and CSS classes here
+        attrs = {
+            "id": "table_pest_alert_level",           # unique table ID
+            "class": "table table-striped table-hover tbl_wimp3" # Bootstrap-friendly styling
+        }
+
+    def render_edit(self, record):
+        url = reverse("pest_risk_levels_table", args=[record.id])  # change "pest_edit" to your URL name
+        return format_html('<a href="{}" class="btn btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
+
+    def render_delete(self, record):
+        url = reverse("pest_alert_level_update", args=[record.id])
+        return format_html('<a href="{}" class="btn btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
+    
+class ActionItemsTable(tables.Table):
+    edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "col_edit"}, "td": {"style": "","class": "col_edit"}})
+    id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
+    action_description = tables.Column(verbose_name="Description")  # override column header
+    delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
+
+    fields = ("id","action_description")
+    
+    class Meta:
+        model = PestRiskAction
+        template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
+        fields = ("edit","id","action_description","delete")
+
+        # Add table HTML id and CSS classes here
+        attrs = {
+            "id": "table_pest_alert_level",           # unique table ID
+            "class": "table table-striped table-hover tbl_wimp3" # Bootstrap-friendly styling
+        }
+
+    def render_edit(self, record):
+        url = reverse("pest_alert_level_update", args=[record.id])  # change "pest_edit" to your URL name
+        return format_html('<a href="{}" class="btn btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
+
+    def render_delete(self, record):
+        url = reverse("pest_alert_level_update", args=[record.id])
+        return format_html('<a href="{}" class="btn btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
+    
+class EffectItemsTable(tables.Table):
+    edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "col_edit"}, "td": {"style": "","class": "col_edit"}})
+    id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
+    action_description = tables.Column(verbose_name="Description")  # override column header
+    delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
+
+    fields = ("id","action_description")
+    
+    class Meta:
+        model = PestRiskEffect
+        template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
+        fields = ("edit","id","action_description","delete")
+
+        # Add table HTML id and CSS classes here
+        attrs = {
+            "id": "table_pest_alert_level",           # unique table ID
+            "class": "table table-striped table-hover tbl_wimp3" # Bootstrap-friendly styling
+        }
+
+    def render_edit(self, record):
+        url = reverse("pest_alert_level_update", args=[record.id])  # change "pest_edit" to your URL name
+        return format_html('<a href="{}" class="btn btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
+
+    def render_delete(self, record):
+        url = reverse("pest_alert_level_update", args=[record.id])
+        return format_html('<a href="{}" class="btn btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
+
+    
 class PestRiskListTable(tables.Table):
     class Meta:
         model = PestRiskEntryDetails
@@ -58,7 +192,7 @@ class PestRiskMainListTable(tables.Table):
         return "N/A"'''
     
     def render_edit(self, record):
-        url = reverse("edit_pest_risk_entry", args=[record.id])  # change "pest_edit" to your URL name
+        url = reverse("pest_risk_details_list", args=[record.id])  # change "pest_edit" to your URL name
         return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
     
     def render_view_details(self, record):
@@ -69,7 +203,6 @@ class PestRiskMainListTable(tables.Table):
         url = reverse("pest_risk_details_list", args=[record.id])  # change "pest_edit" to your URL name
         return format_html('<a href="{}" class="btn_add_details"><i class="fa-solid fa-plus"></i></a>', url)
     
-
 class PestRiskDetailsTable(tables.Table):
     edit = tables.Column(empty_values=(), verbose_name="Edit")
     pest_alert_lvl_id = tables.Column(verbose_name="Pest Risk Alert")  # override column header

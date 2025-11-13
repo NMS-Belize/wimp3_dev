@@ -25,7 +25,19 @@ SECRET_KEY = 'django-insecure-!5ts&5d%71efqbru!l6dmrpn(+0^knizjqt+4hqq83eky$nzr%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+#ALLOWED_HOSTS = ['*']
+
+# settings.py
+
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '[::1]', # IPv6 localhost
+    '192.168.x.x', 
+    '192.168.3.62',
+    '*'
+    #'.your-provider.dev', # Wildcard for subdomains on certain platforms (e.g., Fly.io)
+]
 
 
 # Application definition
@@ -133,3 +145,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10
 }
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://wimp3.nms.gov.bz',
+]

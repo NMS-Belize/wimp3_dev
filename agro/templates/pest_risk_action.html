@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Pest Risk > Drought Alert Level | Agro-Climat Services | WIMP3 | National Meteorological Service of Belize{% endblock %}
+
+{% block content %}
+<div id="main_pr_list" class="container-full p-5">
+<div class="row mb-3">
+    <div class="col-12">
+        <h1>Pest Risk Actions</h1>
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-2">
+        <a class="btn btn-primary" href="{{ object.get_absolute_url }}/agro-climat-services/"><i class="fa-solid fa-arrow-left"></i>&nbsp;Back to Agro-Climat Services</a>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        {% load render_table from django_tables2 %}
+        {% render_table table %}
+    </div>
+</div>
+</div>
+{% endblock %}
