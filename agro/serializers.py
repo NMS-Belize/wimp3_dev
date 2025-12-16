@@ -26,6 +26,16 @@ class PestAlertLevelSerializer(serializers.ModelSerializer):
         model = mx.PestAlertLevel
         fields = '__all__'
 
+class ActionItemsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = mx.PestRiskAction
+        fields = '__all__'
+
+class EffectItemsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = mx.PestRiskEffect
+        fields = '__all__'
+
 '''class PestRiskEntryDSerializer(serializers.ModelSerializer):
     class Meta:
         model = mx.PestRiskEntryMainListing

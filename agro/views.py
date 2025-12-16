@@ -18,7 +18,8 @@ from rest_framework import permissions, viewsets
 
 from wimp.serializers import GroupSerializer, UserSerializer
 
-from .forms import  FormPestRiskStartForm, PestRiskMainListingForm, PestRiskEntryFormDetails, PestAlertLevelForm
+#from .forms import  FormPestRiskStartForm, PestRiskMainListingForm, PestRiskEntryFormDetails, PestAlertLevelForm
+from .forms import *
 
 #################### Create/Define Views ####################
 def index(request):
@@ -166,29 +167,136 @@ def pest_risk_add_details(request, entry_id):
 
 
 ############# TABLE LIST: PEST RISK VARIABlE - Commodity
-def commodity_list(request):
+def commodity_list(request, id=None):
     page_name = "Commodity"
     qs = CommodityType.objects.all().order_by('id')
     table = CommodityTable(qs)
     RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+    if id is not None:
+        entry = get_object_or_404(CommodityType, id=id)
+
     context = {
+        'id' : id,
+        'entry': entry,  
         'page_name': page_name,
-        'table': table
+        'table': table,
+        'new_url': "/agro-climat-services/pest-risk/commodity-entry/",
+        'api_url': "/api/commodity-types/",
     }
     return render(request, 'table_list_template.html', context)
 
+def commodity_entry(request, id=None):
+
+    page_name = "Commodity Type Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(CommodityType, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = CommodityTypeForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('commodity_list', saved_entry.id)
+    else:
+        form = CommodityTypeForm(instance=entry)
+
+    return render(request, 'entry_form.html', {
+        'page_name': page_name,
+        'new_url': "/agro-climat-services/pest-risk/commodity-entry/",
+        'back_url': "/agro-climat-services/pest-risk/commodity-list/",
+        'api_url': "/api/commodity-types/",
+        'form': form,
+        'entry': entry
+    })
+
+def commodity_type_delete(request, id):
+    
+    entry = get_object_or_404(CommodityType, id=id)
+    
+    page_name = "Commodity Type Entry"
+
+    if request.method == "POST":
+        entry.delete()
+        return redirect('commodity_list')  # redirect anywhere you prefer
+
+    return render(request, "delete_confirm.html", {
+        "entry": entry,
+        'page_name': page_name,
+    })
+
 ############# TABLE LIST: PEST RISK VARIABlE - Pest Alert Levels
-def pest_alert_level_list(request):
+def pest_alert_level_list(request, id=None):
+
     page_name = "Pest Alert Levels"
     qs = PestAlertLevel.objects.all().order_by('id')
     table = PestAlertLevelsTable(qs)
     RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+    if id is not None:
+        entry = get_object_or_404(PestAlertLevel, id=id)
+
     context = {
+        'id' : id,
+        'entry': entry,  
         'page_name': page_name,
         'table': table,
-        #'back_url': "{{ object.get_absolute_url }}/agro-climat-services/"
+        'new_url': "/agro-climat-services/pest-risk/pest-alert-level-entry/",
+        'api_url': "/api/pest-alert-levels/",
     }
     return render(request, 'table_list_template.html', context)
+
+def pest_alert_level_entry(request, id=None):
+
+    page_name = "Pest Alert Level Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(PestAlertLevel, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = PestAlertLevelForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('pest_alert_level_list', saved_entry.id)
+    else:
+        form = PestAlertLevelForm(instance=entry)
+
+    return render(request, 'entry_form.html', {
+        'page_name':    page_name,
+        'new_url':      "/agro-climat-services/pest-risk/pest-alert-level-entry/",
+        'back_url':     "/agro-climat-services/pest-risk/apest-alert-level-list/",
+        'api_url':      "/api/pest-alert-levels/",
+        'form':         form,
+        'entry':        entry
+    })
+
+def pest_alert_level_delete(request, id):
+    
+    entry = get_object_or_404(PestAlertLevel, id=id)
+    
+    page_name = "Pest Alert Level Type Entry"
+
+    if request.method == "POST":
+        entry.delete()
+        return redirect('pest_alert_level_list')  # redirect anywhere you prefer
+
+    return render(request, "delete_confirm.html", {
+        "entry": entry,
+        'page_name': page_name,
+    })
+
 
 #################### DROUGHT ALERT LEVELS - TABLE ####################
 def drought_alert_level_list(request):
@@ -202,29 +310,140 @@ def drought_alert_level_list(request):
     }
     return render(request, 'table_list_template.html', context)
 
+
+
+
 #################### PEST RISK ACTION ITEMS - TABLE ####################
-def action_items_list(request):
+def action_items_list(request, id=None):
+
     page_name = "Action Items"
     qs = PestRiskAction.objects.all().order_by('id')
     table = ActionItemsTable(qs)
     RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+    if id is not None:
+        entry = get_object_or_404(PestRiskAction, id=id)
+
     context = {
+        'id' : id,
+        'entry': entry,  
         'page_name': page_name,
-        'table': table
+        'table': table,
+        'new_url': "/agro-climat-services/pest-risk/action-items-entry/",
+        'api_url': "/api/action-items/",
     }
     return render(request, 'table_list_template.html', context)
 
+def action_items_entry(request, id=None):
+
+    page_name = "Action Items Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(CommodityType, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = ActionItemsForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('action_items_list', saved_entry.id)
+    else:
+        form = ActionItemsForm(instance=entry)
+
+    return render(request, 'entry_form.html', {
+        'page_name':    page_name,
+        'new_url':      "/agro-climat-services/pest-risk/action-items-entry/",
+        'back_url':     "/agro-climat-services/pest-risk/action-items-list/",
+        'api_url':      "/api/action-items/",
+        'form':         form,
+        'entry':        entry
+    })
+
+def action_items_delete(request, id):
+    
+    entry = get_object_or_404(PestRiskAction, id=id)
+    
+    page_name = "Action Item Entry"
+
+    if request.method == "POST":
+        entry.delete()
+        return redirect('action_items_list')  # redirect anywhere you prefer
+
+    return render(request, "delete_confirm.html", {
+        "entry": entry,
+        'page_name': page_name,
+    })
+
 #################### PEST RISK EFFECT ITEMS - TABLE ####################
-def effect_items_list(request):
+def effect_items_list(request, id=None):
+    
     page_name = "Effect Items"
     qs = PestRiskEffect.objects.all().order_by('id')
     table = EffectItemsTable(qs)
     RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+    if id is not None:
+        entry = get_object_or_404(PestRiskEffect, id=id)
+
     context = {
+        'id' : id,
+        'entry': entry,  
         'page_name': page_name,
-        'table': table
+        'table': table,
+        'new_url': "/agro-climat-services/pest-risk/effect-items-entry/",
+        'api_url': "/api/effect-items/",
     }
     return render(request, 'table_list_template.html', context)
+
+def effect_items_entry(request, id=None):
+
+    page_name = "Effect Items Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(PestRiskEffect, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = EffectItemsForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('effect_items_list', saved_entry.id)
+    else:
+        form = EffectItemsForm(instance=entry)
+
+    return render(request, 'entry_form.html', {
+        'page_name':    page_name,
+        'new_url':      "/agro-climat-services/pest-risk/effect-items-entry/",
+        'back_url':     "/agro-climat-services/pest-risk/effect-items-list/",
+        'api_url':      "/api/effect-items/",
+        'form':         form,
+        'entry':        entry
+    })
+
+def effect_items_delete(request, id):
+    
+    entry = get_object_or_404(PestRiskEffect, id=id)
+    
+    page_name = "Effect Item Entry"
+
+    if request.method == "POST":
+        entry.delete()
+        return redirect('effect_items_list')  # redirect anywhere you prefer
+
+    return render(request, "delete_confirm.html", {
+        "entry": entry,
+        'page_name': page_name,
+    })
 
 #################### PEST ALERT LEVELS - UPDATE ####################
 def pest_alert_level_update(request, entry_id):
@@ -267,6 +486,14 @@ class CommodityTypeViewSet(viewsets.ModelViewSet):
 class CommodityCategoryViewSet(viewsets.ModelViewSet):
    queryset = CommodityCategory.objects.all().order_by('id')
    serializer_class = sx.CommodityCategorySerializer
+
+class ActionItemsViewSet(viewsets.ModelViewSet):
+   queryset = PestRiskAction.objects.all().order_by('id')
+   serializer_class = sx.ActionItemsSerializer
+
+class EffectItemsViewSet(viewsets.ModelViewSet):
+   queryset = PestRiskEffect.objects.all().order_by('id')
+   serializer_class = sx.EffectItemsSerializer
 
 class PestAlertLevelViewSet(viewsets.ModelViewSet):
    queryset = PestAlertLevel.objects.all().order_by('id')

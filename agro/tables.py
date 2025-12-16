@@ -31,7 +31,7 @@ class CommodityTable(tables.Table):
         return format_html('<a href="{}" class="btn btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
     
     def render_delete(self, record):
-        url = reverse("pest_alert_level_update", args=[record.id])
+        url = reverse("commodity_type_delete", args=[record.id])
         return format_html('<a href="{}" class="btn btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
     
 class PestAlertLevelsTable(tables.Table):
@@ -53,7 +53,7 @@ class PestAlertLevelsTable(tables.Table):
         }
 
     def render_edit(self, record):
-        url = reverse("pest_alert_level_update", args=[record.id])
+        url = reverse("pest_alert_level_entry", args=[record.id])
         return format_html('<a href="{}" class="btn btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
     
     def render_delete(self, record):
@@ -106,25 +106,25 @@ class ActionItemsTable(tables.Table):
         }
 
     def render_edit(self, record):
-        url = reverse("pest_alert_level_update", args=[record.id])  # change "pest_edit" to your URL name
+        url = reverse("action_items_entry", args=[record.id])  # change "pest_edit" to your URL name
         return format_html('<a href="{}" class="btn btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
 
     def render_delete(self, record):
-        url = reverse("pest_alert_level_update", args=[record.id])
+        url = reverse("action_items_delete", args=[record.id])
         return format_html('<a href="{}" class="btn btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
     
 class EffectItemsTable(tables.Table):
     edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "col_edit"}, "td": {"style": "","class": "col_edit"}})
     id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
-    action_description = tables.Column(verbose_name="Description")  # override column header
+    effect_description = tables.Column(verbose_name="Description")  # override column header
     delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
 
-    fields = ("id","action_description")
+    fields = ("id","effect_description")
     
     class Meta:
         model = PestRiskEffect
         template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
-        fields = ("edit","id","action_description","delete")
+        fields = ("edit","id","effect_description","delete")
 
         # Add table HTML id and CSS classes here
         attrs = {
@@ -133,11 +133,11 @@ class EffectItemsTable(tables.Table):
         }
 
     def render_edit(self, record):
-        url = reverse("pest_alert_level_update", args=[record.id])  # change "pest_edit" to your URL name
+        url = reverse("effect_items_entry", args=[record.id])  # change "pest_edit" to your URL name
         return format_html('<a href="{}" class="btn btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
 
     def render_delete(self, record):
-        url = reverse("pest_alert_level_update", args=[record.id])
+        url = reverse("effect_items_delete", args=[record.id])
         return format_html('<a href="{}" class="btn btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
 
     

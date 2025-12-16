@@ -28,7 +28,11 @@ router.register('groups', agro_views.GroupViewSet)
 router.register('districts', agro_views.DistrictViewSet)
 router.register('commodity-types', agro_views.CommodityTypeViewSet)
 router.register('commodity-categories', agro_views.CommodityCategoryViewSet)
+
 router.register('pest-alert-levels', agro_views.PestAlertLevelViewSet)
+router.register('action-items', agro_views.ActionItemsViewSet)
+router.register('effect-items', agro_views.EffectItemsViewSet)
+
 #router.register('pest-risk-entries', agro_views.PestRiskEntryViewSet)
 router.register('pest-risk', agro_views.PestRiskMainListingViewSet)
 

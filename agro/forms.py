@@ -145,3 +145,41 @@ class DroughtAlertLevelForm(forms.ModelForm):
             'action_level': forms.TextInput(attrs={'class': 'form-control'}),
             'color_hex': forms.TextInput(attrs={'class': 'form-control'})
         }
+
+class CommodityTypeForm(forms.ModelForm):
+    class Meta:
+        model = CommodityType
+        fields = ['description','commodity_category']
+        labels = {   
+            # <-- add human-friendly labels here
+            'description': 'Description:',
+            'commodity_category': 'Commodity Category:'
+        }
+        widgets = {            
+            'description': forms.Textarea(attrs={'class': 'form-control'}),
+            'commodity_category': forms.Select(attrs={'class': 'form-control'})
+        }
+
+class ActionItemsForm(forms.ModelForm):
+    class Meta:
+        model = PestRiskAction
+        fields = ['action_description']
+        labels = {   
+            # <-- add human-friendly labels here
+            'action_description': 'Description:',
+        }
+        widgets = {            
+            'action_description': forms.Textarea(attrs={'class': 'form-control'}),
+        }
+
+class EffectItemsForm(forms.ModelForm):
+    class Meta:
+        model = PestRiskEffect
+        fields = ['effect_description']
+        labels = {   
+            # <-- add human-friendly labels here
+            'effect_description': 'Description:',
+        }
+        widgets = {            
+            'effect_description': forms.Textarea(attrs={'class': 'form-control'}),
+        }
