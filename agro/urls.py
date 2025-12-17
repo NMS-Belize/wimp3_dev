@@ -43,7 +43,10 @@ urlpatterns = [
 
     ## PEST RISK VARIABLE: Drought Alert Level
     path("pest-risk/drought-alert-level-list/", views.drought_alert_level_list, name="drought_alert_level_list"),
-
+    path('pest-risk/drought-alert-level-list/<int:id>/', views.drought_alert_level_list,name='drought_alert_level_list'),
+    path("pest-risk/drought-alert-level-entry/", views.drought_alert_level_entry, name="drought_alert_level_entry"),
+    path('pest-risk/drought-alert-level-entry/<int:id>/', views.drought_alert_level_entry,name='drought_alert_level_entry'),
+    path('pest-risk/drought-alert-level-entry/<int:id>/delete/', views.drought_alert_level_delete,name='drought_alert_level_delete'),
 
     ## PEST RISK VARIABLE: Action Items
     path("pest-risk/action-items-list/", views.action_items_list, name="action_items_list"),

@@ -30,6 +30,7 @@ router.register('commodity-types', agro_views.CommodityTypeViewSet)
 router.register('commodity-categories', agro_views.CommodityCategoryViewSet)
 
 router.register('pest-alert-levels', agro_views.PestAlertLevelViewSet)
+router.register('drought-alert-levels', agro_views.DroughtAlertLevelViewSet)
 router.register('action-items', agro_views.ActionItemsViewSet)
 router.register('effect-items', agro_views.EffectItemsViewSet)
 

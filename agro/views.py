@@ -276,7 +276,7 @@ def pest_alert_level_entry(request, id=None):
     return render(request, 'entry_form.html', {
         'page_name':    page_name,
         'new_url':      "/agro-climat-services/pest-risk/pest-alert-level-entry/",
-        'back_url':     "/agro-climat-services/pest-risk/apest-alert-level-list/",
+        'back_url':     "/agro-climat-services/pest-risk/pest-alert-level-list/",
         'api_url':      "/api/pest-alert-levels/",
         'form':         form,
         'entry':        entry
@@ -306,12 +306,54 @@ def drought_alert_level_list(request):
     RequestConfig(request).configure(table)
     context = {
         'page_name': page_name,
+        'new_url':      "/agro-climat-services/pest-risk/drought-alert-level-entry/",
+        'back_url':     "/agro-climat-services/pest-risk/drought-alert-level-list/",
+        'api_url':      "/api/drought-alert-levels/",
         'table': table
     }
     return render(request, 'table_list_template.html', context)
 
+def drought_alert_level_entry(request, id=None):
 
+    page_name = "Drought Alert Level Entry"
 
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(DroughtAlertLevel, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = DroughtAlertLevelForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('drought_alert_level_list', saved_entry.id)
+    else:
+        form = DroughtAlertLevelForm(instance=entry)
+
+    return render(request, 'entry_form.html', {
+        'page_name':    page_name,
+        'new_url':      "/agro-climat-services/pest-risk/drought-alert-level-entry/",
+        'back_url':     "/agro-climat-services/pest-risk/drought-alert-level-list/",
+        'api_url':      "/api/drought-alert-levels/",
+        'form':         form,
+        'entry':        entry
+    })
+
+def drought_alert_level_delete(request, id):
+    
+    entry = get_object_or_404(DroughtAlertLevel, id=id)
+    
+    page_name = "Drought Alert Level Type Entry"
+    if request.method == "POST":
+        entry.delete()
+        return redirect('drought_alert_level_list')  # redirect anywhere you prefer
+
+    return render(request, "delete_confirm.html", {
+        "entry": entry,
+        'page_name': page_name,
+    })
 
 #################### PEST RISK ACTION ITEMS - TABLE ####################
 def action_items_list(request, id=None):
@@ -498,6 +540,10 @@ class EffectItemsViewSet(viewsets.ModelViewSet):
 class PestAlertLevelViewSet(viewsets.ModelViewSet):
    queryset = PestAlertLevel.objects.all().order_by('id')
    serializer_class = sx.PestAlertLevelSerializer
+
+class DroughtAlertLevelViewSet(viewsets.ModelViewSet):
+   queryset = DroughtAlertLevel.objects.all().order_by('id')
+   serializer_class = sx.DroughtAlertLevelSerializer    
 
 class PestRiskEntryDetailsViewSet(viewsets.ModelViewSet):
    queryset = PestRiskEntryDetails.objects.all().order_by('id')

@@ -26,6 +26,11 @@ class PestAlertLevelSerializer(serializers.ModelSerializer):
         model = mx.PestAlertLevel
         fields = '__all__'
 
+class DroughtAlertLevelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = mx.DroughtAlertLevel
+        fields = '__all__'
+
 class ActionItemsSerializer(serializers.ModelSerializer):
     class Meta:
         model = mx.PestRiskAction
