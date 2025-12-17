@@ -27,7 +27,7 @@ class CommodityTable(tables.Table):
         }
 
     def render_edit(self, record):
-        url = reverse("pest_alert_level_update", args=[record.id])
+        url = reverse("commodity_entry", args=[record.id])
         return format_html('<a href="{}" class="btn btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
     
     def render_delete(self, record):
@@ -57,7 +57,7 @@ class PestAlertLevelsTable(tables.Table):
         return format_html('<a href="{}" class="btn btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
     
     def render_delete(self, record):
-        url = reverse("pest_alert_level_update", args=[record.id])
+        url = reverse("pest_alert_level_delete", args=[record.id])
         return format_html('<a href="{}" class="btn btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
     
 class DroughtAlertLevelsTable(tables.Table):
@@ -139,7 +139,6 @@ class EffectItemsTable(tables.Table):
     def render_delete(self, record):
         url = reverse("effect_items_delete", args=[record.id])
         return format_html('<a href="{}" class="btn btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
-
     
 class PestRiskListTable(tables.Table):
     class Meta:

@@ -15,18 +15,18 @@
 <body>
     <div class="container-full bg-light">
         {% block header %}
-        <div id="header" class="header p-3 mb-0 bg-dark">
+        <div id="header" class="header p-3 mb-0">
             <div class="row">
-                <div class="col-1">
-                    <!-- Button to open the offcanvas sidebar -->
-                    <a href="javascript:void(0)" class="btn btn-light" data-bs-toggle="offcanvas" data-bs-target="#menu_sidebar"><i class="fa-solid fa-bars"></i></a>
-                </div>
                 <div class="col-5">
-                    <h2 class="m-0"><a class="navbar-brand pl-3" href="{{ object.get_absolute_url }}" id="logo">WIMP3</a></h2>
+                    <!-- Button to open the offcanvas sidebar -->
+                    <a href="javascript:void(0)" id="offcanvas_btn" data-bs-toggle="offcanvas" data-bs-target="#menu_sidebar"><img id="logo" src="{% static 'icons/bars-solid-wht.svg' %}" alt="" width="50px"  /></a>
+                    <a class="navbar-brand pl-3" href="{{ object.get_absolute_url }}" id="logo"><img id="logo" src="{% static 'images/WIMP3_logo_wht.png' %}" alt="WIMP3 Logo" height="60" /></a>
                 </div>
-                <div class="col-6 text-right">
+                <div class="col-6 text-end">
+                    <span id="login-info">
                     {% if user.is_authenticated %} Welcome, {{ user.username }}!
                     {% else %} Welcome, Guest!{% endif %}
+                    </span>
                 </div>
             </div>
         </div>
@@ -50,13 +50,14 @@
 <!-- Offcanvas Sidebar -->
 <div class="offcanvas offcanvas-start" id="menu_sidebar">
     <div class="offcanvas-header">
-        <h1 class="offcanvas-title">WIMP3</h1>
-        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+        <img id="offcanvas_logo" src="{% static 'images/WIMP3_logo_wht.png' %}" alt="WIMP3 Logo" />
+        <!--<h1 class="offcanvas-title">Hello, Username</h1>-->
+        <button type="button" data-bs-dismiss="offcanvas"><img id="close" src="{% static 'icons/close-wht.svg' %}" alt="Close" width="30px" /></button>
         <hr class="clear" />
     </div>
     <div class="offcanvas-body" id="menu_items">
         <ul class="list-group list-group-flush bg-transparent">
-            <li class="list-group-item"><a href="{{ object.get_absolute_url }}/">Dashboard</a></li>
+            <li class="list-group-item"><a href="{{ object.get_absolute_url }}/">Home</a></li>
             <li class="list-group-item">Weather Forecasting</li>
             <li class="list-group-item"><a href="{{ object.get_absolute_url }}/agro-climat-services/">Agro-Climat Services</a></li>
             <li class="list-group-item">System Variables</li>
