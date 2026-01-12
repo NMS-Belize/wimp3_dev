@@ -20,7 +20,8 @@
                 <div class="col-5">
                     <!-- Button to open the offcanvas sidebar -->
                     <a href="javascript:void(0)" id="offcanvas_btn" data-bs-toggle="offcanvas" data-bs-target="#menu_sidebar"><img id="logo" src="{% static 'icons/bars-solid-wht.svg' %}" alt="" width="50px"  /></a>
-                    <a class="navbar-brand pl-3" href="{{ object.get_absolute_url }}" id="logo"><img id="logo" src="{% static 'images/WIMP3_logo_wht.png' %}" alt="WIMP3 Logo" height="60" /></a>
+                    <!--<a class="navbar-brand pl-3" href="{{ object.get_absolute_url }}" id="logo"><img id="logo" src="{% static 'images/WIMP3_logo_wht.png' %}" alt="WIMP3 Logo" height="60" /></a>-->
+                    <a class="navbar-brand pl-3 display-1" href="{{ object.get_absolute_url }}" id="logo">WIMP3</a>
                 </div>
                 <div class="col-6 text-end">
                     <span id="login-info">
@@ -29,6 +30,7 @@
                     </span>
                 </div>
             </div>
+            
         </div>
         {% endblock %}
     </div>

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Pest Risk Table Details | Agro-Climat Services | WIMP3 | National Meteorological Service of Belize{% endblock %}
+
+{% block content %}
+<div id="main_pr_list" class="container-full p-5">
+<div class="row mb-3">
+    <div class="col-12">
+        <h1>Pest Risk Entry Detail</h1>
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-6">
+        <a id="btn_back_main" class="btn btn-link" href="{% url 'pest_risk_entry' id %}"><i class="fa-solid fa-arrow-left"></i>&nbsp;Back to Main Entry</a>
+    </div>
+    <div class="col-6 text-end">
+        <a class="btn btn_new" href="{% url 'pest_risk_details_create' id %}"><i class="fa-solid fa-plus"></i>&nbsp;Add Details</a>
+        <a class="btn btn-primary" href="{{ new_url }}"><i class="fa-solid fa-plus"></i>&nbsp;New Pest Risk Entry</a>
+        <a class="btn btn_api" href="{{ api_url }}" target="_blank"><i class="fa-solid fa-list"></i>&nbsp;API Feed</a>
+    </div>
+</div>
+{% if id %}
+<div class="row mb-3">
+    <div class="col-12">
+        <!--<div class="alert alert-success" role="alert">
+            {% if entry.id %}
+            <strong>{{ entry.description }}</strong> has been successfully added!
+            {% endif %}
+        </div>-->
+    </div>
+{% endif %}
+<div class="row">
+    <div class="col-12">
+        <h2>Main Entry Details</h2>
+        <div class="alert alert-light">
+            <label class="col-1 mb-1">Entry ID:</label> <label class="col-2"><strong>{{ id }}</strong></label>
+            <label class="col-1 mb-1">Months:</label> <label class="col-2"><strong>{{ month_names|join:", " }}</strong></label><br />
+            <label class="col-1 mb-1">Year:</label> <label class="col-2"><strong>{{ entry.year }}</strong></label>
+            <label class="col-1 mb-1">Commodity:</label> <label class="col-2"><strong>{{ entry.commodity }}</strong></label>
+        </div>
+    </div>
+    <div class="col-12">
+        {% load render_table from django_tables2 %}
+        {% render_table table %}
+    </div>
+</div>
+</div>
+{% endblock %}

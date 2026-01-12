@@ -54,7 +54,6 @@ class PestRiskMainListingForm(forms.ModelForm):
             'commodity': 'Commodity',
         }
         widgets = {
-            #id': forms.HiddenInput(),
             'months': forms.CheckboxSelectMultiple(
                 choices=MONTH_CHOICES,
                 attrs={'class': 'form-check-input'}
@@ -64,12 +63,17 @@ class PestRiskMainListingForm(forms.ModelForm):
         }
 
 
-class PestRiskEntryFormDetails(forms.ModelForm):
+
+    
+
+class PestRiskEntryDetailsForm(forms.ModelForm):
     class Meta:
         model = PestRiskEntryDetails
-        fields = ['pest_risk_listing_id', 'district_id', 'drought_alert_lvl_id','temp_max','temp_min','precip_min','precip_max','effect','info','actions']
+        fields = ['pest_risk_listing_id','district_id', 'pest_alert_lvl_id','drought_alert_lvl_id','temp_max','temp_min','precip_min','precip_max','effect','info','actions']
         labels = {   
+            'pest_risk_listing_id': 'PR ID',
             'district_id': 'Select District / Zone',
+            'pest_alert_lvl_id': 'Pest Alert Level:',
             'drought_alert_lvl_id': 'Drought Level Alert:',
             'temp_min': 'TEMP MIN (°F):',
             'temp_max': 'TEMP MAX (°F):',
@@ -82,6 +86,7 @@ class PestRiskEntryFormDetails(forms.ModelForm):
         widgets = {
             'pest_risk_listing_id': forms.HiddenInput(),
             'district_id':  forms.Select(attrs={'class': 'form-control'}),
+            'pest_alert_lvl_id': forms.Select(attrs={'class': 'form-control'}),
             'drought_alert_lvl_id': forms.Select(attrs={'class': 'form-control'}),
             'temp_min': forms.TextInput(attrs={'class': 'form-control'}),
             'temp_max': forms.TextInput(attrs={'class': 'form-control'}),
@@ -89,22 +94,26 @@ class PestRiskEntryFormDetails(forms.ModelForm):
             'precip_max': forms.TextInput(attrs={'class': 'form-control'}),
             'effect': forms.Select(attrs={'class': 'form-control'}),
             'info': forms.Textarea(attrs={'class': 'form-control'}),
-            'actions': forms.Select(attrs={'class': 'form-control'})
+            'actions': forms.Select(attrs={'class': 'form-control'}),
         }
 
     def __init__(self, *args, **kwargs):
 
-        entry_id = kwargs.pop('entry_id',None)
+        pest_risk_listing_id = kwargs.pop('pest_risk_listing_id',None)
         super().__init__(*args,**kwargs)
-
-        # set hidden entry_id if provided
-        if entry_id is not None:
-            self.fields['pest_risk_listing_id'].initial = entry_id
+        
+        # set hidden pest_risk_listing_id if provided
+        #if pest_risk_listing_id is not None:
+        self.fields['pest_risk_listing_id'].initial = pest_risk_listing_id
 
         # ensure dropdown is populated from PestAlertLevel model
         self.fields['district_id'].queryset = District.objects.all().order_by("id")
         self.fields['district_id'].empty_label = "Select District / Zone"
         
+        self.fields['pest_alert_lvl_id'].queryset = PestAlertLevel.objects.all().order_by("id")
+        self.fields['pest_alert_lvl_id'].empty_label = "Select Pest Alert Level"
+        self.fields['pest_alert_lvl_id'].label_from_instance = lambda obj: obj.description
+
         self.fields['drought_alert_lvl_id'].queryset = DroughtAlertLevel.objects.all().order_by("id")
         self.fields['drought_alert_lvl_id'].empty_label = "Select Drought Alert Level"
         self.fields['drought_alert_lvl_id'].label_from_instance = lambda obj: obj.title

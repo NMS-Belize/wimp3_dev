@@ -148,15 +148,18 @@ class PestRiskListTable(tables.Table):
 
 class PestRiskMainListTable(tables.Table):
     id              = tables.Column(verbose_name="ID",attrs={
-                        "th": {"style": "width:5%; text-align:center;","class": "col_id"},
-                        "td": {"style": "text-align:center;","class": "col_id"}
+                        "th": {"style": "width:60px; text-align:right;","class": "col_id"},
+                        "td": {"style": "text-align:right;","class": "col_id"}
                         })
     year            = tables.Column(attrs={
-                        "th": {"style": "width:15%;","class": ""},
+                        "th": {"style": "width:150px;","class": ""},
+                        "td": {"style": "","class": ""}
+                        })
+    months_display  = tables.Column(empty_values=(),verbose_name="Months",attrs={
+                        "th": {"style": "width:300px;","class": ""},
                         "td": {"style": "","class": ""}
                         })
     commodity       = tables.Column(accessor="commodity.description", verbose_name="Commodity")
-    months_display  = tables.Column(verbose_name="Months")
     edit            = tables.Column(empty_values=(), verbose_name="Edit",attrs={
                         "th": {"style": "width:5%;","class": "col_edit"},
                         "td": {"style": "","class": "col_edit"}
@@ -169,29 +172,28 @@ class PestRiskMainListTable(tables.Table):
                         "th": {"style": "width:5%; text-align:center;","class": "col_details"},
                         "td": {"style": "text-align:center;","class": "col_details"}
                         })
+    delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
 
     class Meta:
         model = PestRiskEntryMainListing
         template_name = "django_tables2/bootstrap4.html"  # or bootstrap5
-        fields = ("edit", "year", "months_display", "commodity","view_details","add_details","id")
-        # Add table ID and class here
+        fields = ("edit", "year", "months_display", "commodity","view_details","add_details","id","delete")
+        
         attrs = {
             "id": "tbl_pest_risk_listing",
             "class": "tbl_wimp3 table",
         }
 
-    '''def render_months_display(self, record):
-        month_map = {
-            "1": "JAN", "2": "FEB", "3": "MAR", "4": "APR",
-            "5": "MAY", "6": "JUN", "7": "JUL", "8": "AUG",
-            "9": "SEP", "10": "OCT", "11": "NOV", "12": "DEC"
-        }
-        if obj.months:
-            return ", ".join([month_map.get(str(m), f"Unknown({m})") for m in obj.months])
-        return "N/A"'''
+    def render_months_display(self, record):
+        if record.months:
+            return ", ".join(
+                calendar.month_abbr[int(m)].upper()
+                for m in record.months
+            )
+        return ""
     
     def render_edit(self, record):
-        url = reverse("pest_risk_details_list", args=[record.id])  # change "pest_edit" to your URL name
+        url = reverse("pest_risk_entry", args=[record.id])  # change "pest_edit" to your URL name
         return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
     
     def render_view_details(self, record):
@@ -199,21 +201,75 @@ class PestRiskMainListTable(tables.Table):
         return format_html('<a href="{}" class="btn_view"><i class="fa-solid fa-eye"></i></a>', url)
     
     def render_add_details(self, record):
-        url = reverse("pest_risk_details_list", args=[record.id])  # change "pest_edit" to your URL name
+        url = reverse("pest_risk_details_create", args=[record.id])  # change "pest_edit" to your URL name
         return format_html('<a href="{}" class="btn_add_details"><i class="fa-solid fa-plus"></i></a>', url)
     
+    def render_delete(self, record):
+        url = reverse("pest_risk_delete", args=[record.id])
+        return format_html('<a href="{}" class="btn btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
+    
 class PestRiskDetailsTable(tables.Table):
-    edit = tables.Column(empty_values=(), verbose_name="Edit")
-    pest_alert_lvl_id = tables.Column(verbose_name="Pest Risk Alert")  # override column header
-    drought_alert_lvl_id = tables.Column(verbose_name="Drought Alert")  # override column header
-    temp_min = tables.Column(verbose_name="TEMP MIN")  # override column header
-    temp_max = tables.Column(verbose_name="TEMP MAX")  # override column header
+
+    id              = tables.Column(verbose_name="ID",attrs={
+                        "th": {"style": "width:60px; text-align:right;","class": "col_id"},
+                        "td": {"style": "text-align:right;","class": "col_id"}
+                        })
+    district_id            = tables.Column(verbose_name="District / Zone",attrs={
+                        "th": {"style": "width:250px;","class": ""},
+                        "td": {"style": "","class": ""}
+                        })
+    pest_alert_lvl_id    = tables.Column(verbose_name="Pest Alert",attrs={
+                        "th": {"style": "width:160px;","class": ""},
+                        "td": {"style": "","class": ""}
+                        })
+    drought_alert_lvl_id    = tables.Column(verbose_name="Drought Alert", attrs={
+                        "th": {"style": "width:160px;","class": ""},
+                        "td": {"style": "","class": ""}
+                        })
+    temp_min            = tables.Column(verbose_name="TEMP °F (MIN)", attrs={
+                        "th": {"style": "width:140px; text-align:right;","class": ""},
+                        "td": {"style": "text-align:right;","class": ""}
+                        })
+    temp_max            = tables.Column(verbose_name="TEMP °F (MAX)", attrs={
+                        "th": {"style": "width:140px; text-align:right;","class": ""},
+                        "td": {"style": "text-align:right;","class": ""}
+                        })
+    precip_min            = tables.Column(verbose_name="PRECIP (MIN), mm", attrs={
+                        "th": {"style": "width:160px; text-align:right;","class": ""},
+                        "td": {"style": "text-align:right;","class": ""}
+                        })
+    precip_max            = tables.Column(verbose_name="PRECIP (MAX), mm", attrs={
+                        "th": {"style": "width:160px; text-align:right;","class": ""},
+                        "td": {"style": "text-align:right;","class": ""}
+                        })
+    effect            = tables.Column(attrs={
+                        "th": {"style": "","class": ""},
+                        "td": {"style": "","class": ""}
+                        })
+    info            = tables.Column(attrs={
+                        "th": {"style": "","class": ""},
+                        "td": {"style": "","class": ""}
+                        })
+    actions            = tables.Column(attrs={
+                        "th": {"style": "width:80px;","class": ""},
+                        "td": {"style": "","class": ""}
+                        })
+    edit            = tables.Column(empty_values=(), verbose_name="Edit",attrs={
+                        "th": {"style": "width:80px;","class": "col_edit"},
+                        "td": {"style": "","class": "col_edit"}
+                        })
 
     class Meta:
         model = PestRiskEntryDetails
-        template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
-        fields = ("id","district_id", "pest_alert_lvl_id", "drought_alert_lvl_id","temp_min","temp_max","precip_min","precip_max","pest_risk_listing_id")
+        template_name = "django_tables2/bootstrap4.html"  # or bootstrap5
+        fields = ("edit", "district_id", "pest_alert_lvl_id", "drought_alert_lvl_id","temp_min","temp_max","precip_min","precip_max","effect","info","actions","id")
+        
+        # Add table ID and class here
+        attrs = {
+            "id": "tbl_pest_risk_listing",
+            "class": "tbl_wimp3 table",
+        }
 
     def render_edit(self, record):
-        url = reverse("pest_risk_entry_details", args=[record.id])  # change "pest_edit" to your URL name
-        return format_html('<a href="{}" class="btn btn-sm btn-primary">Edit</a>', url)
+        url = reverse("pest_risk_details_entry",args=[record.pest_risk_listing_id_id, record.id])
+        return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)

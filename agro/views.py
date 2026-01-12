@@ -1,5 +1,8 @@
+import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
+
+import calendar
 
 from django.template import loader
 
@@ -21,6 +24,21 @@ from wimp.serializers import GroupSerializer, UserSerializer
 #from .forms import  FormPestRiskStartForm, PestRiskMainListingForm, PestRiskEntryFormDetails, PestAlertLevelForm
 from .forms import *
 
+def login_view(request):
+    if request.method == 'POST':
+        #username = request.POST['username']
+        #password = request.POST['password']
+        #user = authenticate(request, username=username, password=password)
+        #if user is not None:
+        #    login(request, user)
+        #    return redirect('index')  # Redirect to a success page.
+        #else:
+            # Return an 'invalid login' error message.
+        #    return render(request, 'login.html', {'error': 'Invalid username or password'})
+        return redirect('users:login')
+    else:
+        return render(request, 'login.html')
+
 #################### Create/Define Views ####################
 def index(request):
     template = loader.get_template('agro_services.html')
@@ -32,141 +50,191 @@ def livestock_entry(request):
     context = {'name': 'World'}  # Data to
     return HttpResponse(template.render(context))    
 
-def pest_risk_list(request):
-    #pr_data = PestRiskEntry.objects.all()
-    #return render(request, "pest_risk_list.html", {"pest_risk_data": pr_data })
-    #template = loader.get_template('pest_risk_list.html')
-    #context = {}  # Data to pass to the template
-    #return HttpResponse(template.render(context))
-    table = PestRiskMainListTable(PestRiskEntryMainListing.objects.all())
-    RequestConfig(request).configure(table)
-    return render(request, "pest_risk_list.html", {"table": table})
 
-#################### PEST RISK DETAILS - TABLE ####################
-def pest_risk_details_list(request, entry_id):
-    qs = PestRiskEntryDetails.objects.filter(pest_risk_listing_id=entry_id)
-    table = PestRiskDetailsTable(qs)
+############# PEST RISK ENTRY
+def pest_risk_list(request, id=None):
+    page_name = "Pest Risk Entries"
+    qs = PestRiskEntryMainListing.objects.all().order_by('-id')
+    table = PestRiskMainListTable(qs)
     RequestConfig(request).configure(table)
-    return render(request, "pest_risk_list.html", {"table": table})
 
-def pest_risk_entry_update(request, entry_id):
-    
-    entry = get_object_or_404(PestRiskEntryMainListing, id = entry_id)
+    # Load entry ONLY if id is provided
+    entry = None
+    if id is not None:
+        entry = get_object_or_404(PestRiskEntryMainListing, id=id)
+
+    context = {
+        'id' : id,
+        'entry': entry,  
+        'page_name': page_name,
+        'table': table,
+        'new_url': "/agro-climat-services/pest-risk-entry/",
+        'api_url': "/api/pest-risk/",
+    }
+    return render(request, 'table_list_main.html', context)
+
+def pest_risk_entry(request, id=None):
+
+    page_name = "Pest Risk Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(PestRiskEntryMainListing, id=id)
+
+        #if entry.months:
+        #    entry.months = json.loads(entry.months)
+    else:
+        entry = None
 
     if request.method == 'POST':
         form = PestRiskMainListingForm(request.POST, instance=entry)
-        if form.is_valid():
-            form.save()
-            return redirect('pest_risk_entry_update', entry_id = entry.id)
-    else:
-        form = PestRiskMainListingForm(instance=entry)  # <-- pre-fills the form
-
-    return render(request, 'entry_form_pest_risk_update.html', {'form': form })
-
-def pest_risk_entry_edit(request, entry_id):
-    return render(request, 'entry_form_pest_risk_update.html', {'form': form })
-
-########################## INITIALIZE A NEW FORM ##############################
-def pest_risk_entry_new(request):
-
-    form = PestRiskMainListingForm(request.POST)
-
-    if form.is_valid():
-        selected = form.cleaned_data['months']
-        return render(request, 'pest_risk_new.html', { 'selected': selected })
-    else:
-        form = PestRiskMainListingForm()
-
-    return render(request, 'pest_risk_new.html', { 'form' : form })
-
-########################## INSER RECORD / PEST RISK MAIN ENTRY ##############################
-def pest_risk_entry_add(request):
-
-    if request.method == 'POST':
-
-        form = PestRiskMainListingForm(request.POST)
 
         if form.is_valid():
-            entry = form.save()  # this actually writes to DB
-            return redirect('pest_risk_details', entry.id)
+            saved_entry = form.save()    # Creates or updates
+            return redirect('pest_risk_details_list', saved_entry.id)
     else:
-        form = PestRiskMainListingForm()
+        form = PestRiskMainListingForm(instance=entry)
 
-    return render(request, 'pest_risk_new.html', {'form': form})
+    return render(request, 'entry_form_pest_risk_main.html', {
+        'page_name':    page_name,
+        'new_url':      "/agro-climat-services/pest-risk-list",
+        'details_url':  "/agro-climat-services/pest-risk/pest-risk-entry/details/",
+        'back_url':     "/agro-climat-services/pest-risk/pest-risk-list/",
+        'api_url':      "/api/pest-risk/",
+        'form': form,
+        'entry': entry
+    })
 
-def pest_risk_details(request, entry_id):
-
-    if request.method == 'POST':
-
-        form = PestRiskEntryFormDetails(request.POST)
-
-        if form.is_valid():
-            entry = form.save()
-            return redirect('pest_risk_details', entry.id)
-    else:
-        form = PestRiskEntryFormDetails()
-
-    return render(request, 'pest_risk_details.html', {'form': form})
-
-
-
-
-
-
-
-    '''if form.is_valid():
-        selected = form.cleaned_data.get('list_months')
-        return render(request, 'entry_form_pest_risk.html', { 
-            'selected': selected,
-            'form': form,
-            'pest_risk_start_id': entry_id
-        })'''
-    #else:
-        #form = PestRiskEntryFormDetails(entry_id=entry_id)
-
-    '''return render(request, 'pest_risk_list.html', {
-        #'form': form,
-        #'pest_risk_start_id': entry_id
-    })'''
-
-def pest_risk_add_details(request, entry_id):
+def pest_risk_details_list(request, id=None, fk=None):
+    page_name = "Pest Risk Details"
+    qs = PestRiskEntryDetails.objects.all().order_by('id')
     
+    # Load entry ONLY if id is provided
+    entry = None
+    if id is not None:
+        entry = get_object_or_404(PestRiskEntryMainListing, id=id)
+
+        # Filter details by parent listing
+        qs = qs.filter(pest_risk_listing_id=id)
+        qs = qs.order_by('id')
+
+    table = PestRiskDetailsTable(qs)
+    RequestConfig(request).configure(table)
+
+    month_names = [calendar.month_name[int(m)] for m in entry.months]
+
+    context = {
+        'id' : id,
+        'fk': fk,
+        'entry': entry,  
+        'page_name': page_name,
+        'month_names': month_names,
+        'table': table,
+        'new_url': "/agro-climat-services/pest-risk-entry/",
+        'back_url':     "/agro-climat-services/pest-risk-list/",
+        'api_url': "/api/pest-risk-entries/",
+    }
+    return render(request, 'table_list_pest_risk_details_template.html', context)
+
+def pest_risk_details_create(request, fk, id=None):
+
+    # Parent object (FK) is REQUIRED
+    parent_entry = get_object_or_404(PestRiskEntryMainListing, id=fk)
+
+    page_name = f"Pest Risk Entry Details: {parent_entry}"
+
+   # Child object (details)
+    entry = None
+    if id:
+        entry = get_object_or_404(PestRiskEntryDetails,id=id,pest_risk_listing=parent_entry)
+
     if request.method == 'POST':
-        form = PestRiskEntryFormDetails(request.POST)
+        form = PestRiskEntryDetailsForm(request.POST, instance=entry)
+        form.instance.pest_risk_listing_id = PestRiskEntryMainListing.objects.get(id=fk)
+
         if form.is_valid():
-            # Get cleaned data
-            pest_risk_listing_id = form.cleaned_data['pest_risk_listing_id']
-            district_id         = form.cleaned_data['district_id']
-            drought_alert_lvl_id = form.cleaned_data['drought_alert_lvl_id']
-            temp_min        = form.cleaned_data['temp_min']
-            temp_max        = form.cleaned_data['temp_max']
-            precip_min  = form.cleaned_data['precip_min']
-            precip_max  = form.cleaned_data['precip_max']
-            effect      = form.cleaned_data['effect']
-            actions     = form.cleaned_data['actions']
-            info        = form.cleaned_data['info']
+            saved_entry = form.save(commit=False)
+            saved_entry.pest_risk_listing  = parent_entry   # set FK
+            saved_entry.save()
 
-            # Save to DB
-            entry = PestRiskEntryDetails.objects.create(
-                pest_risk_listing_id  = pest_risk_listing_id,
-                district_id         = district_id,         # list gets stored in JSONField
-                drought_alert_lvl_id = drought_alert_lvl_id,
-                temp_min        = temp_min,
-                temp_max        = temp_max,
-                precip_min      = precip_min,
-                precip_max      = precip_max,
-                effect          = effect,
-                actions         = actions,
-                info            = info
-            )
-            return redirect('pest_risk_list')  # replace with your success page/view
+            return redirect('pest_risk_details_list', parent_entry.id)
     else:
-        form = FormPestRiskStartForm()
-    return render(request, 'pest_risk_details.html', {'form': form })
+        form = PestRiskEntryDetailsForm(instance=entry)
 
+    return render(request, 'entry_form_pest_risk.html', {
+        'page_name': page_name,
+        'new_url': "/agro-climat-services/pest-risk/pest-risk-entry/",
+        'details_url': f"/agro-climat-services/pest-risk/pest-risk-entry/details/{parent_entry.id}/",
+        'back_url': "/agro-climat-services/pest-risk/pest-risk-list/",
+        'api_url': "/api/pest-risk-entries/",
+        'form': form,
+        'entry': entry,
+        'parent_entry': parent_entry,
+        'parent_id': parent_entry.id,
+        'fk': fk
+    })
 
+def pest_risk_details_entry(request, id=None, fk=None):
 
-############# TABLE LIST: PEST RISK VARIABlE - Commodity
+    # Parent object (FK) is REQUIRED
+    parent_entry = get_object_or_404(PestRiskEntryMainListing, id=fk)
+
+    page_name = f"Pest Risk Entry Details: {parent_entry}"
+
+   # Child object (details)
+    entry = None
+    if id:
+        entry = get_object_or_404(PestRiskEntryDetails,id=id)
+
+    if request.method == 'POST':
+        form = PestRiskEntryDetailsForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save(commit=False)
+            saved_entry.pest_risk_listing  = parent_entry   # set FK
+            saved_entry.save()
+
+            return redirect('pest_risk_details_list', parent_entry.id)
+    else:
+        form = PestRiskEntryDetailsForm(instance=entry)
+
+    return render(request, 'entry_form_pest_risk.html', {
+        'page_name': page_name,
+        'new_url': "/agro-climat-services/pest-risk/pest-risk-entry/",
+        'details_url': f"/agro-climat-services/pest-risk/pest-risk-entry/details/{parent_entry.id}/",
+        'back_url': "/agro-climat-services/pest-risk/pest-risk-list/",
+        'api_url': "/api/pest-risk-entries/",
+        'form': form,
+        'entry': entry,
+        'parent_entry': parent_entry,
+        'parent_id': parent_entry.id
+    })
+
+def pest_risk_delete(request, id):
+    
+    entry = get_object_or_404(PestRiskEntryMainListing, id=id)
+
+    qs = PestRiskEntryDetails.objects.all().order_by('id')
+    # Filter details by parent listing
+    qs = qs.filter(pest_risk_listing_id=id)
+    qs = qs.order_by('id')
+    
+    page_name = "Pest Risk Entry"
+    month_names = [calendar.month_name[int(m)] for m in entry.months]
+
+    if request.method == "POST":
+        entry.delete()
+        
+        return redirect('pest_risk_list')  # redirect anywhere you prefer
+
+    return render(request, "delete_pr_confirm.html", {
+        "entry": entry,
+        'page_name': page_name,
+        'month_names': month_names,
+        'details': qs
+    })
+
+############# PEST RISK VARIABlE - Commodity
 def commodity_list(request, id=None):
     page_name = "Commodity"
     qs = CommodityType.objects.all().order_by('id')
@@ -231,7 +299,7 @@ def commodity_type_delete(request, id):
         'page_name': page_name,
     })
 
-############# TABLE LIST: PEST RISK VARIABlE - Pest Alert Levels
+############# PEST RISK VARIABlE - Pest Alert Levels
 def pest_alert_level_list(request, id=None):
 
     page_name = "Pest Alert Levels"
@@ -296,7 +364,6 @@ def pest_alert_level_delete(request, id):
         "entry": entry,
         'page_name': page_name,
     })
-
 
 #################### DROUGHT ALERT LEVELS - TABLE ####################
 def drought_alert_level_list(request):
@@ -487,21 +554,6 @@ def effect_items_delete(request, id):
         'page_name': page_name,
     })
 
-#################### PEST ALERT LEVELS - UPDATE ####################
-def pest_alert_level_update(request, entry_id):
-    
-    entry = get_object_or_404(PestAlertLevel, id = entry_id)
-
-    if request.method == 'POST':
-        form = PestRiskMainListingForm(request.POST, instance=entry)
-        if form.is_valid():
-            form.save()
-            return redirect('pest_risk_entry_update', entry_id = entry.id)
-    else:
-        form = PestRiskMainListingForm(instance=entry)  # <-- pre-fills the form
-
-    return render(request, 'pest_alert_level_update.html', {'form': form })
-#################### Form Processing ####################
 
 
 #API endpoint that allows groups to be viewed or edited.

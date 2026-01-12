@@ -16,8 +16,8 @@
         <div class="col-3">
             <h3>Pest Risk Listing</h3>
             <ul class="list-group list-group-flush p-0">
-                <li class="list-group-item pl-0"><a href="{{ object.get_absolute_url }}/agro-climat-services/pest-risk-list/">Pest Risk List</a>&nbsp;<a href="{{ object.get_absolute_url }}/api/pest-risk/" target="_blank"><span class="badge text-bg-warning">API FEED</span></a></li>
-                <li class="list-group-item pl-0"><a href="pest-risk-entry/new/">New Entry</a></li>
+                <li class="list-group-item pl-0"><a href="{% url 'pest_risk_list' %}">Pest Risk List</a>&nbsp;<a href="{{ object.get_absolute_url }}/api/pest-risk/" target="_blank"><span class="badge text-bg-warning">API FEED</span></a></li>
+                <li class="list-group-item pl-0"><a href="pest-risk-entry/">New Entry</a></li>
             </ul>
         </div>
         <div class="col-3">

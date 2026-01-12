@@ -11,19 +11,32 @@ from . import views
 urlpatterns = [
     path("", views.index, name="index"),
 
-    path("pest-risk-list/", views.pest_risk_list, name="pest_risk_list"), 
-    path("pest-risk-entry/new/", views.pest_risk_entry_new, name="pest_risk_entry_new"),
     #path("pest-risk-entry/edit/<int:entry_id>", views.edit_pest_risk_entry, name="edit_pest_risk_entry"), 
 
-    path("pest-risk-entry/add/", views.pest_risk_entry_add, name="pest_risk_entry_add"),
-    path("pest-risk-entry/update/", views.pest_risk_entry_update, name="pest_risk_entry_update"), 
+    ## PEST RISK ENTRY
+    path("pest-risk/pest-risk-list/", views.pest_risk_list, name="pest_risk_list"),
+    path('pest-risk-list/<int:id>/', views.pest_risk_list,name='pest_risk_list'),
 
-    
-    
-    path('pest-risk-entry/<int:entry_id>/', views.pest_risk_details, name='pest_risk_details'),
-    path('pest-risk-entry/<int:entry_id>/add/', views.pest_risk_add_details, name='pest_risk_add_details'),
-    path("pest-risk-entry-details/<int:entry_id>/", views.pest_risk_details_list, name="pest_risk_details_list"), 
+    path("pest-risk-entry/", views.pest_risk_entry, name="pest_risk_entry"),    
+    path('pest-risk-entry/<int:id>/', views.pest_risk_entry, name='pest_risk_entry'),
+    path('pest-risk/<int:id>/delete/', views.pest_risk_delete,name='pest_risk_delete'),
 
+
+    path("pest-risk-entry/details-list/", views.pest_risk_details_list, name="pest_risk_details_list"),
+    path("pest-risk-entry/details-list/<int:id>/", views.pest_risk_details_list, name="pest_risk_details_list"),
+    #path("pest-risk-entry/details-list/<int:fk>/", views.pest_risk_details_list, name="pest_risk_details_list"),
+
+    #path("pest-risk-entry/<int:fk>/details/<int:id>/", views.pest_risk_details_entry, name="pest_risk_details_entry"),
+
+     # CREATE
+    path('pest-risk-entry/<int:fk>/details/new/',views.pest_risk_details_create,name='pest_risk_details_create'),
+
+    # UPDATE
+    path('pest-risk-entry/<int:fk>/details/<int:id>/',views.pest_risk_details_entry,name='pest_risk_details_entry'),
+
+    #path("pest-risk-entry/add/", views.pest_risk_entry_add, name="pest_risk_entry_add"),
+    #path("pest-risk-entry/update/", views.pest_risk_entry_update, name="pest_risk_entry_update"), 
+    #path('pest-risk-entry/<int:entry_id>/add/', views.pest_risk_add_details, name='pest_risk_add_details'),
     
     ## PEST RISK VARIABLE: Commodity
     path("pest-risk/commodity-list/", views.commodity_list, name="commodity_list"),
@@ -31,7 +44,6 @@ urlpatterns = [
     path("pest-risk/commodity-entry/", views.commodity_entry, name="commodity_entry"),
     path('pest-risk/commodity-entry/<int:id>/', views.commodity_entry,name='commodity_entry'),
     path('pest-risk/commodity-entry/<int:id>/delete/', views.commodity_type_delete,name='commodity_type_delete'),
-    #path("pest-risk/commodity-entry/save/", views.commodity_entry_save, name="commodity_entry_save"),
 
     ## PEST RISK VARIABLE: Pest Alert Level
     path("pest-risk/pest-alert-level-list/", views.pest_alert_level_list, name="pest_alert_level_list"),

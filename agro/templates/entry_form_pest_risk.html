@@ -1,22 +1,35 @@
 {% extends "base.html" %}
 
-{% block title %}Pest Risk Entry | Agro-Climat Services | WIMP3 | National Meteorological Service of Belize{% endblock %}
+{% block title %}{{ page_name }} | Agro-Climat Services | WIMP3 | National Meteorological Service of Belize{% endblock %}
 
 {% block content %}
-<div id="main_pr_details" class="container-fluid p-5">
+<div id="" class="container-fluid p-5">
+    <div class="row mb-3">
+        <div class="col-6">
+            <a id="btn_back_main" class="btn btn-link" href="{{ back_url }}"><i class="fa-solid fa-arrow-left"></i>&nbsp;Back to {{ page_name }} Listing</a>
+        </div>
+        <div class="col-6 text-end">
+            <a class="btn btn_new" href="{{ details_url }}"><i class="fa-solid fa-plus"></i>&nbsp;Add Details</a>
+            <a class="btn btn_new" href="{{ new_url }}"><i class="fa-solid fa-plus"></i>&nbsp;New Item</a>
+            <a class="btn btn_api" href="{{ object.get_absolute_url }}/agro-climat-services" target="_blank"><i class="fa-solid fa-list"></i>&nbsp;API Feed</a>
+        </div>
+    </div>
     <div class="row mb-3">
         <div class="col-12">
-            <h1>Pest Risk Entry</h1>
+            <h1>Pest Risk Details: {{ parent_id }}</h1>
         </div>
     </div>
     <div class="row">
         <div class="col-12">
-            <form action="add/" method="post" id="frm_PestRisk">
+            <form method="post" id="frm_entry_form">
                 {% csrf_token %}
-                <div class="form-group row m-0"><div class="col-12 m-0"><hr /></div></div>
-                {{ form.as_p }}
                 <div class="form-group row">
-                    <input type="submit" value="Submit" class="btn btn-primary offset-md-2" />
+                    <div class="col-6">
+                        {{ form.as_p }}
+                        <input id="pest_risk_listing_id" name="pest_risk_listing_id" type="hidden" value="{{ parent_id }}" />
+                        <input id="btn_submit" type="submit" value="Submit" class="btn btn-primary" />
+                    </div>
+                    
                 </div>
             </form>
         </div>

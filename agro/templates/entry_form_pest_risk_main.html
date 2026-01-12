@@ -20,11 +20,11 @@
     </div>
     <div class="row">
         <div class="col-12">
-            <form method="post" id="frm_entry_form">
+            <form method="post" id="frm_pest_risk_main" name="frm_pest_risk_main">
                 {% csrf_token %}
                 <div class="form-group row">
                     <div class="col-6">
-                        {{ form.as_p }}
+                        {{ form.as_ul }}
                         <input id="btn_submit" type="submit" value="Submit" class="btn btn-primary" />
                     </div>
                     

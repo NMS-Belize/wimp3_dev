@@ -1,9 +1,28 @@
+:root{
+  --navy: #0b1e33;
+  --aqua-1: #229ebd;
+  --aqua-2: #63bbcf;
+  --teal-1: #013c58;
+  --teal-2: #013c58;
+  --blue-1: #00296B;
+  --yellow-1: #ffb702;
+  --yellow-2: #ffba42;
+  --orange-1: #fb8502;
+  --red: #A50E0E;
+
+  --grey-1: #F1F3F4;
+  --grey-2: #9AA0A6;
+  --dark: #202124;
+
+  --header: #0b1e33;
+}
 body{ 
    font-family: "Source Sans 3", sans-serif;
    font-weight: 400;
    font-optical-sizing: auto;
    font-style: normal;
    line-height: 1.2;
+   color: var(--dark);
 }
 h1,h2,h3,h4,h5,h6{
    font-family: "Encode Sans", sans-serif;
@@ -15,7 +34,7 @@ h1{ font-weight: 300; font-size: 50px; }
 .text-white{ color: #fff !important; }
 #header{
   color:#fff;
-  background:#001d3d;
+  background:var(--teal-1);
 }
 #login-info{
   font-size: 26px;
@@ -44,7 +63,7 @@ h1{ font-weight: 300; font-size: 50px; }
 }
 #menu_sidebar{
   font-family: "Encode Sans", sans-serif;
-  background: #001d3d;
+  background: var(--teal-1);
   color: #fff;
 }
 #menu_items li, #menu_items .list-group-item a{
@@ -72,36 +91,47 @@ h1{ font-weight: 300; font-size: 50px; }
   clear: both; 
   padding-left: 40px; 
 }
-#frm_PestRiskNew #id_list_months div, #id_months div{
-   float: left;
-   width:8%;
- }
- #id_months{ width: 100%; padding-left: 42px; overflow: auto; }
 
- #frm_PestRisk label{
-   float: left;
-   width: 20%;
- }
-#id_year{ clear: left; }
+#id_months{ display: inline-block ; width: 800px; height: 72px; border: 0; overflow: hidden; margin-top: 0; }
+
+#frm_pest_risk_main #id_months label{ width:auto; }
+#frm_pest_risk_main #id_months input{ width: 20px; }
+#frm_pest_risk_main #id_months div{ width: 14.5%; float: left; margin: 0 0 20px 0; }
+
+#frm_pest_risk_main #btn_submit{ margin: 0 0 0 200px; width: auto; background-color: var(--teal-2); }
+
 #frm_PestRisk select, #frm_PestRisk input[type=text], #frm_PestRisk textarea{
    float: left;
    width: 60%;
  }
- #frm_PestRisk p{
-   overflow: auto;
-   margin-bottom: 20px;;
+  #frm_pest_risk_main li {
+    list-style-type: none;
+    margin-bottom: 20px;
+    clear: both;
+  }
+ #frm_pest_risk_main li label{
+  display: inline-block;
+   width: 200px;
  }
-.page-name{ font-weight: 600; color:#00296B; }
+ #frm_pest_risk_main input,  #frm_pest_risk_main select{ 
+  display: inline-block;
+  width: 400px;
+}
+.page-name{ font-weight: 600; color:var(--teal-2); }
 
-.btn_new { background-color:#FDC500 !important; }
-.btn_new:hover { background-color:#e3b100 !important; }
+#btn_back_main{ color: var(--teal-2); text-decoration: none; font-weight: 700; font-size: 18px; padding: 0; }
+
+.btn_add_details{ color:var(--orange-1) }
+
+.btn_new { background-color: var(--yellow-2) !important; }
+.btn_new:hover { background-color:var(--yellow-1) !important; }
 
 .btn_api { background-color:#E8DAA0 !important; }
 .btn_api:hover { background-color:#eadda9
  !important; }
 
 a.btn_edit {
-  color:#FDC500;
+  color:var(--teal-2);
   padding-top: 0;
   padding-bottom: 0;
 }
@@ -110,11 +140,19 @@ a.btn_delete {
   padding-top: 0;
   padding-bottom: 0;
 }
-
+#btn_confirm_delete{
+  background: var(--red);
+  color: #fff;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+#btn_cancel{
+  background: var(--grey-2);
+}
 .col_id, .col_id a{ color:#b7b7b7; }
-.col_view, .col_view a{ color:#001d3d; }
+.col_view, .col_view a{ color:var(--teal-2); }
 .tbl_wimp3 th{
-  background-color: #001d3d;
+  background-color: var(--aqua-1);
   color: #fff;
   padding: 0.5rem;
 }

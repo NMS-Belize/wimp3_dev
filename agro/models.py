@@ -91,8 +91,8 @@ class PestRiskEntryMainListing(models.Model):
         return ", ".join([MONTH_CHOICES.get(m, str(m)) for m in self.months])
 
 class PestRiskEntryDetails(models.Model):
-    id    = models.BigAutoField(primary_key=True)
-    pest_risk_listing_id    = models.ForeignKey(PestRiskEntryMainListing, on_delete=models.CASCADE,null=True,related_name='pest_risk_entries')
+    id                      = models.BigAutoField(primary_key=True)
+    pest_risk_listing_id    = models.ForeignKey(PestRiskEntryMainListing, on_delete=models.CASCADE,related_name='pest_risk_entries')
     district_id             = models.ForeignKey(District, on_delete=models.CASCADE,null=True)
     pest_alert_lvl_id       = models.ForeignKey(PestAlertLevel, on_delete=models.CASCADE,null=True)
     drought_alert_lvl_id    = models.ForeignKey(DroughtAlertLevel, on_delete=models.CASCADE,null=True)
@@ -105,5 +105,7 @@ class PestRiskEntryDetails(models.Model):
     actions     = models.ForeignKey(PestRiskAction, on_delete=models.CASCADE,null=True)
     published_date      = models.DateTimeField(auto_now=True,null=True)
     updated_datetime    = models.DateTimeField(auto_now_add=True,null=True)
-    def __str__(self): 
-        return self.info
+
+    def __str__(self): return f"{self.id}"
+    #def __str__(self):
+        #return f"[{self.pest_risk_listing_id}] : {self.info}"
