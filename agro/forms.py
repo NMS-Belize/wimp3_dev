@@ -62,10 +62,6 @@ class PestRiskMainListingForm(forms.ModelForm):
             'commodity': forms.Select(attrs={'class': 'form-control'})
         }
 
-
-
-    
-
 class PestRiskEntryDetailsForm(forms.ModelForm):
     class Meta:
         model = PestRiskEntryDetails
@@ -123,7 +119,6 @@ class PestRiskEntryDetailsForm(forms.ModelForm):
 
         self.fields['actions'].queryset = PestRiskAction.objects.all().order_by("id")
         self.fields['actions'].empty_label = "Select Actions"
-
 
 class PestAlertLevelForm(forms.ModelForm):
     class Meta:

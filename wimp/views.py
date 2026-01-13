@@ -1,7 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 
 from django.template import loader
+
+#from django_tables2 import RequestConfig
 
 #from django import forms
 #from .forms import FormPestRisk
@@ -9,24 +11,6 @@ from django.template import loader
 # Create your views here.
 
 def index(request):
-    template = loader.get_template('home.html')
+    template = loader.get_template('dashboard.html')
     #context = {'name': 'World'}  # Data to pass to the template
     return HttpResponse(template.render())
-
-#def home(request):
- #   return HttpResponse("Welcome Dashboard")
-
-#################### Form Processing ####################
-'''def add_pest_risk_entry_submit(request):
-    if request.method == 'POST':  # form was submitted
-        form = FormPestRisk(request.POST)  # bind data
-        if form.is_valid():  # validation step
-            form.save()  # process form: save to DB
-            return redirect('book_success')  # redirect after success
-        else:
-            # form has errors, will be shown in template
-            pass
-    else:
-        form = FormPestRisk()  # GET request → show empty form
-
-    return render(request, 'add_pest_risk_entry.html', {'form': form})'''

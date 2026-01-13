@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard | WIMP3{% endblock %}
+
+{% block content %}
+<div id="dashboard" class="container-full p-5">
+    <div class="row mb-3">
+        <div class="col-12">
+            <h1 class="display-1">Welcome to WIMP3!</h1>  
+            <p>Hello {{ user.username }}!</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <h2>Available Services</h2>
+        </div>
+        <div class="col-2">
+            <div class="card" style="width: 18rem;">
+            <img src="{% static 'images/agro2.jpg' %}" alt="Radar image" class="card-img-top" />
+            <div class="card-body">
+            <h5 class="card-title">Agro Services</h5>
+            <p class="card-text">Enter Pest Risk Information</p>
+            <a href="{% url 'agro:pest_risk_list' %}" class="btn btn-primary">Pest Risk Listing</a>
+            </div>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="card" style="width: 18rem;">
+            <img src="{% static 'images/radar.gif' %}" alt="Radar image" class="card-img-top" />
+            <div class="card-body">
+            <h5 class="card-title">Radar Imagery</h5>
+            <p class="card-text">Choose radar images to display on the NMS Website</p>
+            <a href="{% url 'radar:radar_images_list' %}" class="btn btn-primary">Choose Images</a>
+            </div>
+            </div>
+        </div>    
+    </div>
+</div>
+{% endblock %}

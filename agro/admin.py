@@ -8,7 +8,6 @@ admin.site.register(District)
 admin.site.register(Zone)
 admin.site.register(CommodityCategory)
 
-
 admin.site.register(PestAlertLevel)
 admin.site.register(DroughtAlertLevel)
 #admin.site.register(Livestock)
@@ -19,6 +18,7 @@ admin.site.register(PestRiskEffect)
 admin.site.register(PestRiskAction)
 
 @admin.register(CommodityType)
+
 class CommodityTypeAdmin(admin.ModelAdmin):
     list_display = ('description', 'commodity_category', 'published_date', 'updated_datetime')
     search_fields = ('description','commodity_category')

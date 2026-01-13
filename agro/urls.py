@@ -8,10 +8,10 @@ from agro.views import CommodityTypeViewSet
 
 from . import views
 
+app_name = 'agro'
+
 urlpatterns = [
     path("", views.index, name="index"),
-
-    #path("pest-risk-entry/edit/<int:entry_id>", views.edit_pest_risk_entry, name="edit_pest_risk_entry"), 
 
     ## PEST RISK ENTRY
     path("pest-risk/pest-risk-list/", views.pest_risk_list, name="pest_risk_list"),
@@ -20,7 +20,6 @@ urlpatterns = [
     path("pest-risk-entry/", views.pest_risk_entry, name="pest_risk_entry"),    
     path('pest-risk-entry/<int:id>/', views.pest_risk_entry, name='pest_risk_entry'),
     path('pest-risk/<int:id>/delete/', views.pest_risk_delete,name='pest_risk_delete'),
-
 
     path("pest-risk-entry/details-list/", views.pest_risk_details_list, name="pest_risk_details_list"),
     path("pest-risk-entry/details-list/<int:id>/", views.pest_risk_details_list, name="pest_risk_details_list"),
@@ -51,7 +50,6 @@ urlpatterns = [
     path("pest-risk/pest-alert-level-entry/", views.pest_alert_level_entry, name="pest_alert_level_entry"),
     path('pest-risk/pest-alert-level-entry/<int:id>/', views.pest_alert_level_entry,name='pest_alert_level_entry'),
     path('pest-risk/pest-alert-level-entry/<int:id>/delete/', views.pest_alert_level_delete,name='pest_alert_level_delete'),
-
 
     ## PEST RISK VARIABLE: Drought Alert Level
     path("pest-risk/drought-alert-level-list/", views.drought_alert_level_list, name="drought_alert_level_list"),

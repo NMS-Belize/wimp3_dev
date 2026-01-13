@@ -2,6 +2,8 @@ import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 
+from django.urls import reverse
+
 import calendar
 
 from django.template import loader
@@ -42,8 +44,7 @@ def login_view(request):
 #################### Create/Define Views ####################
 def index(request):
     template = loader.get_template('agro_services.html')
-    context = {'name': 'World'}  # Data to pass to the template
-    return HttpResponse(template.render(context))
+    return HttpResponse(template.render())
   
 def livestock_entry(request):
     template = loader.get_template('entry_form_livestock.html')
@@ -68,7 +69,8 @@ def pest_risk_list(request, id=None):
         'entry': entry,  
         'page_name': page_name,
         'table': table,
-        'new_url': "/agro-climat-services/pest-risk-entry/",
+        'new_url':  reverse('agro:pest_risk_entry'),
+        'back_url': reverse('agro:index'),
         'api_url': "/api/pest-risk/",
     }
     return render(request, 'table_list_main.html', context)
@@ -91,15 +93,15 @@ def pest_risk_entry(request, id=None):
 
         if form.is_valid():
             saved_entry = form.save()    # Creates or updates
-            return redirect('pest_risk_details_list', saved_entry.id)
+            return redirect('agro:pest_risk_details_list', saved_entry.id)
     else:
         form = PestRiskMainListingForm(instance=entry)
 
     return render(request, 'entry_form_pest_risk_main.html', {
         'page_name':    page_name,
-        'new_url':      "/agro-climat-services/pest-risk-list",
-        'details_url':  "/agro-climat-services/pest-risk/pest-risk-entry/details/",
-        'back_url':     "/agro-climat-services/pest-risk/pest-risk-list/",
+        'new_url':      reverse('agro:pest_risk_entry'),
+        'details_url':  "",
+        'back_url':     reverse('agro:index'),
         'api_url':      "/api/pest-risk/",
         'form': form,
         'entry': entry
@@ -129,9 +131,9 @@ def pest_risk_details_list(request, id=None, fk=None):
         'entry': entry,  
         'page_name': page_name,
         'month_names': month_names,
-        'table': table,
-        'new_url': "/agro-climat-services/pest-risk-entry/",
-        'back_url':     "/agro-climat-services/pest-risk-list/",
+        'table':    table,
+        'new_url':  reverse('agro:pest_risk_entry'),
+        'back_url': reverse('agro:pest_risk_list'),
         'api_url': "/api/pest-risk-entries/",
     }
     return render(request, 'table_list_pest_risk_details_template.html', context)
@@ -157,15 +159,15 @@ def pest_risk_details_create(request, fk, id=None):
             saved_entry.pest_risk_listing  = parent_entry   # set FK
             saved_entry.save()
 
-            return redirect('pest_risk_details_list', parent_entry.id)
+            return redirect('agro:pest_risk_details_list', parent_entry.id)
     else:
         form = PestRiskEntryDetailsForm(instance=entry)
 
     return render(request, 'entry_form_pest_risk.html', {
         'page_name': page_name,
-        'new_url': "/agro-climat-services/pest-risk/pest-risk-entry/",
-        'details_url': f"/agro-climat-services/pest-risk/pest-risk-entry/details/{parent_entry.id}/",
-        'back_url': "/agro-climat-services/pest-risk/pest-risk-list/",
+        'new_url':      reverse('agro:pest_risk_entry'),
+        'details_url':  reverse('agro:pest_risk_details_create', args=[parent_entry.id]),
+        'back_url':     reverse('agro:pest_risk_list'),
         'api_url': "/api/pest-risk-entries/",
         'form': form,
         'entry': entry,
@@ -194,15 +196,15 @@ def pest_risk_details_entry(request, id=None, fk=None):
             saved_entry.pest_risk_listing  = parent_entry   # set FK
             saved_entry.save()
 
-            return redirect('pest_risk_details_list', parent_entry.id)
+            return redirect('agro:pest_risk_details_list', parent_entry.id)
     else:
         form = PestRiskEntryDetailsForm(instance=entry)
 
     return render(request, 'entry_form_pest_risk.html', {
         'page_name': page_name,
-        'new_url': "/agro-climat-services/pest-risk/pest-risk-entry/",
-        'details_url': f"/agro-climat-services/pest-risk/pest-risk-entry/details/{parent_entry.id}/",
-        'back_url': "/agro-climat-services/pest-risk/pest-risk-list/",
+        'new_url':      reverse('agro:pest_risk_entry'),
+        'details_url':  reverse('agro:pest_risk_details_create', args=[parent_entry.id]),
+        'back_url':     reverse('agro:pest_risk_list'),
         'api_url': "/api/pest-risk-entries/",
         'form': form,
         'entry': entry,
@@ -251,7 +253,7 @@ def commodity_list(request, id=None):
         'entry': entry,  
         'page_name': page_name,
         'table': table,
-        'new_url': "/agro-climat-services/pest-risk/commodity-entry/",
+        'new_url': reverse('agro:commodity_entry'),
         'api_url': "/api/commodity-types/",
     }
     return render(request, 'table_list_template.html', context)
@@ -271,14 +273,14 @@ def commodity_entry(request, id=None):
 
         if form.is_valid():
             saved_entry = form.save()    # Creates or updates
-            return redirect('commodity_list', saved_entry.id)
+            return redirect('agro:commodity_list', saved_entry.id)
     else:
         form = CommodityTypeForm(instance=entry)
 
     return render(request, 'entry_form.html', {
         'page_name': page_name,
-        'new_url': "/agro-climat-services/pest-risk/commodity-entry/",
-        'back_url': "/agro-climat-services/pest-risk/commodity-list/",
+        'new_url': reverse('agro:commodity_entry'),
+        'back_url': reverse('agro:commodity_list'),
         'api_url': "/api/commodity-types/",
         'form': form,
         'entry': entry
@@ -317,7 +319,7 @@ def pest_alert_level_list(request, id=None):
         'entry': entry,  
         'page_name': page_name,
         'table': table,
-        'new_url': "/agro-climat-services/pest-risk/pest-alert-level-entry/",
+        'new_url': reverse('agro:pest_alert_level_entry'),
         'api_url': "/api/pest-alert-levels/",
     }
     return render(request, 'table_list_template.html', context)
@@ -337,14 +339,14 @@ def pest_alert_level_entry(request, id=None):
 
         if form.is_valid():
             saved_entry = form.save()    # Creates or updates
-            return redirect('pest_alert_level_list', saved_entry.id)
+            return redirect('agro:pest_alert_level_list', saved_entry.id)
     else:
         form = PestAlertLevelForm(instance=entry)
 
     return render(request, 'entry_form.html', {
         'page_name':    page_name,
-        'new_url':      "/agro-climat-services/pest-risk/pest-alert-level-entry/",
-        'back_url':     "/agro-climat-services/pest-risk/pest-alert-level-list/",
+        'new_url':      reverse('agro:pest_alert_level_entry'),
+        'back_url':     reverse('agro:pest_alert_level_list'),
         'api_url':      "/api/pest-alert-levels/",
         'form':         form,
         'entry':        entry
@@ -373,8 +375,8 @@ def drought_alert_level_list(request):
     RequestConfig(request).configure(table)
     context = {
         'page_name': page_name,
-        'new_url':      "/agro-climat-services/pest-risk/drought-alert-level-entry/",
-        'back_url':     "/agro-climat-services/pest-risk/drought-alert-level-list/",
+        'new_url':      reverse('agro:drought_alert_level_entry'),
+        'back_url':     reverse('agro:drought_alert_level_list'),
         'api_url':      "/api/drought-alert-levels/",
         'table': table
     }
@@ -395,14 +397,14 @@ def drought_alert_level_entry(request, id=None):
 
         if form.is_valid():
             saved_entry = form.save()    # Creates or updates
-            return redirect('drought_alert_level_list', saved_entry.id)
+            return redirect('agro:drought_alert_level_list', saved_entry.id)
     else:
         form = DroughtAlertLevelForm(instance=entry)
 
     return render(request, 'entry_form.html', {
         'page_name':    page_name,
-        'new_url':      "/agro-climat-services/pest-risk/drought-alert-level-entry/",
-        'back_url':     "/agro-climat-services/pest-risk/drought-alert-level-list/",
+        'new_url':      reverse('agro:drought_alert_level_entry'),
+        'back_url':     reverse('agro:drought_alert_level_list'),
         'api_url':      "/api/drought-alert-levels/",
         'form':         form,
         'entry':        entry
@@ -506,7 +508,7 @@ def effect_items_list(request, id=None):
         'entry': entry,  
         'page_name': page_name,
         'table': table,
-        'new_url': "/agro-climat-services/pest-risk/effect-items-entry/",
+        'new_url': reverse('agro:effect_items_entry'),
         'api_url': "/api/effect-items/",
     }
     return render(request, 'table_list_template.html', context)
@@ -526,14 +528,14 @@ def effect_items_entry(request, id=None):
 
         if form.is_valid():
             saved_entry = form.save()    # Creates or updates
-            return redirect('effect_items_list', saved_entry.id)
+            return redirect('agro:effect_items_list', saved_entry.id)
     else:
         form = EffectItemsForm(instance=entry)
 
     return render(request, 'entry_form.html', {
         'page_name':    page_name,
-        'new_url':      "/agro-climat-services/pest-risk/effect-items-entry/",
-        'back_url':     "/agro-climat-services/pest-risk/effect-items-list/",
+        'new_url':      reverse('agro:effect_items_entry'),
+        'back_url':     reverse('agro:effect_items_list'),
         'api_url':      "/api/effect-items/",
         'form':         form,
         'entry':        entry
@@ -547,14 +549,12 @@ def effect_items_delete(request, id):
 
     if request.method == "POST":
         entry.delete()
-        return redirect('effect_items_list')  # redirect anywhere you prefer
+        return redirect('agro:effect_items_list')  # redirect anywhere you prefer
 
     return render(request, "delete_confirm.html", {
         "entry": entry,
         'page_name': page_name,
     })
-
-
 
 #API endpoint that allows groups to be viewed or edited.
 class UserViewSet(viewsets.ModelViewSet):

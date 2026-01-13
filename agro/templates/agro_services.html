@@ -6,7 +6,7 @@
 <div id="main_agro_services" class="container-full p-5">
     <div class="row mb-3">
         <div class="col-12">
-            <h1>Agro-Climat Services</h1>
+            <h1>Agro-Met Services</h1>
             <!--<div class="alert alert-info" role="alert">
                 Agro-climatic pest risk refers to the likelihood of pest outbreaks and resulting crop damage due to the influence of climate factors like temperature, precipitation, and CO2 levels, which alter pest life cycles, distribution, and survival. Changes in climate increase pest risk by expanding pest ranges, allowing for more generations, disrupting plant-pest synchrony, and impacting biological control, ultimately threatening food security and crop yields. Effective management requires integrating climate change scenarios into pest risk assessments and adopting adaptive strategies like improved monitoring and predictive modeling.
             </div>-->
@@ -16,18 +16,18 @@
         <div class="col-3">
             <h3>Pest Risk Listing</h3>
             <ul class="list-group list-group-flush p-0">
-                <li class="list-group-item pl-0"><a href="{% url 'pest_risk_list' %}">Pest Risk List</a>&nbsp;<a href="{{ object.get_absolute_url }}/api/pest-risk/" target="_blank"><span class="badge text-bg-warning">API FEED</span></a></li>
-                <li class="list-group-item pl-0"><a href="pest-risk-entry/">New Entry</a></li>
+                <li class="list-group-item pl-0"><a href="{% url 'agro:pest_risk_list' %}">Pest Risk List</a><!--&nbsp;<a href="{{ object.get_absolute_url }}/api/pest-risk/" target="_blank"><span class="badge text-bg-warning">API FEED</span></a>--></li>
+                <li class="list-group-item pl-0"><a href="{% url 'agro:pest_risk_entry' %}">New Entry</a></li>
             </ul>
         </div>
         <div class="col-3">
             <h3>Pest Risk Variables</h3>
             <ul class="list-group list-group-flush p-0">
-                <li class="list-group-item pl-0"><a href="{{ object.get_absolute_url }}/agro-climat-services/pest-risk/commodity-list">Commodity</a></li>
-                <li class="list-group-item pl-0"><a href="{{ object.get_absolute_url }}/agro-climat-services/pest-risk/pest-alert-level-list">Pest Alert Levels</a><!--&nbsp;<a href="#" class=""><span class="badge text-bg-dark">API Feed</span></a>--></li>
-                <li class="list-group-item pl-0"><a href="{{ object.get_absolute_url }}/agro-climat-services/pest-risk/drought-alert-level-list">Drought Alert Levels</a></li>
-                <li class="list-group-item pl-0"><a href="{{ object.get_absolute_url }}/agro-climat-services/pest-risk/action-items-list">Action Items</a></li>
-                <li class="list-group-item pl-0"><a href="{{ object.get_absolute_url }}/agro-climat-services/pest-risk/effect-items-list">Effect Items</a></li>
+                <li class="list-group-item pl-0"><a href="{% url 'agro:commodity_list' %}">Commodity</a></li>
+                <li class="list-group-item pl-0"><a href="{% url 'agro:pest_alert_level_list' %}">Pest Alert Levels</a><!--&nbsp;<a href="#" class=""><span class="badge text-bg-dark">API Feed</span></a>--></li>
+                <li class="list-group-item pl-0"><a href="{% url 'agro:drought_alert_level_list' %}">Drought Alert Levels</a></li>
+                <li class="list-group-item pl-0"><a href="{% url 'agro:action_items_list' %}">Action Items</a></li>
+                <li class="list-group-item pl-0"><a href="{% url 'agro:effect_items_list' %}">Effect Items</a></li>
             </ul>
         </div>
     </div>

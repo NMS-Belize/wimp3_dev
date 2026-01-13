@@ -105,7 +105,4 @@ class PestRiskEntryDetails(models.Model):
     actions     = models.ForeignKey(PestRiskAction, on_delete=models.CASCADE,null=True)
     published_date      = models.DateTimeField(auto_now=True,null=True)
     updated_datetime    = models.DateTimeField(auto_now_add=True,null=True)
-
     def __str__(self): return f"{self.id}"
-    #def __str__(self):
-        #return f"[{self.pest_risk_listing_id}] : {self.info}"
