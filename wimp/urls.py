@@ -37,7 +37,7 @@ router.register('effect-items', agro_views.EffectItemsViewSet)
 router.register('pest-risk', agro_views.PestRiskMainListingViewSet)
 
 ### RADAR SERVICES API ROUTES ###
-router.register('radar-images', radar_views.RadarImagesViewSet)
+router.register(r'radar-images', radar_views.RadarImagesViewSet, basename='radarimages')
 
 urlpatterns = [
     path('', views.index, name='index'),

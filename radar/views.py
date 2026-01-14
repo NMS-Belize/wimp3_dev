@@ -47,7 +47,7 @@ def radar_images_list(request, id=None):
         'table': table,
         'new_url':  reverse('radar:radar_image_entry'),
         'back_url': reverse('radar:radar_images_list'),
-        'api_url': "/api/commodity-types/",
+        'api_url':  reverse('radarimages-list'),
     }
     return render(request, 'radar_table_list.html', context)
 
@@ -74,7 +74,7 @@ def radar_image_entry(request, id=None):
         'page_name': page_name,
         'new_url':  reverse('radar:radar_image_entry'),
         'back_url': reverse('radar:radar_images_list'),
-        'api_url':  "/api/commodity-types/",
+        'api_url':  reverse('radarimages-list'),
         'form': form,
         'entry': entry
     })
