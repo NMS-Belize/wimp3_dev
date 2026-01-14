@@ -17,6 +17,6 @@ class RadarImageForm(forms.ModelForm):
         widgets = {
             'image_title': forms.TextInput(attrs={'class': 'form-control'}),
             'image_url': forms.TextInput(attrs={'class': 'form-control'}),
-            'web_directory': forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
+            'web_directory': forms.TextInput(attrs={'class': 'form-control'}),
             'is_published': DjangoToggleSwitchWidget(attrs={'class': 'form-check-input'}),
         }
