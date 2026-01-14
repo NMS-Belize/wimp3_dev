@@ -33,7 +33,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     '[::1]', # IPv6 localhost
     '192.168.x.x', 
-    '192.168.3.62',
+    #'192.168.3.62',
     '*'
     #'.your-provider.dev', # Wildcard for subdomains on certain platforms (e.g., Fly.io)
 ]

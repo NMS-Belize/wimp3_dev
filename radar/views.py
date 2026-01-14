@@ -1,6 +1,8 @@
 from django.shortcuts import render, loader, get_object_or_404, redirect
 from django.http import HttpResponse
 
+from django.urls import reverse
+
 from .models import RadarImages
 
 from django.template import loader
@@ -15,7 +17,7 @@ from wimp.serializers import GroupSerializer, UserSerializer
 
 from rest_framework import permissions, viewsets
 
-# Create your views here.
+### Create your views here.
 '''def sensors(request):
     template = loader.get_template('base.html')
     context = {'name': 'World'}  # Data to pass to the template
@@ -40,10 +42,11 @@ def radar_images_list(request, id=None):
 
     context = {
         'id' : id,
-        'entry': entry,  
+        'entry': entry,
         'page_name': page_name,
         'table': table,
-        'new_url': '../../radar-images/',
+        'new_url':  reverse('radar:radar_image_entry'),
+        'back_url': reverse('radar:radar_images_list'),
         'api_url': "/api/commodity-types/",
     }
     return render(request, 'radar_table_list.html', context)
@@ -69,9 +72,9 @@ def radar_image_entry(request, id=None):
 
     return render(request, 'radar_entry_form.html', {
         'page_name': page_name,
-        'new_url': "/agro-climat-services/pest-risk/commodity-entry/",
-        'back_url': "/agro-climat-services/pest-risk/commodity-list/",
-        'api_url': "/api/commodity-types/",
+        'new_url':  reverse('radar:radar_image_entry'),
+        'back_url': reverse('radar:radar_images_list'),
+        'api_url':  "/api/commodity-types/",
         'form': form,
         'entry': entry
     })
@@ -84,7 +87,7 @@ def radar_image_delete(request, id):
 
     if request.method == "POST":
         entry.delete()
-        return redirect('radar_images_list')  # redirect anywhere you prefer
+        return redirect('radar:radar_images_list')  # redirect anywhere you prefer
 
     return render(request, "radar_image_delete.html", {
         "entry": entry,
