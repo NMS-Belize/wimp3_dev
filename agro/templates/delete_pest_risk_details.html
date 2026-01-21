@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_name }} | Agro-Climat Services | WIMP3 | National Meteorological Service of Belize{% endblock %}
+
+{% block content %}
+<div id="" class="container-fluid p-5">
+    <div class="row mb-3">
+        <div class="col-12">
+            <h1>Delete Pest Risk Details: <span class="text-bold text-danger">{{ entry.id }}</span></h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <p>Are you sure you want to delete this entry?
+            <em>Click <strong>"Confirm Delete"</strong> to continue or <strong>Cancel</strong> to return to main listing</em></p>
+            <p class="mb-3 note"><strong>Note:</strong> ONLY this single sub-entries will be deleted.</p>
+            <hr />
+            <div class="alert alert-warning" role="alert">
+                <h5>Entry Details:</h5>
+                <p><span class="entry_label">Entry ID:</span><strong>{{ entry.id }}</strong></p>
+                <p><span class="entry_label">Main Entry ID:</span><em>[{{ main_id }}]</em></p>
+                <p><span class="entry_label">District/Zone: </span><strong>{{ entry.district_id }}</strong></p>
+                <p><span class="entry_label">Pest Alert Level: </span><strong>{{ entry.pest_alert_lvl_id }}</strong></p>
+                <p><span class="entry_label">Drought Alert Level: </span><strong>{{ entry.drought_alert_lvl_id }}</strong></p>
+                <p><span class="entry_label">Temperature:</span><strong>{{ entry.temp_min }}</strong> °F - <strong>{{ entry.temp_max }}</strong> °F</p>
+                <p><span class="entry_label">Precipitation:</span><strong>{{ entry.precip_min }}</strong> mm - <strong>{{ entry.precip_max }}</strong> mm</p>
+                <p><span class="entry_label">Action:</span><strong>{{ entry.actions }}</strong></p>
+                <p><span class="entry_label">Effect:</span><strong>{{ entry.effect }}</strong></p> 
+                <p><span class="entry_label">Additional Info:</span><strong>{{ entry.info }}</strong></p>                
+            </div>
+        </div>
+            <form method="post">
+                {% csrf_token %}
+                <button id="btn_confirm_delete" type="submit" class="btn btn_confirm_delete">Confirm Delete</button>
+                <a id="btn_cancel" href="{% url 'agro:pest_risk_details_list' main_id %}" class="btn btn_cancel">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -7,21 +7,26 @@
 <div id="dashboard" class="container-full p-5">
     <div class="row mb-3">
         <div class="col-12">
-            <h1 class="display-1">Welcome to WIMP3!</h1>  
-            <p>Hello {{ user.username }}!</p>
+            <h1>{{ page_name }}</h1>  
         </div>
     </div>
     <div class="row">
         <div class="col-12">
             <h2>Available Services</h2>
         </div>
-        <div class="col-2">
+        <div class="col-1">
+            <div class="card"><a class="btn_task_main" href="{% url 'agro:index' %}"><i class="fa-solid fa-tractor"></i><span class="task_desc">Agro-Met Services</span></a></div>
+        </div>
+        <div class="col-1">
+            <div class="card"><a class="btn_task_main" href="{% url 'radar:radar_images_list' %}"><i class="fa-solid fa-satellite-dish"></i><span class="task_desc">Radar Imagery</span></a></div>
+        </div>
+        <!--<div class="col-2">
             <div class="card">
             <img src="{% static 'images/pest_risk.jpg' %}" alt="Radar image" class="card-img-top" />
             <div class="card-body">
-            <h5 class="card-title">Agro Services</h5>
-            <p class="card-text">Enter Pest Risk Information</p>
-            <a href="{% url 'agro:pest_risk_list' %}" class="btn btn-primary">Pest Risk Listing</a>
+            <h5 class="card-title">Agro-Met Services</h5>
+            <p class="card-text">Agromet services provide tailored weather and climate insights that help farmers improve yields, manage risks, and make smarter farm decisions.</p>
+            <a href="{% url 'agro:index' %}" class="btn btn-primary">Agro-Met Services</a>
             </div>
             </div>
         </div>
@@ -31,10 +36,10 @@
             <div class="card-body">
             <h5 class="card-title">Radar Imagery</h5>
             <p class="card-text">Choose radar images to display on the NMS Website</p>
-            <a href="{% url 'radar:radar_images_list' %}" class="btn btn-primary">Choose Images</a>
+            <a href="{% url 'radar:radar_images_list' %}" class="btn btn-primary">Radar Images</a>
             </div>
             </div>
-        </div>    
+        </div>-->
     </div>
 </div>
 {% endblock %}

@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Livestock | WIMP3{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-12">
+        <h1>Livestock Entry</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <form action="/your-name/" method="post">
+            <div class="form-group row">
+                <label for="commodity_type" class="col-2">Commodity Type: </label>
+                <!--<input id="commodity_type" type="text" name="commodity_type" value="{{ commodity_type }}" class="form-control">-->
+                <select class="custom-select col-4" id="commodity_type" aria-placeholder="">
+                    <option value="1" selected>Livestock</option>
+                    <option value="2">Drought Warning</option>
+                    <option value="3">Drought Emergency</option>
+                </select>
+            </div>
+            <div class="form-group row">
+                <label for="district" class="col-2">District: </label>
+                <select class="custom-select col-4" id="district" aria-placeholder="">
+                    <option value="1" selected>Corozal</option>
+                    <option value="2">Orange Walk</option>
+                    <option value="3">Drought Emergency</option>
+                </select>
+            </div>
+            <div class="form-group row">
+                <label for="pest_alert_level" class="col-2">Pest Alert Level: </label>
+                <!--<input id="" type="text" name="pest_alert_level" value="{{ pest_alert_level }}" class="form-control">-->
+
+                <select class="custom-select col-4" id="pest_alert_level">
+                    <option selected>Select Drought Alert Level...</option>
+                    <option value="0">No Concern</option>
+                    <option value="1">Drought Watch</option>
+                    <option value="2">Drought Warning</option>
+                    <option value="3">Drought Emergency</option>
+                </select>
+            </div>
+
+            <div class="form-group row">
+                <label for="drought_alert_level" class="col-2">Drought Alert Level: </label>
+                <input id="drought_alert_level" type="text" name="district" value="{{ drought_alert_level }}" class="form-control col-4">
+            </div>
+            <div class="form-group row">
+                <label for="location" class="col-2">Location: </label>
+                <select class="custom-select col-2" id="pest_alert_level">
+                    <option selected>Select Drought Alert Level...</option>
+                    <option value="0">No Concern</option>
+                    <option value="1">Drought Watch</option>
+                    <option value="2">Drought Warning</option>
+                    <option value="3">Drought Emergency</option>
+                </select>
+            </div>
+            <div class="form-group row">
+                <label for="temp_max" class="col-2">Temperature MAX: </label>
+                <div class="input-group col-2 p-0">
+                    <input id="temp_max" type="text" name="temp_max" value="{{ temp_max }}" class="form-control">
+                    <span class="input-group-text" id="temp_min">&deg;F</span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="temp_min" class="col-2">Temperature MIN: </label>
+                <div class="input-group col-2 p-0">
+                    <input id="temp_min" type="text" name="temp_min" value="{{ temp_min }}" class="form-control" placeholder="Recipient's username">
+                    <span class="input-group-text" id="temp_min">&deg;F</span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="precip" class="col-2">Precipitation: </label>
+                <div class="input-group col-2 p-0">
+                     <input id="precip" type="number" name="precip" value="{{ precip }}" class="form-control">
+                    <span class="input-group-text" id="temp_min">mm</span>
+                </div>
+            </div>
+            <div class="form-group row">
+                
+               
+            </div>
+            <div class="form-group row">
+                <label for="effect" class="col-2">Effect: </label>
+                <textarea id="effect" name="effect" value="{{ effect }}" class="form-control col-4"></textarea>
+            </div>
+            <div class="form-group row">
+                <label for="info" class="col-2">Additional Info: </label>
+                <textarea id="info" name="info" value="{{ info }}" class="form-control col-4"></textarea>
+            </div>
+            <div class="form-group row">
+                <label for="actions" class="col-2">Actions: </label>
+                <textarea id="actions" name="actions" value="{{ actions }}" class="form-control col-4"></textarea>
+            </div>
+            <div class="form-group row">
+                <input type="submit" value="Submit" class="btn btn-primary offset-md-2" />
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

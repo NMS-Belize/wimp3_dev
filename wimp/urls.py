@@ -15,10 +15,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include,path
+from django.contrib.auth import views as auth_views
+from django.views.generic.base import RedirectView
+
+from django.urls import include, path
 from rest_framework import routers
 from agro import views as agro_views
 from radar import views as radar_views
+from users import views as user_views
 
 from . import views
 
@@ -26,7 +30,7 @@ router = routers.DefaultRouter()
 router.register('users', agro_views.UserViewSet)
 router.register('groups', agro_views.GroupViewSet)
 
-### AGRO-CLIMAT SERVICES API ROUTES ###
+### AGRO API ROUTES ###
 router.register('districts', agro_views.DistrictViewSet)
 router.register('commodity-types', agro_views.CommodityTypeViewSet)
 router.register('commodity-categories', agro_views.CommodityCategoryViewSet)
@@ -37,13 +41,34 @@ router.register('effect-items', agro_views.EffectItemsViewSet)
 router.register('pest-risk', agro_views.PestRiskMainListingViewSet)
 
 ### RADAR SERVICES API ROUTES ###
+router.register(r'pest-risk', agro_views.PestRiskMainListingViewSet, basename='agro')
+
+### RADAR SERVICES API ROUTES ###
 router.register(r'radar-images', radar_views.RadarImagesViewSet, basename='radarimages')
 
 urlpatterns = [
-    path('', views.index, name='index'),
+    
+    ### Include ADMIN URL
     path('admin/', admin.site.urls),
+
+    ### Set the root URL (/) to redirect to the login page
+    path('', RedirectView.as_view(url='/accounts/login/', permanent=False)),
+    path('accounts/login/', user_views.login, name='login'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+
+    ### Include API URLS
     path('api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path("agro-climat-services/", include("agro.urls")),
+
+    ### Include URLS for Apps
+    path("agro/", include("agro.urls")),
     path("radar/", include("radar.urls")),
+    path("users/", include("users.urls")),
+
+    ### Include URLS for WIMP App
+    path('dashboard/', views.dashboard, name='dashboard'),
+
+    #path('', views.index, name='index'),
+    # Include all default authentication URLs under the /accounts/ path
+    #path('', include('django.contrib.auth.urls')),
 ]

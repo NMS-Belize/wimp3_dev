@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Agro-Climat Services | WIMP3{% endblock %}
 
@@ -12,25 +13,30 @@
             </div>-->
         </div>
     </div>
-    <div class="row">
-        <div class="col-3">
-            <h3>Pest Risk Listing</h3>
-            <ul class="list-group list-group-flush p-0">
-                <li class="list-group-item pl-0"><a href="{% url 'agro:pest_risk_list' %}">Pest Risk List</a><!--&nbsp;<a href="{{ object.get_absolute_url }}/api/pest-risk/" target="_blank"><span class="badge text-bg-warning">API FEED</span></a>--></li>
-                <li class="list-group-item pl-0"><a href="{% url 'agro:pest_risk_entry' %}">New Entry</a></li>
-            </ul>
+    <div class="row mb-5">
+        <div class="col-1">
+            <div class="card"><a class="btn_task_main" href="{% url 'agro:pest_risk_list' %}"><i class="fa-solid fa-spaghetti-monster-flying"></i><span class="task_desc">Pest Risk</span></a></div>
         </div>
-        <div class="col-3">
+    </div>
+    <div class="row">
+        <div class="col-12">
             <h3>Pest Risk Variables</h3>
-            <ul class="list-group list-group-flush p-0">
-                <li class="list-group-item pl-0"><a href="{% url 'agro:commodity_list' %}">Commodity</a></li>
-                <li class="list-group-item pl-0"><a href="{% url 'agro:pest_alert_level_list' %}">Pest Alert Levels</a><!--&nbsp;<a href="#" class=""><span class="badge text-bg-dark">API Feed</span></a>--></li>
-                <li class="list-group-item pl-0"><a href="{% url 'agro:drought_alert_level_list' %}">Drought Alert Levels</a></li>
-                <li class="list-group-item pl-0"><a href="{% url 'agro:action_items_list' %}">Action Items</a></li>
-                <li class="list-group-item pl-0"><a href="{% url 'agro:effect_items_list' %}">Effect Items</a></li>
-            </ul>
+        </div>
+        <div class="col-1">
+            <div class="card"><a class="btn_task" href="{% url 'agro:commodity_list' %}"><i class="fa-solid fa-seedling"></i><span class="task_desc">Commodity</span></a></div>
+        </div>
+        <div class="col-1">
+            <div class="card"><a class="btn_task" href="{% url 'agro:pest_alert_level_list' %}"><i class="fa-solid fa-bug"></i><span class="task_desc">Pest Alert Levels</span></a></div>
+        </div>
+        <div class="col-1">
+            <div class="card"><a class="btn_task" href="{% url 'agro:drought_alert_level_list' %}"><i class="fa-solid fa-droplet-slash"></i><span class="task_desc">Drought Alert Levels</span></a></div>
+        </div>
+        <div class="col-1">
+            <div class="card"><a class="btn_task" href="{% url 'agro:action_items_list' %}"><i class="fa-solid fa-list-check"></i><span class="task_desc">Action Items</span></a></div>
+        </div>
+        <div class="col-1">
+            <div class="card"><a class="btn_task" href="{% url 'agro:effect_items_list' %}"><i class="fa-solid fa-circle-exclamation"></i><span class="task_desc">Effect Items</span></a></div>
         </div>
     </div>
 </div>
-
 {% endblock %}

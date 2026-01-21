@@ -19,19 +19,15 @@ urlpatterns = [
 
     path("pest-risk-entry/", views.pest_risk_entry, name="pest_risk_entry"),    
     path('pest-risk-entry/<int:id>/', views.pest_risk_entry, name='pest_risk_entry'),
-    path('pest-risk/<int:id>/delete/', views.pest_risk_delete,name='pest_risk_delete'),
+    path('pest-risk-enrty/<int:id>/delete/', views.pest_risk_delete,name='pest_risk_delete'),
 
     path("pest-risk-entry/details-list/", views.pest_risk_details_list, name="pest_risk_details_list"),
     path("pest-risk-entry/details-list/<int:id>/", views.pest_risk_details_list, name="pest_risk_details_list"),
-    #path("pest-risk-entry/details-list/<int:fk>/", views.pest_risk_details_list, name="pest_risk_details_list"),
-
-    #path("pest-risk-entry/<int:fk>/details/<int:id>/", views.pest_risk_details_entry, name="pest_risk_details_entry"),
-
-     # CREATE
-    path('pest-risk-entry/<int:fk>/details/new/',views.pest_risk_details_create,name='pest_risk_details_create'),
-
-    # UPDATE
+    path('pest-risk-entry/<int:fk>/details/entry/',views.pest_risk_details_create,name='pest_risk_details_create'),
     path('pest-risk-entry/<int:fk>/details/<int:id>/',views.pest_risk_details_entry,name='pest_risk_details_entry'),
+    path('pest-risk-entry/<int:fk>/details/<int:id>/delete/',views.pest_risk_details_delete,name='pest_risk_details_delete'),
+
+    path('pest-risk-entry/<int:fk>/details/<int:id>/duplicate/', views.pest_risk_details_entry_duplicate,name='pest_risk_details_entry_duplicate'),
 
     #path("pest-risk-entry/add/", views.pest_risk_entry_add, name="pest_risk_entry_add"),
     #path("pest-risk-entry/update/", views.pest_risk_entry_update, name="pest_risk_entry_update"), 
@@ -64,6 +60,7 @@ urlpatterns = [
     path("pest-risk/action-items-entry/", views.action_items_entry, name="action_items_entry"),
     path('pest-risk/action-items-entry/<int:id>/', views.action_items_entry,name='action_items_entry'),
     path('pest-risk/action-items-entry/<int:id>/delete/', views.action_items_delete,name='action_items_delete'),
+    path('pest-risk/action-items-entry/<int:id>/duplicate/', views.action_items_entry_duplicate,name='action_items_entry_duplicate'),
 
     ## PEST RISK VARIABLE: Effect Items
     path("pest-risk/effect-items-list/", views.effect_items_list, name="effect_items_list"),
@@ -71,8 +68,9 @@ urlpatterns = [
     path("pest-risk/effect-items-entry/", views.effect_items_entry, name="effect_items_entry"),
     path('pest-risk/effect-items-entry/<int:id>/', views.effect_items_entry,name='effect_items_entry'),
     path('pest-risk/effect-items-entry/<int:id>/delete/', views.effect_items_delete,name='effect_items_delete'),
+    path('pest-risk/effect-items-entry/<int:id>/duplicate/', views.effect_items_entry_duplicate,name='effect_items_entry_duplicate'),
 
     #path("add-pest-risk-entry/add/", views.add_pest_risk_entry_add, name="add_pest_risk_entry_add"), 
-    path("livestock-entry/", views.livestock_entry, name="livestock_entry"),
+    #path("livestock-entry/", views.livestock_entry, name="livestock_entry"),
     path('admin/', admin.site.urls)
 ]

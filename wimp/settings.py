@@ -41,6 +41,7 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
+    'users.apps.UsersConfig',
     'agro.apps.AgroConfig',
     #'sensors.apps.SensorsConfig',
     #'forecasts.apps.ForecastsConfig',
@@ -81,6 +82,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -88,6 +90,11 @@ TEMPLATES = [
         },
     },
 ]
+
+
+LOGIN_URL           = 'login'      # The URL for the login page
+LOGIN_REDIRECT_URL  = 'dashboard'   # Redirect to the home page after login
+LOGOUT_REDIRECT_URL = 'login'
 
 WSGI_APPLICATION = 'wimp.wsgi.application'
 

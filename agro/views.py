@@ -8,6 +8,8 @@ import calendar
 
 from django.template import loader
 
+from django.contrib.auth import login as auth_login
+
 #from .models import CommodityType, CommodityCategory, District, PestAlertLevel, PestRiskEntryMainListing, PestRiskEntryDetails, DroughtAlertLevel, PestRiskAction, PestRiskEffect
 from .models import *
 
@@ -26,25 +28,15 @@ from wimp.serializers import GroupSerializer, UserSerializer
 #from .forms import  FormPestRiskStartForm, PestRiskMainListingForm, PestRiskEntryFormDetails, PestAlertLevelForm
 from .forms import *
 
-def login_view(request):
-    if request.method == 'POST':
-        #username = request.POST['username']
-        #password = request.POST['password']
-        #user = authenticate(request, username=username, password=password)
-        #if user is not None:
-        #    login(request, user)
-        #    return redirect('index')  # Redirect to a success page.
-        #else:
-            # Return an 'invalid login' error message.
-        #    return render(request, 'login.html', {'error': 'Invalid username or password'})
-        return redirect('users:login')
-    else:
-        return render(request, 'login.html')
+from django.forms.models import model_to_dict
 
 #################### Create/Define Views ####################
+#@login_required
 def index(request):
-    template = loader.get_template('agro_services.html')
-    return HttpResponse(template.render())
+    context = {
+        'page_name': 'Agro-Met Services'
+    }
+    return render(request, 'agro_services.html', context)
   
 def livestock_entry(request):
     template = loader.get_template('entry_form_livestock.html')
@@ -101,10 +93,34 @@ def pest_risk_entry(request, id=None):
         'page_name':    page_name,
         'new_url':      reverse('agro:pest_risk_entry'),
         'details_url':  "",
-        'back_url':     reverse('agro:index'),
+        'back_url':     reverse('agro:pest_risk_list'),
         'api_url':      "/api/pest-risk/",
         'form': form,
         'entry': entry
+    })
+
+def pest_risk_delete(request, id):
+    
+    entry = get_object_or_404(PestRiskEntryMainListing, id=id)
+
+    qs = PestRiskEntryDetails.objects.all().order_by('id')
+    # Filter details by parent listing
+    qs = qs.filter(pest_risk_listing_id=id)
+    qs = qs.order_by('id')
+    
+    page_name = "Pest Risk Entry"
+    month_names = [calendar.month_name[int(m)] for m in entry.months]
+
+    if request.method == "POST":
+        entry.delete()
+        
+        return redirect('pest_risk_list')  # redirect anywhere you prefer
+
+    return render(request, "delete_pr_confirm.html", {
+        "entry": entry,
+        'page_name': page_name,
+        'month_names': month_names,
+        'details': qs
     })
 
 def pest_risk_details_list(request, id=None, fk=None):
@@ -134,7 +150,7 @@ def pest_risk_details_list(request, id=None, fk=None):
         'table':    table,
         'new_url':  reverse('agro:pest_risk_entry'),
         'back_url': reverse('agro:pest_risk_list'),
-        'api_url': "/api/pest-risk-entries/",
+        'api_url': "/api/pest-risk-/",
     }
     return render(request, 'table_list_pest_risk_details_template.html', context)
 
@@ -212,29 +228,33 @@ def pest_risk_details_entry(request, id=None, fk=None):
         'parent_id': parent_entry.id
     })
 
-def pest_risk_delete(request, id):
+def pest_risk_details_delete(request, id=None, fk=None):
+    entry = get_object_or_404(PestRiskEntryDetails, id=id)
     
-    entry = get_object_or_404(PestRiskEntryMainListing, id=id)
-
-    qs = PestRiskEntryDetails.objects.all().order_by('id')
-    # Filter details by parent listing
-    qs = qs.filter(pest_risk_listing_id=id)
-    qs = qs.order_by('id')
-    
-    page_name = "Pest Risk Entry"
-    month_names = [calendar.month_name[int(m)] for m in entry.months]
+    page_name = "Pest Risk Details Entry"
 
     if request.method == "POST":
         entry.delete()
-        
-        return redirect('pest_risk_list')  # redirect anywhere you prefer
+        return redirect('agro:pest_risk_details_list', fk)  # redirect anywhere you prefer
 
-    return render(request, "delete_pr_confirm.html", {
+    return render(request, "delete_pest_risk_details.html", {
         "entry": entry,
         'page_name': page_name,
-        'month_names': month_names,
-        'details': qs
+        "main_id":fk
     })
+
+def duplicate_object_pest_risk_details(obj):    
+    obj.pk = None                # this is the key trick
+    obj.id = None
+    obj.published_date = None
+    obj.updated_datetime = None
+    obj.save()
+    return obj
+
+def pest_risk_details_entry_duplicate(request, id, fk=None):
+    obj = get_object_or_404(PestRiskEntryDetails, pk=id)
+    duplicate_object_pest_risk_details(obj)
+    return redirect('agro:pest_risk_details_list', id=fk)
 
 ############# PEST RISK VARIABlE - Commodity
 def commodity_list(request, id=None):
@@ -294,9 +314,9 @@ def commodity_type_delete(request, id):
 
     if request.method == "POST":
         entry.delete()
-        return redirect('commodity_list')  # redirect anywhere you prefer
+        return redirect('agro:commodity_list')  # redirect anywhere you prefer
 
-    return render(request, "delete_confirm.html", {
+    return render(request, "delete_commodity.html", {
         "entry": entry,
         'page_name': page_name,
     })
@@ -362,7 +382,7 @@ def pest_alert_level_delete(request, id):
         entry.delete()
         return redirect('pest_alert_level_list')  # redirect anywhere you prefer
 
-    return render(request, "delete_confirm.html", {
+    return render(request, "delete_pest_alert_level.html", {
         "entry": entry,
         'page_name': page_name,
     })
@@ -371,14 +391,14 @@ def pest_alert_level_delete(request, id):
 def drought_alert_level_list(request):
     page_name = "Drought Alert Levels"
     qs = DroughtAlertLevel.objects.all().order_by('id')
-    table = PestAlertLevelsTable(qs)
+    table = DroughtAlertLevelsTable(qs)
     RequestConfig(request).configure(table)
     context = {
-        'page_name': page_name,
+        'page_name':    page_name,
         'new_url':      reverse('agro:drought_alert_level_entry'),
         'back_url':     reverse('agro:drought_alert_level_list'),
         'api_url':      "/api/drought-alert-levels/",
-        'table': table
+        'table':        table
     }
     return render(request, 'table_list_template.html', context)
 
@@ -483,12 +503,23 @@ def action_items_delete(request, id):
 
     if request.method == "POST":
         entry.delete()
-        return redirect('action_items_list')  # redirect anywhere you prefer
+        return redirect('agro:action_items_list')  # redirect anywhere you prefer
 
-    return render(request, "delete_confirm.html", {
+    return render(request, "delete_pest_risk_action.html", {
         "entry": entry,
         'page_name': page_name,
     })
+
+def duplicate_object_pest_risk_action(obj):
+    data = model_to_dict(obj)
+    data.pop('id', None)
+    data['action_description'] = f"{obj.action_description}"
+    return obj.__class__.objects.create(**data)
+
+def action_items_entry_duplicate(request, id):
+    obj = get_object_or_404(PestRiskAction, pk=id)
+    duplicate_object_pest_risk_action(obj)
+    return redirect('agro:action_items_list')
 
 #################### PEST RISK EFFECT ITEMS - TABLE ####################
 def effect_items_list(request, id=None):
@@ -551,10 +582,21 @@ def effect_items_delete(request, id):
         entry.delete()
         return redirect('agro:effect_items_list')  # redirect anywhere you prefer
 
-    return render(request, "delete_confirm.html", {
+    return render(request, "delete_pest_risk_effect.html", {
         "entry": entry,
         'page_name': page_name,
     })
+
+def duplicate_object_pest_risk_effect(obj):
+    data = model_to_dict(obj)
+    data.pop('id', None)
+    data['effect_description'] = f"{obj.effect_description}"
+    return obj.__class__.objects.create(**data)
+
+def effect_items_entry_duplicate(request, id):
+    obj = get_object_or_404(PestRiskEffect, pk=id)
+    duplicate_object_pest_risk_effect(obj)
+    return redirect('agro:effect_items_list')
 
 #API endpoint that allows groups to be viewed or edited.
 class UserViewSet(viewsets.ModelViewSet):

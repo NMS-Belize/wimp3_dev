@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_name }} | Agro-Climat Services | WIMP3 | National Meteorological Service of Belize{% endblock %}
+
+{% block content %}
+<div id="" class="container-fluid p-5">
+    <div class="row mb-3">
+        <div class="col-12">
+            <h1>Delete Entry: <span class="text-bold text-danger">{{ entry.description }}</span></h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <p>Are you sure you want to delete this entry?
+            <em>Click <strong>"Confirm Delete"</strong> to continue or <strong>Cancel</strong> to return to listing</em></p>
+            <hr />
+            <div class="alert alert-warning" role="alert">
+                <p class="m-0">ID: <strong>{{ entry.id }}</strong>, Description: <strong>{{ entry.description }}</strong>, Color: <strong>{{ entry.color_hex }}</strong>&nbsp;<span class="badge" style="background-color: {{ entry.color_hex }} ;">&nbsp;&nbsp;</span></p>
+            </div>
+        </div>
+            <form method="post">
+                {% csrf_token %}
+                <button id="btn_confirm_delete" type="submit" class="btn btn_confirm_delete">Confirm Delete</button>
+                <a id="btn_cancel" href="{% url 'agro:pest_alert_level_list' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

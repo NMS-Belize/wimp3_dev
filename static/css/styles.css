@@ -1,10 +1,13 @@
 :root{
+  --white: #FFFFFF;
   --navy: #0b1e33;
   --aqua-1: #229ebd;
   --aqua-2: #63bbcf;
   --teal-1: #013c58;
   --teal-2: #013c58;
   --blue-1: #00296B;
+  --tan: #E8DAA0;
+  --tan-2: #eadda9;
   --yellow-1: #ffb702;
   --yellow-2: #ffba42;
   --orange-1: #fb8502;
@@ -12,9 +15,15 @@
 
   --grey-1: #F1F3F4;
   --grey-2: #9AA0A6;
+  --grey-3: #F2F3F4;
+
   --dark: #202124;
 
   --header: #0b1e33;
+
+  --light-teal: #228791;
+	--emerald: #065739;
+	--teal-green: #226763;
 }
 body{ 
    font-family: "Source Sans 3", sans-serif;
@@ -24,6 +33,10 @@ body{
    line-height: 1.2;
    color: var(--dark);
 }
+#body_login{ background: url('/static/images/27.jpeg') top left no-repeat; background-size: cover;  }
+.bg-medium{ background-color: var(--grey-3); }
+.bg-medium .container{ background-color: var(--white); }
+.form-container{ padding: 60px;  }
 h1,h2,h3,h4,h5,h6{
    font-family: "Encode Sans", sans-serif;
    font-optical-sizing: auto;
@@ -35,26 +48,31 @@ h1{ font-weight: 300; font-size: 50px; }
 #header{
   color:#fff;
   background:var(--teal-1);
+  height: 90px;
 }
+#main_logo{ height: 100%; }
 #login-info{
-  font-size: 26px;
+  font-size: 20px;
   font-weight: 400;
   padding-top: 20px;
 }
-#main-menu{
-    color:#fff;
-}
+.user-info{ font-weight: 600; color: var(--aqua-2)}
+#main-menu{ color:#fff; }
 #main-menu a{ color:#fff; font-weight: 400; }
+
+#btn_logout { font-size: 18px; font-weight: 500; color: #fff; text-transform: uppercase; padding: 0; }
 #offcanvas_logo{
-  margin: 30px 0;
+  margin: 0 auto;
   display: block;
-  width: 100%;
+  width: 50%;
 }
 .offcanvas-header .btn-close{
   color: #fff !important;
 }
 #close{
   color: #fff !important;
+  background-color: var(--teal-1);
+  border: 0 none;
 }
 #offcanvas_btn{
   color: #fff !important;
@@ -70,66 +88,65 @@ h1{ font-weight: 300; font-size: 50px; }
   color: #fff;;
   text-transform: uppercase;
   font-weight: 500;
-  font-size: 20px;
+  font-size: 18px;
   text-decoration: none;
   letter-spacing: 1px;
 }
 #menu_items .list-group-item{
   background: transparent !important;
+  border-color: var(--navy);
 }
 #logo{ font-size: 30px; font-weight: 600; color: #fff; }
 
 #main_pr_start, #main_pr_details, #main_pr_list, #main_agro_services{
   background: #fff;;
 }
-#frm_PestRiskNew .form-group{
-  clear: both;
-  overflow: auto !important;
-}
-#frm_PestRiskNew #id_list_months{ 
-  width: 100%; 
-  clear: both; 
-  padding-left: 40px; 
-}
 
 #id_months{ display: inline-block ; width: 800px; height: 72px; border: 0; overflow: hidden; margin-top: 0; }
+#id_months label{ width:auto; }
+#id_months input{ width: 20px; }
+#id_months div{ width: 14.5%; float: left; margin: 0 0 20px 0; }
 
-#frm_pest_risk_main #id_months label{ width:auto; }
-#frm_pest_risk_main #id_months input{ width: 20px; }
-#frm_pest_risk_main #id_months div{ width: 14.5%; float: left; margin: 0 0 20px 0; }
-
-#frm_pest_risk_main #btn_submit{ margin: 0 0 0 200px; width: auto; background-color: var(--teal-2); }
-
-#frm_PestRisk select, #frm_PestRisk input[type=text], #frm_PestRisk textarea{
-   float: left;
-   width: 60%;
- }
-  #frm_pest_risk_main li {
+.wimp3_form li {
     list-style-type: none;
     margin-bottom: 20px;
     clear: both;
-  }
- #frm_pest_risk_main li label{
+}
+.wimp3_form li label{
   display: inline-block;
    width: 200px;
  }
- #frm_pest_risk_main input,  #frm_pest_risk_main select{ 
+.wimp3_form input, .wimp3_form select, .wimp3_form textarea{ 
   display: inline-block;
   width: 400px;
 }
+.wimp3_form textarea{ 
+  display: inline-block;
+  width: 800px;
+}
 .page-name{ font-weight: 600; color:var(--teal-2); }
 
+
+/*********** BUTTONS & ICONS ************/
 #btn_back_main{ color: var(--teal-2); text-decoration: none; font-weight: 700; font-size: 18px; padding: 0; }
 
 .btn_add_details{ color:var(--orange-1) }
 
+#btn_submit, .btn_submit{ width: auto; color: #fff; background-color: var(--teal-green); width: auto !important; font-weight: 600; text-transform: uppercase; }
+
 .btn_new { background-color: var(--yellow-2) !important; }
 .btn_new:hover { background-color:var(--yellow-1) !important; }
 
-.btn_api { background-color:#E8DAA0 !important; }
-.btn_api:hover { background-color:#eadda9
- !important; }
+.btn_api { background-color: var(--tan) !important; }
+.btn_api:hover { background-color:var(--tan-2) !important; }
 
+.btn-primary{ background-color: var(--teal-1) !important; border: 1px solid var(--teal-2);}
+
+a.btn_duplicate {
+  color:var(--aqua-1) !important;
+  padding-top: 0;
+  padding-bottom: 0;
+}
 a.btn_edit {
   color:var(--teal-2);
   padding-top: 0;
@@ -149,17 +166,29 @@ a.btn_delete {
 #btn_cancel{
   background: var(--grey-2);
 }
-.col_id, .col_id a{ color:#b7b7b7; }
-.col_view, .col_view a{ color:var(--teal-2); }
+a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding: 20px; }
+.btn_task i, .btn_task_main i{ display: block; clear: both; font-size: 50px; margin: 0 auto; }
+.btn_task i{ color: var(--aqua-1); }
+.btn_task_main i{ color: var(--emerald); }
+
+.task_desc{ display: block; clear: both; color: #343a40; padding-top: 10px; }
+.col_task{ border: 1px solid var(--grey-2); border-radius: 20px; }
+
+
+/*********** TABLE STYLES ************/
 .tbl_wimp3 th{
   background-color: var(--aqua-1);
   color: #fff;
-  padding: 0.5rem;
+  padding: 10px 5px;
 }
+
 .tbl_wimp3 th a{ color:#fff !important; text-decoration: none !important; }
-.tbl_wimp3 td{
-  padding: 0.5rem;
-}
+.tbl_wimp3 td{ padding: 8px 5px; }
+
+.col_id, .col_id a{ color:#b7b7b7; }
+.col_view, .col_view a{ color:var(--teal-2); }
+
+
 .errorlist{
   color: red;
 }
@@ -174,27 +203,19 @@ a.btn_delete {
   background-color: #f8d7da;
   border-color: #f5c6cb;
 }
-
 .alert-heading {
   color: inherit;
 }
-
 .alert-link {
   font-weight: 700;
 }
-
-
 .alert-danger hr {
   border-top-color: #f1b0b7;
 }
-
 .alert-danger .alert-link {
   color: #491217;
 }
 
-#btn_submit{
-  margin-left: 21%;
-}
 #main_agro_services .list-group-item{
   padding-left:0;
 }
@@ -203,3 +224,5 @@ a.btn_delete {
   color:#343a40;
   text-decoration:none;
 }
+
+.entry_label{ display: inline-block; width: 150px;; }

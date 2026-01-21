@@ -16,7 +16,7 @@ MONTH_CHOICES = [
     ('12','DEC')
 ]
 
-class FormPestRiskStartForm(forms.Form):
+'''class FormPestRiskStartForm(forms.Form):
     months = forms.MultipleChoiceField(
         choices = MONTH_CHOICES,
         widget = forms.CheckboxSelectMultiple(
@@ -41,14 +41,13 @@ class FormPestRiskStartForm(forms.Form):
         months = self.cleaned_data.get("months", [])
         if len(months) > 3:
             raise forms.ValidationError("You can only select up to 3 months.")
-        return months
+        return months'''
 
 class PestRiskMainListingForm(forms.ModelForm):
     class Meta:
         model = PestRiskEntryMainListing
         fields = ['months', 'year', 'commodity']
         labels = {   
-            # <-- add human-friendly labels here
             'months': 'Select Months',
             'year': 'Year:',
             'commodity': 'Commodity',
@@ -61,6 +60,18 @@ class PestRiskMainListingForm(forms.ModelForm):
             'year': forms.TextInput(attrs={'class': 'form-control'}),
             'commodity': forms.Select(attrs={'class': 'form-control'})
         }
+        required_css_class = 'required'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Check if the form is bound to an instance
+        if self.instance and self.instance.pk:
+            # For ManyToManyField or MultiSelectField storing month values
+            # Convert them to a list of strings to match MONTH_CHOICES values
+            self.fields['months'].initial = [
+                str(month) for month in getattr(self.instance, 'months', [])
+            ]
 
 class PestRiskEntryDetailsForm(forms.ModelForm):
     class Meta:
