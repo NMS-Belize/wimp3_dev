@@ -11,7 +11,7 @@ class RadarImagesSerializer(serializers.ModelSerializer):
     class Meta:
         model = mx.RadarImages
         #fields = '__all__'
-        fields = ['image_url_full']
+        fields = ['image_title','image_url_full']
 
     def get_image_url_full(self, obj):
 
