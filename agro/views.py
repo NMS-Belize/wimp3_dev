@@ -115,7 +115,7 @@ def pest_risk_delete(request, id):
         
         return redirect('agro:pest_risk_list')  # redirect anywhere you prefer
 
-    return render(request, "delete_pr_confirm.html", {
+    return render(request, "delete_pest_risk.html", {
         "entry": entry,
         'page_name': page_name,
         'month_names': month_names,

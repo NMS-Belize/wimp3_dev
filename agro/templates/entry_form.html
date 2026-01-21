@@ -21,7 +21,7 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <form method="post" id="frm_entry_form" class="wimp3_form">
+                <form method="post" id="frm_entry_form" name="frm_entry_form" class="wimp3_form">
                     {% csrf_token %}
                     {{ form.as_ul }}
                     <li>
