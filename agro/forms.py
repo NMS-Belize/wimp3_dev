@@ -171,7 +171,7 @@ class CommodityTypeForm(forms.ModelForm):
             'commodity_category': 'Commodity Category:'
         }
         widgets = {            
-            'description': forms.Textarea(attrs={'class': 'form-control'}),
+            'description': forms.TextInput(attrs={'class': 'form-control'}),
             'commodity_category': forms.Select(attrs={'class': 'form-control'})
         }
 

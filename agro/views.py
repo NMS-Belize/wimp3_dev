@@ -43,7 +43,6 @@ def livestock_entry(request):
     context = {'name': 'World'}  # Data to
     return HttpResponse(template.render(context))    
 
-
 ############# PEST RISK ENTRY
 def pest_risk_list(request, id=None):
     page_name = "Pest Risk Entries"
@@ -114,7 +113,7 @@ def pest_risk_delete(request, id):
     if request.method == "POST":
         entry.delete()
         
-        return redirect('pest_risk_list')  # redirect anywhere you prefer
+        return redirect('agro:pest_risk_list')  # redirect anywhere you prefer
 
     return render(request, "delete_pr_confirm.html", {
         "entry": entry,
@@ -462,7 +461,7 @@ def action_items_list(request, id=None):
         'entry': entry,  
         'page_name': page_name,
         'table': table,
-        'new_url': "/agro-climat-services/pest-risk/action-items-entry/",
+        'new_url': reverse('agro:action_items_entry'),
         'api_url': "/api/action-items/",
     }
     return render(request, 'table_list_template.html', context)
