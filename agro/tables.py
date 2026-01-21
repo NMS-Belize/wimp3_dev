@@ -187,7 +187,15 @@ class PestRiskMainListTable(tables.Table):
                         "th": {"style": "width:150px;","class": ""},
                         "td": {"style": "","class": ""}
                         })
-    commodity       = tables.Column(accessor="commodity.description", verbose_name="Commodity")
+    commodity       = tables.Column(accessor="commodity.description", verbose_name="Commodity",attrs={
+        "th": {"style": ""},
+        "td": {"class": "col_category"},
+    })
+    commodity_category = tables.Column(accessor="commodity.commodity_category", verbose_name="Sector",attrs={
+        "th": {"style": ""},
+        "td": {"class": ""},
+    })
+
     edit            = tables.Column(empty_values=(), verbose_name="Edit",attrs={
                         "th": {"style": "width:60px;","class": ""},
                         "td": {"style": "","class": "col_edit"}
@@ -205,7 +213,7 @@ class PestRiskMainListTable(tables.Table):
     class Meta:
         model = PestRiskEntryMainListing
         template_name = "django_tables2/bootstrap4.html"  # or bootstrap5
-        fields = ("edit", "year", "months_display", "commodity","view_details","add_details","id","delete")
+        fields = ("edit", "year", "months_display", "commodity","commodity_category","view_details","add_details","id","delete")
         
         attrs = {
             "id": "tbl_pest_risk_listing",
