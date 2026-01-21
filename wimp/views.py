@@ -20,7 +20,6 @@ def index(request):
     template = loader.get_template('entry_form_user_login.html')
     context = {'name': 'World'}  # Data to pass to the template
     return HttpResponse(template.render(context))
-    #return render(request, 'entry_form_user_login.html', context)
 
 @login_required
 def dashboard(request):

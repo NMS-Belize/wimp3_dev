@@ -4,7 +4,6 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required
 
-
 from django.urls import reverse
 from django.http import HttpResponse
 
@@ -33,7 +32,8 @@ def login(request, id=None):
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
             auth_login(request,form.get_user())
-            return redirect('users:user_dashboard')
+            #return redirect('users:user_dashboard')
+            return redirect('agro:index')
     else:
         form = AuthenticationForm()
 

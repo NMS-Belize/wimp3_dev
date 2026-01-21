@@ -34,6 +34,11 @@ body{
    color: var(--dark);
 }
 #body_login{ background: url('/static/images/27.jpeg') top left no-repeat; background-size: cover;  }
+
+#body_login #id_username, #body_login #id_password{ display: block; margin-bottom: 10px; }
+#body_login form label{ display: block; margin-bottom: 10px; }
+#body_login form input{ display: block; margin-bottom: 10px; width:100%; text-align: center; padding: 5px; font-size: 18px; }
+
 .bg-medium{ background-color: var(--grey-3); }
 .bg-medium .container{ background-color: var(--white); }
 .form-container{ padding: 60px;  }
