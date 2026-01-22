@@ -10,10 +10,9 @@ class RadarImagesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = mx.RadarImages
-        #fields = '__all__'
+        #fields = '__all__' #Remove all
         fields = ['image_url','web_directory','image_title','image_url_full']
 
-    ##Update Radar API Feed
     def get_image_url_full(self, obj):
 
         if obj.image_url:

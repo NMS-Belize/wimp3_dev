@@ -1,0 +1,8 @@
+venv/
+.venv/
+sensors/
+forecasts/
+removed/
+__pycache__/
+*.pyc
+db.sqlite3
