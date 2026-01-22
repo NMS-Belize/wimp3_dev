@@ -28,8 +28,8 @@ class RadarImagesTable(tables.Table):
 
     def render_edit(self, record):
         url = reverse("radar:radar_image_entry", args=[record.id])
-        return format_html('<a href="{}" class="btn btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
+        return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
     
     def render_delete(self, record):
         url = reverse("radar:radar_image_delete", args=[record.id])
-        return format_html('<a href="{}" class="btn btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
+        return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)

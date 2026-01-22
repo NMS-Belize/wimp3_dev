@@ -28,11 +28,11 @@ class CommodityTable(tables.Table):
 
     def render_edit(self, record):
         url = reverse("agro:commodity_entry", args=[record.id])
-        return format_html('<a href="{}" class="btn btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
+        return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
     
     def render_delete(self, record):
         url = reverse("agro:commodity_type_delete", args=[record.id])
-        return format_html('<a href="{}" class="btn btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
+        return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
     
 class PestAlertLevelsTable(tables.Table):
     edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "text-center"}, "td": {"style": "","class": "col_edit text-center"}})
@@ -86,11 +86,11 @@ class DroughtAlertLevelsTable(tables.Table):
 
     def render_edit(self, record):
         url = reverse("agro:drought_alert_level_entry", args=[record.id])  # change "pest_edit" to your URL name
-        return format_html('<a href="{}" class="btn btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
+        return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
 
     def render_delete(self, record):
         url = reverse("agro:drought_alert_level_delete", args=[record.id])
-        return format_html('<a href="{}" class="btn btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
+        return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
     
 class ActionItemsTable(tables.Table):
     edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={
@@ -204,16 +204,17 @@ class PestRiskMainListTable(tables.Table):
                         "th": {"style": "width:100px; text-align:center;","class": ""},
                         "td": {"style": "text-align:center;","class": "col_view"}
                         })
-    add_details     = tables.Column(empty_values=(), verbose_name="Add Details", attrs={
+    '''add_details     = tables.Column(empty_values=(), verbose_name="Add Details", attrs={
                         "th": {"style": "width:90px; text-align:center;","class": ""},
                         "td": {"style": "text-align:center;","class": "col_details"}
-                        })
-    delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": ""},"td": {"style": "","class": "col_delete"}})
+                        })'''
+    delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "text-center"},"td": {"style": "","class": "col_delete text-center"}})
 
     class Meta:
         model = PestRiskEntryMainListing
         template_name = "django_tables2/bootstrap4.html"  # or bootstrap5
-        fields = ("edit", "year", "months_display", "commodity","commodity_category","view_details","add_details","id","delete")
+        #fields = ("edit", "year", "months_display", "commodity","commodity_category","view_details","add_details","id","delete")
+        fields = ("edit", "year", "months_display", "commodity","commodity_category","view_details","id","delete")
         
         attrs = {
             "id": "tbl_pest_risk_listing",
@@ -236,13 +237,13 @@ class PestRiskMainListTable(tables.Table):
         url = reverse("agro:pest_risk_details_list", args=[record.id])  # change "pest_edit" to your URL name
         return format_html('<a href="{}" class="btn_view"><i class="fa-solid fa-eye"></i></a>', url)
     
-    def render_add_details(self, record):
+    '''def render_add_details(self, record):
         url = reverse("agro:pest_risk_details_create", args=[record.id])  # change "pest_edit" to your URL name
-        return format_html('<a href="{}" class="btn_add_details"><i class="fa-solid fa-plus"></i></a>', url)
+        return format_html('<a href="{}" class="btn_add_details"><i class="fa-solid fa-plus"></i></a>', url)'''
     
     def render_delete(self, record):
         url = reverse("agro:pest_risk_delete", args=[record.id])
-        return format_html('<a href="{}" class="btn btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
+        return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
     
 class PestRiskDetailsTable(tables.Table):
 

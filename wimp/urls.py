@@ -26,6 +26,8 @@ from users import views as user_views
 
 from . import views
 
+app_name = 'wimp'
+
 router = routers.DefaultRouter()
 router.register('users', agro_views.UserViewSet)
 router.register('groups', agro_views.GroupViewSet)
@@ -52,7 +54,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     ### Set the root URL (/) to redirect to the login page
-    path('', RedirectView.as_view(url='/accounts/login/', permanent=False)),
+    path('', RedirectView.as_view(url='/accounts/login/', permanent=False), name='index'),
+    path('dashboard/', views.dashboard, name='site_home'),
     path('accounts/login/', user_views.login, name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
 

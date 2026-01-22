@@ -8,7 +8,6 @@ from .models import RadarImages
 from django.template import loader
 from django_tables2 import RequestConfig
 
-
 from .tables import RadarImagesTable
 from .forms import RadarImageForm
 
@@ -16,6 +15,8 @@ from . import serializers as sx
 from wimp.serializers import GroupSerializer, UserSerializer
 
 from rest_framework import permissions, viewsets
+
+from django.contrib.auth.decorators import login_required
 
 ### Create your views here.
 '''def sensors(request):
@@ -28,6 +29,7 @@ def index(request):
     context = {'name': 'World'}  # Data to pass to the template
     return HttpResponse(template.render(context))
 
+@login_required
 def radar_images_list(request, id=None):
     page_name = "Radar Images Listing"
     qs = RadarImages.objects.all().order_by('id')
@@ -46,7 +48,7 @@ def radar_images_list(request, id=None):
         'page_name': page_name,
         'table': table,
         'new_url':  reverse('radar:radar_image_entry'),
-        'back_url': reverse('radar:radar_images_list'),
+        'back_url': reverse('site_home'),
         'api_url':  reverse('radarimages-list'),
     }
     return render(request, 'radar_table_list.html', context)
