@@ -11,13 +11,13 @@ class RadarImagesSerializer(serializers.ModelSerializer):
     class Meta:
         model = mx.RadarImages
         #fields = '__all__'
-        fields = ['image_title','image_url_full']
+        fields = ['image_url','web_directory','image_title','image_url_full']
 
     def get_image_url_full(self, obj):
 
         if obj.image_url:
             filename = os.path.basename(obj.image_url)
-            # Ensure web_directory ends with a slash
+            # Ensure web_directory ends with a slash ##
             web_dir = obj.web_directory
             if not web_dir.endswith('/'):
                 web_dir += '/'
