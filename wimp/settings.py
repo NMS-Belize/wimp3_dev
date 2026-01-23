@@ -61,14 +61,14 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    #'django.middleware.common.CommonMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'wimp.middleware.LoginRequiredMiddleware',
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -92,7 +92,7 @@ TEMPLATES = [
 ]
 
 
-LOGIN_URL           = 'login'      # The URL for the login page
+LOGIN_URL           = '/accounts/login/'      # The URL for the login page
 LOGIN_REDIRECT_URL  = 'dashboard'   # Redirect to the home page after login
 LOGOUT_REDIRECT_URL = 'login'
 

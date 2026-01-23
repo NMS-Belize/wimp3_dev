@@ -78,6 +78,7 @@ class PestRiskEntryMainListing(models.Model):
     months      = models.JSONField()   # to store multiple months (checkbox list)
     year        = models.IntegerField(default=0)
     commodity   = models.ForeignKey(CommodityType, on_delete=models.CASCADE,related_name='Commodity',null=True)
+    is_published = models.BooleanField(default=False)
     #def __str__(self): return f"[{self.id}] {self.year} {self.months} - {self.commodity}"
 
     def __str__(self):

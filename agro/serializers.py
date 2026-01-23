@@ -6,6 +6,16 @@ class MonthSerializer(serializers.ModelSerializer):
         model = mx.Months
         fields = '__all__'
 
+class SectorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = mx.CommodityCategory
+        fields = '__all__'
+
+class ZoneSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = mx.Zone
+        fields = '__all__'
+
 class DistrictSerializer(serializers.ModelSerializer):
     class Meta:
         model = mx.District
@@ -16,11 +26,6 @@ class CommodityTypeSerializer(serializers.ModelSerializer):
         model = mx.CommodityType
         fields = '__all__'
     
-class CommodityCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = mx.CommodityCategory
-        fields = '__all__'
-
 class PestAlertLevelSerializer(serializers.ModelSerializer):
     class Meta:
         model = mx.PestAlertLevel
@@ -40,11 +45,6 @@ class EffectItemsSerializer(serializers.ModelSerializer):
     class Meta:
         model = mx.PestRiskEffect
         fields = '__all__'
-
-'''class PestRiskEntryDSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = mx.PestRiskEntryMainListing
-        fields = '__all__'''
 
 class PestRiskEntryDetailsSerializer(serializers.ModelSerializer):
     #pest_risk_listing_id = PestRiskEntryMainListingSerializer(read_only=True)

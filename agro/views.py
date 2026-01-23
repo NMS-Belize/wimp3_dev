@@ -1,47 +1,43 @@
-import json
+
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 
 from django.urls import reverse
 
-import calendar
+import calendar, json
 
 from django.template import loader
 
-from django.contrib.auth import login as auth_login
+from django.contrib import messages
+from django.contrib.auth import login as auth_login, logout, authenticate
+from django.contrib.auth.models import Group, User
+from django.contrib.auth.decorators import login_required,permission_required
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 
-#from .models import CommodityType, CommodityCategory, District, PestAlertLevel, PestRiskEntryMainListing, PestRiskEntryDetails, DroughtAlertLevel, PestRiskAction, PestRiskEffect
 from .models import *
 
 from django_tables2 import RequestConfig
-#from .tables import PestRiskListTable, PestRiskMainListTable, PestRiskDetailsTable, PestAlertLevelsTable, ActionItemsTable, EffectItemsTable
 from .tables import *
 
 #from .serializers import CommodityTypeSerializer, CommodityCategorySerializer
 from . import serializers as sx
 
-from django.contrib.auth.models import Group, User
 from rest_framework import permissions, viewsets
 
 from wimp.serializers import GroupSerializer, UserSerializer
 
-#from .forms import  FormPestRiskStartForm, PestRiskMainListingForm, PestRiskEntryFormDetails, PestAlertLevelForm
 from .forms import *
 
 from django.forms.models import model_to_dict
 
 #################### Create/Define Views ####################
-#@login_required
+
 def index(request):
     context = {
         'page_name': 'Agro-Met Services'
     }
-    return render(request, 'agro_services.html', context)
-  
-def livestock_entry(request):
-    template = loader.get_template('entry_form_livestock.html')
-    context = {'name': 'World'}  # Data to
-    return HttpResponse(template.render(context))    
+    return render(request, 'agro_services.html', context) 
 
 ############# PEST RISK ENTRY
 def pest_risk_list(request, id=None):
@@ -255,6 +251,217 @@ def pest_risk_details_entry_duplicate(request, id, fk=None):
     duplicate_object_pest_risk_details(obj)
     return redirect('agro:pest_risk_details_list', id=fk)
 
+@require_POST
+@permission_required("agro.change_pestriskentrymainlisting", raise_exception=True)
+def pest_risk_toggle_is_published(request, id):
+    record = get_object_or_404(PestRiskEntryMainListing, id=id)
+
+    record.is_published = not record.is_published
+    record.save(update_fields=["is_published"])
+
+    status = "published" if record.is_published else "unpublished"
+    messages.success(request, f"Record {status} successfully.")
+
+    return redirect("agro:pest_risk_list")
+
+############# PEST RISK VARIABlE - Sector
+def sector_list(request, id=None):
+    page_name = "Sector"
+    qs = CommodityCategory.objects.all().order_by('id')
+    table = SectorTable(qs)
+    RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+    if id is not None:
+        entry = get_object_or_404(CommodityCategory, id=id)
+
+    context = {
+        'id' : id,
+        'entry': entry,  
+        'page_name': page_name,
+        'table': table,
+        'new_url': reverse('agro:sector_entry'),
+        'api_url': reverse('sectors-list'),
+    }
+    return render(request, 'table_list_template.html', context)
+
+def sector_entry(request, id=None):
+
+    page_name = "Sector Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(CommodityCategory, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = SectorForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('agro:sector_list', saved_entry.id)
+    else:
+        form = SectorForm(instance=entry)
+
+    return render(request, 'entry_form.html', {
+        'page_name': page_name,
+        'new_url':  reverse('agro:sector_entry'),
+        'back_url': reverse('agro:sector_list'),
+        'api_url':  reverse('sectors-list'),
+        'form': form,
+        'entry': entry
+    })
+
+def sector_delete(request, id):
+    
+    entry = get_object_or_404(CommodityCategory, id=id)
+    
+    page_name = "Zone/Area Entry"
+
+    if request.method == "POST":
+        entry.delete()
+        messages.success(request, "deleted")  # acts like True
+        return redirect('agro:sector_list')  # redirect anywhere you prefer
+    
+    return render(request, "delete_sector.html", {
+        "entry": entry,
+        'page_name': page_name,
+    })
+
+############# PEST RISK VARIABlE - Zone/Area
+def zone_area_list(request, id=None):
+    page_name = "Zone/Area"
+    qs = Zone.objects.all().order_by('id')
+    table = ZoneAreaTable(qs)
+    RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+    if id is not None:
+        entry = get_object_or_404(Zone, id=id)
+
+    context = {
+        'id' : id,
+        'entry': entry,  
+        'page_name': page_name,
+        'table': table,
+        'new_url': reverse('agro:zone_area_entry'),
+        'api_url': reverse('zones-list'),
+    }
+    return render(request, 'table_list_template.html', context)
+
+def zone_area_entry(request, id=None):
+
+    page_name = "Zone/Area Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(Zone, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = ZoneAreaForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('agro:zone_area_list', saved_entry.id)
+    else:
+        form = ZoneAreaForm(instance=entry)
+
+    return render(request, 'entry_form.html', {
+        'page_name': page_name,
+        'new_url':  reverse('agro:zone_area_entry'),
+        'back_url': reverse('agro:zone_area_list'),
+        'api_url': reverse('zones-list'),
+        'form': form,
+        'entry': entry
+    })
+
+def zone_area_delete(request, id):
+    
+    entry = get_object_or_404(Zone, id=id)
+    
+    page_name = "Zone/Area Entry"
+
+    if request.method == "POST":
+        entry.delete()
+        messages.success(request, "deleted")  # acts like True
+        return redirect('agro:zone_area_list')  # redirect anywhere you prefer
+    
+    return render(request, "delete_zone.html", {
+        "entry": entry,
+        'page_name': page_name,
+    })
+
+############# PEST RISK VARIABlE - District/Zone
+def district_zone_list(request, id=None):
+    page_name = "District/Zone"
+    qs = District.objects.all().order_by('id')
+    table = DistrictZoneTable(qs)
+    RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+    if id is not None:
+        entry = get_object_or_404(District, id=id)
+
+    context = {
+        'id' : id,
+        'entry': entry,  
+        'page_name': page_name,
+        'table': table,
+        'new_url': reverse('agro:district_zone_entry'),
+        'api_url': reverse('districts-list'),
+    }
+    return render(request, 'table_list_template.html', context)
+
+def district_zone_entry(request, id=None):
+
+    page_name = "District/Zone Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(District, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = DistrictZoneForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('agro:district_zone_list', saved_entry.id)
+    else:
+        form = DistrictZoneForm(instance=entry)
+
+    return render(request, 'entry_form.html', {
+        'page_name': page_name,
+        'new_url':  reverse('agro:district_zone_entry'),
+        'back_url': reverse('agro:district_zone_list'),
+        'api_url':  reverse('districts-list'),
+        'form': form,
+        'entry': entry
+    })
+
+def district_zone_delete(request, id):
+    
+    entry = get_object_or_404(District, id=id)
+    
+    page_name = "District/Zone Entry"
+
+    if request.method == "POST":
+        entry.delete()
+        messages.success(request, "deleted")  # acts like True
+        return redirect('agro:district_zone_list')  # redirect anywhere you prefer
+    
+    return render(request, "delete_district.html", {
+        "entry": entry,
+        'page_name': page_name,
+    })
+
 ############# PEST RISK VARIABlE - Commodity
 def commodity_list(request, id=None):
     page_name = "Commodity"
@@ -273,7 +480,7 @@ def commodity_list(request, id=None):
         'page_name': page_name,
         'table': table,
         'new_url': reverse('agro:commodity_entry'),
-        'api_url': "/api/commodity-types/",
+        'api_url': reverse('commodity-list'),
     }
     return render(request, 'table_list_template.html', context)
 
@@ -298,9 +505,9 @@ def commodity_entry(request, id=None):
 
     return render(request, 'entry_form.html', {
         'page_name': page_name,
-        'new_url': reverse('agro:commodity_entry'),
+        'new_url':  reverse('agro:commodity_entry'),
         'back_url': reverse('agro:commodity_list'),
-        'api_url': "/api/commodity-types/",
+        'api_url':  reverse('commodity-list'),
         'form': form,
         'entry': entry
     })
@@ -339,7 +546,7 @@ def pest_alert_level_list(request, id=None):
         'page_name': page_name,
         'table': table,
         'new_url': reverse('agro:pest_alert_level_entry'),
-        'api_url': "/api/pest-alert-levels/",
+        'api_url': reverse('pestalertlevels-list'),
     }
     return render(request, 'table_list_template.html', context)
 
@@ -366,7 +573,7 @@ def pest_alert_level_entry(request, id=None):
         'page_name':    page_name,
         'new_url':      reverse('agro:pest_alert_level_entry'),
         'back_url':     reverse('agro:pest_alert_level_list'),
-        'api_url':      "/api/pest-alert-levels/",
+        'api_url':      reverse('pestalertlevels-list'),
         'form':         form,
         'entry':        entry
     })
@@ -396,7 +603,7 @@ def drought_alert_level_list(request):
         'page_name':    page_name,
         'new_url':      reverse('agro:drought_alert_level_entry'),
         'back_url':     reverse('agro:drought_alert_level_list'),
-        'api_url':      "/api/drought-alert-levels/",
+        'api_url':      reverse('droughtalertlevels-list'),
         'table':        table
     }
     return render(request, 'table_list_template.html', context)
@@ -424,7 +631,7 @@ def drought_alert_level_entry(request, id=None):
         'page_name':    page_name,
         'new_url':      reverse('agro:drought_alert_level_entry'),
         'back_url':     reverse('agro:drought_alert_level_list'),
-        'api_url':      "/api/drought-alert-levels/",
+        'api_url':      reverse('droughtalertlevels-list'),
         'form':         form,
         'entry':        entry
     })
@@ -457,12 +664,12 @@ def action_items_list(request, id=None):
         entry = get_object_or_404(PestRiskAction, id=id)
 
     context = {
-        'id' : id,
-        'entry': entry,  
+        'id' :      id,
+        'entry':    entry,  
         'page_name': page_name,
-        'table': table,
-        'new_url': reverse('agro:action_items_entry'),
-        'api_url': "/api/action-items/",
+        'table':    table,
+        'new_url':  reverse('agro:action_items_entry'),
+        'api_url':  reverse('actionitems-list'),
     }
     return render(request, 'table_list_template.html', context)
 
@@ -489,7 +696,7 @@ def action_items_entry(request, id=None):
         'page_name':    page_name,
         'new_url':      "/agro-climat-services/pest-risk/action-items-entry/",
         'back_url':     "/agro-climat-services/pest-risk/action-items-list/",
-        'api_url':      "/api/action-items/",
+        'api_url':      reverse('actionitems-list'),
         'form':         form,
         'entry':        entry
     })
@@ -539,7 +746,7 @@ def effect_items_list(request, id=None):
         'page_name': page_name,
         'table': table,
         'new_url': reverse('agro:effect_items_entry'),
-        'api_url': "/api/effect-items/",
+        'api_url':  reverse('effectitems-list'),
     }
     return render(request, 'table_list_template.html', context)
 
@@ -566,7 +773,7 @@ def effect_items_entry(request, id=None):
         'page_name':    page_name,
         'new_url':      reverse('agro:effect_items_entry'),
         'back_url':     reverse('agro:effect_items_list'),
-        'api_url':      "/api/effect-items/",
+        'api_url':      reverse('effectitems-list'),
         'form':         form,
         'entry':        entry
     })
@@ -609,6 +816,14 @@ class GroupViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 #API endpoint that allows groups to be viewed or edited.
+class SectorViewSet(viewsets.ModelViewSet):
+   queryset = CommodityCategory.objects.all().order_by('id')
+   serializer_class = sx.SectorSerializer
+
+class ZoneViewSet(viewsets.ModelViewSet):
+   queryset = Zone.objects.all().order_by('id')
+   serializer_class = sx.ZoneSerializer
+
 class DistrictViewSet(viewsets.ModelViewSet):
    queryset = District.objects.all().order_by('id')
    serializer_class = sx.DistrictSerializer
@@ -616,10 +831,6 @@ class DistrictViewSet(viewsets.ModelViewSet):
 class CommodityTypeViewSet(viewsets.ModelViewSet):
    queryset = CommodityType.objects.all().order_by('id')
    serializer_class = sx.CommodityTypeSerializer
-
-class CommodityCategoryViewSet(viewsets.ModelViewSet):
-   queryset = CommodityCategory.objects.all().order_by('id')
-   serializer_class = sx.CommodityCategorySerializer
 
 class ActionItemsViewSet(viewsets.ModelViewSet):
    queryset = PestRiskAction.objects.all().order_by('id')
@@ -642,7 +853,5 @@ class PestRiskEntryDetailsViewSet(viewsets.ModelViewSet):
    serializer_class = sx.PestRiskEntryDetailsSerializer
 
 class PestRiskMainListingViewSet(viewsets.ModelViewSet):
-   #queryset = PestRiskEntryMainListing.objects.all().order_by('id')
-   #serializer_class = sx.PestRiskEntryMainListingSerializer
-   queryset = PestRiskEntryMainListing.objects.all().prefetch_related("pest_risk_entries")
+   queryset = PestRiskEntryMainListing.objects.filter(is_published=True).prefetch_related("pest_risk_entries")
    serializer_class = sx.PestRiskEntryMainListingSerializer

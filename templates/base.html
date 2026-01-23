@@ -16,7 +16,7 @@
                 <div class="col-5">
                     <!-- Button to open the offcanvas sidebar -->
                     <a href="javascript:void(0)" id="offcanvas_btn" data-bs-toggle="offcanvas" data-bs-target="#menu_sidebar"><img id="logo" src="{% static 'icons/bars-solid-wht.svg' %}" alt="" width="50px"  /></a>
-                    <a class="navbar-brand pl-3 display-1" href="{% url 'dashboard' %}" id="logo"><img id="main_logo" src="{% static 'images/WIMP3_600_sc.png' %}" alt="WIMP3 Logo" style="width: 200px; margin-left: 42px;" /></a>
+                    <a class="navbar-brand pl-3 display-1" href="{% url 'site_home' %}" id="logo"><img id="main_logo" src="{% static 'images/WIMP3_600_sc.png' %}" alt="WIMP3 Logo" style="width: 200px; margin-left: 42px;" /></a>
                 </div>
                 <div class="col-6 pt-2 text-end">
                     <span id="login-info">
@@ -55,7 +55,7 @@
     <div class="offcanvas-body" id="menu_items">
         <hr class="clear" />
         <ul class="list-group list-group-flush bg-transparent">
-            <li class="list-group-item"><a href="{% url 'dashboard' %}">Home</a></li>
+            <li class="list-group-item"><a href="{% url 'site_home' %}">Home</a></li>
             <!--<li class="list-group-item">Weather Forecasting</li>-->
             <li class="list-group-item"><a href="{% url 'agro:index' %}">Agro-Met Services</a></li>
             <li class="list-group-item"><a href="{% url 'radar:radar_images_list' %}">Radar</a></li>

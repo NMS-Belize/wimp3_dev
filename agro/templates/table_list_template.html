@@ -22,6 +22,7 @@
 <div class="row mb-3">
     <div class="col-12">
         <div class="alert alert-success" role="alert">
+            {{ entry.id }}
             {% if entry.description %}
             <strong>{{ entry.description }}</strong> has been successfully added!
             {% endif %}
@@ -30,6 +31,9 @@
             {% endif %}
             {% if entry.effect_description %}
             <strong>{{ entry.effect_description }}</strong> has been successfully added!
+            {% endif %}
+            {% if entry.district_area %}
+            <strong>{{ entry.district_area }}, {{ entry.zone }}</strong> has been successfully added!
             {% endif %}
         </div>
     </div>

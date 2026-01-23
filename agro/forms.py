@@ -1,64 +1,24 @@
 from django import forms
-from .models import Months, CommodityType, DroughtAlertLevel, District, PestRiskEntryMainListing, PestRiskEntryDetails,  PestAlertLevel, PestRiskEffect, PestRiskAction
+from .models import Months, Zone, CommodityCategory, CommodityType, DroughtAlertLevel, District, PestRiskEntryMainListing, PestRiskEntryDetails,  PestAlertLevel, PestRiskEffect, PestRiskAction
 
-MONTH_CHOICES = [
-    ('1','JAN'),
-    ('2', 'FEB'),
-    ('3','MAR'),
-    ('4','APR'),
-    ('5','MAY'),
-    ('6','JUN'),
-    ('7','JUL'),
-    ('8','AUG'),
-    ('9','SEP'),
-    ('10','OCT'),
-    ('11','NOV'),
-    ('12','DEC')
-]
+from django_toggle_switch_widget.widgets import DjangoToggleSwitchWidget
 
-'''class FormPestRiskStartForm(forms.Form):
-    months = forms.MultipleChoiceField(
-        choices = MONTH_CHOICES,
-        widget = forms.CheckboxSelectMultiple(
-            attrs={'class': 'form-check-input'}
-        ),
-        required = True
-    )
-    commodity = forms.ModelChoiceField(
-        queryset = CommodityType.objects.all(),
-        empty_label = "Select a Commodity",
-        required = True,
-        widget = forms.Select(attrs = {'class': 'form-control' })
-    )
-    year = forms.CharField(
-        label = "Year",
-        required = True,
-        max_length = 4,
-        widget = forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Year'})
-    )
-
-    def clean_months(self):
-        months = self.cleaned_data.get("months", [])
-        if len(months) > 3:
-            raise forms.ValidationError("You can only select up to 3 months.")
-        return months'''
+MONTH_CHOICES   = [('1','JAN'),('2', 'FEB'),('3','MAR'),('4','APR'),('5','MAY'),('6','JUN'),('7','JUL'),('8','AUG'),('9','SEP'),('10','OCT'),('11','NOV'),('12','DEC')]
+YEAR_CHOICES    = [('2026', '2026'),('2027', '2027')]
 
 class PestRiskMainListingForm(forms.ModelForm):
     class Meta:
         model = PestRiskEntryMainListing
         fields = ['months', 'year', 'commodity']
         labels = {   
-            'months': 'Select Months',
-            'year': 'Year:',
-            'commodity': 'Commodity',
+            'months':       'Months',
+            'year':         'Year:',
+            'commodity':    'Commodity'
         }
         widgets = {
-            'months': forms.CheckboxSelectMultiple(
-                choices=MONTH_CHOICES,
-                attrs={'class': 'form-check-input'}
-            ),
-            'year': forms.TextInput(attrs={'class': 'form-control'}),
-            'commodity': forms.Select(attrs={'class': 'form-control'})
+            'months':       forms.CheckboxSelectMultiple(choices=MONTH_CHOICES,attrs={'class': 'form-check-input'}),
+            'year':         forms.Select(choices=YEAR_CHOICES,attrs={'class': 'form-control'}),
+            'commodity':    forms.Select(attrs={'class': 'form-control'})
         }
         required_css_class = 'required'
 
@@ -130,6 +90,44 @@ class PestRiskEntryDetailsForm(forms.ModelForm):
 
         self.fields['actions'].queryset = PestRiskAction.objects.all().order_by("id")
         self.fields['actions'].empty_label = "Select Actions"
+
+class SectorForm(forms.ModelForm):
+    class Meta:
+        model = CommodityCategory
+        fields = ['description']
+        labels = {   
+            # <-- add human-friendly labels here
+            'description': 'Description:',
+        }
+        widgets = {            
+            'description': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+class ZoneAreaForm(forms.ModelForm):
+    class Meta:
+        model = Zone
+        fields = ['zone_name']
+        labels = {   
+            # <-- add human-friendly labels here
+            'zone_name': 'Zone Name:',
+        }
+        widgets = {            
+            'zone_name': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+class DistrictZoneForm(forms.ModelForm):
+    class Meta:
+        model = District
+        fields = ['district_area', 'zone_id']
+        labels = {   
+            # <-- add human-friendly labels here
+            'district_area': 'District:',
+            'zone_id': 'Zone/Area',
+        }
+        widgets = {            
+            'district_area': forms.TextInput(attrs={'class': 'form-control'}),
+            'zone_id': forms.Select(attrs={'class': 'form-control'})
+        }
 
 class PestAlertLevelForm(forms.ModelForm):
     class Meta:

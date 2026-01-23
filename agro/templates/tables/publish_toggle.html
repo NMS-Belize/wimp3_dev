@@ -1,0 +1,7 @@
+<form method="post" action="{% url 'agro:pest_risk_toggle_is_published' record.id %}" style="display:inline;">{% csrf_token %}
+    <button type="submit" class="btn_view" style="border:none;background:none;">
+        {% if record.is_published %}<i class="fa-solid fa-circle-check text-success"></i>
+        {% else %}<i class="fa-solid fa-circle-xmark text-muted"></i>
+        {% endif %}
+    </button>
+</form>

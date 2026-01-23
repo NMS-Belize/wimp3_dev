@@ -8,6 +8,82 @@ from django.utils.html import format_html
 #from .models import PestRiskEntryMainListing, PestRiskEntryDetails, Months, PestAlertLevel, PestRiskAction, PestRiskEffect
 from .models import *
 
+class SectorTable(tables.Table):
+    edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "col_edit"}, "td": {"style": "","class": "col_edit"}})
+    id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
+    description = tables.Column(verbose_name="District",attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+    delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "text-center"},"td": {"style": "","class": "col_delete text-center"}})
+
+    class Meta:
+        model = CommodityCategory
+        template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
+        fields = ("edit","description","id","delete")
+
+        # Add table HTML id and CSS classes here
+        attrs = {
+            "id": "table_pest_alert_level",           # unique table ID
+            "class": "table table-striped table-condensed table-hover tbl_wimp3" # Bootstrap-friendly styling
+        }
+
+    def render_edit(self, record):
+        url = reverse("agro:sector_entry", args=[record.id])
+        return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
+    
+    def render_delete(self, record):
+        url = reverse("agro:sector_delete", args=[record.id])
+        return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
+    
+class ZoneAreaTable(tables.Table):
+    edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "col_edit"}, "td": {"style": "","class": "col_edit"}})
+    id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
+    zone_name = tables.Column(verbose_name="District",attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+    delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "text-center"},"td": {"style": "","class": "col_delete text-center"}})
+
+    class Meta:
+        model = District
+        template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
+        fields = ("edit","zone_name","id","delete")
+
+        # Add table HTML id and CSS classes here
+        attrs = {
+            "id": "table_pest_alert_level",           # unique table ID
+            "class": "table table-striped table-condensed table-hover tbl_wimp3" # Bootstrap-friendly styling
+        }
+
+    def render_edit(self, record):
+        url = reverse("agro:zone_area_entry", args=[record.id])
+        return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
+    
+    def render_delete(self, record):
+        url = reverse("agro:zone_area_delete", args=[record.id])
+        return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
+
+class DistrictZoneTable(tables.Table):
+    edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "col_edit"}, "td": {"style": "","class": "col_edit"}})
+    id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
+    district_area = tables.Column(verbose_name="District",attrs={"th": {"style": "width:300px;","class": ""}, "td": {"style": "","class": ""}})
+    zone_id = tables.Column(verbose_name="Zone/Area", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+    delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
+
+    class Meta:
+        model = District
+        template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
+        fields = ("edit","district_area","zone_id","id","delete")
+
+        # Add table HTML id and CSS classes here
+        attrs = {
+            "id": "table_pest_alert_level",           # unique table ID
+            "class": "table table-striped table-condensed table-hover tbl_wimp3" # Bootstrap-friendly styling
+        }
+
+    def render_edit(self, record):
+        url = reverse("agro:commodity_entry", args=[record.id])
+        return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
+    
+    def render_delete(self, record):
+        url = reverse("agro:district_zone_delete", args=[record.id])
+        return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
+
 class CommodityTable(tables.Table):
     edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "col_edit"}, "td": {"style": "","class": "col_edit"}})
     id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
@@ -195,26 +271,49 @@ class PestRiskMainListTable(tables.Table):
         "th": {"style": ""},
         "td": {"class": ""},
     })
-
-    edit            = tables.Column(empty_values=(), verbose_name="Edit",attrs={
-                        "th": {"style": "width:60px;","class": ""},
-                        "td": {"style": "","class": "col_edit"}
-                        })
-    view_details    = tables.Column(empty_values=(), verbose_name="View Details", attrs={
-                        "th": {"style": "width:100px; text-align:center;","class": ""},
-                        "td": {"style": "text-align:center;","class": "col_view"}
-                        })
+    is_published = tables.TemplateColumn(
+        template_name="tables/publish_toggle.html",
+        verbose_name="Published",
+        orderable=False,
+        attrs={
+            "th": {"style": "width:75px;","class": "text-center"},
+            "td": {"style": "","class": "text-center"}
+        })
+    edit = tables.Column(
+        empty_values=(), 
+        verbose_name="Edit",
+        orderable=False,
+        attrs={
+            "th": {"style": "width:60px;","class": ""},
+            "td": {"style": "","class": "col_edit"}
+        })
+    view_details = tables.Column(
+        empty_values=(), 
+        verbose_name="View Details",
+        orderable=False,
+        attrs={
+            "th": {"style": "width:100px; text-align:center;","class": ""},
+            "td": {"style": "text-align:center;","class": "col_view"}
+        })
+    
     '''add_details     = tables.Column(empty_values=(), verbose_name="Add Details", attrs={
                         "th": {"style": "width:90px; text-align:center;","class": ""},
                         "td": {"style": "text-align:center;","class": "col_details"}
                         })'''
-    delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "text-center"},"td": {"style": "","class": "col_delete text-center"}})
+    delete = tables.Column(
+        empty_values=(), 
+        verbose_name="Delete",
+        orderable=False,
+        attrs={
+            "th": {"style": "width:75px;","class": "text-center"},
+            "td": {"style": "","class": "col_delete text-center"}
+        })
 
     class Meta:
         model = PestRiskEntryMainListing
         template_name = "django_tables2/bootstrap4.html"  # or bootstrap5
         #fields = ("edit", "year", "months_display", "commodity","commodity_category","view_details","add_details","id","delete")
-        fields = ("edit", "year", "months_display", "commodity","commodity_category","view_details","id","delete")
+        fields = ("edit", "year", "months_display", "commodity","commodity_category","view_details","is_published","id","delete")
         
         attrs = {
             "id": "tbl_pest_risk_listing",
@@ -236,11 +335,7 @@ class PestRiskMainListTable(tables.Table):
     def render_view_details(self, record):
         url = reverse("agro:pest_risk_details_list", args=[record.id])  # change "pest_edit" to your URL name
         return format_html('<a href="{}" class="btn_view"><i class="fa-solid fa-eye"></i></a>', url)
-    
-    '''def render_add_details(self, record):
-        url = reverse("agro:pest_risk_details_create", args=[record.id])  # change "pest_edit" to your URL name
-        return format_html('<a href="{}" class="btn_add_details"><i class="fa-solid fa-plus"></i></a>', url)'''
-    
+
     def render_delete(self, record):
         url = reverse("agro:pest_risk_delete", args=[record.id])
         return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)

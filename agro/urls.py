@@ -28,11 +28,33 @@ urlpatterns = [
     path('pest-risk-entry/<int:fk>/details/<int:id>/delete/',views.pest_risk_details_delete,name='pest_risk_details_delete'),
 
     path('pest-risk-entry/<int:fk>/details/<int:id>/duplicate/', views.pest_risk_details_entry_duplicate,name='pest_risk_details_entry_duplicate'),
+    path('pest-risk-entry/<int:id>/toggle-publish/',views.pest_risk_toggle_is_published,name='pest_risk_toggle_is_published'),
 
     #path("pest-risk-entry/add/", views.pest_risk_entry_add, name="pest_risk_entry_add"),
     #path("pest-risk-entry/update/", views.pest_risk_entry_update, name="pest_risk_entry_update"), 
     #path('pest-risk-entry/<int:entry_id>/add/', views.pest_risk_add_details, name='pest_risk_add_details'),
     
+    ## PEST RISK VARIABLE: Zone Area
+    path("pest-risk/sector-list/", views.sector_list, name="sector_list"),
+    path('pest-risk/sector-list/<int:id>/', views.sector_list,name='sector_list'),
+    path("pest-risk/sector-entry/", views.sector_entry, name="sector_entry"),
+    path('pest-risk/sector-entry/<int:id>/', views.sector_entry,name='sector_entry'),
+    path('pest-risk/sector-entry/<int:id>/delete/', views.sector_delete,name='sector_delete'),
+
+    ## PEST RISK VARIABLE: Zone Area
+    path("pest-risk/zone-area-list/", views.zone_area_list, name="zone_area_list"),
+    path('pest-risk/zone-area-list/<int:id>/', views.zone_area_list,name='zone_area_list'),
+    path("pest-risk/zone-area-entry/", views.zone_area_entry, name="zone_area_entry"),
+    path('pest-risk/zone-area-entry/<int:id>/', views.zone_area_entry,name='zone_area_entry'),
+    path('pest-risk/zone-area-entry/<int:id>/delete/', views.zone_area_delete,name='zone_area_delete'),
+
+    ## PEST RISK VARIABLE: District/Zone
+    path("pest-risk/district-zone-list/", views.district_zone_list, name="district_zone_list"),
+    path('pest-risk/district-zone-list/<int:id>/', views.district_zone_list,name='district_zone_list'),
+    path("pest-risk/district-zone-entry/", views.district_zone_entry, name="district_zone_entry"),
+    path('pest-risk/district-zone-entry/<int:id>/', views.district_zone_entry,name='district_zone_entry'),
+    path('pest-risk/district-zone-entry/<int:id>/delete/', views.district_zone_delete,name='district_zone_delete'),
+
     ## PEST RISK VARIABLE: Commodity
     path("pest-risk/commodity-list/", views.commodity_list, name="commodity_list"),
     path('pest-risk/commodity-list/<int:id>/', views.commodity_list,name='commodity_list'),

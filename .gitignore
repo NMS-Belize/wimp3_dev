@@ -1,8 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Django
+*.log
+*.pot
+db.sqlite3
+media/
+
+# Migrations (optional)
+# **/migrations/
+# !**/migrations/__init__.py
+
+# Environment variables
+.env
+.env.*
+
+# Virtual environments
 venv/
 .venv/
+env/
+
+# Project-specific directories
 sensors/
 forecasts/
 removed/
-__pycache__/
-*.pyc
-db.sqlite3
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db

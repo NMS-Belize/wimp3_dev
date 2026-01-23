@@ -14,28 +14,23 @@
         </div>
     </div>
     <div class="row mb-5">
-        <div class="col-1">
-            <div class="card"><a class="btn_task_main" href="{% url 'agro:pest_risk_list' %}"><i class="fa-solid fa-spaghetti-monster-flying"></i><span class="task_desc">Pest Risk</span></a></div>
+        <div class="col-12">
+            <div class="item_task_main"><a class="btn_task_main" href="{% url 'agro:pest_risk_list' %}"><i class="fa-solid fa-spaghetti-monster-flying"></i><span class="task_desc">Pest Risk</span></a></div>
         </div>
     </div>
     <div class="row">
         <div class="col-12">
             <h3>Pest Risk Variables</h3>
         </div>
-        <div class="col-1">
-            <div class="card"><a class="btn_task" href="{% url 'agro:commodity_list' %}"><i class="fa-solid fa-seedling"></i><span class="task_desc">Commodity</span></a></div>
-        </div>
-        <div class="col-1">
-            <div class="card"><a class="btn_task" href="{% url 'agro:pest_alert_level_list' %}"><i class="fa-solid fa-bug"></i><span class="task_desc">Pest Alert Levels</span></a></div>
-        </div>
-        <div class="col-1">
-            <div class="card"><a class="btn_task" href="{% url 'agro:drought_alert_level_list' %}"><i class="fa-solid fa-droplet-slash"></i><span class="task_desc">Drought Alert Levels</span></a></div>
-        </div>
-        <div class="col-1">
-            <div class="card"><a class="btn_task" href="{% url 'agro:action_items_list' %}"><i class="fa-solid fa-list-check"></i><span class="task_desc">Action Items</span></a></div>
-        </div>
-        <div class="col-1">
-            <div class="card"><a class="btn_task" href="{% url 'agro:effect_items_list' %}"><i class="fa-solid fa-circle-exclamation"></i><span class="task_desc">Effect Items</span></a></div>
+        <div class="col-12">
+            <div class="item_task"><a class="btn_task" href="{% url 'agro:sector_list' %}"><i class="fa-solid fa-fish"></i><span class="task_desc">Sector</span></a></div>
+            <div class="item_task"><a class="btn_task" href="{% url 'agro:zone_area_list' %}"><i class="fa-solid fa-map-location-dot"></i><span class="task_desc">Zone/Area</span></a></div>
+            <div class="item_task"><a class="btn_task" href="{% url 'agro:district_zone_list' %}"><i class="fa-solid fa-location-dot"></i><span class="task_desc">District</span></a></div>
+            <div class="item_task"><a class="btn_task" href="{% url 'agro:commodity_list' %}"><i class="fa-solid fa-seedling"></i><span class="task_desc">Commodity</span></a></div>
+            <div class="item_task"><a class="btn_task" href="{% url 'agro:pest_alert_level_list' %}"><i class="fa-solid fa-bug"></i><span class="task_desc">Pest Alert Levels</span></a></div>
+            <div class="item_task"><a class="btn_task" href="{% url 'agro:drought_alert_level_list' %}"><i class="fa-solid fa-droplet-slash"></i><span class="task_desc">Drought Alert Levels</span></a></div>
+            <div class="item_task"><a class="btn_task" href="{% url 'agro:action_items_list' %}"><i class="fa-solid fa-list-check"></i><span class="task_desc">Action Items</span></a></div>
+            <div class="item_task"><a class="btn_task" href="{% url 'agro:effect_items_list' %}"><i class="fa-solid fa-circle-exclamation"></i><span class="task_desc">Effect Items</span></a></div>
         </div>
     </div>
 </div>

@@ -33,14 +33,15 @@ router.register('users', agro_views.UserViewSet)
 router.register('groups', agro_views.GroupViewSet)
 
 ### AGRO API ROUTES ###
-router.register('districts', agro_views.DistrictViewSet)
-router.register('commodity-types', agro_views.CommodityTypeViewSet)
-router.register('commodity-categories', agro_views.CommodityCategoryViewSet)
-router.register('pest-alert-levels', agro_views.PestAlertLevelViewSet)
-router.register('drought-alert-levels', agro_views.DroughtAlertLevelViewSet)
-router.register('action-items', agro_views.ActionItemsViewSet)
-router.register('effect-items', agro_views.EffectItemsViewSet)
-router.register('pest-risk', agro_views.PestRiskMainListingViewSet)
+router.register('sectors', agro_views.SectorViewSet, basename='sectors')
+router.register('zones', agro_views.ZoneViewSet, basename='zones')
+router.register('districts', agro_views.DistrictViewSet, basename='districts')
+router.register('commodity', agro_views.CommodityTypeViewSet, basename='commodity')
+router.register('pest-alert-levels', agro_views.PestAlertLevelViewSet, basename='pestalertlevels')
+router.register('drought-alert-levels', agro_views.DroughtAlertLevelViewSet, basename='droughtalertlevels')
+router.register('action-items', agro_views.ActionItemsViewSet, basename='actionitems')
+router.register('effect-items', agro_views.EffectItemsViewSet, basename='effectitems')
+router.register('pest-risk', agro_views.PestRiskMainListingViewSet, basename='pestrisk')
 
 ### RADAR SERVICES API ROUTES ###
 #router.register(r'pest-risk', agro_views.PestRiskMainListingViewSet, basename='agro')
@@ -69,7 +70,7 @@ urlpatterns = [
     path("users/", include("users.urls")),
 
     ### Include URLS for WIMP App
-    path('dashboard/', views.dashboard, name='dashboard'),
+    #path('dashboard/', views.dashboard, name='dashboard'),
 
     #path('', views.index, name='index'),
     # Include all default authentication URLs under the /accounts/ path

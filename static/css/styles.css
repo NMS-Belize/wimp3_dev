@@ -176,10 +176,14 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 .btn_task i{ color: var(--aqua-1); }
 .btn_task_main i{ color: var(--emerald); }
 
-.task_desc{ display: block; clear: both; color: #343a40; padding-top: 10px; }
+.task_desc{ display: block; clear: both; color: #343a40; padding-top: 10px; font-weight: 700;  }
 .col_task{ border: 1px solid var(--grey-2); border-radius: 20px; }
 
+.item_task_main{ float: left; width: 120px; height: 120px; margin: 0 5px 15px 0; }
+.item_task{ float: left; width: 120px; height: 120px; margin: 0 5px 15px 0; }
 
+.item_task_main .task_desc{ color: var(--emerald); }
+.item_task .task_desc{ color: var(--aqua-1); }
 /*********** TABLE STYLES ************/
 .tbl_wimp3 th{
   background-color: var(--aqua-1);
