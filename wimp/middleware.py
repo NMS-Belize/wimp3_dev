@@ -19,6 +19,10 @@ class LoginRequiredMiddleware:
             return None
 
         # Allow staff/admin/static/media if needed
+        if path.startswith('api/'):
+            return None
+        
+        # Allow staff/admin/static/media if needed
         if path.startswith('admin/'):
             return None
 
