@@ -33,6 +33,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     '[::1]', # IPv6 localhost
     '192.168.x.x', 
+    'wimp3.hydromet.gov.bz',
     #'192.168.3.62',
     '*'
     #'.your-provider.dev', # Wildcard for subdomains on certain platforms (e.g., Fly.io)
@@ -158,4 +159,5 @@ REST_FRAMEWORK = {
 
 CSRF_TRUSTED_ORIGINS = [
     'https://wimp3.nms.gov.bz',
+    'https://wimp3.hydromet.gov.bz',
 ]

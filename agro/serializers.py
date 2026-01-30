@@ -50,7 +50,9 @@ class PestRiskEntryDetailsSerializer(serializers.ModelSerializer):
     #pest_risk_listing_id = PestRiskEntryMainListingSerializer(read_only=True)
     zone = serializers.SerializerMethodField()
     pest_alert = serializers.SerializerMethodField()
+    pest_alert_color_hex = serializers.SerializerMethodField()
     drought_alert = serializers.SerializerMethodField()
+    drought_alert_color_hex = serializers.SerializerMethodField()
     temp_min = serializers.SerializerMethodField()
     temp_max = serializers.SerializerMethodField()
     precip_min = serializers.SerializerMethodField()
@@ -60,7 +62,7 @@ class PestRiskEntryDetailsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = mx.PestRiskEntryDetails
-        fields = ['pest_risk_listing_id', 'zone', 'pest_alert', 'drought_alert', 'temp_min','temp_max','precip_min','precip_max','effect','info','actions']
+        fields = ['pest_risk_listing_id', 'zone', 'pest_alert','pest_alert_color_hex', 'drought_alert', 'drought_alert_color_hex', 'temp_min','temp_max','precip_min','precip_max','effect','info','actions']
     
     def get_zone(self, obj): 
         return f"{obj.district_id.district_area}" if obj.district_id is not None else "N/A"
@@ -68,8 +70,14 @@ class PestRiskEntryDetailsSerializer(serializers.ModelSerializer):
     def get_pest_alert(self, obj): 
         return f"{obj.pest_alert_lvl_id.description}" if obj.pest_alert_lvl_id is not None else "N/A"
     
+    def get_pest_alert_color_hex(self, obj): 
+        return f"{obj.pest_alert_lvl_id.color_hex}" if obj.pest_alert_lvl_id is not None else "N/A"
+    
     def get_drought_alert(self, obj): 
         return f"{obj.drought_alert_lvl_id.description}" if obj.drought_alert_lvl_id is not None else "N/A"
+    
+    def get_drought_alert_color_hex(self, obj): 
+        return f"{obj.drought_alert_lvl_id.color_hex}" if obj.drought_alert_lvl_id is not None else "N/A"
     
     def get_temp_min(self, obj): 
         return f"{obj.temp_min:.1f} °F" if obj.temp_min is not None else "N/A"
