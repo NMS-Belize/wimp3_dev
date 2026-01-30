@@ -855,3 +855,4 @@ class PestRiskEntryDetailsViewSet(viewsets.ModelViewSet):
 class PestRiskMainListingViewSet(viewsets.ModelViewSet):
    queryset = PestRiskEntryMainListing.objects.filter(is_published=True).prefetch_related("pest_risk_entries")
    serializer_class = sx.PestRiskEntryMainListingSerializer
+   pagination_class = None
