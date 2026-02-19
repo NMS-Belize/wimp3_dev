@@ -244,11 +244,11 @@ class EffectItemsTable(tables.Table):
         url = reverse("agro:effect_items_delete", args=[record.id])
         return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
     
-class PestRiskListTable(tables.Table):
-    class Meta:
-        model = PestRiskEntryDetails
-        template_name = "django_tables2/bootstrap4.html"  # or bootstrap5
-        fields = ("id","pest_risk_listing_id", "district_id", "pest_alert_lvl_id", "drought_alert_lvl_id", "temp_max", "temp_min", "precip_min", "precip_max", "effect", "info", "actions")
+#class PestRiskListTable(tables.Table):
+    #class Meta:
+        #model = PestRiskEntryDetails
+        #template_name = "django_tables2/bootstrap4.html"  # or bootstrap5
+        #fields = ("id","pest_risk_listing_id", "district_id", "pest_alert_lvl_id", "drought_alert_lvl_id", "temp_max", "temp_min", "precip_min", "precip_max", "effect", "info", "actions")
 
 class PestRiskMainListTable(tables.Table):
     id              = tables.Column(verbose_name="ID",attrs={
@@ -259,7 +259,7 @@ class PestRiskMainListTable(tables.Table):
                         "th": {"style": "width:80px;","class": ""},
                         "td": {"style": "","class": ""}
                         })
-    months_display  = tables.Column(empty_values=(),verbose_name="Months",attrs={
+    months  = tables.Column(verbose_name="Months",attrs={
                         "th": {"style": "width:150px;","class": ""},
                         "td": {"style": "","class": ""}
                         })
@@ -312,21 +312,19 @@ class PestRiskMainListTable(tables.Table):
     class Meta:
         model = PestRiskEntryMainListing
         template_name = "django_tables2/bootstrap4.html"  # or bootstrap5
-        #fields = ("edit", "year", "months_display", "commodity","commodity_category","view_details","add_details","id","delete")
-        fields = ("edit", "year", "months_display", "commodity","commodity_category","view_details","is_published","id","delete")
+        fields = ("edit", "year", "months", "commodity","commodity_category","view_details","is_published","id","delete")
         
         attrs = {
             "id": "tbl_pest_risk_listing",
             "class": "tbl_wimp3 table table-striped table-condensed table-hover tbl_wimp3",
         }
 
-    def render_months_display(self, record):
-        if record.months:
-            return ", ".join(
-                calendar.month_abbr[int(m)].upper()
-                for m in record.months
-            )
-        return ""
+    def render_months(self, value):
+        import calendar
+        return ", ".join(
+            calendar.month_abbr[int(m)].upper()
+            for m in value if m
+        )
     
     def render_edit(self, record):
         url = reverse("agro:pest_risk_entry", args=[record.id])  # change "pest_edit" to your URL name
@@ -430,6 +428,5 @@ class PestRiskDetailsTable(tables.Table):
         url = reverse("agro:pest_risk_details_delete", args=[record.pest_risk_listing_id_id, record.id])
         return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
     
-
     #def render_color_hex(self, record):
     #    return format_html('<span><i class="fa-solid fa-square" style="color: {};"></i></span>',record.color_hex)

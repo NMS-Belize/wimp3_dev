@@ -1,7 +1,9 @@
 from rest_framework import serializers
-from . import models as mx
+from .. import models as mx
 import os
 from urllib.parse import urljoin
+
+from ..models import RadarImages
 
 class RadarImagesSerializer(serializers.ModelSerializer):
 

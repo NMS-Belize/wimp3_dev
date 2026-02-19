@@ -2,11 +2,20 @@ from django import forms
 from .models import Months, Zone, CommodityCategory, CommodityType, DroughtAlertLevel, District, PestRiskEntryMainListing, PestRiskEntryDetails,  PestAlertLevel, PestRiskEffect, PestRiskAction
 
 from django_toggle_switch_widget.widgets import DjangoToggleSwitchWidget
+from django.core.exceptions import ValidationError
 
-MONTH_CHOICES   = [('1','JAN'),('2', 'FEB'),('3','MAR'),('4','APR'),('5','MAY'),('6','JUN'),('7','JUL'),('8','AUG'),('9','SEP'),('10','OCT'),('11','NOV'),('12','DEC')]
+MONTH_CHOICES   = [(1,'January'),(2,'February'),(3,'March'),(4,'April'),(5,'May'),(6,'June'),(7,'July'),(8,'August'),(9,'September'),(10,'October'),(11,'November'),(12,'December')]
 YEAR_CHOICES    = [('2026', '2026'),('2027', '2027')]
 
 class PestRiskMainListingForm(forms.ModelForm):
+
+    # Replace the default field with MultipleChoiceField
+    months = forms.MultipleChoiceField(
+        choices=MONTH_CHOICES,
+        widget=forms.CheckboxSelectMultiple(attrs={'class': ''}),
+        label="Months"
+    )
+
     class Meta:
         model = PestRiskEntryMainListing
         fields = ['months', 'year', 'commodity']
@@ -16,13 +25,71 @@ class PestRiskMainListingForm(forms.ModelForm):
             'commodity':    'Commodity'
         }
         widgets = {
-            'months':       forms.CheckboxSelectMultiple(choices=MONTH_CHOICES,attrs={'class': 'form-check-input'}),
+            'months':       forms.CheckboxSelectMultiple(choices=MONTH_CHOICES,attrs={'class': ''}),
             'year':         forms.Select(choices=YEAR_CHOICES,attrs={'class': 'form-control'}),
             'commodity':    forms.Select(attrs={'class': 'form-control'})
         }
         required_css_class = 'required'
 
     def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Prepopulate months from instance JSONField
+        if self.instance and self.instance.months:
+            self.initial['months'] = self.instance.months
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+
+        if isinstance(instance.months, list):
+            instance.months = sorted(instance.months)
+        if commit:
+            instance.save()
+        return instance
+
+    def clean_months(self):
+        
+        months = self.cleaned_data.get('months', [])
+
+        # Convert string selections back to integers
+        month_numbers = sorted([int(m) for m in months])
+
+        if len(month_numbers) != 3:
+            raise ValidationError("You must select exactly 3 months.")
+
+        # Check for consecutive months
+        if not (month_numbers[1] == month_numbers[0] + 1 and
+                month_numbers[2] == month_numbers[1] + 1):
+            raise ValidationError("The 3 months must be consecutive.")
+
+        return month_numbers  # store as integers
+
+    def clean(self):
+        cleaned_data = super().clean()
+        months = cleaned_data.get("months")
+        year = cleaned_data.get("year")
+        commodity = cleaned_data.get("commodity")
+
+        if months and year and commodity:
+            months_sorted = sorted(months)
+
+            queryset = PestRiskEntryMainListing.objects.filter(
+                year=year,
+                commodity=commodity
+            )
+
+            # Exclude current instance when editing
+            if self.instance.pk:
+                queryset = queryset.exclude(pk=self.instance.pk)
+
+            for entry in queryset:
+                if sorted(entry.months) == months_sorted:
+                    raise ValidationError(
+                        "This combination of Months, Year and Commodity already exists."
+                    )
+
+        return cleaned_data
+
+    '''def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         # Check if the form is bound to an instance
@@ -31,7 +98,7 @@ class PestRiskMainListingForm(forms.ModelForm):
             # Convert them to a list of strings to match MONTH_CHOICES values
             self.fields['months'].initial = [
                 str(month) for month in getattr(self.instance, 'months', [])
-            ]
+            ]'''
 
 class PestRiskEntryDetailsForm(forms.ModelForm):
     class Meta:
@@ -145,7 +212,7 @@ class PestAlertLevelForm(forms.ModelForm):
 
 class DroughtAlertLevelForm(forms.ModelForm):
     class Meta:
-        model = PestAlertLevel
+        model = DroughtAlertLevel
         fields = ['description', 'color_hex']
         labels = {   
             # <-- add human-friendly labels here

@@ -9,4 +9,9 @@ class RadarImages(models.Model):
     is_published = models.BooleanField(default=False)
     published_date = models.DateTimeField(auto_now=True,null=True)
     updated_datetime = models.DateTimeField(auto_now_add=True,null=True)
+
+    class Meta:
+        verbose_name = "Radar Image"
+        verbose_name_plural = "Radar Images"
+
     def __str__(self): return self.image_url

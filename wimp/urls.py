@@ -1,28 +1,24 @@
-"""
-URL configuration for wimp project.
+""" URL configuration for wimp project. """
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.views.generic.base import RedirectView
 
 from django.urls import include, path
+
 from rest_framework import routers
+from rest_framework.routers import DefaultRouter
+
+#from .router import router
+from rest_framework.authtoken import views
+
 from agro import views as agro_views
+from alerts import views as alert_views
 from radar import views as radar_views
 from users import views as user_views
+
+from radar.api import urls as radar_api_urls
+from radar.api.viewsets import RadarImagesViewSet
 
 from . import views
 
@@ -43,11 +39,12 @@ router.register('action-items', agro_views.ActionItemsViewSet, basename='actioni
 router.register('effect-items', agro_views.EffectItemsViewSet, basename='effectitems')
 router.register('pest-risk', agro_views.PestRiskMainListingViewSet, basename='pestrisk')
 
-### RADAR SERVICES API ROUTES ###
-#router.register(r'pest-risk', agro_views.PestRiskMainListingViewSet, basename='agro')
+### ALERTS API ROUTES ###
+router.register('cap-alerts', alert_views.CAPAlertsViewSet, basename='capalerts')
+router.register('cap-alert-details', alert_views.CAPAlertDetailsViewSet, basename='capalertdetails')
 
 ### RADAR SERVICES API ROUTES ###
-router.register(r'radar-images', radar_views.RadarImagesViewSet, basename='radarimages')
+router.register('radar-images', RadarImagesViewSet, basename='radarimages')
 
 urlpatterns = [
     
@@ -62,12 +59,20 @@ urlpatterns = [
 
     ### Include API URLS
     path('api/', include(router.urls)),
+    path('api/', include(radar_api_urls)),
+   
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
+    
+
+
     ### Include URLS for Apps
-    path("agro/", include("agro.urls")),
-    path("radar/", include("radar.urls")),
-    path("users/", include("users.urls")),
+    path('agro/', include('agro.urls')),
+    path('alerts/', include('alerts.urls')),
+    path('radar/', include('radar.urls')),
+    path('users/', include('users.urls')),
+   
+    #path('test_token/', user_views.test_token, name='test_token')
 
     ### Include URLS for WIMP App
     #path('dashboard/', views.dashboard, name='dashboard'),

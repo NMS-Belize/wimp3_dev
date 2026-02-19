@@ -15,8 +15,7 @@ from rest_framework.routers import DefaultRouter
 app_name = 'radar'
 
 urlpatterns = [
-    path("", views.index, name="index"),
-
+    path('', views.index, name="index"),
     path('radar-images/', views.radar_image_entry, name="radar_image_entry"),
     path('radar-images/<int:id>/', views.radar_image_entry,name='radar_image_entry'),
     path('radar-images-list/', views.radar_images_list, name="radar_images_list"),

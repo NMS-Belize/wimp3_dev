@@ -1,6 +1,6 @@
-from django.shortcuts import render, loader, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponse
-
+from django.shortcuts import render, loader, get_object_or_404, redirect
 from django.urls import reverse
 
 from .models import RadarImages
@@ -8,21 +8,12 @@ from .models import RadarImages
 from django.template import loader
 from django_tables2 import RequestConfig
 
-from .tables import RadarImagesTable
 from .forms import RadarImageForm
+from .models import RadarImages
+from .tables import RadarImagesTable
 
-from . import serializers as sx
-from wimp.serializers import GroupSerializer, UserSerializer
-
-from rest_framework import permissions, viewsets
-
-from django.contrib.auth.decorators import login_required
-
-### Create your views here.
-'''def sensors(request):
-    template = loader.get_template('base.html')
-    context = {'name': 'World'}  # Data to pass to the template
-    return HttpResponse(template.render(context))'''
+from rest_framework import permissions
+from rest_framework.decorators import api_view, permission_classes
 
 def index(request):
     template = loader.get_template('radar_home.html')
@@ -30,8 +21,13 @@ def index(request):
     return HttpResponse(template.render(context))
 
 @login_required
+#@permission_required("radar.view_radarimages", raise_exception=True)
 def radar_images_list(request, id=None):
     page_name = "Radar Images Listing"
+
+    if not request.user.has_perm("radar.view_radarimages"):
+        return render(request, 'no_permission.html', {'page_name': page_name})
+    
     qs = RadarImages.objects.all().order_by('id')
     table = RadarImagesTable(qs)
     RequestConfig(request).configure(table)
@@ -53,6 +49,7 @@ def radar_images_list(request, id=None):
     }
     return render(request, 'radar_table_list.html', context)
 
+@permission_required("radar.add_radarimages", raise_exception=True)
 def radar_image_entry(request, id=None):
 
     page_name = "Radar Image Entry"
@@ -95,8 +92,3 @@ def radar_image_delete(request, id):
         "entry": entry,
         'page_name': page_name,
     })
-
-### API VIEWSETS
-class RadarImagesViewSet(viewsets.ModelViewSet):
-   queryset = RadarImages.objects.filter(is_published=True).order_by('id')
-   serializer_class = sx.RadarImagesSerializer

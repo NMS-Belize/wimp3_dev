@@ -9,6 +9,11 @@ class Months(models.Model):
     month_name = models.CharField(max_length=20)
     published_date = models.DateTimeField(auto_now=True,null=True)
     updated_datetime = models.DateTimeField(auto_now_add=True,null=True)
+
+    class Meta:
+        verbose_name = "Month"
+        verbose_name_plural = "Months"
+
     def __str__(self): return self.month_name
 
 class CommodityCategory(models.Model):
@@ -16,6 +21,11 @@ class CommodityCategory(models.Model):
     description = models.CharField(max_length=20)
     published_date = models.DateTimeField(auto_now=True,null=True)
     updated_datetime = models.DateTimeField(auto_now_add=True,null=True)
+
+    class Meta:
+        verbose_name = "Sector"
+        verbose_name_plural = "Sectors"
+
     def __str__(self): return self.description
 
 class CommodityType(models.Model):
@@ -24,6 +34,11 @@ class CommodityType(models.Model):
     commodity_category = models.ForeignKey(CommodityCategory, related_name='commodity_category', on_delete=models.CASCADE,null=True)
     published_date = models.DateTimeField(auto_now=True,null=True)
     updated_datetime = models.DateTimeField(auto_now_add=True,null=True)
+
+    class Meta:
+        verbose_name = "Commodity Type"
+        verbose_name_plural = "Commodity Types"
+
     def __str__(self): return self.description
 
 class Zone(models.Model):
@@ -47,6 +62,11 @@ class PestAlertLevel(models.Model):
     color_hex           = models.CharField(max_length=7,null=True)
     published_date      = models.DateTimeField(auto_now=True,null=True)
     updated_datetime    = models.DateTimeField(auto_now_add=True,null=True)
+
+    class Meta:
+        verbose_name = "Pest Alert Level"
+        verbose_name_plural = "Pest Alert Levels"
+
     def __str__(self): return self.description
 
 class DroughtAlertLevel(models.Model):
@@ -57,20 +77,35 @@ class DroughtAlertLevel(models.Model):
     color_hex           = models.CharField(max_length=7,null=True)
     published_date      = models.DateTimeField(auto_now=True,null=True)
     updated_datetime    = models.DateTimeField(auto_now_add=True,null=True)
+
+    class Meta:
+        verbose_name = "Drought Alert Level"
+        verbose_name_plural = "Drought Alert Levels"
+
     def __str__(self): return self.title
 
 class PestRiskEffect(models.Model):
     id                  = models.BigAutoField(primary_key=True)
-    effect_description  = models.TextField(null=True)
+    effect_description  = models.TextField(blank=False,null=False)
     published_date      = models.DateTimeField(auto_now=True,null=True)
     updated_datetime    = models.DateTimeField(auto_now_add=True,null=True)
+
+    class Meta:
+        verbose_name = "Pest Risk Effect"
+        verbose_name_plural = "Pest Risk Effects"
+
     def __str__(self): return self.effect_description
 
 class PestRiskAction(models.Model):
     id                  = models.BigAutoField(primary_key=True)
-    action_description  = models.TextField(null=True)
+    action_description  = models.TextField(blank=False,null=False)
     published_date      = models.DateTimeField(auto_now=True,null=True)
     updated_datetime    = models.DateTimeField(auto_now_add=True,null=True)
+
+    class Meta:
+        verbose_name = "Pest Risk Action"
+        verbose_name_plural = "Pest Risk Actions"
+
     def __str__(self): return self.action_description
 
 class PestRiskEntryMainListing(models.Model):
@@ -81,13 +116,24 @@ class PestRiskEntryMainListing(models.Model):
     is_published = models.BooleanField(default=False)
     #def __str__(self): return f"[{self.id}] {self.year} {self.months} - {self.commodity}"
 
+    class Meta:
+        verbose_name = "Pest Risk Entry"
+        verbose_name_plural = "Pest Risk Entries"
+
+        '''constraints = [
+            models.UniqueConstraint(
+                fields=['months', 'year', 'commodity'],
+                name='unique_months_year_commodity'
+            )
+        ]'''
+
     def __str__(self):
         return f"[{self.id}] {self.year}: {self.get_month_names()} - {self.commodity}"
 
     def get_month_names(self):
         MONTH_CHOICES = {
-            "1": "JAN", "2": "FEB", "3": "MAR", "4": "APR", "5": "MAY", "6": "JUN",
-            "7": "JUL", "8": "AUG", "9": "SEP", "10": "OCT", "11": "NOV", "12": "DEC"
+            1: "JAN", 2: "FEB", 3: "MAR", 4: "APR", 5: "MAY", 6: "JUN",
+            7: "JUL", 8: "AUG", 9: "SEP", 10: "OCT", 11: "NOV", 12: "DEC"
         }
         return ", ".join([MONTH_CHOICES.get(m, str(m)) for m in self.months])
 
@@ -106,4 +152,9 @@ class PestRiskEntryDetails(models.Model):
     actions     = models.ForeignKey(PestRiskAction, on_delete=models.CASCADE,null=True)
     published_date      = models.DateTimeField(auto_now=True,null=True)
     updated_datetime    = models.DateTimeField(auto_now_add=True,null=True)
+
+    class Meta:
+        verbose_name = "Pest Risk Detail"
+        verbose_name_plural = "Pest Risk Details"
+
     def __str__(self): return f"{self.id}"

@@ -7,14 +7,14 @@
 <div id="dashboard" class="container-full p-5">
     <div class="row mb-3">
         <div class="col-12">
-            <h1>{{ page_name }}</h1>  
+            <h1>User Access Denied</h1>  
         </div>
     </div>
     <div class="row">
         <div class="col-12">
-            <h2>Available Services</h2>
-            <div class="item_task"><a class="btn_task_main" href="{% url 'agro:index' %}"><i class="fa-solid fa-tractor"></i><span class="task_desc">Agro-Met Services</span></a></div>
-            <div class="item_task"><a class="btn_task_main" href="{% url 'radar:radar_images_list' %}"><i class="fa-solid fa-satellite-dish"></i><span class="task_desc">Radar Imagery</span></a></div>
+            <div class="alert alert-danger" role="alert">
+                We are sorry, but you do not have access to view this page.
+            </div>
         </div>
         <!--<div class="col-2">
             <div class="card">

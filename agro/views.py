@@ -1,35 +1,29 @@
-
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, JsonResponse
-
-from django.urls import reverse
-
 import calendar, json
 
-from django.template import loader
-
+from django.db import IntegrityError
 from django.contrib import messages
 from django.contrib.auth import login as auth_login, logout, authenticate
 from django.contrib.auth.models import Group, User
-from django.contrib.auth.decorators import login_required,permission_required
+from django.forms.models import model_to_dict
+from django.http import HttpResponse, JsonResponse
+from django.contrib.auth.decorators import login_required, permission_required
+from django.shortcuts import render, redirect, get_object_or_404
+from django.template import loader
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
-
-from .models import *
+from django.urls import reverse
 
 from django_tables2 import RequestConfig
+from rest_framework import permissions, viewsets
+from rest_framework_api_key.permissions import HasAPIKey
+from wimp.serializers import GroupSerializer, UserSerializer
+
+from .forms import *
+from .models import *
 from .tables import *
 
 #from .serializers import CommodityTypeSerializer, CommodityCategorySerializer
 from . import serializers as sx
-
-from rest_framework import permissions, viewsets
-
-from wimp.serializers import GroupSerializer, UserSerializer
-
-from .forms import *
-
-from django.forms.models import model_to_dict
 
 #################### Create/Define Views ####################
 
@@ -37,7 +31,7 @@ def index(request):
     context = {
         'page_name': 'Agro-Met Services'
     }
-    return render(request, 'agro_services.html', context) 
+    return render(request, 'agro_home.html', context) 
 
 ############# PEST RISK ENTRY
 def pest_risk_list(request, id=None):
@@ -78,11 +72,19 @@ def pest_risk_entry(request, id=None):
     if request.method == 'POST':
         form = PestRiskMainListingForm(request.POST, instance=entry)
 
+        #if form.is_valid():
+        #   saved_entry = form.save()    # Creates or updates
+        #  return redirect('agro:pest_risk_details_list', saved_entry.id)
+        
         if form.is_valid():
-            saved_entry = form.save()    # Creates or updates
-            return redirect('agro:pest_risk_details_list', saved_entry.id)
+            try:
+                saved_entry = form.save()
+                return redirect('agro:pest_risk_details_list', saved_entry.id)
+            except IntegrityError:
+                form.add_error(None, "This combination of Months, Year and Commodity already exists.")
     else:
-        form = PestRiskMainListingForm(instance=entry)
+        #form = PestRiskMainListingForm(instance=entry)
+        form = PestRiskMainListingForm(instance=entry,initial={'months': True})
 
     return render(request, 'entry_form_pest_risk_main.html', {
         'page_name':    page_name,
@@ -119,8 +121,12 @@ def pest_risk_delete(request, id):
     })
 
 def pest_risk_details_list(request, id=None, fk=None):
+    qs = PestRiskEntryDetails.objects.all().order_by('-id')
     page_name = "Pest Risk Details"
-    qs = PestRiskEntryDetails.objects.all().order_by('id')
+    '''qs = PestRiskEntryDetails.objects.select_related('commodity').all().order_by(
+        'commodity__commodity_category',  # sector
+        'commodity__description'          # commodity
+    )'''
     
     # Load entry ONLY if id is provided
     entry = None
@@ -134,18 +140,18 @@ def pest_risk_details_list(request, id=None, fk=None):
     table = PestRiskDetailsTable(qs)
     RequestConfig(request).configure(table)
 
-    month_names = [calendar.month_name[int(m)] for m in entry.months]
+    #month_names = [calendar.month_name[int(m)] for m in entry.months]
 
     context = {
         'id' : id,
         'fk': fk,
         'entry': entry,  
         'page_name': page_name,
-        'month_names': month_names,
+        #'month_names': month_names,
         'table':    table,
         'new_url':  reverse('agro:pest_risk_entry'),
         'back_url': reverse('agro:pest_risk_list'),
-        'api_url': "/api/pest-risk-/",
+        'api_url':  reverse('pestrisk-list'),
     }
     return render(request, 'table_list_pest_risk_details_template.html', context)
 
@@ -586,7 +592,7 @@ def pest_alert_level_delete(request, id):
 
     if request.method == "POST":
         entry.delete()
-        return redirect('pest_alert_level_list')  # redirect anywhere you prefer
+        return redirect('agro:pest_alert_level_list')  # redirect anywhere you prefer
 
     return render(request, "delete_pest_alert_level.html", {
         "entry": entry,
@@ -594,12 +600,21 @@ def pest_alert_level_delete(request, id):
     })
 
 #################### DROUGHT ALERT LEVELS - TABLE ####################
-def drought_alert_level_list(request):
+def drought_alert_level_list(request, id=None):
+    
     page_name = "Drought Alert Levels"
     qs = DroughtAlertLevel.objects.all().order_by('id')
     table = DroughtAlertLevelsTable(qs)
     RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+    if id is not None:
+        entry = get_object_or_404(DroughtAlertLevel, id=id)  
+
     context = {
+        'id' : id,
+        'entry': entry,  
         'page_name':    page_name,
         'new_url':      reverse('agro:drought_alert_level_entry'),
         'back_url':     reverse('agro:drought_alert_level_list'),
@@ -623,7 +638,7 @@ def drought_alert_level_entry(request, id=None):
 
         if form.is_valid():
             saved_entry = form.save()    # Creates or updates
-            return redirect('agro:drought_alert_level_list', saved_entry.id)
+            return redirect('agro:drought_alert_level_list_id', saved_entry.id)
     else:
         form = DroughtAlertLevelForm(instance=entry)
 
@@ -679,7 +694,7 @@ def action_items_entry(request, id=None):
 
     # If id exists => update, else => create new
     if id:
-        entry = get_object_or_404(CommodityType, id=id)
+        entry = get_object_or_404(PestRiskAction, id=id)
     else:
         entry = None
 
@@ -688,7 +703,7 @@ def action_items_entry(request, id=None):
 
         if form.is_valid():
             saved_entry = form.save()    # Creates or updates
-            return redirect('action_items_list', saved_entry.id)
+            return redirect('agro:action_items_list', saved_entry.id)
     else:
         form = ActionItemsForm(instance=entry)
 

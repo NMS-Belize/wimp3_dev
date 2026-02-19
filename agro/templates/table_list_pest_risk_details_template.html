@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load month_filters %}
 
 {% block title %}Pest Risk Table Details | Agro-Climat Services | WIMP3 | National Meteorological Service of Belize{% endblock %}
 
@@ -33,9 +34,13 @@
     <div class="col-12">
         <div class="alert alert-light">
             <label class="col-1 mb-1">Entry ID:</label> <label class="col-2"><strong>{{ id }}</strong></label>
-            <label class="col-1 mb-1">Months:</label> <label class="col-2"><strong>{{ month_names|join:", " }}</strong></label><br />
+            <label class="col-1 mb-1">Months:</label> <label class="col-7"><strong>
+                {% for m in entry.months %}
+                    {{ m|month_abbr }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </strong></label><br />
             <label class="col-1 mb-1">Year:</label> <label class="col-2"><strong>{{ entry.year }}</strong></label>
-            <label class="col-1 mb-1">Commodity:</label> <label class="col-2"><strong>{{ entry.commodity }}</strong></label>
+            <label class="col-1 mb-1">Commodity:</label> <label class="col-7"><strong>{{ entry.commodity }}</strong></label>
         </div>
     </div>
     <div class="col-12">

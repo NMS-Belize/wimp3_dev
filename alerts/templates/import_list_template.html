@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}CAP Alerts | Agro-Climat Services | WIMP3 | National Meteorological Service of Belize{% endblock %}
+
+{% block content %}
+<div id="main_pr_list" class="container-full p-5">
+<div class="row mb-3">
+    <div class="col-12">
+        <h1><em>Fetching CAP Alerts</em></h1>
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-6">
+        <a id="btn_back_main" class="btn btn-link" href="{% url 'alerts:index' %}"><i class="fa-solid fa-arrow-left"></i>&nbsp;Back to Alerts Dashboard</a>
+    </div>
+    <div class="col-6 text-end">
+        <a class="btn btn_new" href="{{ new_url }}"><i class="fa-solid fa-plus"></i>&nbsp;Import CAP Alerts</a>
+        <a class="btn btn_api" href="{{ api_url }}" target="_blank"><i class="fa-solid fa-list"></i>&nbsp;API Feed</a>
+    </div>
+</div>
+{% if id %}
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="alert alert-success" role="alert">
+            {% if messages %}
+            <div>
+                {% for message in messages %}
+                <div 
+                    class="alert 
+                        {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
+<div class="row">
+    <div class="col-12">
+        {% load render_table from django_tables2 %}
+        {% render_table table %}
+    </div>
+</div>
+</div>
+{% endblock %}

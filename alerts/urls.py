@@ -12,10 +12,14 @@ from . import views
 from rest_framework import serializers
 from rest_framework.routers import DefaultRouter
 
-app_name = 'users'
+app_name = 'alerts'
 
 urlpatterns = [
     path('', views.index, name="index"),
-    path('login/', views.login, name="login"),
-    path('dashboard/', views.user_dashboard, name="user_dashboard")
+
+    ## CAP ALERTS
+    path('cap-alerts-list/', views.cap_alerts_list, name="cap_alerts_list"),
+    path('cap-alerts-import/', views.cap_alerts_import, name="cap_alerts_import"),
+    path('cap-alerts-details/<str:guid>/', views.cap_alerts_details, name="cap_alerts_details"),
+    path('cap-alerts-toggle-is-published/<str:guid>/', views.cap_alert_toggle_is_published, name="cap_alert_toggle_is_published"),
 ]

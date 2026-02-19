@@ -4,10 +4,12 @@ from django.shortcuts import render, get_object_or_404, redirect
 
 from django.contrib.auth.decorators import login_required
 
-
 from django.http import HttpResponse
 from django.urls import reverse
 from django.template import loader
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 #from django_tables2 import RequestConfig
 
@@ -28,3 +30,6 @@ def dashboard(request):
     }
     return render(request, 'dashboard.html', context)
 
+#def test_token(request):
+    
+   # @api_view(['POST'])
