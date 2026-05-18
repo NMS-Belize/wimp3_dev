@@ -502,6 +502,7 @@ def district_forecast_list(request, id=None):
     page_name = "District Level Forecasts"
     qs = DistrictForecast.objects.all().order_by('-id')
     table = DistrictForecastTable(qs)
+    table.empty_text = "No records available"
     RequestConfig(request).configure(table)
 
     # Load entry ONLY if id is provided
