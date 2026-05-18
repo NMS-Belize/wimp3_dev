@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ page_name }} | WIMP3{% endblock %}
+{% block content %}
+<div class="row mb-5">
+    <div class="col-12 d-flex flex-row mb-3">
+        <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'inventory:inventory_list' %}">
+                <img src="{% static 'button_icons/device.png' %}" alt="Inventory List" />
+                <span class="task_desc">Inventory List</span>
+            </a>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <h3>Inventory Variables</h3>
+    </div>
+    <div class="col-12 d-flex flex-row mb-3">
+        <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'inventory:inventory_category_list' %}">
+                <img src="{% static 'button_icons/app.png' %}" alt="Device Category" />
+                <span class="task_desc">Device Type/Category</span>
+            </a>
+        </div>
+        <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'inventory:inventory_category_list' %}">
+                <img src="{% static 'button_icons/door-sign.png' %}" alt="Office Location" />
+                <span class="task_desc">Office/Location</span>
+            </a>
+        </div>
+        <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'inventory:inventory_category_list' %}">
+                <img src="{% static 'button_icons/door-sign.png' %}" alt="Office Location" />
+                <span class="task_desc">Manufacturer</span>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

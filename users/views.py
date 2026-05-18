@@ -33,7 +33,7 @@ def login(request, id=None):
         if form.is_valid():
             auth_login(request,form.get_user())
             #return redirect('users:user_dashboard')
-            return redirect('agro:index')
+            return redirect('site_home')
     else:
         form = AuthenticationForm()
 

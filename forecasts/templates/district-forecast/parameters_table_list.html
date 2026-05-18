@@ -1,0 +1,28 @@
+{% extends "base_table.html" %}
+{% load static %}
+{% block title %}District Forecasts | WIMP3 | National Meteorological Service of Belize{% endblock %}
+{% block content %}
+
+{% if id %}
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="alert alert-success" role="alert">
+            {% if entry.description %}
+                <strong>{{ entry.description }}</strong> has been successfully added!
+            {% endif %}
+            {% if entry.district_name %}
+                <strong>{{ entry.district_name }}</strong> has been successfully added!
+            {% endif %}
+            {% if entry.forecast_date %}
+            <strong>{{ entry.forecast_date }}</strong> has been successfully added!
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
+<div class="row">
+    <div class="col-12">
+        {% load render_table from django_tables2 %}
+        {% render_table table %}
+    </div>
+</div>
+{% endblock %}

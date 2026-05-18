@@ -1,0 +1,152 @@
+{% extends "base_blank.html" %}
+{% block title %}{{ page_name }} | WIMP3 | National Meteorological Service of Belize{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="alert alert-light">Forecast ID: <strong>{{ forecast_id }}</strong>, Forecast Date: <strong>{{ main_entry.forecast_date }}</strong></div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">{{ item_entry.district.district_name }}</h2>
+    </div>
+    <div class="col-12">
+        <form method="post">
+            {% csrf_token %}
+            <div class="row mb-3 pb-2 border-bottom">
+                <div class="col-2">&nbsp;</div>
+                <div class="col-2"><span class="h5">Forecast Value</span></div>
+                <div class="col-2"><span class="h5">Probability</span></div>
+                <div class="col-2"><span class="h5">Severity</span></div>
+                <div class="col-1"><span class="h5">Risk</span></div>
+                <div class="col-3"><span class="h5">Instruction</span> <button type="button" class="btn btn_new btn-sm" data-bs-toggle="modal" data-bs-target="#addInstructionModal"><i class="fa-solid fa-circle-plus"></i>&nbsp;Add Instruction</button></div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-2"><span class="h6">PRECIP, MAX 24H (in)</span></div>
+                <div class="col-2">{{ form.precip_max }}</div>
+                <div class="col-2">{{ form.prob_precip_max }}</div>
+                <div class="col-2">{{ form.sev_precip_max }}</div>
+                <div class="col-1"></div>
+                <div class="col-3">{{ form.ins_precip_max }}</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-2"><span class="h6">TEMP MAX (°F)</span></div>
+                <div class="col-2">{{ form.temp_max }}</div>
+                <div class="col-2">{{ form.prob_temp_max }}</div>
+                <div class="col-2">{{ form.sev_temp_max }}</div>
+                <div class="col-1"></div>
+                <div class="col-3">{{ form.ins_temp_max }}</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-2"><span class="h6">TEMP MIN (°F)</span></div>
+                <div class="col-2">{{ form.temp_min }}</div>
+                <div class="col-2">{{ form.prob_temp_min }}</div>
+                <div class="col-2">{{ form.sev_temp_min }}</div>
+                <div class="col-1"></div>
+                <div class="col-3">{{ form.ins_temp_min }}</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-2"><span class="h6">Winds (kts)</span></div>
+                <div class="col-2 d-flex">{{ form.winds_min }}<span class="mx-2">to</span>{{ form.winds_max }}</div>
+                <div class="col-2">{{ form.prob_winds }}</div>
+                <div class="col-2">{{ form.sev_winds }}</div>
+                <div class="col-1"></div>
+                <div class="col-3">{{ form.ins_winds }}</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-2"><span class="h6">Weather Conditions</span></div>
+                <div class="col-2">{{ form.weather_conditions }}</div>
+                <div class="col-2">{{ form.prob_weather_conditions }}</div>
+                <div class="col-2">{{ form.sev_weather_conditions }}</div>
+                <div class="col-1"></div>
+                <div class="col-3">{{ form.ins_weather_conditions }}</div>
+            </div>
+            <div class="row mb-3"> 
+                <div class="col-12">
+                    <input id="btn_submit" name="btn_submit" type="submit" value="Save" class="btn" />
+                    <input id="btn_submit_close" name="btn_submit_close" type="submit" value="Save & Close" class="btn btn-primary" />
+                    <a class="btn btn-danger" href="{{ back_url }}">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="modal fade" id="addInstructionModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Instruction</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="instructionError" class="text-danger mb-2"></div>
+                    <label class="form-label">Instruction</label>
+                    <input type="text" id="new_instruction" class="form-control">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveInstructionBtn">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+document.getElementById("saveInstructionBtn").addEventListener("click", function () {
+
+    const description = document.getElementById("new_instruction").value;
+    const errorBox = document.getElementById("instructionError");
+
+    fetch("{% url 'forecasts:district_forecast_instructions_ajax_add' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+            description: description
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+
+            const selectIds = [
+                "id_ins_precip_max",
+                "id_ins_temp_max",
+                "id_ins_temp_min",
+                "id_ins_winds",
+                "id_ins_weather_conditions"
+            ];
+
+            selectIds.forEach(function(selectId) {
+                const select = document.getElementById(selectId);
+                if (select) {
+                    const option = new Option(
+                        data.description,
+                        data.id,
+                        false,
+                        false
+                    );
+                    select.add(option);
+                }
+            });
+                        
+            //const select = document.getElementById("id_ins_precip_max");
+            //const option = new Option(data.description, data.id, true, true);
+            //select.add(option);
+
+            document.getElementById("new_instruction").value = "";
+            errorBox.innerText = "";
+
+            const modalElement = document.getElementById("addInstructionModal");
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            modal.hide();
+        }
+        else {
+            errorBox.innerText = data.error;
+        }
+    });
+});
+</script>
+{% endblock %}

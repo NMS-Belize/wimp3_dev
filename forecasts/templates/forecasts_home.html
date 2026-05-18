@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ page_name }} | WIMP3{% endblock %}
+{% block content %}
+<div class="row mb-5">
+    <div class="col-12 d-flex flex-row mb-3">
+        <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:district_forecast_list' %}">
+                <img src="{% static 'button_icons/atmospheric-conditions.png' %}" alt="District Forecasts" />
+                <span class="task_desc">District Forecasts</span>
+            </a>
+        </div>
+    </div>
+</div>
+<div class="row mb-5">
+    <div class="col-12">
+        <h4>Forecast Parameters</h4>
+    </div>
+    <div class="col-12 d-flex flex-row mb-3">
+        <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:district_list' %}">
+                <img src="{% static 'button_icons/belize.png' %}" alt="District" />
+                <span class="task_desc">District</span>
+            </a>
+        </div>
+        <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:alert_level_list' %}">
+                <img src="{% static 'button_icons/speedometer.png' %}" alt="Alert Level" />
+                <span class="task_desc">Alert Level</span>
+            </a>
+        </div>
+        <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:instructions_list' %}">
+                <img src="{% static 'button_icons/productivity.png' %}" alt="District Forecast Instructions" />
+                <span class="task_desc">District Forecast Instructions</span>
+            </a>
+        </div>
+        <!--<div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:probability_list' %}">
+                <img src="{% static 'button_icons/curve.png' %}" alt="Probability" />
+                <span class="task_desc">Probability</span>
+            </a>
+        </div>
+        <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:severity_list' %}">
+                <img src="{% static 'button_icons/severe-weather.png' %}" alt="Severity" />
+                <span class="task_desc">Severity Level</span>
+            </a>
+        </div>
+        <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:risk_level_list' %}">
+                <img src="{% static 'button_icons/speedometer.png' %}" alt="Risk Level" />
+                <span class="task_desc">Risk Level</span>
+            </a>
+        </div>-->
+    </div>
+</div>
+{% endblock %}

@@ -25,7 +25,6 @@ env/
 
 # Project-specific directories
 sensors/
-forecasts/
 removed/
 
 # VS Code

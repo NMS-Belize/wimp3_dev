@@ -12,6 +12,7 @@ from rest_framework.routers import DefaultRouter
 #from .router import router
 from rest_framework.authtoken import views
 
+from forecasts import views as forecasts_views
 from agro import views as agro_views
 from alerts import views as alert_views
 from radar import views as radar_views
@@ -28,11 +29,15 @@ router = routers.DefaultRouter()
 router.register('users', agro_views.UserViewSet)
 router.register('groups', agro_views.GroupViewSet)
 
+### FORECASTS API ROUTES ###
+router.register('district-forecast', forecasts_views.DistrictForecastViewSet, basename='district-forecast')
+router.register('district-forecasts-all', forecasts_views.DistrictForecastAllViewSet, basename='district-forecasts-all')
+
 ### AGRO API ROUTES ###
-router.register('sectors', agro_views.SectorViewSet, basename='sectors')
-router.register('zones', agro_views.ZoneViewSet, basename='zones')
-router.register('districts', agro_views.DistrictViewSet, basename='districts')
-router.register('commodity', agro_views.CommodityTypeViewSet, basename='commodity')
+router.register('sectors',      agro_views.SectorViewSet, basename='sectors')
+router.register('zones',        agro_views.ZoneViewSet, basename='zones')
+router.register('districts',    agro_views.DistrictViewSet, basename='districts')
+router.register('commodity',    agro_views.CommodityTypeViewSet, basename='commodity')
 router.register('pest-alert-levels', agro_views.PestAlertLevelViewSet, basename='pestalertlevels')
 router.register('drought-alert-levels', agro_views.DroughtAlertLevelViewSet, basename='droughtalertlevels')
 router.register('action-items', agro_views.ActionItemsViewSet, basename='actionitems')
@@ -58,19 +63,19 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
 
     ### Include API URLS
-    path('api/', include(router.urls)),
-    path('api/', include(radar_api_urls)),
+    path('api/',            include(router.urls)),
+    path('api/',            include(radar_api_urls)),
    
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-
-    
-
+    path('api-auth/',       include('rest_framework.urls', namespace='rest_framework')),
 
     ### Include URLS for Apps
-    path('agro/', include('agro.urls')),
-    path('alerts/', include('alerts.urls')),
-    path('radar/', include('radar.urls')),
-    path('users/', include('users.urls')),
+    path('forecasts/',      include('forecasts.urls')),
+    path('observations/',   include('observations.urls')),
+    path('agro/',           include('agro.urls')),
+    path('alerts/',         include('alerts.urls')),
+    path('radar/',          include('radar.urls')),
+    path('users/',          include('users.urls')),
+    path('inventory/',      include('inventory.urls')),
    
     #path('test_token/', user_views.test_token, name='test_token')
 

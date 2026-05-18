@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 from corsheaders.defaults import default_headers
 
@@ -47,6 +48,9 @@ INSTALLED_APPS = [
     'agro.apps.AgroConfig',
     'alerts.apps.AlertsConfig',
     'radar.apps.RadarConfig',
+    'inventory.apps.InventoryConfig',
+    'observations.apps.ObservationsConfig',
+    'forecasts.apps.ForecastsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -114,10 +118,15 @@ TEMPLATES = [
     },
 ]
 
-
 LOGIN_URL           = '/accounts/login/'      # The URL for the login page
 LOGIN_REDIRECT_URL  = 'dashboard'   # Redirect to the home page after login
 LOGOUT_REDIRECT_URL = 'login'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "/media/"
+
+DOCS_ROOT = os.path.join(BASE_DIR, "docs")
+DOCS_URL = "/docs/"
 
 WSGI_APPLICATION = 'wimp.wsgi.application'
 

@@ -1,0 +1,51 @@
+{% extends "base_blank.html" %}
+{% block title %}{{ page_name }} | WIMP3 | National Meteorological Service of Belize{% endblock %}
+
+{% block content %}
+    <div class="row mt-2">
+        <div class="col-6">
+            <h4>Forecast ID: <strong>{{ forecast_id }}</strong>, Forecast Date: <strong>{{ entry.forecast_date }}</strong></h4>
+        </div>
+        <div class="col-6 d-flex flex-row-reverse">
+            <!--<form method="post" class="wimp3_form ms-3 pt-2">
+                <small id="publishStatus" class="text-muted"></small>   
+                {% csrf_token %}
+                <div class="form-check form-switch">{{ form.is_published }}<label class="form-check-label" for="id_is_published">Published Status</label></div>
+            </form>-->
+            <a class="ms-3 btn btn-primary" href="{{ back_url }}"><i class="fa-solid fa-arrow-left"></i>&nbsp;Back to {{ prev_page }}</a>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-12">
+        {% load render_table from django_tables2 %}
+        {% render_table table %}
+        </div>   
+    </div>
+    <script type="text/javascript">
+
+        /*document.getElementById("id_is_published").addEventListener("change", function () {
+            console.log("Checkbox changed: ", this.checked);
+            const checkbox = this;
+            const statusText = document.getElementById("publishStatus");
+
+            fetch("{% url 'forecasts:district_forecast_toggle_is_published_ajax' entry.id %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: new URLSearchParams({
+                    is_published: checkbox.checked ? "true" : "false"
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    statusText.innerText = data.is_published
+                        ? "Published successfully."
+                        : "Unpublished successfully.";
+                }
+            });
+        });*/
+    </script>
+{% endblock %}
