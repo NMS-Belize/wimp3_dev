@@ -149,6 +149,8 @@ h1{ font-weight: 300; font-size: 50px; }
 .btn_add_details{ color:var(--orange-1) }
 
 #btn_submit, .btn_submit{ width: auto; color: #fff; background-color: var(--teal-green); width: auto !important; font-weight: 600; text-transform: uppercase; }
+#btn_submit_close, .btn_submit_close{ width: auto; color: #fff; background-color: var(--teal-1); width: auto !important; font-weight: 600; text-transform: uppercase; }
+#btn_close, .btn_close{ width: auto; color: #fff; background-color: var(--red); width: auto !important; font-weight: 600; text-transform: uppercase; }
 
 .btn_new { background-color: var(--yellow-2) !important; }
 .btn_new:hover { background-color:var(--yellow-1) !important; }
@@ -212,6 +214,15 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 .item_dashboard img{ width: 85%; height: auto; display: block; margin: 0 auto; }
 .item_dashboard .task_desc{ font-weight: 500; text-decoration: none; text-transform: uppercase; line-height: 1.1; color: var(--teal-2); }
 .item_dashboard a{ text-decoration: none; }
+
+/*********** ALERT LEVELS ************/
+.color-select{ background-color: none !important; }
+.color-select .option{ background-color: inherit;}
+.risk-alert{ font-size: 16px; font-weight:800;}
+.low{ background: #3CAEA3 !important; text-transform: uppercase; }
+.med{ background: #FCBF49 !important; text-transform: uppercase; }
+.high{ background: #fd7e14 !important; color: #fff; text-transform: uppercase;  }
+.critical{ background: #D62828 !important; color: #fff; text-transform: uppercase; }
 
 /*********** TABLE STYLES ************/
 .tbl_wimp3 th{
@@ -384,3 +395,14 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 }
 #admin_link{ color: #fff !important; }
 #footer{ z-index: -10 !important; }
+
+/*********** INVENTORY ENTRY ************/
+#inventory_form h3{ 
+  font-size: 18px;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: var(--aqua-2);
+  padding: 5px 10px;
+  margin-bottom: 15px;
+}
+#inventory_form .row div{ margin-bottom: 15px; }

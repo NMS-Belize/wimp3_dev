@@ -26,12 +26,14 @@ class ColorSelect(forms.Select):
         if value:
 
             severity_id = value.value if hasattr(value, "value") else value
-            severity    = Severity.objects.filter(pk=severity_id).first()
+            severity    = AlertLevel.objects.filter(pk=severity_id).first()
 
             if severity and severity.color:
-                option["attrs"]["style"] = (
-                    f"background-color: {severity.color} !important; --bs-form-select-bg-img: none;"
-                )
+                #option["attrs"]["style"] = (
+                #    f"color: {severity.color} !important; "
+                #)
+                option["attrs"]["class"] = (f"{severity.description.lower()}")
+                
 
         return option
 
@@ -168,75 +170,43 @@ class DistrictForecastDetailsForm(forms.ModelForm):
     class Meta:
         model = DistrictForecastDetails
         fields = [ 
-                  'temp_max', 'prob_temp_max', 'sev_temp_max', 'ins_temp_max',
-                  'temp_min', 'prob_temp_min', 'sev_temp_min', 'ins_temp_min',
-                  'winds_min', 'winds_max', 'prob_winds', 'sev_winds', 'ins_winds',
-                  'precip_max', 'prob_precip_max', 'sev_precip_max', 'ins_precip_max',
-                  'weather_conditions', 'prob_weather_conditions', 'sev_weather_conditions', 'ins_weather_conditions'
+                  'temp_max', 'prob_temp_max', 'sev_temp_max', 'risk_temp_max', 'ins_temp_max',
+                  'temp_min', 'prob_temp_min', 'sev_temp_min', 'risk_temp_min', 'ins_temp_min',
+                  'winds_min', 'winds_max', 'prob_winds', 'sev_winds', 'risk_winds', 'ins_winds',
+                  'precip_max', 'prob_precip_max', 'sev_precip_max', 'risk_precip_max', 'ins_precip_max',
+                  'weather_conditions', 'prob_weather_conditions', 'sev_weather_conditions', 'risk_weather_conditions', 'ins_weather_conditions'
         ]
-        labels = {   
-            # <-- add human-friendly labels here
-            #'district': 'District:',
-            #'temp_max': 'TEMP MAX (°F):',
-            #'prob_temp_max': 'PROBABILITY - TEMP MAX:',
-            #'sev_temp_max': 'SEVERITY - TEMP MAX:',
-            #'temp_min': 'TEMP MIN (°F):',
-            #'prob_temp_min': 'PROBABILITY - TEMP MIN:',
-            #'sev_temp_min': 'SEVERITY - TEMP MIN:',
-            #'winds': 'WINDS (kts):',
-            #'prob_winds': 'PROBABILITY - WINDS:',
-            #'sev_winds': 'SEVERITY - WINDS:',
-            #'precip_max': 'PRECIPITATION (MAX 24H, in):',
-            #'prob_precip_max': 'PROBABILITY - PRECIPITATION:',
-            #'sev_precip_max': 'SEVERITY - PRECIPITATION:',
-            #'weather_conditions': 'WEATHER CONDITIONS:',
-            #'prob_weather_conditions': 'PROBABILITY - WEATHER CONDITIONS:',
-            #'sev_weather_conditions': 'SEVERITY - WEATHER CONDITIONS:'
-        }
         widgets = {            
-            #'district': forms.TextInput(attrs={'class': 'form-select', 'disabled': 'disabled'}),
+            'weather_conditions': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'cols': 20, 'style': 'width: 100%'}),
+            'prob_weather_conditions': forms.Select(attrs={'class': 'form-select color-select', 'width': '100%'}),
+            'sev_weather_conditions': forms.Select(attrs={'class': 'form-select color-select', 'width': '100%'}),
+            #'risk_weather_conditions': forms.Select(attrs={'class': 'form-control','style': 'display:none','placeholder': ''}),
+            'risk_weather_conditions': forms.HiddenInput(),
+            'ins_weather_conditions': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
+
 
             'temp_max': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.5', 'width': '100%'}),
-            'prob_temp_max': forms.Select(attrs={'class': 'form-select','width': '100%'}),
-            'sev_temp_max': ColorSelect(attrs={'class': 'form-select', 'width': '100%'}),
+            'prob_temp_max': forms.Select(attrs={'class': 'form-select color-select','width': '100%'}),
+            'sev_temp_max': forms.Select(attrs={'class': 'form-select color-select', 'width': '100%'}),
+            'risk_temp_max': forms.HiddenInput(),
             'ins_temp_max': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
 
             'temp_min': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.5', 'width': '100%'}),
             'prob_temp_min': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
-            'sev_temp_min': ColorSelect(attrs={'class': 'form-select', 'width': '100%'}),
+            'sev_temp_min': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
+            'risk_temp_min': forms.HiddenInput(),
             'ins_temp_min': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
 
             'winds_min': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.5', 'width': '45%'}),
             'winds_max': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.5', 'width': '45%'}),
             'prob_winds': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
-            'sev_winds': ColorSelect(attrs={'class': 'form-select', 'width': '100%'}),
+            'sev_winds': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
+            'risk_winds': forms.HiddenInput(),
             'ins_winds': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
 
             'precip_max': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.5', 'width': '100%'}),
             'prob_precip_max': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
-            'sev_precip_max': ColorSelect(attrs={'class': 'form-select', 'width': '100%'}),
+            'sev_precip_max': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
+            'risk_precip_max': forms.HiddenInput(),
             'ins_precip_max': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
-
-            'weather_conditions': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'cols': 20, 'style': 'width: 100%'}),
-            'prob_weather_conditions': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
-            'sev_weather_conditions': ColorSelect(attrs={'class': 'form-select', 'width': '100%'}),
-            'ins_weather_conditions': forms.Select(attrs={'class': 'form-select', 'width': '100%'})
         }
-
-    '''def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        
-        self.fields['probability'].queryset = Probability.objects.all().order_by("id")
-        self.fields['probability'].empty_label = "Select Probability Level"
-        self.fields['probability'].label_from_instance = lambda obj: obj.description
-
-        self.fields['severity'].queryset = Severity.objects.all().order_by("id")
-        self.fields['severity'].empty_label = "Select Severity Level"
-        self.fields["severity"].label_from_instance = (
-            lambda obj: f"⬛ {obj.description}"
-        )
-
-        self.fields['risk_level'].queryset = RiskLevel.objects.all().order_by("id")
-        self.fields['risk_level'].empty_label = "Select Risk Level"
-        self.fields['risk_level'].label_from_instance = lambda obj: obj.description'''
-

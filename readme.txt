@@ -20,3 +20,6 @@ git pull
 
 STEP 4: Create/Update Migrations
 python3 manage.py migrate forecasts
+
+STEP 5: Run the Server
+python3 manage.py runserver 0.0.0.0:8000

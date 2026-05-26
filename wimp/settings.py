@@ -37,6 +37,7 @@ ALLOWED_HOSTS = [
     '192.168.x.x', 
     'wimp3.hydromet.gov.bz',
     '192.168.3.62',
+    '192.168.3.68',
     '*'
     #'.your-provider.dev', # Wildcard for subdomains on certain platforms (e.g., Fly.io)
 ]

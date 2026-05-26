@@ -237,8 +237,8 @@ class DistrictForecastTable(tables.Table):
 class DistrictForecastDetailsTable(tables.Table):
 
     edit            = tables.Column(empty_values=(), verbose_name="Edit",attrs={
-                        "th": {"style": "width:60px;","class": "col_edit"},
-                        "td": {"style": "","class": "col_edit"}
+                        "th": {"style": "width:60px;","class": "col_edit text-center"},
+                        "td": {"style": "","class": "col_edit text-center"}
                         })
     
     district         = tables.Column(verbose_name="District",attrs={
@@ -248,21 +248,21 @@ class DistrictForecastDetailsTable(tables.Table):
     
     precip_max         = tables.Column(verbose_name="Precip (MAX)",attrs={
                         "th": {"style": "width:15%;","class": ""},
-                        "td": {"style": "","class": ""}
+                        "td": {"style": "","class": "pe-4"}
                         })
     
     temp_max         = tables.Column(verbose_name="TEMP °F (MAX)",attrs={
                         "th": {"style": "width:15%;","class": ""},
-                        "td": {"style": "","class": ""}
+                        "td": {"style": "","class": "pe-4"}
                         })
     temp_min         = tables.Column(verbose_name="TEMP °F (MIN)",attrs={
                         "th": {"style": "width:15%;","class": ""},
-                        "td": {"style": "","class": ""}
+                        "td": {"style": "","class": "pe-4"}
                         })
     
     winds         = tables.Column(verbose_name="Winds (Kts)",empty_values=(),attrs={
                         "th": {"style": "width:15%;","class": ""},
-                        "td": {"style": "","class": ""}
+                        "td": {"style": "","class": "pe-4"}
                         })
     
     weather_conditions = tables.Column(verbose_name="Weather Conditions",attrs={
@@ -270,17 +270,11 @@ class DistrictForecastDetailsTable(tables.Table):
                         "td": {"style": "","class": ""}
                         })
 
-    '''id              = tables.Column(verbose_name="ID",attrs={
-                        "th": {"style": "width:60px; text-align:right;","class": "col_id"},
-                        "td": {"style": "text-align:right;","class": "col_id"}
-                        })'''
-    
-
     class Meta:
         model = DistrictForecastDetails
         template_name = "django_tables2/bootstrap4.html"  # or bootstrap5
-        fields      = ("edit","district","temp_max","temp_min","precip_max","weather_conditions") #,"id")
-        sequence    = ("edit","district","temp_max","temp_min","winds","precip_max","weather_conditions")
+        fields      = ("edit","district","temp_max","temp_min","precip_max","weather_conditions","id","forecast_id")
+        sequence    = ("edit","district","weather_conditions","temp_max","temp_min","winds","precip_max")
         
         # Add table ID and class here
         attrs = {
@@ -300,128 +294,220 @@ class DistrictForecastDetailsTable(tables.Table):
     
     def render_temp_max(self, record):
 
-        prob_class = "bg-light"
+        prob_class  = "bg-dark"
+        sev_class   = "bg-dark"
+        risk_class  = "bg-dark"
 
         if record.prob_temp_max:
             
             prob_text = str(record.prob_temp_max).lower()
 
             if "low" in prob_text:
-                prob_class = "bg-success"
+                prob_class = "low"
             elif "medium" in prob_text:
-                prob_class = "bg-warning text-dark"
+                prob_class = "med text-dark"
             elif "high" in prob_text:
-                prob_class = "bg-danger"
-
-        # Severity badge color
-        
-        sev_class = "bg-light"
+                prob_class = "high"
 
         if record.sev_temp_max:
+
             sev_text = str(record.sev_temp_max).lower()
 
             if "low" in sev_text:
-                sev_class = "bg-success"
+                sev_class = "low"
             elif "medium" in sev_text:
-                sev_class = "bg-warning text-dark"
+                sev_class = "med text-dark"
             elif "high" in sev_text:
-                sev_class = "bg-danger"
+                sev_class = "high" 
 
-        link_html   = '{}<br/><small class="badge {} bg-primary">Prob: {}</small >, <small class="badge {}">Sev: {}</small><br/><small class="text-muted">Risk: ({})</small>'
-        return format_html(link_html, record.temp_max, prob_class, record.prob_temp_max, sev_class, record.sev_temp_max, "")
+        if record.risk_temp_max:
+
+            risk_text = str(record.risk_temp_max).lower()
+
+            if "low" in risk_text:
+                risk_class = "low"
+            elif "medium" in risk_text:
+                risk_class = "med text-dark"
+            elif "high" in risk_text:
+                risk_class = "high"
+            elif "critical" in risk_text:
+                risk_class = "critical"
+
+        link_html   = '<div class="fst-italic mb-1">{}</div><div class="row text-muted"><div class="col"><small>Probability:</small><br /><div class="badge {}">{}</div></div><div class="col"><small>Severity:</small><br /><div class="badge {}">{}</div></div><div class="col"><small>Risk:</small><br /><div class="badge {}">{}</div></div></div>'
+        return format_html(link_html, record.temp_max, prob_class, record.prob_temp_max, sev_class, record.sev_temp_max, risk_class, record.risk_temp_max)
     
     def render_temp_min(self, record):
 
-        prob_class = "bg-light"
+        prob_class  = "bg-dark"
+        sev_class   = "bg-dark"
+        risk_class  = "bg-dark"
 
         if record.prob_temp_min:
             
             prob_text = str(record.prob_temp_min).lower()
 
             if "low" in prob_text:
-                prob_class = "bg-success"
+                prob_class = "low"
             elif "medium" in prob_text:
-                prob_class = "bg-warning text-dark"
+                prob_class = "med text-dark"
             elif "high" in prob_text:
-                prob_class = "bg-danger"
-
-        # Severity badge color
-        sev_class = "bg-light"
+                prob_class = "high"
 
         if record.sev_temp_min:
+            
             sev_text = str(record.sev_temp_min).lower()
 
             if "low" in sev_text:
-                sev_class = "bg-success"
+                sev_class = "low"
             elif "medium" in sev_text:
-                sev_class = "bg-warning text-dark"
+                sev_class = "med text-dark"
             elif "high" in sev_text:
-                sev_class = "bg-danger"
+                sev_class = "high"
 
-        link_html   = '{}<br/><small class="badge {} bg-primary">Prob: {}</small >, <small class="badge {}">Sev: {}</small><br/><small class="text-muted">Risk: ({})</small>'
-        return format_html(link_html, record.temp_min, prob_class, record.prob_temp_min, sev_class, record.sev_temp_min, "")
+        if record.risk_temp_min:
+            
+            risk_text = str(record.risk_temp_min).lower()
+
+            if "low" in risk_text:
+                risk_class = "low"
+            elif "medium" in risk_text:
+                risk_class = "med text-dark"
+            elif "high" in risk_text:
+                risk_class = "high"
+            elif "critical" in risk_text:
+                risk_class = "critical"
+
+        link_html   = '<div class="fst-italic mb-1">{}</div><div class="row text-muted"><div class="col"><small>Probability:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Severity:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Risk:</small><br /><span class="badge {}">{}</span></div></div>'
+        return format_html(link_html, record.temp_min, prob_class, record.prob_temp_min, sev_class, record.sev_temp_min, risk_class, record.risk_temp_min)
     
     def render_winds(self, record):
 
-        prob_class = "bg-light"
+        prob_class  = "bg-dark"
+        sev_class   = "bg-dark"
+        risk_class  = "bg-dark"
 
         if record.prob_winds:
             
             prob_text = str(record.prob_winds).lower()
 
             if "low" in prob_text:
-                prob_class = "bg-success"
+                prob_class = "low"
             elif "medium" in prob_text:
-                prob_class = "bg-warning text-dark"
+                prob_class = "med text-dark"
             elif "high" in prob_text:
-                prob_class = "bg-danger"
-
-        # Severity badge color
-        
-        sev_class = "bg-light"
+                prob_class = "high"
 
         if record.sev_winds:
+            
             sev_text = str(record.sev_winds).lower()
 
             if "low" in sev_text:
-                sev_class = "bg-success"
+                sev_class = "low"
             elif "medium" in sev_text:
-                sev_class = "bg-warning text-dark"
+                sev_class = "med text-dark"
             elif "high" in sev_text:
-                sev_class = "bg-danger"
+                sev_class = "high"
+            
+        if record.risk_winds:
+            
+            risk_text = str(record.risk_winds).lower()
 
-        link_html   = '{} - {}<br/><small class="badge {}">Prob: {}</small >, <small class="badge {}">Sev: {}</small><br/><small class="text-muted">Risk: {}</small>'
-        return format_html(link_html, record.winds_min, record.winds_max, prob_class, record.prob_winds, sev_class, record.sev_winds, "")
+            if "low" in risk_text:
+                risk_class = "low"
+            elif "medium" in risk_text:
+                risk_class = "med text-dark"
+            elif "high" in risk_text:
+                risk_class = "high"
+            elif "critical" in risk_text:
+                risk_class = "critical"
+
+        link_html   = '<div class="fst-italic mb-1">{} - {}</div><div class="row text-muted"><div class="col"><small>Probability:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Severity:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Risk:</small><br /><span class="badge {}">{}</span></div></div>'
+        return format_html(link_html, record.winds_min, record.winds_max, prob_class, record.prob_winds, sev_class, record.sev_winds, risk_class, record.risk_winds)
     
     def render_weather_conditions(self, record):
 
-        prob_class = "bg-light"
+        prob_class = "bg-dark"
+        sev_class = "bg-dark"
+        risk_class = "bg-dark"
 
-        if record.prob_weather_conditions:
+        prob_id = record.prob_weather_conditions_id
+        sev_id = record.sev_weather_conditions_id
+
+        ALERT_CLASSES = {
+            1: "low", 2: "med text-dark", 3: "high",
+        }
+
+        if prob_id:
+            prob_class = ALERT_CLASSES.get(prob_id, "bg-dark")
+
+        if sev_id:
+            sev_class = ALERT_CLASSES.get(sev_id, "bg-dark")
+        
+        RISK_MATRIX = {
+
+            # PROBABILITY
+            1: {  # LOW
+                1: "low",
+                2: "med text-dark",
+                3: "med text-dark",
+            },
+            2: {  # MED
+                1: "low",
+                2: "med text-dark",
+                3: "high",
+            },
+            3: {  # HIGH
+                1: "low",
+                2: "high",
+                3: "critical"
+            }
+        }
+
+        if prob_id and sev_id:
+            risk_class = RISK_MATRIX.get(prob_id, {}).get(sev_id, "bg-dark")
+
+        link_html   = '<div class="fst-italic mb-2">{}</div><div class="row text-muted"><div class="col"><small>Probability:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Severity:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Risk:</small><br /><span class="badge {}">{}</span></div></div>'
+        return format_html(link_html, record.weather_conditions, prob_class, record.prob_weather_conditions, sev_class, record.sev_weather_conditions, risk_class, record.risk_weather_conditions)
+    
+    def render_precip_max(self, record):
+
+        prob_class  = "bg-dark"
+        sev_class   = "bg-dark"
+        risk_class  = "bg-dark"
+
+        if record.prob_precip_max:
             
-            prob_text = str(record.prob_weather_conditions).lower()
+            prob_text = str(record.prob_precip_max).lower()
 
             if "low" in prob_text:
-                prob_class = "bg-success"
+                prob_class = "low"
             elif "medium" in prob_text:
-                prob_class = "bg-warning text-dark"
+                prob_class = "med text-dark"
             elif "high" in prob_text:
-                prob_class = "bg-danger"
-
-        # Severity badge color
+                prob_class = "high"
         
-        sev_class = "bg-light"
-
-        if record.sev_weather_conditions:
+        if record.sev_precip_max:
             
-            sev_text = str(record.sev_weather_conditions).lower()
+            sev_text = str(record.sev_precip_max).lower()
 
             if "low" in sev_text:
-                sev_class = "bg-success"
+                sev_class = "low"
             elif "medium" in sev_text:
-                sev_class = "bg-warning text-dark"
+                sev_class = "med text-dark"
             elif "high" in sev_text:
-                sev_class = "bg-danger"
+                sev_class = "high"
+            
+        if record.risk_precip_max:
+            risk_text = str(record.risk_precip_max).lower()
 
-        link_html   = '{}<br/><small class="badge {}">P: {}</small >, <small class="badge {}">S: ({})</small><br/><small  class="text-muted">Risk: ({})</small>'
-        return format_html(link_html, record.weather_conditions, prob_class, record.prob_weather_conditions, sev_class, record.sev_weather_conditions, "")
+            if "low" in risk_text:
+                risk_class = "low"
+            elif "medium" in risk_text:
+                risk_class = "med text-dark"
+            elif "high" in risk_text:
+                risk_class = "high"
+            elif "critical" in risk_text:
+                risk_class = "critical"
+
+        link_html   = '<div class="fst-italic mb-1">{}</div><div class="row text-muted"><div class="col"><small>Probability:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Severity:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Risk:</small><br /><div class="badge {}">{}</span></div></div>'
+        return format_html(link_html, record.precip_max, prob_class, record.prob_precip_max, sev_class, record.sev_precip_max, risk_class, record.risk_precip_max)

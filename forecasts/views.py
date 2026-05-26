@@ -525,28 +525,31 @@ def district_forecast_entry(request, id=None):
 
     page_name = "District Forecast Entry"
 
-    # If id exists => update, else => create new
     if id:
         entry = get_object_or_404(DistrictForecast, id=id)
     else:
         entry = None
 
     if request.method == 'POST':
+        
         form = DistrictForecastForm(request.POST, instance=entry)
 
+        '''is_new = entry is None'''
+
         if form.is_valid():
-            saved_entry = form.save()    # Creates or updates
-            
-            # Insert one detail record for each district
-            districts = District.objects.all()[:6]
+
+            saved_entry = form.save()
+
+            districts = District.objects.all().order_by("id")[:6]
 
             for district in districts:
                 DistrictForecastDetails.objects.get_or_create(
-                    forecast_id=saved_entry.id,
+                    forecast=saved_entry,
                     district=district
                 )
-            
             return redirect('forecasts:district_forecast_details_entry', saved_entry.id)
+        else:
+            print(form.errors)  # shows what field failed validation  
     else:
         form = DistrictForecastForm(instance=entry)
 
@@ -620,39 +623,42 @@ def district_forecast_toggle_is_published_ajax(request, id):
 ############# DISTRICT FORECASTS: Details List #############
 def district_forecast_details_list(request, id=None, fk=None):
 
+    #print(fk);
     page_name = "District Forecast Entry"
 
-    qs = DistrictForecastDetails.objects.all().order_by('-id')
+    #qs = DistrictForecastDetails.objects.all().order_by('id')
 
     # Parent forecast
     parent_entry = get_object_or_404(DistrictForecast, id=id)
 
-    # Load entry ONLY if id is provided
-    entry = None
+    # Get only details for this forecast
+    qs = DistrictForecastDetails.objects.filter(forecast_id=id).order_by('id')
+    table = DistrictForecastDetailsTable(qs)
+    RequestConfig(request).configure(table)
 
-    if id is not None:
+    print("Forecast ID:", id)
+    print("Details count:", qs.count())
+    print(qs.query)
+
+    '''if id is not None:
         entry = get_object_or_404(DistrictForecast, id=id)
 
         # Filter details by parent listing
         qs = qs.filter(forecast_id=fk)
-        qs = qs.order_by('id')
+        qs = qs.order_by('-id')'''
 
-    table = DistrictForecastDetailsTable(qs)
-    RequestConfig(request).configure(table)
-    print(type(table))
-
-   # Child object (details)
-    entry = None
-    if id:
-        entry = get_object_or_404(DistrictForecastDetails,id=id)
-
+    #Child object (details)
+    #entry = None
+    
+    #if id:
+    #    entry = get_object_or_404(DistrictForecastDetails,id=id)
 
     return render(request, 'district-forecast/district_forecast_table_list_details.html', {
         'id' : id,
-        'fk': fk,
+        #'fk': fk,
         'page_name': page_name,
         'table': table,
-        'entry': entry,
+        #'entry': entry,
         'parent_entry': parent_entry,
         'new_url': reverse('forecasts:district_forecast_details_entry'),
         'back_url': reverse('forecasts:district_forecast_list'),
@@ -662,7 +668,7 @@ def district_forecast_details_list(request, id=None, fk=None):
 def district_forecast_details_entry(request, id):
 
     page_name = "District Forecast Details"
-    qs = DistrictForecastDetails.objects.all().order_by('-id')
+    qs = DistrictForecastDetails.objects.filter(forecast_id=id).order_by('id')
 
     # If id exists => update, else => create new
     if id:
@@ -673,7 +679,6 @@ def district_forecast_details_entry(request, id):
     table = DistrictForecastDetailsTable(qs)
     table.empty_text = "No records available"
     RequestConfig(request).configure(table)
-    print(type(table))
     
     if request.method == 'POST':
         form = DistrictForecastPublishForm(request.POST, instance=entry)

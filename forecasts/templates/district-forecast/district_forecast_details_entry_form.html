@@ -20,22 +20,22 @@
                 <div class="col-2"><span class="h5">Probability</span></div>
                 <div class="col-2"><span class="h5">Severity</span></div>
                 <div class="col-1"><span class="h5">Risk</span></div>
-                <div class="col-3"><span class="h5">Instruction</span> <button type="button" class="btn btn_new btn-sm" data-bs-toggle="modal" data-bs-target="#addInstructionModal"><i class="fa-solid fa-circle-plus"></i>&nbsp;Add Instruction</button></div>
+                <div class="col-3"><span class="h5 me-3">Instruction</span> <button type="button" class="btn btn_new btn-sm" data-bs-toggle="modal" data-bs-target="#addInstructionModal"><i class="fa-solid fa-circle-plus"></i>&nbsp;Add Instruction</button></div>
             </div>
             <div class="row mb-3">
-                <div class="col-2"><span class="h6">PRECIP, MAX 24H (in)</span></div>
-                <div class="col-2">{{ form.precip_max }}</div>
-                <div class="col-2">{{ form.prob_precip_max }}</div>
-                <div class="col-2">{{ form.sev_precip_max }}</div>
-                <div class="col-1"></div>
-                <div class="col-3">{{ form.ins_precip_max }}</div>
+                <div class="col-2"><span class="h6">Weather Conditions</span></div>
+                <div class="col-2">{{ form.weather_conditions }}</div>
+                <div class="col-2">{{ form.prob_weather_conditions }}</div>
+                <div class="col-2">{{ form.sev_weather_conditions }}</div>
+                <div class="col-1"><span id="risk_level_weather_conditions" class="form-control risk-alert">&nbsp;</span>{{ form.risk_weather_conditions }}</div>
+                <div class="col-3">{{ form.ins_weather_conditions }}</div>
             </div>
             <div class="row mb-3">
                 <div class="col-2"><span class="h6">TEMP MAX (°F)</span></div>
                 <div class="col-2">{{ form.temp_max }}</div>
                 <div class="col-2">{{ form.prob_temp_max }}</div>
                 <div class="col-2">{{ form.sev_temp_max }}</div>
-                <div class="col-1"></div>
+                <div class="col-1"><span id="risk_level_temp_max" class="form-control risk-alert"></span>{{ form.risk_temp_max }}</div>
                 <div class="col-3">{{ form.ins_temp_max }}</div>
             </div>
             <div class="row mb-3">
@@ -43,30 +43,30 @@
                 <div class="col-2">{{ form.temp_min }}</div>
                 <div class="col-2">{{ form.prob_temp_min }}</div>
                 <div class="col-2">{{ form.sev_temp_min }}</div>
-                <div class="col-1"></div>
+                <div class="col-1"><span id="risk_level_temp_min" class="form-control risk-alert"></span>{{ form.risk_temp_min }}</div>
                 <div class="col-3">{{ form.ins_temp_min }}</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-2"><span class="h6">PRECIP, MAX 24H (in)</span></div>
+                <div class="col-2">{{ form.precip_max }}</div>
+                <div class="col-2">{{ form.prob_precip_max }}</div>
+                <div class="col-2">{{ form.sev_precip_max }}</div>
+                <div class="col-1"><span id="risk_level_precip_max" class="form-control risk-alert"></span>{{ form.risk_precip_max }}</div>
+                <div class="col-3">{{ form.ins_precip_max }}</div>
             </div>
             <div class="row mb-3">
                 <div class="col-2"><span class="h6">Winds (kts)</span></div>
                 <div class="col-2 d-flex">{{ form.winds_min }}<span class="mx-2">to</span>{{ form.winds_max }}</div>
                 <div class="col-2">{{ form.prob_winds }}</div>
                 <div class="col-2">{{ form.sev_winds }}</div>
-                <div class="col-1"></div>
+                <div class="col-1"><span id="risk_level_winds" class="form-control risk-alert"></span>{{ form.risk_winds }}</div>
                 <div class="col-3">{{ form.ins_winds }}</div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-2"><span class="h6">Weather Conditions</span></div>
-                <div class="col-2">{{ form.weather_conditions }}</div>
-                <div class="col-2">{{ form.prob_weather_conditions }}</div>
-                <div class="col-2">{{ form.sev_weather_conditions }}</div>
-                <div class="col-1"></div>
-                <div class="col-3">{{ form.ins_weather_conditions }}</div>
             </div>
             <div class="row mb-3"> 
                 <div class="col-12">
                     <input id="btn_submit" name="btn_submit" type="submit" value="Save" class="btn" />
                     <input id="btn_submit_close" name="btn_submit_close" type="submit" value="Save & Close" class="btn btn-primary" />
-                    <a class="btn btn-danger" href="{{ back_url }}">Cancel</a>
+                    <a id="btn_close" class="btn btn-danger" href="{{ back_url }}">Cancel</a>
                 </div>
             </div>
         </form>
@@ -76,7 +76,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Add Instruction</h5>
+                    <h3 class="modal-title">Add Instruction</h3>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -85,68 +85,176 @@
                     <input type="text" id="new_instruction" class="form-control">
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="saveInstructionBtn">Save</button>
+                    <button type="button" class="btn_close btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn_submit_close btn_submit btn btn-primary" id="saveInstructionBtn">Save</button>
                 </div>
             </div>
         </div>
     </div>
-<script>
-document.getElementById("saveInstructionBtn").addEventListener("click", function () {
+{% endblock %} 
+{% block extra_js %}
+<script type="text/javascript">
 
-    const description = document.getElementById("new_instruction").value;
-    const errorBox = document.getElementById("instructionError");
+    document.addEventListener("DOMContentLoaded", function () {
 
-    fetch("{% url 'forecasts:district_forecast_instructions_ajax_add' %}", {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": "{{ csrf_token }}",
-            "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({
-            description: description
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
+        calculateRisk("id_prob_weather_conditions","id_sev_weather_conditions","id_risk_weather_conditions","risk_level_weather_conditions");
+        calculateRisk("id_prob_temp_max","id_sev_temp_max","id_risk_temp_max","risk_level_temp_max");
+        calculateRisk("id_prob_temp_min","id_sev_temp_min","id_risk_temp_min","risk_level_temp_min");
+        calculateRisk("id_prob_winds","id_sev_winds","id_risk_winds","risk_level_winds");
+        calculateRisk("id_prob_precip_max","id_sev_precip_max","id_risk_precip_max","risk_level_precip_max");
+        
+        // TEMP MAX
+        document.getElementById("id_prob_temp_max").addEventListener("change", function () {
+            calculateRisk("id_prob_temp_max","id_sev_temp_max","id_risk_temp_max","risk_level_temp_max");
+        });
+        document.getElementById("id_sev_temp_max").addEventListener("change", function () {
+            calculateRisk("id_prob_temp_max","id_sev_temp_max","id_risk_temp_max","risk_level_temp_max");
+        });
 
-            const selectIds = [
-                "id_ins_precip_max",
-                "id_ins_temp_max",
-                "id_ins_temp_min",
-                "id_ins_winds",
-                "id_ins_weather_conditions"
-            ];
+         // TEMP MIN
+        document.getElementById("id_prob_temp_min").addEventListener("change", function () {
+            calculateRisk("id_prob_temp_min","id_sev_temp_min","id_risk_temp_min","risk_level_temp_min");
+        });
+        document.getElementById("id_sev_temp_min").addEventListener("change", function () {
+            calculateRisk("id_prob_temp_min","id_sev_temp_min","id_risk_temp_min","risk_level_temp_min");
+        });
 
-            selectIds.forEach(function(selectId) {
-                const select = document.getElementById(selectId);
-                if (select) {
-                    const option = new Option(
-                        data.description,
-                        data.id,
-                        false,
-                        false
-                    );
-                    select.add(option);
+        // WEATHER CONDITIONS
+        document.getElementById("id_prob_weather_conditions").addEventListener("change", function () {
+            calculateRisk("id_prob_weather_conditions","id_sev_weather_conditions","id_risk_weather_conditions","risk_level_weather_conditions");
+        });
+        document.getElementById("id_sev_weather_conditions").addEventListener("change", function () {
+            calculateRisk("id_prob_weather_conditions","id_sev_weather_conditions","id_risk_weather_conditions","risk_level_weather_conditions");
+        });
+
+        // WINDS
+        document.getElementById("id_prob_winds").addEventListener("change", function () {
+            calculateRisk("id_prob_winds","id_sev_winds","id_risk_winds","risk_level_winds");
+        });
+        document.getElementById("id_sev_winds").addEventListener("change", function () {
+            calculateRisk("id_prob_winds","id_sev_winds","id_risk_winds","risk_level_winds");
+        });
+
+        // PRECIP
+        document.getElementById("id_prob_precip_max").addEventListener("change", function () {
+            calculateRisk("id_prob_precip_max","id_sev_precip_max","id_risk_precip_max","risk_level_precip_max");
+        });
+        document.getElementById("id_prob_precip_max").addEventListener("change", function () {
+            calculateRisk("id_prob_precip_max","id_sev_precip_max","id_risk_precip_max","risk_level_precip_max");
+        });
+
+        function calculateRisk(probFieldId, sevFieldId, riskFieldId, riskSpan) {
+        
+            const prob = document.getElementById(probFieldId);
+            const sev  = document.getElementById(sevFieldId);
+            const risk = document.getElementById(riskFieldId);
+            const risk_alert = document.getElementById(riskSpan);
+
+            if (!prob || !sev || !risk) return;
+
+            function updateRisk(probFieldId, sevFieldId, riskFieldId, riskSpan) {
+                
+                const prob_val = prob.value;
+                const sev_val = sev.value;
+
+                let riskValue = "";
+                let riskClass = "";
+                let riskText = "";
+
+                const riskData = getRisk(prob_val,sev_val);
+
+                if (riskData) {
+                    risk.value = riskData.value;
+                    risk_alert.innerText = riskData.text;
+                    risk_alert.classList.remove("low","medium","high","critical");
+                    risk_alert.classList.add(riskData.class);
+                }
+            }
+
+            function getRisk(prob_val, sev_val){
+                const RISK_MATRIX = {
+                    1: { // LOW probability
+                        1: { value: 1, text: "LOW", class: "low" }, // LOW Seveverity
+                        2: { value: 2, text: "MEDIUM", class: "med" },
+                        3: { value: 2, text: "MEDIUM", class: "med" },
+                        //4: { value: 4, text: "CRITICAL", class: "critical" }
+                    },
+                    2: { // MED probability
+                        1: { value: 1, text: "LOW", class: "low" }, // LOW Seveverity
+                        2: { value: 2, text: "MEDIUM", class: "med" },
+                        3: { value: 3, text: "HIGH", class: "high" },
+                    },
+                    3: { // HIGH probability
+                        1: { value: 1, text: "LOW", class: "low" }, // LOW Seveverity
+                        2: { value: 3, text: "HIGH", class: "high" },
+                        3: { value: 4, text: "CRITICAL", class: "critical" },
+                    }
+                };
+                return RISK_MATRIX?.[prob_val]?.[sev_val] || null;
+            }
+
+            prob.addEventListener("change", updateRisk);
+            sev.addEventListener("change", updateRisk);
+            updateRisk(probFieldId, sevFieldId, riskFieldId, riskSpan);
+        }
+
+        document.getElementById("saveInstructionBtn").addEventListener("click", function () {
+
+            const description = document.getElementById("new_instruction").value;
+            const errorBox = document.getElementById("instructionError");
+
+            fetch("{% url 'forecasts:district_forecast_instructions_ajax_add' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: new URLSearchParams({
+                    description: description
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+
+                    const selectIds = [
+                        "id_ins_precip_max",
+                        "id_ins_temp_max",
+                        "id_ins_temp_min",
+                        "id_ins_winds",
+                        "id_ins_weather_conditions"
+                    ];
+
+                    selectIds.forEach(function(selectId) {
+                        const select = document.getElementById(selectId);
+                        if (select) {
+                            const option = new Option(
+                                data.description,
+                                data.id,
+                                false,
+                                false
+                            );
+                            select.add(option);
+                        }
+                    });
+                                
+                    //const select = document.getElementById("id_ins_precip_max");
+                    //const option = new Option(data.description, data.id, true, true);
+                    //select.add(option);
+
+                    document.getElementById("new_instruction").value = "";
+                    errorBox.innerText = "";
+
+                    const modalElement = document.getElementById("addInstructionModal");
+                    const modal = bootstrap.Modal.getInstance(modalElement);
+                    modal.hide();
+                }
+                else {
+                    errorBox.innerText = data.error;
                 }
             });
-                        
-            //const select = document.getElementById("id_ins_precip_max");
-            //const option = new Option(data.description, data.id, true, true);
-            //select.add(option);
-
-            document.getElementById("new_instruction").value = "";
-            errorBox.innerText = "";
-
-            const modalElement = document.getElementById("addInstructionModal");
-            const modal = bootstrap.Modal.getInstance(modalElement);
-            modal.hide();
-        }
-        else {
-            errorBox.innerText = data.error;
-        }
+        });
     });
-});
+
 </script>
 {% endblock %}

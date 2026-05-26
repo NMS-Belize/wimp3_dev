@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}{{ page_name }} | Agro-Climat Services | WIMP3 | National Meteorological Service of Belize{% endblock %}
+
+{% block content %}
+<form id="inventory_form" class="pt-5" method="post">
+    {% csrf_token %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3>Device Details</h3>
+        </div>
+        <div class="col-4">
+            <label class="form-label">Device Label</label>
+            {{ form.device_label }}
+        </div>
+        <div class="col-4">
+            <label class="form-label">Device Name</label>
+            {{ form.device_name }}
+        </div>
+        <div class="col-4">
+            <label class="form-label">Category</label>
+            {{ form.category }}
+        </div>
+        <div class="col-4">
+            <label class="form-label">Device Type</label>
+            {{ form.device_type }}
+        </div>
+        <div class="col-4">
+            <label class="form-label">Manufacturer</label>
+            {{ form.manufacturer }}
+        </div>
+        <div class="col-4">
+            <label class="form-label">Model Number</label>
+            {{ form.model_number }}
+        </div>
+        <div class="col-4">
+            <label class="form-label">Service Tag</label>
+            {{ form.service_tag }}
+        </div>
+        <div class="col-4">
+            <label class="form-label">Serial Number</label>
+            {{ form.serial_number }}
+        </div>
+        <div class="clear"></div>
+        <div class="col-4">
+            <label class="form-label">Device Status</label>
+            {{ form.device_status }}
+        </div>
+        <div class="col-4">
+            <label class="form-label">Sponsor</label>
+            {{ form.sponsor }}
+        </div>
+        <div class="col-4">
+            <label class="form-label">Acquisition Date</label>
+            {{ form.acquisition_date }}
+        </div>
+    </div>
+
+    <!-- Hardware Specifications -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3>Hardware Specifications</h3>
+        </div>
+        <div class="col-4">
+            <label class="form-label">Processor</label>
+            {{ form.processor }}
+        </div>
+        <div class="col-4">
+            <label class="form-label">RAM</label>
+            {{ form.ram }}
+        </div>
+        <div class="col-4">
+            <label class="form-label">Disk Size</label>
+            {{ form.disk }}
+        </div>
+        <div class="col-4">
+            <label class="form-label">Operating System</label>
+            {{ form.operating_system }}
+        </div>
+    </div>
+
+    <!-- Network Information -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3>Network Information</h3>
+        </div>
+        <div class="col-4">
+            <label class="form-label">MAC Address</label>
+            {{ form.mac_address }}
+        </div>
+        <div class="col-4">
+            <label class="form-label">IP Address</label>
+            {{ form.ip_address }}
+        </div>
+    </div>
+
+    <!-- Placement & Assignment -->
+    <div class="row mb-4">
+        <div class="col-12 mb-4">
+            <h3>Placement & Assignment</h3>
+        </div>
+
+        <div class="col-4">
+            <label class="form-label">Assigned User</label>
+            {{ form.assigned_user }}
+        </div>
+
+        <div class="col-4">
+            <label class="form-label">Placement</label>
+            {{ form.placement }}
+        </div>
+
+        <div class="col-4">
+            <label class="form-label">Department/Section</label>
+            {{ form.department_section }}
+        </div>
+
+        <div class="col-4">
+            <label class="form-label">Floor Level</label>
+            {{ form.floor_level }}
+        </div>
+        <div class="col-4">
+            <label class="form-label">Date Issued</label>
+            {{ form.date_issued }}
+        </div>
+    </div>
+    <div class="actions mt-4">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="{% url 'inventory:inventory_list' %}" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+{% endblock %}

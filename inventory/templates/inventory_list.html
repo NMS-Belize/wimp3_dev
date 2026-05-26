@@ -1,89 +1,71 @@
 {% extends "base.html" %}
 {% load static %}
-
 {% block title %}{{ page_name }} | Radar Services | WIMP3 | National Meteorological Service of Belize{% endblock %}
-
 {% block content %}
-<div id="" class="container-fluid p-5">
-    <div class="row mb-3">
-        <div class="col-6">
-            <a id="btn_back_main" class="btn btn-link" href="{{ back_url }}"><i class="fa-solid fa-arrow-left"></i>&nbsp;Back to {{ page_name }} Listing</a>
-        </div>
-        <div class="col-6 text-end">
-            <a class="btn btn_new" href="{{ new_url }}"><i class="fa-solid fa-plus"></i>&nbsp;New Item</a>
-            <a class="btn btn_api" href="{{ object.get_absolute_url }}/radar" target="_blank"><i class="fa-solid fa-list"></i>&nbsp;API Feed</a>
-        </div>
-    </div>
-    <div class="row mb-3">
-        <div class="col-12">
-            <h1>{{ page_name }}</h1>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-12">
-            <form method="post" id="frm_entry_form">
-                {% csrf_token %}
-                <div class="form-group row">
-                    <div class="col-6">
-                        {{ form.as_p }}
-                        <input id="btn_submit" type="submit" value="Submit" class="btn btn-primary" />
+<div class="row">
+    <div class="col-12">
+        <form method="post" id="frm_entry_form">
+            {% csrf_token %}
+            <div class="form-group row">
+                <div class="col-6">
+                    {{ form.as_p }}
+                    <input id="btn_submit" type="submit" value="Submit" class="btn btn-primary" />
+                </div>
+
+                <div class="container">
+                    <div class="top-bar">
+                        <h2>Inventory Items</h2>
+                        <a href="{% url 'inventory_entry' %}" class="btn">Add New Item</a>
                     </div>
 
-                    <div class="container">
-        <div class="top-bar">
-            <h2>Inventory Items</h2>
-            <a href="{% url 'inventory_entry' %}" class="btn">Add New Item</a>
-        </div>
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="message">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
 
-        {% if messages %}
-            {% for message in messages %}
-                <div class="message">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-
-        <table>
-            <thead>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Asset Tag</th>
+                <th>Category</th>
+                <th>Placement</th>
+                <th>Brand</th>
+                <th>Model</th>
+                <th>Quantity</th>
+                <th>Status</th>
+                <th>Active</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
                 <tr>
-                    <th>Name</th>
-                    <th>Asset Tag</th>
-                    <th>Category</th>
-                    <th>Placement</th>
-                    <th>Brand</th>
-                    <th>Model</th>
-                    <th>Quantity</th>
-                    <th>Status</th>
-                    <th>Active</th>
-                    <th>Action</th>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.asset_tag }}</td>
+                    <td>{{ item.category }}</td>
+                    <td>{{ item.placement|default:"-" }}</td>
+                    <td>{{ item.brand|default:"-" }}</td>
+                    <td>{{ item.model|default:"-" }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.get_status_display }}</td>
+                    <td>{{ item.is_active|yesno:"Yes,No" }}</td>
+                    <td>
+                        <a href="{% url 'inventory_edit' item.pk %}" class="edit-link">Edit</a>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                {% for item in items %}
-                    <tr>
-                        <td>{{ item.name }}</td>
-                        <td>{{ item.asset_tag }}</td>
-                        <td>{{ item.category }}</td>
-                        <td>{{ item.placement|default:"-" }}</td>
-                        <td>{{ item.brand|default:"-" }}</td>
-                        <td>{{ item.model|default:"-" }}</td>
-                        <td>{{ item.quantity }}</td>
-                        <td>{{ item.get_status_display }}</td>
-                        <td>{{ item.is_active|yesno:"Yes,No" }}</td>
-                        <td>
-                            <a href="{% url 'inventory_edit' item.pk %}" class="edit-link">Edit</a>
-                        </td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="10">No inventory items found.</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-                    
-                </div>
-            </form>
-        </div>
+            {% empty %}
+                <tr>
+                    <td colspan="10">No inventory items found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+                
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}

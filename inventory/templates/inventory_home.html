@@ -14,7 +14,7 @@
 </div>
 <div class="row">
     <div class="col-12">
-        <h3>Inventory Variables</h3>
+        <h3>Inventory Parameters</h3>
     </div>
     <div class="col-12 d-flex flex-row mb-3">
         <div class="item_dashboard position-relative">
@@ -24,7 +24,20 @@
             </a>
         </div>
         <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'inventory:inventory_category_list' %}">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'inventory:department_section_list' %}">
+                <img src="{% static 'button_icons/sections.png' %}" alt="Deaprtment/Section" />
+                <span class="task_desc">Department/Section</span>
+            </a>
+        </div>
+        <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'inventory:manufacturer_list' %}">
+                <img src="{% static 'button_icons/brand-image.png' %}" alt="Manufacturer" />
+                <span class="task_desc">Manufacturer</span>
+            </a>
+        </div>
+        
+        <!--<div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'inventory:index' %}">
                 <img src="{% static 'button_icons/door-sign.png' %}" alt="Office Location" />
                 <span class="task_desc">Office/Location</span>
             </a>
@@ -34,7 +47,7 @@
                 <img src="{% static 'button_icons/door-sign.png' %}" alt="Office Location" />
                 <span class="task_desc">Manufacturer</span>
             </a>
-        </div>
+        </div>-->
     </div>
 </div>
 {% endblock %}
