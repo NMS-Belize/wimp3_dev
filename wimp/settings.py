@@ -34,12 +34,16 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     '[::1]', # IPv6 localhost
-    '192.168.x.x', 
-    'wimp3.hydromet.gov.bz',
-    '192.168.3.62',
-    '192.168.3.68',
+    '192.168.x.x',
+    '.nms.gov.bz',
+    '.nmsapps.gov.bz',
     '*'
     #'.your-provider.dev', # Wildcard for subdomains on certain platforms (e.g., Fly.io)
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://wimp3.nms.gov.bz',
+    'https://wimp3.nmsapps.gov.bz',
 ]
 
 # Application definition
@@ -47,7 +51,7 @@ ALLOWED_HOSTS = [
 INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'agro.apps.AgroConfig',
-    'alerts.apps.AlertsConfig',
+    #'alerts.apps.AlertsConfig',
     'radar.apps.RadarConfig',
     'inventory.apps.InventoryConfig',
     'observations.apps.ObservationsConfig',
@@ -176,6 +180,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+#STATIC_ROOT = BASE_DIR / "staticfiles"
+
 STATICFILES_DIRS = [ BASE_DIR / "static",  # Or specify the path to your project-level static directory
 ]
 
@@ -199,8 +205,3 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
 }
-
-CSRF_TRUSTED_ORIGINS = [
-    'https://wimp3.nms.gov.bz',
-    'https://wimp3.hydromet.gov.bz',
-]

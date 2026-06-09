@@ -188,25 +188,26 @@ class ProbabilityTable(tables.Table):
 class DistrictForecastTable(tables.Table):
     edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:60px;","class": "text-center"}, "td": {"style": "","class": "col_edit text-center"}})
     
-    forecast_date = tables.Column(verbose_name="Forecast Date", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": "col_link"}})
-    pdf_file = tables.Column(empty_values=(),verbose_name="PDF",orderable=False,
-        attrs={"th": {"style": "width:65px; text-align:center;","class": ""},"td": {"style": "text-align:center;","class": "col_pdf"}})
-    created_datetime = tables.Column(verbose_name="Created Date", attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "fst-italic;","class": ""}})
-    updated_datetime = tables.Column(verbose_name="Updated Date", attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "","class": ""}})
+    forecast_date       = tables.Column(verbose_name="Forecast Date", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": "col_link text-start"}})
+    created_by          = tables.Column(verbose_name="Created By", attrs={"th": {"style": "width:150px;","class": ""}, "td": {"style": "","class": ""}})
+    created_datetime    = tables.Column(verbose_name="Created Date", attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "fst-italic;","class": ""}})
+    updated_by          = tables.Column(verbose_name="Updated By", attrs={"th": {"style": "width:150px;","class": ""}, "td": {"style": "","class": ""}})
+    updated_datetime    = tables.Column(verbose_name="Updated Date", attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "","class": ""}})
     
-    is_published = tables.TemplateColumn(
-        template_name="district-forecast/district_forecast_publish_toggle.html",
-        verbose_name="Published",
-        orderable=False,
-        attrs={"th": {"style": "width:75px;","class": "text-center"},"td": {"style": "","class": "text-center"}})
+    pdf_file            = tables.Column(empty_values=(),verbose_name="PDF",orderable=False, attrs={"th": {"style": "width:65px; text-align:center;","class": ""},"td": {"style": "text-align:center;","class": "col_pdf"}})
+    is_published        = tables.TemplateColumn(template_name="district-forecast/district_forecast_publish_toggle.html", verbose_name="Status", orderable=False, 
+                            attrs={"th": {"style": "width:75px;", "class": "text-center "},
+                                   "td": {"style": "","class": "text-center"}}
+                        )
     
-    id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:100px;","class": "text-end"}, "td": {"style": "","class": "text-end"}})
-    delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:65px;","class": "text-center col_edit"},"td": {"style": "","class": "text-center col_delete"}})
+    id                  = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:80px;","class": "text-end"}, "td": {"style": "","class": "text-end"}})
+    delete              = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:65px;","class": "text-center col_edit"},"td": {"style": "","class": "text-center col_delete"}})
 
     class Meta:
         model = DistrictForecast
         template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
-        fields = ("edit","forecast_date","created_datetime","updated_datetime","pdf_file","is_published","id","delete")
+        fields = ("edit","forecast_date","created_by","created_datetime","updated_by","updated_datetime","pdf_file","is_published","id","delete")
+        sequence = ("edit","forecast_date","created_by","created_datetime","updated_by","updated_datetime","pdf_file","is_published","id","delete")
 
         # Add table HTML id and CSS classes here
         attrs = {
@@ -223,6 +224,12 @@ class DistrictForecastTable(tables.Table):
         link_html   = '<a href="{}" class="btn btn_edit_link p-0" disabled>{}</a>'
         url         = reverse("forecasts:district_forecast_details_entry",args=[record.id])
         return format_html(link_html, url, record.forecast_date.strftime("%B %d, %Y"))
+    
+    def render_created_by(self, record):
+        return record.created_by.get_full_name() if record.created_by else ""
+    
+    def render_updated_by(self, record):
+        return record.updated_by.get_full_name() if record.updated_by else ""
     
     def render_pdf_file(self, record):
         link_html   = '<a href="{}" class="btn_pdf" target="_blank"><i class="fa-solid fa-file-pdf"></i></a>'
@@ -273,7 +280,7 @@ class DistrictForecastDetailsTable(tables.Table):
     class Meta:
         model = DistrictForecastDetails
         template_name = "django_tables2/bootstrap4.html"  # or bootstrap5
-        fields      = ("edit","district","temp_max","temp_min","precip_max","weather_conditions","id","forecast_id")
+        fields      = ("edit","district","temp_max","temp_min","precip_max","weather_conditions")
         sequence    = ("edit","district","weather_conditions","temp_max","temp_min","winds","precip_max")
         
         # Add table ID and class here

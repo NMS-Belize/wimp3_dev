@@ -1,4 +1,5 @@
 {% load static %}
+{% load group_tags %}
 <nav class="sidebar d-flex flex-column flex-shrink-0 position-fixed">
     <button class="toggle-btn" onclick="toggleSidebar()"><i class="fas fa-chevron-left"></i></button>
     <img id="sidebar_logo" class="hide-on-collapse flex-shrink-0 me-3 mt-5 mb-5" src="{% static 'images/wimp3_logo_v2.png' %}" alt="WIMP3 Logo" />
@@ -7,22 +8,31 @@
             <i class="fa-solid fa-house me-3"></i>
             <span class="hide-on-collapse">Dashboard</span>
         </a>
+        {% if perms.forecasts.view_districtforecast %}
         <a href="{% url 'forecasts:index' %}" class="sidebar-link">
             <i class="fa-solid fa-sun me-3"></i>
             <span class="hide-on-collapse">Weather Forecasts</span>
         </a>
+        {% endif %}
+        {% if perms.observations.view_observation %}
         <a href="{% url 'observations:index' %}" class="sidebar-link" disabled>
             <i class="fa-solid fa-cloud me-3"></i>
             <span class="hide-on-collapse">Weather Observations</span>
         </a>
-        <a href="{% url 'alerts:index' %}" class="sidebar-link hidden" disabled>
+        {% endif %}
+        {% if perms.alerts.view_alert %}
+        <a href="#" class="sidebar-link hidden" disabled>
             <i class="fa-solid fa-triangle-exclamation me-3"></i>
             <span class="hide-on-collapse">Alerts</span>
         </a>
+        {% endif %}
+        {% if perms.agro.view_agroclimatservice %}
         <a href="{% url 'agro:index' %}" class="sidebar-link">
             <i class="fa-solid fa-seedling me-3"></i>
             <span class="hide-on-collapse">Agro-Climat Services</span>
         </a>
+        {% endif %}
+        {% if perms.inventory.view_inventoryitem %}
         <a href="{% url 'radar:radar_images_list' %}" class="sidebar-link">
             <i class="fa-solid fa-satellite-dish me-3"></i>
             <span class="hide-on-collapse">Radar</span>
@@ -31,17 +41,29 @@
             <i class="fa-solid fa-box me-3"></i>
             <span class="hide-on-collapse">Inventory</span>
         </a>
+        {% endif %}
     </div>
     <div class="profile-section mt-auto p-4">
         <div class="d-flex flex-column align-items-center text-center">
-            <img src="https://randomuser.me/api/portraits/women/70.jpg" style="height:60px" class="rounded-circle mb-2" alt="Profile">
+            
             
             {% if user.is_authenticated %}
+            <div class="user-initials">{{ user.first_name|first }}{{ user.last_name|first }}</div>
             <form class="logout" action="{% url 'logout' %}" method="post">
                 {% csrf_token %}
                 <div class="user-info">{{ user.first_name }} {{ user.last_name }}</div>
                 <div class="profile-info">
-                    <small>Admin</small>
+                    <small>
+                        {% if user.is_superuser %}
+                            Super Admin
+                        {% else %}
+                            {% for group in user.groups.all %}
+                                {{ group.name }}
+                            {% empty %}
+                                No Group
+                            {% endfor %}
+                        {% endif %}
+                    </small>
                 </div>
                 <button class="btn btn-warning mt-4" type="submit">Logout <i class="fa-solid fa-arrow-right-from-bracket"></i></button>
             </form>
@@ -49,12 +71,14 @@
             {% else %}
                 <a class="btn btn-warning" href="{% url 'login' %}">Login <i class="fa-solid fa-user"></i></a>
             {% endif %}
+            {% if user.is_superuser %}
             <div class="pt-4 pb-2">
                 <a id="admin_link" href="{% url 'admin:index' %}" class="sidebar-link text-decoration-none" target="_blank">
                     <i class="fas fa-gear"></i>
                     <span class="hide-on-collapse">DJango Admin</span>
                 </a>
             </div>
+            {% endif %}
         </div>
     </div>
 </nav>

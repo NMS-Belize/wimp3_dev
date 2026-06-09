@@ -4,128 +4,171 @@
 {% block content %}
 <form id="inventory_form" class="pt-5" method="post">
     {% csrf_token %}
-    <div class="row mb-4">
-        <div class="col-12">
-            <h3>Device Details</h3>
+    {% if form.errors %}
+    <div class="alert alert-danger">
+        <strong>Please correct the following errors:</strong>
+        {{ form.non_field_errors }}
+        <ul>
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <li>{{ field.label }}: {{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <button class="nav-link active" id="nav_tab_general" data-bs-toggle="tab" data-bs-target="#tab_general" type="button" role="tab" aria-controls="tab_general" aria-selected="true">General Device Details</button>
+        <button class="nav-link" id="nav_tab_placement" data-bs-toggle="tab" data-bs-target="#tab_placement" type="button" role="tab" aria-controls="tab_placement" aria-selected="false">Placement & Assignment</button>
+        <button class="nav-link" id="nav_tab_hardware" data-bs-toggle="tab" data-bs-target="#tab_hardware" type="button" role="tab" aria-controls="tab_hardware" aria-selected="false">Hardware Specifications</button>
+        <button class="nav-link" id="nav_tab_network" data-bs-toggle="tab" data-bs-target="#tab_network" type="button" role="tab" aria-controls="tab_network" aria-selected="false">Network Information</button>
+        <button class="nav-link" id="nav_tab_info" data-bs-toggle="tab" data-bs-target="#tab_info" type="button" role="tab" aria-controls="tab_info" aria-selected="false">Additional Information</button>
+    </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active pt-4" id="tab_general" role="tabpanel" aria-labelledby="nav_tab_general" tabindex="1">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h2>General Device Details</h2>
+                </div>
+                <div class="col-4">
+                    <label class="form-label">Device Label</label>
+                    {{ form.device_label }}
+                </div>
+                <div class="col-4">
+                    <label class="form-label">Device Name</label>
+                    {{ form.device_name }}
+                </div>
+                <div class="col-4">
+                    <label class="form-label">Category</label>
+                    {{ form.category }}
+                </div>
+                <div class="col-4">
+                    <label class="form-label">Device Type</label>
+                    {{ form.device_type }}
+                </div>
+                <div class="col-4">
+                    <label class="form-label">Manufacturer</label>
+                    {{ form.manufacturer }}
+                </div>
+                <div class="col-4">
+                    <label class="form-label">Model Number</label>
+                    {{ form.model_number }}
+                </div>
+                <div class="col-4">
+                    <label class="form-label">Serial Number</label>
+                    {{ form.serial_number }}
+                </div>
+                <div class="clear"></div>
+                <div class="col-4">
+                    <label class="form-label">Device Status</label>
+                    {{ form.device_status }}
+                </div>
+                <div class="col-4">
+                    <label class="form-label">Vendor</label>
+                    {{ form.vendor }}
+                </div>
+                <div class="col-4">
+                    <label class="form-label">Acquisition Date</label>
+                    {{ form.acquisition_date }}
+                </div>
+            </div>
         </div>
-        <div class="col-4">
-            <label class="form-label">Device Label</label>
-            {{ form.device_label }}
+        <div class="tab-pane fade pt-4" id="tab_placement" role="tabpanel" aria-labelledby="nav_tab_placement" tabindex="2">
+            <!-- Placement & Assignment -->
+            <div class="row mb-4">
+                <div class="col-12 mb-4">
+                    <h2>Placement & Assignment</h2>
+                </div>
+
+                <div class="col-4">
+                    <label class="form-label">Assigned User</label>
+                    {{ form.assigned_user }}
+                </div>
+
+                <div class="col-4">
+                    <label class="form-label">Placement</label>
+                    {{ form.placement }}
+                </div>
+                <div class="col-4">
+                    <label class="form-label">Department/Section</label>
+                    {{ form.department_section }}
+                </div>
+
+                <div class="col-4">
+                    <label class="form-label">Floor Level</label>
+                    {{ form.floor_level }}
+                </div>
+                <div class="col-4">
+                    <label class="form-label">Date Issued</label>
+                    {{ form.date_issued }}
+                </div>
+            </div>
         </div>
-        <div class="col-4">
-            <label class="form-label">Device Name</label>
-            {{ form.device_name }}
+        <div class="tab-pane fade pt-4" id="tab_hardware" role="tabpanel" aria-labelledby="nav_tab_hardware" tabindex="2">
+            <!-- Hardware Specifications -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h2>Hardware Specifications</h2>
+                </div>
+                <div class="col-4">
+                    <label class="form-label">Service Tag</label>
+                    {{ form.service_tag }}
+                </div>
+                <div class="col-4">
+                    <label class="form-label">Processor</label>
+                    {{ form.processor }}
+                </div>
+                <div class="col-4">
+                    <label class="form-label">RAM</label>
+                    {{ form.ram }}
+                </div>
+                <div class="col-4">
+                    <label class="form-label">Disk Size</label>
+                    {{ form.disk }}
+                </div>
+                <div class="col-4">
+                    <label class="form-label">Operating System</label>
+                    {{ form.operating_system }}
+                </div>
+            </div>
         </div>
-        <div class="col-4">
-            <label class="form-label">Category</label>
-            {{ form.category }}
+        <div class="tab-pane fade pt-4" id="tab_network" role="tabpanel" aria-labelledby="nav_tab_network" tabindex="3">
+            <!-- Network Information -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h2>Network Information</h2>
+                </div>
+                <div class="col-4">
+                    <label class="form-label">MAC Address</label>
+                    {{ form.mac_address }}
+                </div>
+                <div class="col-4">
+                    <label class="form-label">IP Address</label>
+                    {{ form.ip_address }}
+                </div>
+            </div>
         </div>
-        <div class="col-4">
-            <label class="form-label">Device Type</label>
-            {{ form.device_type }}
+        <div class="tab-pane fade pt-4" id="tab_info" role="tabpanel" aria-labelledby="nav_tab_info" tabindex="4">
+            <div class="col-12">
+                <h2>Additional Information</h2>
+            </div>
+            <div>
+                <label class="form-label">Important Notes:</label>
+                {{ form.notes }}
+            </div>
         </div>
-        <div class="col-4">
-            <label class="form-label">Manufacturer</label>
-            {{ form.manufacturer }}
-        </div>
-        <div class="col-4">
-            <label class="form-label">Model Number</label>
-            {{ form.model_number }}
-        </div>
-        <div class="col-4">
-            <label class="form-label">Service Tag</label>
-            {{ form.service_tag }}
-        </div>
-        <div class="col-4">
-            <label class="form-label">Serial Number</label>
-            {{ form.serial_number }}
-        </div>
+    </div>
+        
         <div class="clear"></div>
-        <div class="col-4">
-            <label class="form-label">Device Status</label>
-            {{ form.device_status }}
-        </div>
-        <div class="col-4">
-            <label class="form-label">Sponsor</label>
-            {{ form.sponsor }}
-        </div>
-        <div class="col-4">
-            <label class="form-label">Acquisition Date</label>
-            {{ form.acquisition_date }}
+        <div class="col-12 actions mt-4 mb-4">
+            <input id="btn_submit" name="btn_submit" type="submit" value="Save" class="btn" />
+            <input id="btn_submit_close" name="btn_submit_close" type="submit" value="Save & Close" class="btn btn-primary" />
+            <a id="btn_close" class="btn btn-danger" href="{{ back_url }}">Cancel</a>
         </div>
     </div>
-
-    <!-- Hardware Specifications -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <h3>Hardware Specifications</h3>
-        </div>
-        <div class="col-4">
-            <label class="form-label">Processor</label>
-            {{ form.processor }}
-        </div>
-        <div class="col-4">
-            <label class="form-label">RAM</label>
-            {{ form.ram }}
-        </div>
-        <div class="col-4">
-            <label class="form-label">Disk Size</label>
-            {{ form.disk }}
-        </div>
-        <div class="col-4">
-            <label class="form-label">Operating System</label>
-            {{ form.operating_system }}
-        </div>
-    </div>
-
-    <!-- Network Information -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <h3>Network Information</h3>
-        </div>
-        <div class="col-4">
-            <label class="form-label">MAC Address</label>
-            {{ form.mac_address }}
-        </div>
-        <div class="col-4">
-            <label class="form-label">IP Address</label>
-            {{ form.ip_address }}
-        </div>
-    </div>
-
-    <!-- Placement & Assignment -->
-    <div class="row mb-4">
-        <div class="col-12 mb-4">
-            <h3>Placement & Assignment</h3>
-        </div>
-
-        <div class="col-4">
-            <label class="form-label">Assigned User</label>
-            {{ form.assigned_user }}
-        </div>
-
-        <div class="col-4">
-            <label class="form-label">Placement</label>
-            {{ form.placement }}
-        </div>
-
-        <div class="col-4">
-            <label class="form-label">Department/Section</label>
-            {{ form.department_section }}
-        </div>
-
-        <div class="col-4">
-            <label class="form-label">Floor Level</label>
-            {{ form.floor_level }}
-        </div>
-        <div class="col-4">
-            <label class="form-label">Date Issued</label>
-            {{ form.date_issued }}
-        </div>
-    </div>
-    <div class="actions mt-4">
-        <button type="submit" class="btn btn-primary">Save</button>
-        <a href="{% url 'inventory:inventory_list' %}" class="btn btn-secondary">Cancel</a>
-    </div>
+    
 </form>
 {% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ page_name }} | District Forecast| WIMP3 | National Meteorological Service of Belize{% endblock %}
+{% block content %}
+<div class="row mt-3 mb-3">
+    <div class="col-12">
+        <h2>Delete Entry: <span class="text-bold text-delete">{{ entry.device_label }}</span></h2>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <p>Are you sure you want to delete this entry?
+        <em>Click <strong>"Confirm Delete"</strong> to continue or <strong>Cancel</strong> to return to listing</em></p>
+        <hr />
+        <div class="alert alert-warning" role="alert">
+            <p class="m-0">ID: <strong>{{ entry.id }}</strong>, Device Label: <strong>{{ entry.device_label }}</strong></p>
+        </div>
+    </div>
+        <form method="post">
+            {% csrf_token %}
+            <button id="btn_confirm_delete" type="submit" class="btn btn_confirm_delete">Confirm Delete</button>
+            <a id="btn_cancel" href="{% url 'inventory:inventory_list' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

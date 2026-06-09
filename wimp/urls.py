@@ -14,7 +14,7 @@ from rest_framework.authtoken import views
 
 from forecasts import views as forecasts_views
 from agro import views as agro_views
-from alerts import views as alert_views
+#from alerts import views as alert_views
 from radar import views as radar_views
 from users import views as user_views
 
@@ -45,8 +45,8 @@ router.register('effect-items', agro_views.EffectItemsViewSet, basename='effecti
 router.register('pest-risk', agro_views.PestRiskMainListingViewSet, basename='pestrisk')
 
 ### ALERTS API ROUTES ###
-router.register('cap-alerts', alert_views.CAPAlertsViewSet, basename='capalerts')
-router.register('cap-alert-details', alert_views.CAPAlertDetailsViewSet, basename='capalertdetails')
+#router.register('cap-alerts', alert_views.CAPAlertsViewSet, basename='capalerts')
+#router.register('cap-alert-details', alert_views.CAPAlertDetailsViewSet, basename='capalertdetails')
 
 ### RADAR SERVICES API ROUTES ###
 router.register('radar-images', RadarImagesViewSet, basename='radarimages')
@@ -72,7 +72,7 @@ urlpatterns = [
     path('forecasts/',      include('forecasts.urls')),
     path('observations/',   include('observations.urls')),
     path('agro/',           include('agro.urls')),
-    path('alerts/',         include('alerts.urls')),
+    #path('alerts/',         include('alerts.urls')),
     path('radar/',          include('radar.urls')),
     path('users/',          include('users.urls')),
     path('inventory/',      include('inventory.urls')),

@@ -20,7 +20,13 @@
         <div class="item_dashboard position-relative">
             <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'inventory:inventory_category_list' %}">
                 <img src="{% static 'button_icons/app.png' %}" alt="Device Category" />
-                <span class="task_desc">Device Type/Category</span>
+                <span class="task_desc">Inventory Category</span>
+            </a>
+        </div>
+        <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'inventory:device_type_list' %}">
+                <img src="{% static 'button_icons/categories.png' %}" alt="Device Type" />
+                <span class="task_desc">Device Type</span>
             </a>
         </div>
         <div class="item_dashboard position-relative">
@@ -35,13 +41,14 @@
                 <span class="task_desc">Manufacturer</span>
             </a>
         </div>
-        
-        <!--<div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'inventory:index' %}">
-                <img src="{% static 'button_icons/door-sign.png' %}" alt="Office Location" />
-                <span class="task_desc">Office/Location</span>
+        <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'inventory:vendor_list' %}">
+                <img src="{% static 'button_icons/vendor.png' %}" alt="Vendor" />
+                <span class="task_desc">Vendor</span>
             </a>
         </div>
+        
+        <!--
         <div class="item_dashboard position-relative">
             <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'inventory:inventory_category_list' %}">
                 <img src="{% static 'button_icons/door-sign.png' %}" alt="Office Location" />

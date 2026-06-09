@@ -3,7 +3,9 @@
     <a class="me-4" href="{% url 'site_home' %}">
         <img class="me-1" src="{% static 'button_icons/main-menu.png' %}" alt="Dashboard" />&nbsp; Dashboard
     </a>
+    {% if user.is_superuser %}
     <a class="me-4" href="{% url 'api-root' %}" target="_blank">
         <img class="me-1" src="{% static 'button_icons/api.png' %}" alt="API Root" />&nbsp; Go to API Root
     </a>
+    {% endif %}
 </div>

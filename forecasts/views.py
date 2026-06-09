@@ -11,6 +11,8 @@ from django.views.decorators.http import require_POST
 
 from django_tables2 import RequestConfig
 from rest_framework import settings, status, viewsets
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 from reportlab.platypus import Image, SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.pagesizes import letter, landscape
@@ -531,14 +533,25 @@ def district_forecast_entry(request, id=None):
         entry = None
 
     if request.method == 'POST':
-        
-        form = DistrictForecastForm(request.POST, instance=entry)
 
-        '''is_new = entry is None'''
+        form = DistrictForecastForm(request.POST, instance=entry)
 
         if form.is_valid():
 
-            saved_entry = form.save()
+            saved_entry = form.save(commit=False)
+
+            # New record only
+            if entry is None:
+                saved_entry.created_by = request.user
+
+            # Every save/update
+            saved_entry.updated_by = request.user
+
+            # IMPORTANT: save before using in ForeignKey queries
+            saved_entry.save()
+
+            # If your form has many-to-many fields
+            form.save_m2m()
 
             districts = District.objects.all().order_by("id")[:6]
 
@@ -547,18 +560,22 @@ def district_forecast_entry(request, id=None):
                     forecast=saved_entry,
                     district=district
                 )
-            return redirect('forecasts:district_forecast_details_entry', saved_entry.id)
+
+            return redirect(
+                'forecasts:district_forecast_details_entry',
+                saved_entry.id
+            )
+
         else:
-            print(form.errors)  # shows what field failed validation  
+            print(form.errors)
+
     else:
         form = DistrictForecastForm(instance=entry)
 
     return render(request, 'district-forecast/entry_form.html', {
         'page_name': page_name,
-        'new_url':  reverse('forecasts:district_forecast_entry'),
+        'new_url': reverse('forecasts:district_forecast_entry'),
         'back_url': reverse('forecasts:district_forecast_list'),
-
-        #'api_url': reverse('zones-list'),
         'form': form,
         'entry': entry
     })
@@ -932,6 +949,8 @@ class DistrictForecastAllViewSet(viewsets.ModelViewSet):
     pagination_class = None
 
 class DistrictForecastViewSet(viewsets.ModelViewSet):
-   queryset = DistrictForecast.objects.filter(is_published=True).prefetch_related("district_forecast_details")
-   serializer_class = sx.DistrictForecastSerializer
-   pagination_class = None
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    queryset = DistrictForecast.objects.filter(is_published=True).prefetch_related("district_forecast_details")
+    serializer_class = sx.DistrictForecastSerializer
+    pagination_class = None

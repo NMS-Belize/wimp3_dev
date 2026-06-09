@@ -1,9 +1,14 @@
 from django.contrib import admin
-from .models import InventoryCategory, OfficeLocationPlacement, InventoryItem
+from .models import DeviceType, InventoryCategory, OfficeLocationPlacement, InventoryItem, Vendor, Manufacturer, DepartmentSection
 
 
 admin.site.register(InventoryCategory)
+admin.site.register(Manufacturer)
+admin.site.register(DepartmentSection)
+admin.site.register(DeviceType)
+admin.site.register(OfficeLocationPlacement)
 admin.site.register(InventoryItem)
+admin.site.register(Vendor)
 
 '''@admin.register(InventoryCategory)
 class InventoryCategoryAdmin(admin.ModelAdmin):

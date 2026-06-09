@@ -1,46 +1,59 @@
 {% extends "base.html" %}
 {% load static %}
+{% load group_tags %}
 {% block title %}{{ page_name }} | WIMP3{% endblock %}
 {% block content %}
 <div id="dashboard" class="container-full">
     <div class="row">
         <div class="col-12 d-flex flex-row mb-3">
+            {% if perms.forecasts.view_districtforecast %}
             <div class="item_dashboard position-relative">
                 <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:index' %}">
                     <img class="img-fluid" src="{% static 'button_icons/meteorology.png' %}" alt="Forecasts" />
                     <span class="task_desc">Forecasts</span>
                 </a>
             </div>
+            {% endif %}
+            {% if perms.observations.view_observation %}
             <div class="item_dashboard position-relative">
                 <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'observations:index' %}">
                     <img class="img-fluid" src="{% static 'button_icons/cloudy.png' %}" alt="Weather Observations" />
                     <span class="task_desc">Weather Observations</span>
                 </a>
             </div>
+            {% endif %}
+            {% if perms.agro.view_agroclimatservice %}
             <div class="item_dashboard position-relative">
                 <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'agro:index' %}">
                     <img class="img-fluid" src="{% static 'button_icons/agriculture.png' %}" alt="Agro-Met Services" />
                     <span class="task_desc">Agro-Met Services</span>
                 </a>
             </div>
+            {% endif %}
+            {% if perms.alerts.view_alert %}
             <div class="item_dashboard position-relative">
-                <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'alerts:index' %}">
+                <a class="position-absolute top-50 start-50 translate-middle" href="#">
                     <img class="img-fluid" src="{% static 'button_icons/alert.png' %}" alt="Weather Alerts" />
                     <span class="task_desc">Weather Alerts</span>
                 </a>
             </div>
+            {% endif %}
+            {% if perms.radar.view_radarimage %}
             <div class="item_dashboard position-relative">
                 <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'radar:radar_images_list' %}">
                     <img class="img-fluid" src="{% static 'button_icons/radar.png' %}" alt="Radar Imagery" />
                     <span class="task_desc">Radar Imagery</span>
                 </a>
             </div>
+            {% endif %}
+            {% if perms.inventory.view_inventoryitem %}
             <div class="item_dashboard position-relative">
                 <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'inventory:index' %}">
                     <img class="img-fluid" src="{% static 'button_icons/inventory-management.png' %}" alt="Inventory Management" />
                     <span class="task_desc">Inventory Management</span>
                 </a>
-            </div>           
+            </div>
+            {% endif %}           
         </div>
     </div>
 </div>

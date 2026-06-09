@@ -37,8 +37,18 @@ body{
    line-height: 1.2;
    color: var(--dark);
    overflow-x: hidden;
+   height: 100%;
+   width: 100%;
 }
-#body_login{ background: url('/static/images/27.jpeg') top left no-repeat; background-size: cover;  }
+#body_login{ 
+  background-image: url('/static/images/27.jpeg'); 
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat; 
+  height: 100%;
+  width: 100%; 
+}
 
 #body_login #id_username, #body_login #id_password{ display: block; margin-bottom: 10px; }
 #body_login form label{ display: block; margin-bottom: 10px; }
@@ -117,6 +127,20 @@ h1{ font-weight: 300; font-size: 50px; }
 #main_pr_start, #main_pr_details, #main_pr_list, #main_agro_services{
   background: #fff;;
 }
+.user-initials{ 
+  border-radius: 50%;
+  height: 60px;
+  width: 60px;
+  background: var(--aqua-1);
+  color: #fff;
+  font-size: 28px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px auto;
+}
+
 
 #id_months{ display: inline-block ; width: 800px; height: 72px; border: 0; overflow: hidden; margin-top: 0; }
 #id_months label{ width:auto; }

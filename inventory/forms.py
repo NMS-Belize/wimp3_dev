@@ -1,5 +1,5 @@
 from django import forms
-from .models import DepartmentSection, InventoryCategory, Manufacturer,InventoryItem
+from .models import DepartmentSection, HardwareSpecifications, InventoryCategory, Manufacturer,InventoryItem, DeviceType, NetworkDetails, Vendor
 
 class InventoryCategoryForm(forms.ModelForm):
     class Meta:
@@ -11,6 +11,34 @@ class InventoryCategoryForm(forms.ModelForm):
         }
         widgets = {            
             'name': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+class DeviceTypeForm(forms.ModelForm):
+    class Meta:
+        model = DeviceType
+        fields = ['name', 'inventory_category']
+        labels = {   
+            # <-- add human-friendly labels here
+            'name': 'Device Type Name:',
+            'inventory_category': 'Inventory Category:',
+        }
+        widgets = {            
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'inventory_category': forms.Select(attrs={'class': 'form-select'}),
+        }
+
+class VendorForm(forms.ModelForm):
+    class Meta:
+        model = Vendor
+        fields = ['name', 'short_name']
+        labels = {   
+            # <-- add human-friendly labels here
+            'name': 'Vendor Name:',
+            'short_name': 'Short Name:',
+        }
+        widgets = {            
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'short_name': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
 class DepartmentSectionForm(forms.ModelForm):
@@ -53,23 +81,18 @@ class InventoryItemForm(forms.ModelForm):
             'category',
             'manufacturer',
             'model_number',
-            'service_tag',
-            'processor',
-            'ram',
-            'operating_system',
-            'disk',
             'device_status',
             'serial_number',
-            'mac_address',
-            'ip_address',
+            #'service_tag',
             'acquisition_date',
             'date_issued',
-            'sponsor',
+            'vendor',
+            'notes',
         ]
         widgets = {
             'device_label': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Device Label'}),
             'device_name': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Device Name'}),
-            'device_type': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Device Type'}),
+            'device_type': forms.Select(attrs={'class': 'form-control'}),
             'assigned_user': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Assigned User'}),
             'placement': forms.Select(attrs={'class': 'form-select'}),
             'department_section': forms.Select(attrs={'class': 'form-select'}),
@@ -77,16 +100,52 @@ class InventoryItemForm(forms.ModelForm):
             'category': forms.Select(attrs={'class': 'form-select'}),
             'manufacturer': forms.Select(attrs={'class': 'form-select'}),
             'model_number': forms.TextInput(attrs={'class': 'form-control'}),
-            'service_tag': forms.TextInput(attrs={'class': 'form-control'}),
-            'processor': forms.TextInput(attrs={'class': 'form-control' }),
-            'ram': forms.TextInput(attrs={'class': 'form-control'}),
-            'operating_system': forms.TextInput(attrs={'class': 'form-control'}),
-            'disk': forms.TextInput(attrs={'class': 'form-control'}),
             'device_status': forms.Select(attrs={'class': 'form-select'}),
             'serial_number': forms.TextInput(attrs={'class': 'form-control'}),
-            'mac_address': forms.TextInput(attrs={'class': 'form-control'}),
-            'ip_address': forms.TextInput(attrs={'class': 'form-control'}),
+            #'service_tag': forms.TextInput(attrs={'class': 'form-control'}),
             'acquisition_date': forms.DateInput(attrs={'class': 'form-control','type': 'date'}),
             'date_issued': forms.DateInput(attrs={'class': 'form-control','type': 'date'}),
-            'sponsor': forms.TextInput(attrs={'class': 'form-control'}),
+            'vendor': forms.Select(attrs={'class': 'form-control'}),
+            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
         }
+
+class NetworkDetailsForm(forms.ModelForm):
+    class Meta:
+        model = NetworkDetails
+        fields = [
+            'inventory_item',
+            'mac_address',
+            'ip_address',
+            'cabinet',
+            'switch_port_number',
+        ]
+        widgets = {
+            'inventory_item': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Inventory Item'}),
+            'mac_address': forms.TextInput(attrs={'class': 'form-control','placeholder': 'MAC Address'}),
+            'ip_address': forms.TextInput(attrs={'class': 'form-control','placeholder': 'IP Address'}),
+            'cabinet': forms.Select(attrs={'class': 'form-select'}),
+            'switch_port_number': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Switch Port Number'}),
+        }
+    
+class HardwareSpecificationsForm(forms.ModelForm):
+    class Meta:
+        model = HardwareSpecifications
+        fields = [
+            'inventory_item',
+            'service_tag',
+            'express_service_code',
+            'processor',
+            'ram',
+            'operating_system',
+            'disk_size'
+        ]
+        widgets = {
+            'inventory_item': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Inventory Item'}),
+            'service_tag': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Service Tag'}),
+            'express_service_code': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Express Service Code'}),
+            'processor': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Processor'}),
+            'ram': forms.TextInput(attrs={'class': 'form-control','placeholder': 'RAM'}),
+            'operating_system': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Operating System'}),
+            'disk_size': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Disk'}),
+        }
+        
