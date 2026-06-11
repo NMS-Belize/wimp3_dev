@@ -1,5 +1,7 @@
 import calendar, io
 import os
+from click import style
+from click import style
 from django.contrib import messages
 from sqlite3 import IntegrityError
 
@@ -10,22 +12,34 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 from django_tables2 import RequestConfig
+from reportlab.lib import styles
 from rest_framework import settings, status, viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
-from reportlab.platypus import Image, SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
-from reportlab.lib.pagesizes import letter, landscape
+
 from reportlab.lib import colors
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib.pagesizes import letter
+from reportlab.lib.enums import TA_CENTER, TA_LEFT
+from reportlab.lib.pagesizes import letter, landscape
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.platypus import Image, SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+
 
 from forecasts.forms import DistrictForecastDetailsForm, DistrictForecastForm, DistrictForecastInstructionsForm, DistrictForecastPublishForm, RiskLevelForm, SeverityForm, ProbabilityForm, DistrictForm, AlertLevelForm
 from forecasts.tables import AlertLevelTable, DistrictForecastDetailsTable, DistrictForecastTable, RiskLevelTable, SeverityTable, ProbabilityTable, DistrictTable, InstructionsTable
 from forecasts.models import AlertLevel, District, DistrictForecastDetails, RiskLevel, Severity, Probability, DistrictForecast, DistrictForecastInstructions
 
 from . import serializers as sx
+
+PAGE_WIDTH, PAGE_HEIGHT = letter
+
+pdfmetrics.registerFont(TTFont("OpenSans-Regular","static/fonts/OpenSans-Regular.ttf"))
+pdfmetrics.registerFont(TTFont("OpenSans-Light","static/fonts/OpenSans-Light.ttf"))
+pdfmetrics.registerFont(TTFont("OpenSans-SemiBold","static/fonts/OpenSans-SemiBold.ttf"))
+pdfmetrics.registerFont(TTFont("OpenSans-Bold","static/fonts/OpenSans-Bold.ttf"))
 
 # Create your views here.
 def index(request):
@@ -761,6 +775,31 @@ def district_forecast_details_entry_item(request, id=None, fk=None):
         'back_url': reverse('forecasts:district_forecast_details_entry', kwargs={'id': fk}),
     })
 
+def add_background_wafs_full(canvas, doc):
+    canvas.saveState()
+    canvas.drawImage("static/images/letterhead/nms_wafs_full.jpg",0,0,width=PAGE_WIDTH,height=PAGE_HEIGHT,preserveAspectRatio=False,mask='auto')
+    canvas.restoreState()
+
+def add_background_climat_full(canvas, doc):
+    canvas.saveState()
+    canvas.drawImage("static/images/letterhead/nms_clim_full.jpg",0,0,width=PAGE_WIDTH,height=PAGE_HEIGHT,preserveAspectRatio=False,mask='auto')
+    canvas.restoreState()
+
+def get_risk_color(level):
+    if not level:
+        return "#000000"
+
+    if level == 1:
+        return "#3CAEA3"      # Green
+    elif level == 2:
+        return "#FCBF49"      # Amber
+    elif level == 3:
+        return "#fd7e14"      # Orange
+    elif level == 4:
+        return "#D62828"      # Red
+
+    return "#000000"
+
 def generate_pdf(request, id=None):
 
     forecast = get_object_or_404(DistrictForecast, id=id)
@@ -773,156 +812,143 @@ def generate_pdf(request, id=None):
     os.makedirs(folder_path, exist_ok=True)
 
     # Full PDF file path
-    filename = f"District_Forecast_{forecast.forecast_date}.pdf"
+    filename = f"District_Forecast_NMS_BZ_{forecast.forecast_date}.pdf"
     file_path = os.path.join(folder_path, filename)
 
-    letterhead = Image("static/images/letterhead/nms_wafs.png")
-    letterhead.drawHeight = 2 * inch
-    letterhead.drawWidth = 8.5 * inch
-
-    # Create PDF directly on server
-    #p = canvas.Canvas(file_path, pagesize=letter)
-
-    doc = SimpleDocTemplate(
-        file_path, pagesize=landscape(letter), rightMargin=30, leftMargin=30, topMargin=30, bottomMargin=30,
-    )
+    doc = SimpleDocTemplate(file_path, pagesize=letter, leftMargin=0.5 * inch, rightMargin=0.5 * inch, topMargin=2 * inch, bottomMargin=0.5 * inch)
 
     styles = getSampleStyleSheet()
     elements = []
 
-    
+    main_title  = ParagraphStyle("MainTitle",   parent = styles["Title"],   fontName = "OpenSans-SemiBold", fontSize = 22, leading = 26, alignment = TA_LEFT, textColor = "#00537A", spaceAfter = 10)
+    sub_title   = ParagraphStyle("SubTitle",    parent = styles["Title"],   fontName = "OpenSans-Bold",     fontSize = 10, leading = 14, alignment = TA_LEFT, textColor = "#000000", spaceAfter = 10)
+    main_text   = ParagraphStyle("MainText",    parent = styles["Normal"],  fontName = "OpenSans-Regular",  fontSize = 10, leading = 18, alignment = TA_LEFT, textColor = "#000000", spaceAfter = 6)
+    foot_text   = ParagraphStyle("FootText",    parent = styles["Normal"],  fontName = "OpenSans-Regular",  fontSize = 8, leading = 12, alignment = TA_LEFT, textColor = "#000000", spaceAfter = 2)
+    table_head  = ParagraphStyle("TableHeader", parent = styles["Normal"],  fontName = "OpenSans-Bold",     fontSize = 9, leading = 9, spaceAfter = 10 )
+    table_first = ParagraphStyle("TableCol1",   parent = styles["Normal"],  fontName="OpenSans-Bold",       fontSize = 10 )
+    table_body  = ParagraphStyle("TableBody",   parent = styles["Normal"],  fontName = "OpenSans-Regular",  fontSize = 10, leading = 12, spaceAfter = 0 )
+    risk_text   = ParagraphStyle("RiskText",    parent = styles["Normal"],  fontName = "OpenSans-Bold",     fontSize = 10, spaceAfter = 40 )
 
+    details = DistrictForecastDetails.objects.filter(forecast=forecast).select_related("district").order_by("district__district_name")
 
-    '''p = canvas.Canvas(buffer, pagesize=letter)
-
-    width, height = letter
-
-    details = DistrictForecastDetails.objects.filter(
-        forecast=forecast
-    ).select_related(
-        "district",
-        "prob_temp_min", "sev_temp_min", "ins_temp_min",
-        "prob_temp_max", "sev_temp_max", "ins_temp_max",
-        "prob_precip_max", "sev_precip_max", "ins_precip_max",
-        "prob_winds", "sev_winds", "ins_winds",
-        "prob_weather_conditions", "sev_weather_conditions", "ins_weather_conditions",
-    ).order_by("district__district_name")
-
-     # Header
-    p.setFont("Helvetica-Bold", 22)
-    p.drawString(0.75 * inch, height - 1 * inch, "District Forecast")
-
-    p.setFont("Helvetica", 13)
-    p.drawString(0.75 * inch, height - 1.3 * inch, f"Forecast Date: {forecast.forecast_date}")
-    #p.drawString(1 * inch, height - 1.5 * inch, f"Published: {'Yes' if forecast.is_published else 'No'}")
-
-    # Table headings
-    y = height - 2 * inch
-
-    p.setFont("Helvetica-Bold", 11)
-    p.drawString(0.75 * inch, y, "DISTRICT")
-    p.drawString(2 * inch, y, "TEMP (MIN)")
-    p.drawString(3 * inch, y, "TEMP (MAX)")
-    p.drawString(4 * inch, y, "RAINFALL")
-    p.drawString(5 * inch, y, "WIND")
-    p.drawString(6.0 * inch, y, "WEATHER CONDITIONS")
-
-    y -= 0.25 * inch
-    p.setFont("Helvetica", 9)
-
-    for item in details:
-        if y < 60:
-            p.showPage()
-            y = height - 50
-            p.setFont("Helvetica", 9)
-
-        district = item.district.district_name if item.district else "N/A"
-        temp_min = f"{item.temp_min:.1f} °F" if item.temp_min is not None else ""
-        temp_max = f"{item.temp_max:.1f} °F" if item.temp_max is not None else ""
-        precip = f"{item.precip_max:.1f} in" if item.precip_max is not None else ""
-       
-        winds = ""
-        if item.winds_min is not None and item.winds_max is not None:
-            winds = f"{item.winds_min:.1f}-{item.winds_max:.1f} mph"
-
-        conditions = item.weather_conditions or ""
-
-        p.setFont("Helvetica-Bold", 9)
-        p.drawString(55, y, district)
-
-        p.setFont("Helvetica", 9)
-        p.drawString(145, y, temp_min)
-        p.drawString(215, y, temp_max)
-        p.drawString(290, y, precip)
-        p.drawString(360, y, winds)
-        p.drawString(430, y, conditions[:25])
-
-        y -= 18
-
-    p.showPage()
-    p.save()
-
-    buffer.seek(0)'''
-
-    details = DistrictForecastDetails.objects.filter(
-        forecast=forecast
-    ).select_related("district").order_by("district__district_name")
-
-    data = [
-        ["DISTRICT","TEMP (MIN)","TEMP (MAX)","RAINFALL","WIND","WEATHER CONDITIONS"]
-    ]
+    data = [[
+        Paragraph("DISTRICT", table_head),
+        Paragraph("WEATHER CONDITIONS", table_head),
+        Paragraph("TEMP<br/><font size='8'>(MIN)</font>", table_head),
+        Paragraph("TEMP<br/><font size='8'>(MAX)</font>", table_head),
+        Paragraph("RAINFALL<br/><font size='8'>(24HR)</font>", table_head),
+        Paragraph("WINDS", table_head),
+    ]]
 
     for item in details:
         wind = ""
         if item.winds_min is not None and item.winds_max is not None:
-            wind = f"{item.winds_min:.1f} - {item.winds_max:.1f} mph"
+            wind = f"{item.winds_min}-{item.winds_max} kts"
+        
+        weather_prob    = item.prob_weather_conditions.description.upper() if item.prob_weather_conditions else ""
+        temp_min_prob   = item.prob_temp_min.description.upper() if item.prob_temp_min else ""
+        temp_max_prob   = item.prob_temp_max.description.upper() if item.prob_temp_max else ""
+        precip_prob     = item.prob_precip_max.description.upper() if item.prob_precip_max else ""
+        wind_prob       = item.prob_winds.description.upper() if item.prob_winds else ""
+
+        weather_color   = get_risk_color(item.prob_weather_conditions_id)
+        temp_min_color  = get_risk_color(item.prob_temp_min_id)
+        temp_max_color  = get_risk_color(item.prob_temp_max_id)
+        precip_color    = get_risk_color(item.prob_precip_max_id)
+        wind_color      = get_risk_color(item.prob_winds_id)
+
+        weather_text    = item.weather_conditions or ""
+        temp_min_text   = f"{item.temp_min}°F" if item.temp_min is not None else ""
+        temp_max_text   = f"{item.temp_max}°F" if item.temp_max is not None else ""
+        precip_text     = f"{item.precip_max:.1f} in" if item.precip_max is not None else ""
+        wind_text       = wind
+        
+        if weather_prob:
+            weather_prob_text = (f"<font size='8' color='{weather_color}'>{weather_prob}</font>")
+
+        if temp_min_prob:
+            temp_min_prob_text = (f"<font size='8' color='{temp_min_color}'>{temp_min_prob}</font>")
+
+        if temp_max_prob:
+            temp_max_prob_text = (f"<font size='8' color='{temp_max_color}'>{temp_max_prob}</font>")
+
+        if precip_prob:
+            precip_prob_text = (f"<font size='8' color='{precip_color}'>{precip_prob}</font>")
+        
+        if wind_prob:
+            wind_prob_text = (f"<font size='8' color='{wind_color}'>{wind_prob}</font>")
 
         data.append([
-            item.district.district_name if item.district else "",
-            f"{item.temp_min:.1f} °F" if item.temp_min is not None else "",
-            f"{item.temp_max:.1f} °F" if item.temp_max is not None else "",
-            f"{item.precip_max:.1f} in" if item.precip_max is not None else "",
-            wind,
-            item.weather_conditions or "",
+            Paragraph(item.district.district_name if item.district else "", table_first),
+            Paragraph(weather_text, table_body),
+            Paragraph(temp_min_text, table_body),
+            Paragraph(temp_max_text, table_body),
+            Paragraph(precip_text, table_body),
+            Paragraph(wind_text, table_body),
         ])
+        data.append([
+            Paragraph("<font color='#000000' size='8'>Risk Level: </font>", table_body),
+            Paragraph(weather_prob_text, risk_text),
+            Paragraph(temp_min_prob_text, risk_text),
+            Paragraph(temp_max_prob_text, risk_text),
+            Paragraph(precip_prob_text, risk_text),
+            Paragraph(wind_prob_text, risk_text),
+        ])
+
+    available_width = doc.width
 
     table = Table(
         data,
         colWidths=[
-            1.5 * inch,
-            1.0 * inch,
-            1.0 * inch,
-            1.0 * inch,
-            1.3 * inch,
-            3.5 * inch,
+            available_width * 0.15,
+            available_width * 0.38,
+            available_width * 0.10,
+            available_width * 0.10,
+            available_width * 0.12,
+            available_width * 0.15,
         ],
-        repeatRows=1
+        repeatRows = 1
     )
 
-    table.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), colors.lightblue),
+    style = TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#b2d9d0")),
         ("TEXTCOLOR", (0, 0), (-1, 0), colors.black),
-        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-        ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
-        ("FONTSIZE", (0, 0), (-1, -1), 9),
         ("ALIGN", (1, 1), (4, -1), "CENTER"),
-        ("VALIGN", (0, 0), (-1, -1), "TOP"),
-        ("GRID", (0, 0), (-1, -1), 0.5, colors.white),
-        ("LEFTPADDING", (0, 0), (-1, -1), 5),
-        ("RIGHTPADDING", (0, 0), (-1, -1), 5),
-        ("TOPPADDING", (0, 0), (-1, -1), 4),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
-    ]))
+        #("VALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("VALIGN", (0, 0), (-1, 0), "MIDDLE"),
 
-    elements.append(letterhead)
-    elements.append(Paragraph("District Level Forecast",styles["Title"]))
-    elements.append(Paragraph(f"Forecast Date: {forecast.forecast_date}", styles["Normal"]))
-    elements.append(Spacer(1, 12))
+        ("ALIGN", (0, 1), (-1, -1), "LEFT"),
+        
+        # Data rows
+        ("VALIGN", (0, 1), (-1, -1), "TOP"),
+        #("GRID", (0, 0), (-1, -1), 0.5, colors.white),
+        ("LEFTPADDING", (0, 0), (-1, -1), 4),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 4),
+        ("TOPPADDING", (0, 0), (-1, -1), 2),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
+    ])
+
+    for row in range(2, len(data), 2):
+        style.add("LINEBELOW",(0, row),(-1, row),0.5, colors.HexColor("#b2d9d0"))
+    
+    table.setStyle(style)
+
+    forecaster = ""
+    if forecast.created_by:
+        forecaster = forecast.created_by.get_full_name() or forecast.created_by.username
+
+    elements.append(Paragraph("District Level Forecast", main_title))
+    elements.append(Paragraph(f"Forecast Date: {forecast.forecast_date.strftime('%B %d, %Y')}", sub_title))
     elements.append(table)
     elements.append(Spacer(1, 12))
-    elements.append(Paragraph(f"Forecaster: {forecast.created_by}", styles["Normal"]))
+    elements.append(Paragraph(f"Forecaster: {forecaster}", foot_text))
+    elements.append(Paragraph(f"Date Created: {forecast.created_datetime.strftime('%B %d, %Y | %I:%M %p')}; Last Updated: {forecast.updated_datetime.strftime('%B %d, %Y | %I:%M %p')}", foot_text))
 
-    doc.build(elements)
+    doc.build(elements,
+        onFirstPage=add_background_wafs_full,
+        onLaterPages=add_background_wafs_full
+    )
+    available_width = doc.width
 
     #buffer.seek(0)
 

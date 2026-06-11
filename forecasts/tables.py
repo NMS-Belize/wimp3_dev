@@ -1,9 +1,12 @@
 # tables.py
+import os
+
 import django_tables2 as tables
 import calendar
 
 from django.urls import reverse
 from django.utils.html import format_html
+from django.conf import settings
 
 from forecasts.models import AlertLevel, District, DistrictForecastDetails, DistrictForecastInstructions, RiskLevel, Severity, Probability, DistrictForecast
 
@@ -232,9 +235,21 @@ class DistrictForecastTable(tables.Table):
         return record.updated_by.get_full_name() if record.updated_by else ""
     
     def render_pdf_file(self, record):
-        link_html   = '<a href="{}" class="btn_pdf" target="_blank"><i class="fa-solid fa-file-pdf"></i></a>'
+        filename    = f"District_Forecast_NMS_BZ_{record.forecast_date}.pdf"
         url         = reverse("forecasts:generate_pdf", args=[record.id])  # change "pest_edit" to your URL name
-        return format_html(link_html, url)
+
+        pdf_path    = os.path.join(settings.DOCS_ROOT,"District_Forecasts",filename)
+
+        if os.path.exists(pdf_path):
+            url = f"{settings.DOCS_URL}/District_Forecasts/{filename}"
+            pdf_class = "btn_pdf"
+        else:
+            url = reverse("forecasts:generate_pdf", args=[record.id])
+            pdf_class = "btn_pdf_new"
+
+        link_html   = '<a href="{}" class="{}" target="_blank"><i class="fa-solid fa-file-pdf"></i></a>'
+        
+        return format_html(link_html, url, pdf_class)
     
     def render_delete(self, record):
         link_html   = '<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>'

@@ -430,3 +430,10 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
   margin-bottom: 15px;
 }
 #inventory_form .row div{ margin-bottom: 15px; }
+
+.btn_pdf{
+  color: var(--rose) !important;
+}
+.btn_pdf_new{
+  color:var(--dark) !important;
+}
