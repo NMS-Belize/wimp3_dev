@@ -51,7 +51,7 @@ def inventory_entry(request, id=None):
     else:
         entry = None
 
-    print(entry.category_id)  # check terminal
+    #print(entry.category_id)  # check terminal
 
     if request.method == 'POST':
         form = InventoryItemForm(request.POST, instance=entry)

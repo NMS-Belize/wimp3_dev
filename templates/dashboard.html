@@ -4,6 +4,25 @@
 {% block title %}{{ page_name }} | WIMP3{% endblock %}
 {% block content %}
 <div id="dashboard" class="container-full">
+    <div class="row mb-5">
+        <div class="col-12">
+            <h1 class="mb-4">NMS Apps</h1>
+        </div>
+        <div class="col-12 d-flex flex-row mb-3">
+            <div class="item_dashboard position-relative">
+                <a class="position-absolute top-50 start-50 translate-middle" href="https://nms.gov.bz" target="_blank" rel="noopener noreferrer">
+                    <img class="img-fluid" src="{% static 'images/app_icons/nms_logo.png' %}" alt="NMS Website" />
+                    <span class="task_desc">NMS Website</span>
+                </a>
+            </div>
+            <div class="item_dashboard position-relative">
+                <a class="position-absolute top-50 start-50 translate-middle" href="http://200.32.229.83/index.html" target="_blank" rel="noopener noreferrer">
+                    <img class="img-fluid" src="{% static 'images/app_icons/radarpic.gif' %}" alt="Radar Imagery" />
+                    <span class="task_desc">Radar Imagery</span>
+                </a>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-12 d-flex flex-row mb-3">
             {% if perms.forecasts.view_districtforecast %}
