@@ -141,17 +141,18 @@ class VendorTable(tables.Table):
 
 class InventoryTable(tables.Table):
     edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "col_edit"}, "td": {"style": "","class": "col_edit"}})
-    id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
     device_label = tables.Column(verbose_name="Device Label",attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
     device_name = tables.Column(verbose_name="Device Name",attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
     category = tables.Column(verbose_name="Category",attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+    assigned_user   = tables.Column(verbose_name="Assigned User",attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+    id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
     delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "text-center"},"td": {"style": "","class": "col_delete text-center"}})
 
     class Meta:
         model = InventoryItem
         template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
-        fields = ("edit","id","device_label","device_name","category","delete")
-        sequence = ("edit","device_label","device_name","category","id","delete")
+        fields = ("edit","id","device_label","device_name","category","assigned_user","delete")
+        sequence = ("edit","device_label","device_name","category","assigned_user","id","delete")
 
         # Add table HTML id and CSS classes here
         attrs = {

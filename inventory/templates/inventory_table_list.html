@@ -10,6 +10,21 @@
 {% endif %}
 <div class="row">
     <div class="col-12">
+        <form method="get" class="mb-3">
+            <table class="table table-borderless">
+                <tr>
+                    <td width="75px">&nbsp;</td>
+                    <td><input type="text" name="device_label" class="form-control" placeholder="Search Device Label" value="{{ request.GET.device_label }}" /></td>
+                    <td><input type="text" name="device_name" class="form-control" placeholder="Search Device Name" value="{{ request.GET.device_name }}" /></td>
+                    <td><input type="text" name="device_category" class="form-control" placeholder="Search Device Category" value="{{ request.GET.device_category }}" /></td>
+                    <td><input type="text" name="user" class="form-control" placeholder="Search User" value="{{ request.GET.user }}" /></td>
+                    <td width="75px">&nbsp;</td>
+                    <td width="75px">&nbsp;</td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <div class="col-12">
         {% load render_table from django_tables2 %}
         {% render_table table %}
     </div>

@@ -39,7 +39,7 @@ def inventory_list(request, id=None):
         'back_url': reverse('inventory:index'),
         #'api_url': reverse('sectors-list'),
     }
-    return render(request, 'table_list_template.html', context)
+    return render(request, 'inventory_table_list.html', context)
 
 def inventory_entry(request, id=None):
 
