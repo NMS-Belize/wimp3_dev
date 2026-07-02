@@ -10,7 +10,7 @@ from django_toggle_switch_widget.widgets import DjangoToggleSwitchWidget
 from django.core.exceptions import ValidationError
 
 from django.db.models.functions import Lower
-
+from django.db.models import Q
 
 from django.utils import timezone
 
@@ -231,30 +231,35 @@ class DistrictForecastDetailsForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['ins_weather_conditions'].queryset = (
             DistrictForecastInstructions.objects.filter(
-                category__category_name="Weather Conditions"
+                Q(category__category_name="Weather Conditions") |
+                Q(category__category_name="Uncategorized")
             ).order_by(Lower('description'))
         )
 
         self.fields['ins_temp_max'].queryset = (
             DistrictForecastInstructions.objects.filter(
-                category__category_name="Temperature"
+                Q(category__category_name="Temperature") |
+                Q(category__category_name="Uncategorized")
             ).order_by(Lower('description'))
         )
 
         self.fields['ins_temp_min'].queryset = (
             DistrictForecastInstructions.objects.filter(
-                category__category_name="Temperature"
+                Q(category__category_name="Temperature") |
+                Q(category__category_name="Uncategorized")
             ).order_by(Lower('description'))
         )        
 
         self.fields['ins_winds'].queryset = (
             DistrictForecastInstructions.objects.filter(
-                category__category_name="Winds"
+                Q(category__category_name="Winds") |
+                Q(category__category_name="Uncategorized")
             ).order_by(Lower('description'))
         )
 
         self.fields['ins_precip_max'].queryset = (
             DistrictForecastInstructions.objects.filter(
-                category__category_name="Precipitation"
+                Q(category__category_name="Precipitation") |
+                Q(category__category_name="Uncategorized")
             ).order_by(Lower('description'))
         )
