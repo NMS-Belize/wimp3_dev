@@ -4,10 +4,6 @@ import django_filters
 from .models import InventoryItem
 
 class InventoryItemFilter(django_filters.FilterSet):
-    device_label = django_filters.CharFilter(
-        lookup_expr="icontains",
-        label="Device Label"
-    )
 
     device_name = django_filters.CharFilter(
         lookup_expr="icontains",
@@ -27,15 +23,12 @@ class InventoryItemFilter(django_filters.FilterSet):
     class Meta:
         model = InventoryItem
         fields = [
-            #"device_label",
             "device_name",
-            "assigned_user",
-            "serial_number",
-            "device_status",
             "category",
-            "device_type",
+            "serial_number",
             "department_section",
-            "placement",
+            "assigned_user",
+            "device_status",
         ]
 
     def __init__(self, *args, **kwargs):
