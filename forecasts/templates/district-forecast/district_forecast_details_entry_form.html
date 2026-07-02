@@ -14,6 +14,7 @@
     <div class="col-12">
         <form method="post">
             {% csrf_token %}
+            
             <div class="row mb-3 pb-2 border-bottom">
                 <div class="col-2">&nbsp;</div>
                 <div class="col-2"><span class="h5">Forecast Value</span></div>
@@ -27,7 +28,7 @@
                 <div class="col-2">{{ form.weather_conditions }}</div>
                 <div class="col-2">{{ form.prob_weather_conditions }}</div>
                 <div class="col-2">{{ form.sev_weather_conditions }}</div>
-                <div class="col-1"><span id="risk_level_weather_conditions" class="form-control risk-alert">&nbsp;</span>{{ form.risk_weather_conditions }}</div>
+                <div class="col-1"><span id="risk_level_weather_conditions" class="form-control risk-alert">&nbsp;</span>{{ form.risk_weather_conditions }}&nbsp;</div>
                 <div class="col-3">{{ form.ins_weather_conditions }}</div>
             </div>
             <div class="row mb-3">
@@ -35,7 +36,7 @@
                 <div class="col-2">{{ form.temp_max }}</div>
                 <div class="col-2">{{ form.prob_temp_max }}</div>
                 <div class="col-2">{{ form.sev_temp_max }}</div>
-                <div class="col-1"><span id="risk_level_temp_max" class="form-control risk-alert"></span>{{ form.risk_temp_max }}</div>
+                <div class="col-1"><span id="risk_level_temp_max" class="form-control risk-alert">&nbsp;</span>{{ form.risk_temp_max }}&nbsp;</div>
                 <div class="col-3">{{ form.ins_temp_max }}</div>
             </div>
             <div class="row mb-3">
@@ -43,7 +44,7 @@
                 <div class="col-2">{{ form.temp_min }}</div>
                 <div class="col-2">{{ form.prob_temp_min }}</div>
                 <div class="col-2">{{ form.sev_temp_min }}</div>
-                <div class="col-1"><span id="risk_level_temp_min" class="form-control risk-alert"></span>{{ form.risk_temp_min }}</div>
+                <div class="col-1"><span id="risk_level_temp_min" class="form-control risk-alert">&nbsp;</span>{{ form.risk_temp_min }}&nbsp;</div>
                 <div class="col-3">{{ form.ins_temp_min }}</div>
             </div>
             <div class="row mb-3">
@@ -51,7 +52,7 @@
                 <div class="col-2">{{ form.precip_max }}</div>
                 <div class="col-2">{{ form.prob_precip_max }}</div>
                 <div class="col-2">{{ form.sev_precip_max }}</div>
-                <div class="col-1"><span id="risk_level_precip_max" class="form-control risk-alert"></span>{{ form.risk_precip_max }}</div>
+                <div class="col-1"><span id="risk_level_precip_max" class="form-control risk-alert">&nbsp;</span>{{ form.risk_precip_max }}&nbsp;</div>
                 <div class="col-3">{{ form.ins_precip_max }}</div>
             </div>
             <div class="row mb-3">
@@ -59,14 +60,14 @@
                 <div class="col-2 d-flex">{{ form.winds_min }}<span class="mx-2">to</span>{{ form.winds_max }}</div>
                 <div class="col-2">{{ form.prob_winds }}</div>
                 <div class="col-2">{{ form.sev_winds }}</div>
-                <div class="col-1"><span id="risk_level_winds" class="form-control risk-alert"></span>{{ form.risk_winds }}</div>
+                <div class="col-1"><span id="risk_level_winds" class="form-control risk-alert">&nbsp;</span>{{ form.risk_winds }}&nbsp;</div>
                 <div class="col-3">{{ form.ins_winds }}</div>
             </div>
             <div class="row mb-3"> 
                 <div class="col-12">
-                    <input id="btn_submit" name="btn_submit" type="submit" value="Save" class="btn" />
-                    <input id="btn_submit_close" name="btn_submit_close" type="submit" value="Save & Close" class="btn btn-primary" />
-                    <a id="btn_close" class="btn btn-danger" href="{{ back_url }}">Cancel</a>
+                    <input id="btn_submit" name="btn_submit" type="submit" value="Save Entry" class="btn" />
+                    <!--<input id="btn_submit_close" name="btn_submit_close" type="submit" value="Save & Close" class="btn btn-primary" />-->
+                    <a id="btn_close" class="btn btn-danger" href="{{ back_url }}">Close</a>
                 </div>
             </div>
         </form>
@@ -80,9 +81,21 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div id="instructionError" class="text-danger mb-2"></div>
-                    <label class="form-label">Instruction</label>
-                    <input type="text" id="new_instruction" class="form-control">
+                    <div id="instructionError" name="instructionError" class="text-danger mb-2"></div>
+                    <div class="form-group">
+                        <label class="form-label">Instruction</label>
+                        <textarea type="text" id="new_instruction" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label class="form-label">Category</label>
+                        <select type="text" id="new_instruction_category" name="new_instruction_category" class="form-control" value="Weather Conditions">
+                            <option value="" disabled>-- Select Category --</option>
+                            <option value="1">Weather Conditions</option>
+                            <option value="2">Temperature</option>
+                            <option value="3">Winds</option>
+                            <option value="4">Precipitation</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn_close btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -201,7 +214,10 @@
         document.getElementById("saveInstructionBtn").addEventListener("click", function () {
 
             const description = document.getElementById("new_instruction").value;
+            const category = document.getElementById("new_instruction_category").value;
             const errorBox = document.getElementById("instructionError");
+
+            
 
             fetch("{% url 'forecasts:district_forecast_instructions_ajax_add' %}", {
                 method: "POST",
@@ -210,31 +226,70 @@
                     "Content-Type": "application/x-www-form-urlencoded",
                 },
                 body: new URLSearchParams({
-                    description: description
+                    description: description,
+                    category: category
                 })
             })
             .then(response => response.json())
             .then(data => {
+                
                 if (data.success) {
 
+                    const selectMap = {
+                        "1": "id_ins_precip_max",
+                        "2": "id_ins_temp_max",
+                        "3": "id_ins_temp_min",
+                        "4": "id_ins_winds",
+                        "5": "id_ins_weather_conditions"
+                    };
+
                     const selectIds = [
-                        "id_ins_precip_max",
-                        "id_ins_temp_max",
-                        "id_ins_temp_min",
-                        "id_ins_winds",
-                        "id_ins_weather_conditions"
+                        selectMap[category]
                     ];
+
+                    /*selectIds.forEach(function(selectId) {
+                        const select = document.getElementById(selectId);
+                        //console.log(selectId, select);
+
+                        
+
+                        if (select) {
+
+                            Array.from(select.options).forEach(option => {
+                                option.selected = false;
+                            });
+
+                            const option = new Option(data.description, data.id, true, true);
+
+                            
+                            select.add(option);
+                            select.value = data.id;
+
+                            select.dispatchEvent(new Event("change", { bubbles: true }));
+                        }
+                    });*/
 
                     selectIds.forEach(function(selectId) {
                         const select = document.getElementById(selectId);
+
                         if (select) {
-                            const option = new Option(
-                                data.description,
-                                data.id,
-                                false,
-                                false
-                            );
-                            select.add(option);
+                            // Remove previous selection
+                            Array.from(select.options).forEach(option => {
+                                option.selected = false;
+                            });
+
+                            // Add new option if it doesn't already exist
+                            let option = select.querySelector(`option[value="${data.id}"]`);
+                            if (!option) {
+                                option = new Option(data.description, data.id, true, true);
+                                select.add(option);
+                            }
+
+                            // Select the new option
+                            select.value = data.id;
+
+                            // Notify listeners
+                            select.dispatchEvent(new Event("change", { bubbles: true }));
                         }
                     });
                                 
@@ -243,6 +298,7 @@
                     //select.add(option);
 
                     document.getElementById("new_instruction").value = "";
+                    document.getElementById("new_instruction_category").value = "";
                     errorBox.innerText = "";
 
                     const modalElement = document.getElementById("addInstructionModal");
@@ -250,11 +306,11 @@
                     modal.hide();
                 }
                 else {
+                    console.log(data.error);
                     errorBox.innerText = data.error;
                 }
             });
         });
     });
-
 </script>
 {% endblock %}

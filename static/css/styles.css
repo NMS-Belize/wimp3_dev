@@ -437,3 +437,6 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 .btn_pdf_new{
   color:var(--dark) !important;
 }
+#id_winds_min,#winds_max{
+  line-height: 1 !important;
+}

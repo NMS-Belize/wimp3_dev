@@ -35,6 +35,12 @@
                 <span class="task_desc">District Forecast Instructions</span>
             </a>
         </div>
+        <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:instructions_category_list' %}">
+                <img src="{% static 'button_icons/options.png' %}" alt="Instructions Category" />
+                <span class="task_desc">Instructions Category</span>
+            </a>
+        </div>
         <!--<div class="item_dashboard position-relative">
             <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:probability_list' %}">
                 <img src="{% static 'button_icons/curve.png' %}" alt="Probability" />

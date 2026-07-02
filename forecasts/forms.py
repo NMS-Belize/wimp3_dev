@@ -1,12 +1,16 @@
 from datetime import timezone
+from unicodedata import category
 
 from click import option
 from django import forms
 from pytz import timezone
-from .models import AlertLevel, District, DistrictForecast, DistrictForecastDetails, DistrictForecastInstructions, Probability, RiskLevel, Severity
+from .models import AlertLevel, District, DistrictForecast, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, Probability, RiskLevel, Severity
 
 from django_toggle_switch_widget.widgets import DjangoToggleSwitchWidget
 from django.core.exceptions import ValidationError
+
+from django.db.models.functions import Lower
+
 
 from django.utils import timezone
 
@@ -63,16 +67,30 @@ class AlertLevelForm(forms.ModelForm):
             'color': forms.TextInput(attrs={'class': 'form-control'})
         }
 
+class DistrictForecastInstructionsCategoryForm(forms.ModelForm):
+    class Meta:
+        model = DistrictForecastInstructionsCategory
+        fields = ['category_name']
+        labels = {   
+            # <-- add human-friendly labels here
+            'category_name': 'Category Name:'
+        }
+        widgets = {            
+            'category_name': forms.TextInput(attrs={'class': 'form-control'})
+        }
+
 class DistrictForecastInstructionsForm(forms.ModelForm):
     class Meta:
         model = DistrictForecastInstructions
-        fields = ['description']
+        fields = ['description', 'category']
         labels = {   
             # <-- add human-friendly labels here
-            'description': 'Description:'
+            'description': 'Description:',
+            'category': 'Category:'
         }
         widgets = {            
-            'description': forms.TextInput(attrs={'class': 'form-control'})
+            'description': forms.Textarea(attrs={'class': 'form-control'}),
+            'category': forms.Select(attrs={'class': 'form-select'})
         }
 
 class RiskLevelForm(forms.ModelForm):
@@ -152,7 +170,6 @@ class DistrictForecastForm(forms.ModelForm):
 
         return forecast_date
     
-
 class DistrictForecastPublishForm(forms.ModelForm):
     class Meta:
         model = DistrictForecast
@@ -170,20 +187,19 @@ class DistrictForecastDetailsForm(forms.ModelForm):
     class Meta:
         model = DistrictForecastDetails
         fields = [ 
-                  'temp_max', 'prob_temp_max', 'sev_temp_max', 'risk_temp_max', 'ins_temp_max',
-                  'temp_min', 'prob_temp_min', 'sev_temp_min', 'risk_temp_min', 'ins_temp_min',
-                  'winds_min', 'winds_max', 'prob_winds', 'sev_winds', 'risk_winds', 'ins_winds',
-                  'precip_max', 'prob_precip_max', 'sev_precip_max', 'risk_precip_max', 'ins_precip_max',
-                  'weather_conditions', 'prob_weather_conditions', 'sev_weather_conditions', 'risk_weather_conditions', 'ins_weather_conditions'
+            'temp_max', 'prob_temp_max', 'sev_temp_max', 'risk_temp_max', 'ins_temp_max',
+            'temp_min', 'prob_temp_min', 'sev_temp_min', 'risk_temp_min', 'ins_temp_min',
+            'winds_min', 'winds_max', 'prob_winds', 'sev_winds', 'risk_winds', 'ins_winds',
+            'precip_max', 'prob_precip_max', 'sev_precip_max', 'risk_precip_max', 'ins_precip_max',
+            'weather_conditions', 'prob_weather_conditions', 'sev_weather_conditions', 'risk_weather_conditions', 'ins_weather_conditions'
         ]
-        widgets = {            
+        widgets = { 
             'weather_conditions': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'cols': 20, 'style': 'width: 100%'}),
             'prob_weather_conditions': forms.Select(attrs={'class': 'form-select color-select', 'width': '100%'}),
             'sev_weather_conditions': forms.Select(attrs={'class': 'form-select color-select', 'width': '100%'}),
             #'risk_weather_conditions': forms.Select(attrs={'class': 'form-control','style': 'display:none','placeholder': ''}),
             'risk_weather_conditions': forms.HiddenInput(),
             'ins_weather_conditions': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
-
 
             'temp_max': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.5', 'width': '100%'}),
             'prob_temp_max': forms.Select(attrs={'class': 'form-select color-select','width': '100%'}),
@@ -204,9 +220,41 @@ class DistrictForecastDetailsForm(forms.ModelForm):
             'risk_winds': forms.HiddenInput(),
             'ins_winds': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
 
-            'precip_max': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.5', 'width': '100%'}),
+            'precip_max': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.25', 'width': '100%'}),
             'prob_precip_max': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
             'sev_precip_max': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
             'risk_precip_max': forms.HiddenInput(),
             'ins_precip_max': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['ins_weather_conditions'].queryset = (
+            DistrictForecastInstructions.objects.filter(
+                category__category_name="Weather Conditions"
+            ).order_by(Lower('description'))
+        )
+
+        self.fields['ins_temp_max'].queryset = (
+            DistrictForecastInstructions.objects.filter(
+                category__category_name="Temperature"
+            ).order_by(Lower('description'))
+        )
+
+        self.fields['ins_temp_min'].queryset = (
+            DistrictForecastInstructions.objects.filter(
+                category__category_name="Temperature"
+            ).order_by(Lower('description'))
+        )        
+
+        self.fields['ins_winds'].queryset = (
+            DistrictForecastInstructions.objects.filter(
+                category__category_name="Winds"
+            ).order_by(Lower('description'))
+        )
+
+        self.fields['ins_precip_max'].queryset = (
+            DistrictForecastInstructions.objects.filter(
+                category__category_name="Precipitation"
+            ).order_by(Lower('description'))
+        )

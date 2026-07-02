@@ -43,9 +43,17 @@ class RiskLevel(models.Model):
 
     def __str__(self):
         return f"{self.description}"
-    
+
+class DistrictForecastInstructionsCategory(models.Model):
+    category_name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return str(self.category_name)
+        
 class DistrictForecastInstructions(models.Model):
     description = models.CharField(max_length=200)
+    #category = models.ForeignKey(DistrictForecastInstructionsCategory,on_delete=models.SET_NULL,null=True,blank=True,related_name="instructions_category")
+    category = models.ForeignKey(DistrictForecastInstructionsCategory,on_delete=models.CASCADE,related_name="instructions_category")
 
     def __str__(self):
         return str(self.description)
@@ -84,7 +92,7 @@ class DistrictForecastDetails(models.Model):
     risk_winds      = models.ForeignKey(RiskLevel,on_delete=models.SET_NULL,null=True,blank=True,related_name="risk_winds")
     ins_winds       = models.ForeignKey(DistrictForecastInstructions,on_delete=models.SET_NULL,null=True,blank=True,related_name="instructions_winds")
 
-    precip_max      = models.DecimalField(default=0.0,max_digits=5,decimal_places=1)
+    precip_max      = models.DecimalField(default=0.00,max_digits=5,decimal_places=1)
     prob_precip_max = models.ForeignKey(AlertLevel,on_delete=models.SET_NULL,null=True,blank=True,related_name="probability_precip_max")
     sev_precip_max  = models.ForeignKey(AlertLevel,on_delete=models.SET_NULL,null=True,blank=True,related_name="severity_precip_max")
     risk_precip_max = models.ForeignKey(RiskLevel,on_delete=models.SET_NULL,null=True,blank=True,related_name="risk_precip_max")

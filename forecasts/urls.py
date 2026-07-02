@@ -31,6 +31,13 @@ urlpatterns = [
 
     path("district-forecast/instructions/ajax/add/", views.district_forecast_instructions_ajax_add,name="district_forecast_instructions_ajax_add"),
 
+    ## DISTRICT FORECASTS: Instructions Category
+    path('district-forecast/instructions-category/list/', views.instructions_category_list, name="instructions_category_list"),
+    path('district-forecast/instructions-category/list/<int:id>/', views.instructions_category_list, name='instructions_category_list'),
+    path('district-forecast/instructions-category/entry/', views.instructions_category_entry, name="instructions_category_entry"),
+    path('district-forecast/instructions-category/entry/<int:id>/', views.instructions_category_entry, name='instructions_category_entry'),
+    #path('district-forecast/instructions-category/entry/<int:id>/delete/', views.instructions_category_delete, name='instructions_category_delete'),
+
     ## DISTRICT FORECASTS: Risk Level
     path('district-forecast/risk-level-list/', views.risk_level_list, name="risk_level_list"),
     path('district-forecast/risk-level-list/<int:id>/', views.risk_level_list,name='risk_level_list'),

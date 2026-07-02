@@ -1,5 +1,6 @@
 import calendar, io
 import os
+from unicodedata import category
 from click import style
 from click import style
 from django.contrib import messages
@@ -28,9 +29,9 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import Image, SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 
 
-from forecasts.forms import DistrictForecastDetailsForm, DistrictForecastForm, DistrictForecastInstructionsForm, DistrictForecastPublishForm, RiskLevelForm, SeverityForm, ProbabilityForm, DistrictForm, AlertLevelForm
-from forecasts.tables import AlertLevelTable, DistrictForecastDetailsTable, DistrictForecastTable, RiskLevelTable, SeverityTable, ProbabilityTable, DistrictTable, InstructionsTable
-from forecasts.models import AlertLevel, District, DistrictForecastDetails, RiskLevel, Severity, Probability, DistrictForecast, DistrictForecastInstructions
+from forecasts.forms import DistrictForecastDetailsForm, DistrictForecastForm, DistrictForecastInstructionsCategoryForm, DistrictForecastInstructionsForm, DistrictForecastPublishForm, RiskLevelForm, SeverityForm, ProbabilityForm, DistrictForm, AlertLevelForm
+from forecasts.tables import AlertLevelTable, DistrictForecastDetailsTable, DistrictForecastTable, InstructionsCategoryTable, RiskLevelTable, SeverityTable, ProbabilityTable, DistrictTable, InstructionsTable
+from forecasts.models import AlertLevel, District, DistrictForecastDetails, DistrictForecastInstructionsCategory, RiskLevel, Severity, Probability, DistrictForecast, DistrictForecastInstructions
 
 from . import serializers as sx
 
@@ -246,7 +247,7 @@ def instructions_entry(request, id=None):
         'page_name':    page_name,
         'new_url':      reverse('forecasts:instructions_list'),
         'details_url':  "",
-        #'back_url':     reverse('forecasts:risk_level_list'),
+        'back_url':     reverse('forecasts:instructions_list'),
         'api_url':      "/api/pest-risk/",
         'form': form,
         'entry': entry
@@ -276,6 +277,7 @@ def instructions_delete(request, id):
 @require_POST
 def district_forecast_instructions_ajax_add(request):
     description = request.POST.get("description", "").strip()
+    category = request.POST.get("category", "").strip()
 
     if not description:
         return JsonResponse({
@@ -283,12 +285,75 @@ def district_forecast_instructions_ajax_add(request):
             "error": "Description is required."
         })
 
-    item = DistrictForecastInstructions.objects.create(description=description)
+    if not category:
+        return JsonResponse({
+            "success": False,
+            "error": "Category is required."
+        })
+
+    item = DistrictForecastInstructions.objects.create(description=description, category_id=category)
 
     return JsonResponse({
         "success": True,
         "id": item.id,
-        "description": str(item)
+        "description": str(item),
+        "category": item.category.category_name if item.category else None
+    })
+
+
+############# DISTRICT FORECASTS: Instructions Category #############
+def instructions_category_list(request, id=None):
+    page_name = "Instructions Category Entries"
+    qs = DistrictForecastInstructionsCategory.objects.all().order_by('-id')
+    table = InstructionsCategoryTable(qs)
+    table.empty_text = "No records available"
+    RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+    '''if id is not None:
+        entry = get_object_or_404(PestRiskEntryMainListing, id=id)'''
+
+    context = {
+        #'id' : id,
+        'entry': entry,  
+        'page_name': page_name,
+        'prev_page': 'District Forecast Instructions',
+        'table': table,
+        'new_url':  reverse('forecasts:instructions_category_entry'),
+        'back_url': reverse('forecasts:index'),
+        #'api_url': "/api/pest-risk/",
+    }
+    return render(request, 'district-forecast/parameters_table_list.html', context)
+
+def instructions_category_entry(request, id=None):
+
+    page_name = "Instructions Category Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(DistrictForecastInstructionsCategory, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = DistrictForecastInstructionsCategoryForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('forecasts:instructions_category_list', saved_entry.id)
+        
+    else:
+        form = DistrictForecastInstructionsCategoryForm(instance=entry)
+
+    return render(request, 'district-forecast/parameters_entry_form.html', {
+        'page_name':    page_name,
+        'new_url':      reverse('forecasts:instructions_list'),
+        'details_url':  "",
+        'back_url':     reverse('forecasts:instructions_list'),
+        'api_url':      "/api/pest-risk/",
+        'form': form,
+        'entry': entry
     })
 
 ############# DISTRICT FORECATSTS: Risk Level Entry #############
@@ -710,13 +775,26 @@ def district_forecast_details_entry(request, id):
     table = DistrictForecastDetailsTable(qs)
     table.empty_text = "No records available"
     RequestConfig(request).configure(table)
-    
+
     if request.method == 'POST':
+        print(request.POST)
         form = DistrictForecastPublishForm(request.POST, instance=entry)
 
         if form.is_valid():
             saved_entry = form.save()    # Creates or updates
-            return redirect('forecasts:district_forecast_details_entry', saved_entry.id)
+            messages.success(request, "Record saved successfully.")
+            #return redirect('forecasts:district_forecast_details_entry', saved_entry.id)            
+
+            # Save & Close button
+            #if 'btn_submit_close' in request.POST:
+            #   return redirect('forecasts:district_forecast_list')
+
+            # Regular Save button
+            return redirect('forecasts:district_forecast_details_entry', saved_entry.id)  
+            
+        else:
+            messages.error(request, "Please correct the errors below.")
+            print(form.errors)  # check terminal
     else:
         form = DistrictForecastPublishForm(instance=entry)
 
@@ -774,6 +852,35 @@ def district_forecast_details_entry_item(request, id=None, fk=None):
         'forecast_id': fk,
         'back_url': reverse('forecasts:district_forecast_details_entry', kwargs={'id': fk}),
     })
+
+'''def district_forecast_details_instructions_ajax_add(request):
+    if request.method == "POST":
+        description = request.POST.get("description")
+        category_id = request.POST.get("category")
+
+        if not description:
+            return JsonResponse({
+                "success": False,
+                "error": "Instruction description is required."
+            })
+
+        if not category_id:
+            return JsonResponse({
+                "success": False,
+                "error": "Instruction category is required."
+            })
+
+        instruction = DistrictForecastInstructions.objects.create(
+            description=description,
+            category_id=category_id
+        )
+
+        return JsonResponse({
+            "success": True,
+            "id": instruction.id,
+            "description": instruction.description,
+            "category": instruction.category_id,
+        })'''
 
 def add_background_wafs_full(canvas, doc):
     canvas.saveState()

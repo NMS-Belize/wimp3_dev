@@ -145,7 +145,7 @@ class InventoryTable(tables.Table):
     device_name = tables.Column(verbose_name="Device Name",attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
     category = tables.Column(verbose_name="Category",attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
     assigned_user   = tables.Column(verbose_name="Assigned User",attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
-    id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
+    id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": "text-end"}, "td": {"style": "","class": "text-end"}})
     delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "text-center"},"td": {"style": "","class": "col_delete text-center"}})
 
     class Meta:

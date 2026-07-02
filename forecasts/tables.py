@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 from django.conf import settings
 
-from forecasts.models import AlertLevel, District, DistrictForecastDetails, DistrictForecastInstructions, RiskLevel, Severity, Probability, DistrictForecast
+from forecasts.models import AlertLevel, District, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, RiskLevel, Severity, Probability, DistrictForecast
 
 class DistrictTable(tables.Table):
     edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "text-center"}, "td": {"style": "","class": "col_edit text-center"}})
@@ -75,12 +75,13 @@ class InstructionsTable(tables.Table):
     edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "text-center"}, "td": {"style": "","class": "col_edit text-center"}})
     id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
     description = tables.Column(verbose_name="Instructions", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+    category = tables.Column(verbose_name="Category", attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "","class": ""}})
     delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
 
     class Meta:
         model = DistrictForecastInstructions
         template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
-        fields = ("edit","description","id","delete")
+        fields = ("edit","description","category","id","delete")
 
         # Add table HTML id and CSS classes here
         attrs = {
@@ -97,10 +98,43 @@ class InstructionsTable(tables.Table):
         url = reverse("forecasts:instructions_entry", args=[record.id])
         return format_html(link_html, url, record.description)
 
+    def render_category(self, record):
+        return record.category.category_name
+
     def render_delete(self, record):
         url = reverse("forecasts:instructions_delete", args=[record.id])
         return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
 
+class InstructionsCategoryTable(tables.Table):
+    edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "text-center"}, "td": {"style": "","class": "col_edit text-center"}})
+    id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
+    category_name = tables.Column(verbose_name="Instructions Category", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+    delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
+
+    class Meta:
+        model = DistrictForecastInstructionsCategory
+        template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
+        fields = ("edit","category_name","id","delete")
+
+        # Add table HTML id and CSS classes here
+        attrs = {
+            "id": "table_pest_alert_level",           # unique table ID
+            "class": "table table-striped table-condensed table-hover tbl_wimp3" # Bootstrap-friendly styling
+        }
+    
+    def render_edit(self, record):
+        url = reverse("forecasts:instructions_entry", args=[record.id])
+        return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
+    
+    def render_category_name(self, record):
+        link_html = '<a href="{}" class="btn btn-link p-0 text-decoration-none">{}</a>'
+        url = reverse("forecasts:instructions_entry", args=[record.id])
+        return format_html(link_html, url, record.category_name)
+
+    def render_delete(self, record):
+        url = reverse("forecasts:instructions_delete", args=[record.id])
+        return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
+    
 class RiskLevelTable(tables.Table):
     edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "text-center"}, "td": {"style": "","class": "col_edit text-center"}})
     id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
