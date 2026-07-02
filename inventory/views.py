@@ -10,6 +10,9 @@ from .forms     import InventoryCategoryForm, DepartmentSectionForm, Manufacture
 from .models    import DepartmentSection, DeviceType, InventoryCategory, InventoryItem, Manufacturer, Vendor
 from .tables    import DepartmentSectionTable, InventoryCategoryTable, InventoryTable, ManufacturerTable, DeviceTypeTable, VendorTable
 
+from .filters import InventoryItemFilter
+
+
 def index(request):
     context = {
         'page_name': 'Inventory Home',
@@ -20,14 +23,23 @@ def index(request):
 def inventory_list(request, id=None):
     page_name = "Inventory List"
     qs = InventoryItem.objects.all().order_by('id')
-    table = InventoryTable(qs)
+
+    filterset = InventoryItemFilter(
+        request.GET,
+        queryset=qs
+    )
+    
+    table = InventoryTable(filterset.qs)
     table.empty_text = "No records available"
-    RequestConfig(request).configure(table)
+    #RequestConfig(request).configure(table)
+    RequestConfig(request, paginate={"per_page": 50}).configure(table)
+
 
     # Load entry ONLY if id is provided
     entry = None
     if id is not None:
         entry = get_object_or_404(InventoryItem, id=id)
+
 
     context = {
         'id' : id,
@@ -35,6 +47,7 @@ def inventory_list(request, id=None):
         'page_name': page_name,
         "prev_page": 'Inventory Management',
         'table': table,
+        "filter": filterset,
         'new_url': reverse('inventory:inventory_entry'),
         'back_url': reverse('inventory:index'),
         #'api_url': reverse('sectors-list'),

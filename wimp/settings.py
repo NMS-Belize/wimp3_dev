@@ -68,7 +68,8 @@ INSTALLED_APPS = [
     'rest_framework_api_key',
     'django_tables2',
     'django_toggle_switch_widget',
-    'corsheaders'
+    'corsheaders',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
