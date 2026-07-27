@@ -1,0 +1,17 @@
+[
+    {
+        "id": 1,
+        "description": "Low",
+        "color": "#3CAEA3"
+    },
+    {
+        "id": 2,
+        "description": "Medium",
+        "color": "#FCBF49"
+    },
+    {
+        "id": 3,
+        "description": "High",
+        "color": "#D62828"
+    }
+]

@@ -1,17 +1,21 @@
 from unittest import loader
 
 from django.contrib import messages
-from django.http import HttpResponse
+from django.db import transaction
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.views.decorators.http import require_GET
+
 from django_tables2 import RequestConfig
 
-from .forms     import InventoryCategoryForm, DepartmentSectionForm, ManufacturerForm, InventoryItemForm, DeviceTypeForm, VendorForm
-from .models    import DepartmentSection, DeviceType, InventoryCategory, InventoryItem, Manufacturer, Vendor
-from .tables    import DepartmentSectionTable, InventoryCategoryTable, InventoryTable, ManufacturerTable, DeviceTypeTable, VendorTable
+from system_core.models import OfficeLocation
+
+from .forms     import InventoryCategoryForm, InventoryItemPhotoFormSet, HardwareSpecificationsForm, NetworkDetailsForm, ManufacturerForm, InventoryItemForm, DeviceTypeForm, VendorForm
+from .models    import DeviceType, InventoryCategory, InventoryItem, Manufacturer, Vendor
+from .tables    import InventoryCategoryTable, InventoryTable, ManufacturerTable, DeviceTypeTable, VendorTable
 
 from .filters import InventoryItemFilter
-
 
 def index(request):
     context = {
@@ -58,43 +62,88 @@ def inventory_entry(request, id=None):
 
     page_name = "Inventory Item Entry"
 
-    # If id exists => update, else => create new
+    # If an ID exists, update the record.
+    # Otherwise, create a new InventoryItem instance.
     if id:
         entry = get_object_or_404(InventoryItem, id=id)
     else:
-        entry = None
+        entry = InventoryItem()
 
-    #print(entry.category_id)  # check terminal
+    if request.method == "POST":
 
-    if request.method == 'POST':
-        form = InventoryItemForm(request.POST, instance=entry)
+        form_main       = InventoryItemForm(request.POST, request.FILES, instance=entry)
+        form_hardware   = HardwareSpecificationsForm(request.POST, request.FILES, instance=entry)
+        form_network    = NetworkDetailsForm(request.POST, request.FILES, instance=entry)
+        form_photos     = InventoryItemPhotoFormSet(request.POST,request.FILES,instance=entry,prefix="photos")
 
-        if form.is_valid():
-            saved_entry = form.save()    # Creates or updates
-            messages.success(request, "Record saved successfully.")
+        if form_main.is_valid() and form_photos.is_valid() and form_hardware.is_valid() and form_network.is_valid():
 
-            # Save & Close button
-            if 'btn_submit_close' in request.POST:
-                return redirect('inventory:inventory_list')
+            try:
+                with transaction.atomic():
 
-            # Regular Save button
-            return redirect('inventory:inventory_entry',saved_entry.id)
-            #return redirect('inventory:inventory_list', saved_entry.id)
+                    saved_entry = form_main.save(commit=False)
+
+                    # Set user tracking fields.
+                    if not saved_entry.pk:
+                        saved_entry.created_by = request.user
+
+                    saved_entry.updated_by = request.user
+                    saved_entry.save()
+
+                    # Connect other forms to the saved inventory item.
+                    form_hardware.instance = saved_entry
+                    form_hardware.save()
+
+                    form_network.instance = saved_entry
+                    form_network.save()
+
+                    form_photos.instance = saved_entry
+                    form_photos.save()
+
+                messages.success(request, "Inventory record and details saved successfully.")
+
+                # Save and Close button.
+                if "btn_submit_close" in request.POST:
+                    return redirect("inventory:inventory_list")
+
+                # Regular Save button.
+                return redirect("inventory:inventory_entry",id=saved_entry.id)
+
+            except Exception as error:
+                messages.error(request, "The inventory record could not be saved.")
+                print("Inventory save error:", error)
+
         else:
             messages.error(request, "Please correct the errors below.")
-            print(form.errors)  # check terminal
-    else:
-        form = InventoryItemForm(instance=entry)
+            print("Inventory form errors:", form_main.errors)
+            print("Hardware errors:", form_hardware.errors)
+            print("Network Details errors:", form_network.errors)
+            print("Photo errors:", form_photos.errors)
 
-    return render(request, 'inventory/entry_form.html', {
-        'page_name': page_name,
-        'new_url':  reverse('inventory:inventory_entry'),
-        'back_url': reverse('inventory:inventory_list'),
-        "prev_page": 'Inventory Management',
-        'api_url':  reverse('sectors-list'),
-        'form': form,
-        'entry': entry
-    })
+            print("Inventory Item non-form errors:",form_main.non_form_errors())
+            print("Hardware non-form errors:",form_hardware.non_form_errors())
+            print("Network non-form errors:",form_network.non_form_errors())
+            print("Photo non-form errors:",form_photos.non_form_errors())
+
+    else:
+        form_main       = InventoryItemForm(instance=entry,prefix="main")
+        form_hardware   = HardwareSpecificationsForm(instance=entry,prefix="hardware")
+        form_network    = NetworkDetailsForm(instance=entry,prefix="network")
+        form_photos     = InventoryItemPhotoFormSet(instance=entry,prefix="photos")
+
+    return render(request,"inventory/entry_form.html",{
+            "page_name": page_name,
+            "new_url": reverse("inventory:inventory_entry"),
+            "back_url": reverse("inventory:inventory_list"),
+            "prev_page": "Inventory Management",
+            "api_url": reverse("sectors-list"),
+            "form": form_main,
+            "form_photos": form_photos,
+            "form_hardware": form_hardware,
+            "form_network": form_network,
+            "entry": entry
+        }
+    )
 
 def inventory_delete(request, id):
     
@@ -182,6 +231,32 @@ def inventory_category_delete(request, id):
         'back_url': reverse('inventory:inventory_category_list'),
     })
 
+@require_GET
+def get_placement_floor(request):
+    placement_id = request.GET.get("placement_id")
+
+    if not placement_id:
+        return JsonResponse({
+            "success": False,
+            "floor": "",
+            "error": "No placement was selected.",
+        })
+
+    try:
+        placement = OfficeLocation.objects.get(pk=placement_id)
+
+        return JsonResponse({
+            "success": True,
+            "floor": placement.floor or "",
+        })
+
+    except OfficeLocation.DoesNotExist:
+        return JsonResponse({
+            "success": False,
+            "floor": "",
+            "error": "Placement was not found.",
+        }, status=404)
+    
 def device_type_list(request, id=None):
     page_name = "Device Type List"
     qs = DeviceType.objects.all().order_by('id')
@@ -250,76 +325,6 @@ def device_type_delete(request, id):
         "entry": entry,
         'page_name': page_name,
         'back_url': reverse('inventory:device_type_list'),
-    })
-
-def department_section_list(request, id=None):
-    page_name = "Department Section List"
-    qs = DepartmentSection.objects.all().order_by('id')
-    table = DepartmentSectionTable(qs)
-    table.empty_text = "No records available"
-    RequestConfig(request).configure(table)
-
-    # Load entry ONLY if id is provided
-    entry = None
-    if id is not None:
-        entry = get_object_or_404(DepartmentSection, id=id)
-
-    context = {
-        'id' : id,
-        'entry': entry,  
-        'page_name': page_name,
-        "prev_page": 'Inventory Management',
-        'table': table,
-        'new_url': reverse('inventory:department_section_entry'),
-        'back_url': reverse('inventory:index'),
-        #'api_url': reverse('sectors-list'),
-    }
-    return render(request, 'inventory_table_list.html', context)
-
-def department_section_entry(request, id=None):
-    entry = None
-
-    page_name = "Department Section Entry"
-
-    # If id exists => update, else => create new
-    if id:
-        entry = get_object_or_404(DepartmentSection, id=id)
-    else:
-        entry = None
-
-    if request.method == 'POST':
-        form = DepartmentSectionForm(request.POST, instance=entry)
-
-        if form.is_valid():
-            saved_entry = form.save()    # Creates or updates
-            return redirect('inventory:department_section_list', saved_entry.id)
-    else:
-        form = DepartmentSectionForm(instance=entry)
-
-    return render(request, 'inventory/parameters_entry_form.html', {
-        'page_name': page_name,
-        'new_url':  reverse('inventory:department_section_entry'),
-        'back_url': reverse('inventory:department_section_list'),
-        'api_url':  reverse('sectors-list'),
-        'form': form,
-        'entry': entry
-    })
-
-def department_section_delete(request, id):
-    
-    entry = get_object_or_404(DepartmentSection, id=id)
-    
-    page_name = "Department Section"
-
-    if request.method == "POST":
-        entry.delete()
-        messages.success(request, "deleted")  # acts like True
-        return redirect('inventory:department_section_list')  # redirect anywhere you prefer
-    
-    return render(request, "inventory/parameters_delete.html", {
-        "entry": entry,
-        'page_name': page_name,
-        'back_url': reverse('inventory:department_section_list'),
     })
 
 def manufacturer_list(request, id=None):

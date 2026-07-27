@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block title %}{{ page_name }} | Agro-Climat Services | WIMP3 | National Meteorological Service of Belize{% endblock %}
-
 {% block content %}
-<form id="inventory_form" class="pt-5" method="post">
+
+<form id="inventory_form" class="pt-3" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {% if form.errors %}
     <div class="alert alert-danger">
@@ -22,9 +22,10 @@
     <div class="nav nav-tabs" id="nav-tab" role="tablist">
         <button class="nav-link active" id="nav_tab_general" data-bs-toggle="tab" data-bs-target="#tab_general" type="button" role="tab" aria-controls="tab_general" aria-selected="true">General Device Details</button>
         <button class="nav-link" id="nav_tab_placement" data-bs-toggle="tab" data-bs-target="#tab_placement" type="button" role="tab" aria-controls="tab_placement" aria-selected="false">Placement & Assignment</button>
-        <button class="nav-link" id="nav_tab_hardware" data-bs-toggle="tab" data-bs-target="#tab_hardware" type="button" role="tab" aria-controls="tab_hardware" aria-selected="false">Hardware Specifications</button>
-        <button class="nav-link" id="nav_tab_network" data-bs-toggle="tab" data-bs-target="#tab_network" type="button" role="tab" aria-controls="tab_network" aria-selected="false">Network Information</button>
-        <button class="nav-link" id="nav_tab_info" data-bs-toggle="tab" data-bs-target="#tab_info" type="button" role="tab" aria-controls="tab_info" aria-selected="false">Additional Information</button>
+        <button class="nav-link" id="nav_tab_hardware"  data-bs-toggle="tab" data-bs-target="#tab_hardware" type="button" role="tab" aria-controls="tab_hardware" aria-selected="false">Hardware Specifications</button>
+        <button class="nav-link" id="nav_tab_network"   data-bs-toggle="tab" data-bs-target="#tab_network" type="button" role="tab" aria-controls="tab_network" aria-selected="false">Network Information</button>
+        <button class="nav-link" id="nav_tab_photos"    data-bs-toggle="tab" data-bs-target="#tab_photos" type="button" role="tab" aria-controls="tab_photos" aria-selected="false">Photos</button>
+        <button class="nav-link" id="nav_tab_info"      data-bs-toggle="tab" data-bs-target="#tab_info" type="button" role="tab" aria-controls="tab_info" aria-selected="false">Additional Information</button>
     </div>
     </nav>
     <div class="tab-content" id="nav-tabContent">
@@ -82,7 +83,6 @@
                 <div class="col-12 mb-4">
                     <h2>Placement & Assignment</h2>
                 </div>
-
                 <div class="col-4">
                     <label class="form-label">Assigned User</label>
                     {{ form.assigned_user }}
@@ -99,7 +99,7 @@
 
                 <div class="col-4">
                     <label class="form-label">Floor Level</label>
-                    {{ form.floor_level }}
+                    {{ form.placement_floor }}
                 </div>
                 <div class="col-4">
                     <label class="form-label">Date Issued</label>
@@ -115,23 +115,23 @@
                 </div>
                 <div class="col-4">
                     <label class="form-label">Service Tag</label>
-                    {{ form.service_tag }}
+                    {{ form_hardware.service_tag }}
                 </div>
                 <div class="col-4">
                     <label class="form-label">Processor</label>
-                    {{ form.processor }}
+                    {{ form_hardware.processor }}
                 </div>
                 <div class="col-4">
                     <label class="form-label">RAM</label>
-                    {{ form.ram }}
+                    {{ form_hardware.ram }}
                 </div>
                 <div class="col-4">
                     <label class="form-label">Disk Size</label>
-                    {{ form.disk }}
+                    {{ form_hardware.disk_size }}
                 </div>
                 <div class="col-4">
                     <label class="form-label">Operating System</label>
-                    {{ form.operating_system }}
+                    {{ form_hardware.operating_system }}
                 </div>
             </div>
         </div>
@@ -143,32 +143,180 @@
                 </div>
                 <div class="col-4">
                     <label class="form-label">MAC Address</label>
-                    {{ form.mac_address }}
+                    {{ form_network.mac_address }}
                 </div>
                 <div class="col-4">
                     <label class="form-label">IP Address</label>
-                    {{ form.ip_address }}
+                    {{ form_network.ip_address }}
                 </div>
             </div>
         </div>
-        <div class="tab-pane fade pt-4" id="tab_info" role="tabpanel" aria-labelledby="nav_tab_info" tabindex="4">
+        <div class="tab-pane fade pt-4" id="tab_photos" role="tabpanel" aria-labelledby="nav_tab_photos" tabindex="4">
+            
+            <div class="col-12">
+                <h2>Photos</h2>
+                <div class="alert alert-info">You may upload up to 10 photos.</div>
+                {{ form_photos.management_form }}
+
+                {% for error in form_photos.non_form_errors %}
+                <div class="alert alert-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <!-- New photo upload forms first -->
+            <div class="col-12 p-0 alert alerty-light">
+                <p class="text-muted">Upload New Photo</p>
+                {% for photo_form in form_photos %}
+                    {% if not photo_form.instance.pk %}
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                {{ photo_form.id }}
+                                <div class="mb-3">
+                                    {{ photo_form.photo }}
+                                    {{ photo_form.photo.errors }}
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ photo_form.caption.label_tag }}
+                                    {{ photo_form.caption }}
+                                    {{ photo_form.caption.errors }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <!-- Existing photos -->
+            <div class="col-12">
+                <h5 class="mb-3">Saved Photos</h5>
+                <div class="d-flex flex-wrap gap-3">
+                    {% for photo_form in form_photos %}
+                        {% if photo_form.instance.pk %}
+                        <div class="card shadow-sm" style="width: 240px;">
+                            {{ photo_form.id }}
+                            <div class="d-flex align-items-center justify-content-center bg-light border-bottom overflow-hidden" style="height: 180px;">
+                                {% if photo_form.instance.photo %}
+                                    <img src="{{ photo_form.instance.photo.url }}" alt="{{ photo_form.instance.caption|default:'Inventory photo' }}" class="img-fluid" style="width: 100%; height: 180px; object-fit: cover;" />
+                                {% else %}
+                                    <span class="text-muted">No image available</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <input type="file" name="{{ photo_form.photo.html_name }}" id="{{ photo_form.photo.id_for_label }}" class="form-control">
+                                    {{ photo_form.photo.errors }}
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ photo_form.caption.label_tag }}
+                                    {{ photo_form.caption }}
+                                    {{ photo_form.caption.errors }}
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    {{ photo_form.is_primary }}
+                                    {{ photo_form.is_primary.label_tag }}
+                                    {{ photo_form.is_primary.errors }}
+                                </div>
+
+                                <div class="form-check alert alert-danger pt-1 pb-1 ps-2 pe-1">
+                                    {{ photo_form.DELETE }}
+                                    <label class="form-check-label text-danger" for="{{ photo_form.DELETE.id_for_label }}">Delete this photo?</label>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% empty %}
+                        <div class="alert alert-secondary">No photos have been uploaded.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade pt-4" id="tab_info" role="tabpanel" aria-labelledby="nav_tab_info" tabindex="5">
             <div class="col-12">
                 <h2>Additional Information</h2>
             </div>
-            <div>
+            <div class="col-12">
                 <label class="form-label">Important Notes:</label>
                 {{ form.notes }}
             </div>
         </div>
     </div>
-        
-        <div class="clear"></div>
-        <div class="col-12 actions mt-4 mb-4">
+    <div class="clear"></div>
+    <div class="col-12 actions mt-4 mb-4">
             <input id="btn_submit" name="btn_submit" type="submit" value="Save" class="btn" />
             <input id="btn_submit_close" name="btn_submit_close" type="submit" value="Save & Close" class="btn btn-primary" />
             <a id="btn_close" class="btn btn-danger" href="{{ back_url }}">Cancel</a>
         </div>
     </div>
-    
 </form>
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+
+    const placementSelect = document.getElementById("id_placement");
+    const floorInput = document.getElementById("id_placement_floor");
+
+    if (!placementSelect || !floorInput) {
+        return;
+    }
+
+    async function updatePlacementFloor() {
+        const placementId = placementSelect.value;
+
+        if (!placementId) {
+            floorInput.value = "";
+            return;
+        }
+
+        floorInput.value = "Loading...";
+
+        try {
+            const url = new URL(
+                "{% url 'inventory:get_placement_floor' %}",
+                window.location.origin
+            );
+
+            url.searchParams.set("placement_id", placementId);
+
+            const response = await fetch(url, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error("Unable to retrieve the floor.");
+            }
+
+            const data = await response.json();
+
+            if (data.success) {
+
+                const floorNames = {
+                    "1": "First Floor",
+                    "2": "Second Floor",
+                    "3": "Third Floor"
+                };
+
+                floorInput.value = floorNames[String(data.floor)] || data.floor;
+
+            } else {
+                floorInput.value = "";
+            }
+
+        } catch (error) {
+            console.error(error);
+            floorInput.value = "";
+        }
+    }
+
+    // Update when placement changes
+    placementSelect.addEventListener("change", updatePlacementFloor);
+
+    // Update immediately when the page loads
+    updatePlacementFloor();
+});
+</script>
 {% endblock %}

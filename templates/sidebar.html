@@ -8,45 +8,55 @@
             <i class="fa-solid fa-house me-3"></i>
             <span class="hide-on-collapse">Dashboard</span>
         </a>
-        {% if perms.forecasts.view_districtforecast %}
+        {% if perms.forecasts.view_districtforecast or user.is_superuser %}
         <a href="{% url 'forecasts:index' %}" class="sidebar-link">
             <i class="fa-solid fa-sun me-3"></i>
             <span class="hide-on-collapse">Weather Forecasts</span>
         </a>
         {% endif %}
-        {% if perms.observations.view_observation %}
+        {% if perms.observations.view_observation or user.is_superuser %}
         <a href="{% url 'observations:index' %}" class="sidebar-link" disabled>
             <i class="fa-solid fa-cloud me-3"></i>
             <span class="hide-on-collapse">Weather Observations</span>
         </a>
         {% endif %}
-        {% if perms.alerts.view_alert %}
+        {% if perms.alerts.view_alert or user.is_superuser %}
         <a href="#" class="sidebar-link hidden" disabled>
             <i class="fa-solid fa-triangle-exclamation me-3"></i>
             <span class="hide-on-collapse">Alerts</span>
         </a>
         {% endif %}
-        {% if perms.agro.view_agroclimatservice %}
+        {% if perms.agro.view_agroclimatservice or user.is_superuser %}
         <a href="{% url 'agro:index' %}" class="sidebar-link">
             <i class="fa-solid fa-seedling me-3"></i>
             <span class="hide-on-collapse">Agro-Climat Services</span>
         </a>
         {% endif %}
-        {% if perms.inventory.view_inventoryitem %}
+        {% if perms.inventory.view_inventoryitem or user.is_superuser %}
         <a href="{% url 'radar:radar_images_list' %}" class="sidebar-link">
             <i class="fa-solid fa-satellite-dish me-3"></i>
             <span class="hide-on-collapse">Radar</span>
         </a>
-        <a href="{% url 'inventory:index' %}" class="sidebar-link">
+        <a href="{% url 'inventory:inventory_list' %}" class="sidebar-link">
             <i class="fa-solid fa-box me-3"></i>
             <span class="hide-on-collapse">Inventory</span>
+        </a>
+        {% endif %}
+        {% if perms.users.view_users or user.is_superuser %}
+        <a href="{% url 'users:user_list' %}" class="sidebar-link">
+            <i class="fa-solid fa-users me-3"></i>
+            <span class="hide-on-collapse">Users</span>
+        </a>
+        {% endif %}
+        {% if perms.users.view_users or user.is_superuser %}
+        <a href="{% url 'system_core:index' %}" class="sidebar-link">
+            <i class="fa-solid fa-gear me-3"></i>
+            <span class="hide-on-collapse">System Parameters</span>
         </a>
         {% endif %}
     </div>
     <div class="profile-section mt-auto p-4">
         <div class="d-flex flex-column align-items-center text-center">
-            
-            
             {% if user.is_authenticated %}
             <div class="user-initials">{{ user.first_name|first }}{{ user.last_name|first }}</div>
             <form class="logout" action="{% url 'logout' %}" method="post">

@@ -42,9 +42,16 @@ ALLOWED_HOSTS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:8000",
+    "http://localhost:8000",
     'https://wimp3.nms.gov.bz',
     'https://wimp3.nmsapps.gov.bz',
 ]
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # Application definition
 
@@ -56,6 +63,7 @@ INSTALLED_APPS = [
     'inventory.apps.InventoryConfig',
     'observations.apps.ObservationsConfig',
     'forecasts.apps.ForecastsConfig',
+    'system_core.apps.SystemCoreConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -119,6 +127,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                "django.template.context_processors.media",
             ],
         },
     },

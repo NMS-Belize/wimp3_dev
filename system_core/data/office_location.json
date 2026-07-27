@@ -1,0 +1,92 @@
+[
+    {
+        "id": 1,
+        "name": "Lobby",
+        "floor": 1
+    },
+    {
+        "id": 2,
+        "name": "Conference Room",
+        "floor": 1
+    },
+    {
+        "id": 3,
+        "name": "Deputy Director's Office",
+        "floor": 1
+    },
+    {
+        "id": 4,
+        "name": "Administration Office",
+        "floor": 1
+    },
+    {
+        "id": 5,
+        "name": "Climate Services HOD Office",
+        "floor": 1
+    },
+    {
+        "id": 6,
+        "name": "Technicians Workshop",
+        "floor": 1
+    },
+    {
+        "id": 7,
+        "name": "Kitchen (First Floor)",
+        "floor": 1
+    },
+    {
+        "id": 8,
+        "name": "Storage Room",
+        "floor": 1
+    },
+    {
+        "id": 9,
+        "name": "Library/Research Unit",
+        "floor": 2
+    },
+    {
+        "id": 10,
+        "name": "Library/Research Unit/Office",
+        "floor": 2
+    },
+    {
+        "id": 11,
+        "name": "Director's Office",
+        "floor": 2
+    },
+    {
+        "id": 12,
+        "name": "Information Technology Office",
+        "floor": 2
+    },
+    {
+        "id": 13,
+        "name": "Climate Services Office",
+        "floor": 2
+    },
+    {
+        "id": 14,
+        "name": "Kitchen (Second Floor)",
+        "floor": 2
+    },
+    {
+        "id": 15,
+        "name": "Server Room",
+        "floor": 2
+    },
+    {
+        "id": 16,
+        "name": "Weather Analysis & Forecasting Section",
+        "floor": 2
+    },
+    {
+        "id": 17,
+        "name": "Senior El-Tech Office",
+        "floor": 3
+    },
+    {
+        "id": 18,
+        "name": "Radar Server Room",
+        "floor": 3
+    }
+]

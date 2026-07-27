@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "name": "Administration & Accounts",
+        "short_name": "ADMIN"
+    },
+    {
+        "id": 2,
+        "name": "Weather Analysis & Forecasting Section",
+        "short_name": "WAFS"
+    },
+    {
+        "id": 3,
+        "name": "Climate & Agriculture Services",
+        "short_name": "CLIMAT"
+    },
+    {
+        "id": 4,
+        "name": "Electronics & Information Technology Section",
+        "short_name": "EIT"
+    }
+]

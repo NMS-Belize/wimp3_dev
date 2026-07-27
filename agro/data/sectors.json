@@ -1,0 +1,14 @@
+[
+    {
+        "id": 1,
+        "description": "Agriculture"
+    },
+    {
+        "id": 2,
+        "description": "Aquaculture"
+    },
+    {
+        "id": 3,
+        "description": "Livestock"
+    }
+]

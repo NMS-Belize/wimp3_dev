@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "description": "Low",
+        "color": "#3CAEA3"
+    },
+    {
+        "id": 2,
+        "description": "Medium",
+        "color": "#FCBF49"
+    },
+    {
+        "id": 3,
+        "description": "High",
+        "color": "#fd7e14"
+    },
+    {
+        "id": 4,
+        "description": "Critical",
+        "color": "#D62828"
+    }
+]

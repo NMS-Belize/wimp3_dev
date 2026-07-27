@@ -8,7 +8,7 @@ class MonthSerializer(serializers.ModelSerializer):
 
 class SectorSerializer(serializers.ModelSerializer):
     class Meta:
-        model = mx.CommodityCategory
+        model = mx.Sector
         fields = '__all__'
 
 class ZoneSerializer(serializers.ModelSerializer):
@@ -23,7 +23,7 @@ class DistrictSerializer(serializers.ModelSerializer):
 
 class CommodityTypeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = mx.CommodityType
+        model = mx.Commodity
         fields = '__all__'
     
 class PestAlertLevelSerializer(serializers.ModelSerializer):

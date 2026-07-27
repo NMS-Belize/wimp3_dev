@@ -15,7 +15,7 @@ class SectorTable(tables.Table):
     delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "text-center"},"td": {"style": "","class": "col_delete text-center"}})
 
     class Meta:
-        model = CommodityCategory
+        model = Sector
         template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
         fields = ("edit","description","id","delete")
 
@@ -88,13 +88,13 @@ class CommodityTable(tables.Table):
     edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "col_edit"}, "td": {"style": "","class": "col_edit"}})
     id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
     description = tables.Column(attrs={"th": {"style": "width:700px;","class": ""}, "td": {"style": "","class": ""}})
-    commodity_category = tables.Column(verbose_name="Commodity Category", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+    sector = tables.Column(verbose_name="Sector", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
     delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
 
     class Meta:
-        model = CommodityType
+        model = Commodity
         template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
-        fields = ("edit","description", "commodity_category","id","delete")
+        fields = ("edit","description", "sector","id","delete")
 
         # Add table HTML id and CSS classes here
         attrs = {

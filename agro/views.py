@@ -275,14 +275,14 @@ def pest_risk_toggle_is_published(request, id):
 ############# PEST RISK VARIABlE - Sector
 def sector_list(request, id=None):
     page_name = "Sector"
-    qs = CommodityCategory.objects.all().order_by('id')
+    qs = Sector.objects.all().order_by('id')
     table = SectorTable(qs)
     RequestConfig(request).configure(table)
 
     # Load entry ONLY if id is provided
     entry = None
     if id is not None:
-        entry = get_object_or_404(CommodityCategory, id=id)
+        entry = get_object_or_404(Sector, id=id)
 
     context = {
         'id' : id,
@@ -479,14 +479,14 @@ def district_zone_delete(request, id):
 ############# PEST RISK VARIABlE - Commodity
 def commodity_list(request, id=None):
     page_name = "Commodity"
-    qs = CommodityType.objects.all().order_by('id')
+    qs = Commodity.objects.all().order_by('id')
     table = CommodityTable(qs)
     RequestConfig(request).configure(table)
 
     # Load entry ONLY if id is provided
     entry = None
     if id is not None:
-        entry = get_object_or_404(CommodityType, id=id)
+        entry = get_object_or_404(Commodity, id=id)
 
     context = {
         'id' : id,
@@ -506,7 +506,7 @@ def commodity_entry(request, id=None):
 
     # If id exists => update, else => create new
     if id:
-        entry = get_object_or_404(CommodityType, id=id)
+        entry = get_object_or_404(Commodity, id=id)
     else:
         entry = None
 
@@ -530,7 +530,7 @@ def commodity_entry(request, id=None):
 
 def commodity_type_delete(request, id):
     
-    entry = get_object_or_404(CommodityType, id=id)
+    entry = get_object_or_404(Commodity, id=id)
     
     page_name = "Commodity Type Entry"
 
@@ -849,7 +849,7 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 #API endpoint that allows groups to be viewed or edited.
 class SectorViewSet(viewsets.ModelViewSet):
-   queryset = CommodityCategory.objects.all().order_by('id')
+   queryset = Sector.objects.all().order_by('id')
    serializer_class = sx.SectorSerializer
 
 class ZoneViewSet(viewsets.ModelViewSet):
@@ -861,7 +861,7 @@ class DistrictViewSet(viewsets.ModelViewSet):
    serializer_class = sx.DistrictSerializer
 
 class CommodityTypeViewSet(viewsets.ModelViewSet):
-   queryset = CommodityType.objects.all().order_by('id')
+   queryset = Commodity.objects.all().order_by('id')
    serializer_class = sx.CommodityTypeSerializer
 
 class ActionItemsViewSet(viewsets.ModelViewSet):

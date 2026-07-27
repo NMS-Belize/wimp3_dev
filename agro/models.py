@@ -3,20 +3,15 @@ import datetime
 from django.db import models
 from django.utils import timezone
 
+from system_core.models import (
+    District,
+    Zone,
+    Months
+)
+
 # Create your models here.
-class Months(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    month_name = models.CharField(max_length=20)
-    published_date = models.DateTimeField(auto_now=True,null=True)
-    updated_datetime = models.DateTimeField(auto_now_add=True,null=True)
 
-    class Meta:
-        verbose_name = "Month"
-        verbose_name_plural = "Months"
-
-    def __str__(self): return self.month_name
-
-class CommodityCategory(models.Model):
+class Sector(models.Model):
     id = models.BigAutoField(primary_key=True)
     description = models.CharField(max_length=20)
     published_date = models.DateTimeField(auto_now=True,null=True)
@@ -28,12 +23,12 @@ class CommodityCategory(models.Model):
 
     def __str__(self): return self.description
 
-class CommodityType(models.Model):
-    id = models.BigAutoField(primary_key=True)
+class Commodity(models.Model):
+    id          = models.BigAutoField(primary_key=True)
     description = models.CharField(max_length=100)
-    commodity_category = models.ForeignKey(CommodityCategory, related_name='commodity_category', on_delete=models.CASCADE,null=True)
-    published_date = models.DateTimeField(auto_now=True,null=True)
-    updated_datetime = models.DateTimeField(auto_now_add=True,null=True)
+    sector      = models.ForeignKey(Sector, related_name='sector', on_delete=models.CASCADE,null=True)
+    published_date      = models.DateTimeField(auto_now=True,null=True)
+    updated_datetime    = models.DateTimeField(auto_now_add=True,null=True)
 
     class Meta:
         verbose_name = "Commodity Type"
@@ -41,20 +36,13 @@ class CommodityType(models.Model):
 
     def __str__(self): return self.description
 
-class Zone(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    zone_name = models.CharField(max_length=50)
-    published_date = models.DateTimeField(auto_now=True,null=True)
-    updated_datetime = models.DateTimeField(auto_now_add=True,null=True)
-    def __str__(self): return self.zone_name
-
-class District(models.Model):
+'''class District(models.Model):
     id = models.BigAutoField(primary_key=True)
     district_area = models.CharField(max_length=100)
     zone_id = models.ForeignKey(Zone, related_name='zone_id', on_delete=models.CASCADE,null=True)
     published_date = models.DateTimeField(auto_now=True,null=True)
     updated_datetime = models.DateTimeField(auto_now_add=True,null=True)
-    def __str__(self): return self.district_area
+    def __str__(self): return self.district_area'''
 
 class PestAlertLevel(models.Model):
     id                  = models.BigAutoField(primary_key=True)
@@ -112,7 +100,7 @@ class PestRiskEntryMainListing(models.Model):
     id          = models.BigAutoField(primary_key=True)
     months      = models.JSONField()   # to store multiple months (checkbox list)
     year        = models.IntegerField(default=0)
-    commodity   = models.ForeignKey(CommodityType, on_delete=models.CASCADE,related_name='Commodity',null=True)
+    commodity   = models.ForeignKey(Commodity, on_delete=models.CASCADE,related_name='Commodity',null=True)
     is_published = models.BooleanField(default=False)
     #def __str__(self): return f"[{self.id}] {self.year} {self.months} - {self.commodity}"
 

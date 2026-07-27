@@ -1,5 +1,7 @@
 from django import forms
-from .models import Months, Zone, CommodityCategory, CommodityType, DroughtAlertLevel, District, PestRiskEntryMainListing, PestRiskEntryDetails,  PestAlertLevel, PestRiskEffect, PestRiskAction
+from .models import Sector, Commodity, DroughtAlertLevel, PestRiskEntryMainListing, PestRiskEntryDetails,  PestAlertLevel, PestRiskEffect, PestRiskAction
+
+from system_core.models import District, Zone, Months
 
 from django_toggle_switch_widget.widgets import DjangoToggleSwitchWidget
 from django.core.exceptions import ValidationError
@@ -160,7 +162,7 @@ class PestRiskEntryDetailsForm(forms.ModelForm):
 
 class SectorForm(forms.ModelForm):
     class Meta:
-        model = CommodityCategory
+        model = Sector
         fields = ['description']
         labels = {   
             # <-- add human-friendly labels here
@@ -185,14 +187,14 @@ class ZoneAreaForm(forms.ModelForm):
 class DistrictZoneForm(forms.ModelForm):
     class Meta:
         model = District
-        fields = ['district_area', 'zone_id']
+        fields = ['district_name', 'zone_id']
         labels = {   
             # <-- add human-friendly labels here
-            'district_area': 'District:',
+            'district_name': 'District:',
             'zone_id': 'Zone/Area',
         }
         widgets = {            
-            'district_area': forms.TextInput(attrs={'class': 'form-control'}),
+            'district_name': forms.TextInput(attrs={'class': 'form-control'}),
             'zone_id': forms.Select(attrs={'class': 'form-control'})
         }
 
@@ -228,16 +230,16 @@ class DroughtAlertLevelForm(forms.ModelForm):
 
 class CommodityTypeForm(forms.ModelForm):
     class Meta:
-        model = CommodityType
-        fields = ['description','commodity_category']
+        model = Commodity
+        fields = ['description','sector']
         labels = {   
             # <-- add human-friendly labels here
             'description': 'Description:',
-            'commodity_category': 'Commodity Category:'
+            'sector': 'Sector:'
         }
         widgets = {            
             'description': forms.TextInput(attrs={'class': 'form-control'}),
-            'commodity_category': forms.Select(attrs={'class': 'form-control'})
+            'sector': forms.Select(attrs={'class': 'form-control'})
         }
 
 class ActionItemsForm(forms.ModelForm):

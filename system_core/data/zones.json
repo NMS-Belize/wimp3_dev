@@ -1,0 +1,18 @@
+[
+    {
+        "id": 1,
+        "zone_name": "North"
+    },
+    {
+        "id": 2,
+        "zone_name": "Central Inland"
+    },
+    {
+        "id": 3,
+        "zone_name": "Central Coastal"
+    },
+    {
+        "id": 4,
+        "zone_name": "South"
+    }
+]

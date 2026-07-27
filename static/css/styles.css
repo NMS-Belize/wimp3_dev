@@ -234,8 +234,8 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 #dashboard .item_dashboard{  position: relative; }
 #dashboard .item_dashboard .task_desc{ font-size: 18px; }
 
-.item_dashboard{ width:175px; height: 175px; padding: 5px; margin: 0 8px; border: 1px solid var(--grey-1); text-align: center; background: var(--grey-1); border-radius: 20px; }
-.item_dashboard img{ width: 85%; height: auto; display: block; margin: 0 auto; }
+.item_dashboard{ width:125px; height: 125px; padding: 5px; margin: 0 8px; text-align: center; border-radius: 20px; }
+.item_dashboard img{ width: auto; height: 80px; display: block; margin: 0 auto; }
 .item_dashboard .task_desc{ font-weight: 500; text-decoration: none; text-transform: uppercase; line-height: 1.1; color: var(--teal-2); }
 .item_dashboard a{ text-decoration: none; }
 
@@ -439,4 +439,15 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 }
 #id_winds_min,#winds_max{
   line-height: 1 !important;
+}
+
+#frm_entry_form label{ width: 120px !important; }
+
+.nav-tabs .nav-link{
+  color:var(--teal-1);
+  font-weight: 600;
+}
+.nav-tabs .nav-link.active{
+  color:var(--aqua-1);
+  font-weight: 600;
 }

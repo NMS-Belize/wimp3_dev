@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}{{ page_name }} | WIMP3 | NMS Belize{% endblock %}
+{% load static %}
+{% block content %}
+<div class="row mb-3">
+    <div class="col-12 text-end">
+        <a class="btn btn-primary" href="{{ back_url }}"><i class="fa-solid fa-arrow-left"></i>&nbsp;Back to {{ page_name }} Listing</a>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <form method="post" id="frm_entry_form" name="frm_entry_form" class="wimp3_form "><!-- d-flex flex-row align-items-start -->
+            {% csrf_token %}
+            
+            {{ user_form.non_field_errors }}
+            {{ profile_form.non_field_errors }}
+
+            {% for field in user_form %}
+            <div class="mb-3">
+                {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check">
+                    {{ field }}
+                    {{ field.label_tag }}
+                </div>
+                {% else %}
+                    {{ field.label_tag }}
+                    {{ field }}
+                 {% endif %}
+
+                {% for error in field.errors %}
+                <div class="text-danger">
+                    {{ error }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+
+
+            {% for field in profile_form %}
+        <div class="mb-3">
+            {{ field.label_tag }}
+            {{ field }}
+
+            {% for error in field.errors %}
+                <div class="text-danger">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+            <li><input id="btn_submit" type="submit" value="Submit" class="btn ms-2" /></li>
+        </form>
+    </div>
+</div>
+{% endblock %}

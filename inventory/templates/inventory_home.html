@@ -30,12 +30,6 @@
             </a>
         </div>
         <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'inventory:department_section_list' %}">
-                <img src="{% static 'button_icons/sections.png' %}" alt="Deaprtment/Section" />
-                <span class="task_desc">Department/Section</span>
-            </a>
-        </div>
-        <div class="item_dashboard position-relative">
             <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'inventory:manufacturer_list' %}">
                 <img src="{% static 'button_icons/brand-image.png' %}" alt="Manufacturer" />
                 <span class="task_desc">Manufacturer</span>
@@ -47,14 +41,6 @@
                 <span class="task_desc">Vendor</span>
             </a>
         </div>
-        
-        <!--
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'inventory:inventory_category_list' %}">
-                <img src="{% static 'button_icons/door-sign.png' %}" alt="Office Location" />
-                <span class="task_desc">Manufacturer</span>
-            </a>
-        </div>-->
     </div>
 </div>
 {% endblock %}

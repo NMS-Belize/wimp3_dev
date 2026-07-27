@@ -3,25 +3,14 @@ from time import timezone
 from django.db import models
 from django.conf import settings
 
+from system_core.models import (
+    Zone,
+    District,
+    AlertLevel,
+    RiskLevel,
+)
+
 # Create your models here.
-
-class District(models.Model):
-    district_name = models.CharField(max_length=100, unique=True)
-    published_date = models.DateTimeField(auto_now=True,null=True)
-    updated_datetime = models.DateTimeField(auto_now_add=True,null=True)
-
-    class Meta:
-        ordering = ["district_name"]
-
-    def __str__(self):
-        return self.district_name
-
-class AlertLevel(models.Model):
-    description = models.CharField(max_length=20)
-    color       = models.CharField(max_length=20,default="",null=True, blank=True)
-
-    def __str__(self):
-        return self.description
      
 class Probability(models.Model):
     description = models.CharField(max_length=20)
@@ -36,13 +25,6 @@ class Severity(models.Model):
 
     def __str__(self):
         return self.description
-
-class RiskLevel(models.Model):
-    description = models.CharField(max_length=20)
-    color = models.CharField(max_length=20,default="",null=True, blank=True)
-
-    def __str__(self):
-        return f"{self.description}"
 
 class DistrictForecastInstructionsCategory(models.Model):
     category_name = models.CharField(max_length=200)
@@ -114,4 +96,66 @@ class DistrictForecastDetails(models.Model):
 
     def __str__(self):
         return f"{self.district} - {self.forecast.forecast_date}"
-    
+
+class ForecastGeneral(models.Model):
+    forecast_date = models.DateField()
+    forecast_time = models.TimeField(null=True, blank=True)
+    forecast_type = models.IntegerField(null=True, blank=True)
+
+    general_situation = models.CharField(max_length=255)
+    twenty_four_hour_forecast = models.CharField(max_length=1000)
+
+    light_variable = models.IntegerField(null=True, blank=True)
+
+    wind_speed = models.CharField(max_length=10)
+    wind_direction = models.CharField(max_length=50, null=True, blank=True)
+    wind_condition = models.CharField(max_length=50, null=True, blank=True)
+
+    wind_shift_speed = models.CharField(max_length=10, null=True, blank=True)
+    wind_shift_direction = models.CharField(max_length=50, null=True, blank=True)
+    wind_shift_condition = models.CharField(max_length=50, null=True, blank=True)
+
+    sea_state = models.CharField(max_length=255)
+    wave = models.CharField(max_length=10, null=True, blank=True)
+
+    sea_state_shift = models.CharField(max_length=255, null=True, blank=True)
+    wave_shift = models.CharField(max_length=10, null=True, blank=True)
+
+    advisory = models.CharField(max_length=1000)
+    outlook = models.CharField(max_length=1000)
+
+    coast_high_f = models.IntegerField()
+    coast_high_c = models.IntegerField(null=True, blank=True)
+
+    coast_low_f = models.IntegerField()
+    coast_low_c = models.IntegerField(null=True, blank=True)
+
+    inland_high_f = models.IntegerField()
+    inland_high_c = models.IntegerField(null=True, blank=True)
+
+    inland_low_f = models.IntegerField()
+    inland_low_c = models.IntegerField(null=True, blank=True)
+
+    hills_high_f = models.IntegerField()
+    hills_high_c = models.IntegerField(null=True, blank=True)
+
+    hills_low_f = models.IntegerField()
+    hills_low_c = models.IntegerField(null=True, blank=True)
+
+    publish_to_web = models.BooleanField()
+
+    forecaster_id = models.IntegerField()
+
+    created_by = models.CharField(max_length=11)
+    created_time = models.DateTimeField(null=True, blank=True)
+
+    updated_by = models.CharField(max_length=11)
+    updated_time = models.DateTimeField(null=True, blank=True)
+
+    auto_update = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = "tbl_forecast_general"
+
+    def __str__(self):
+        return f"{self.forecast_date} ({self.id})"

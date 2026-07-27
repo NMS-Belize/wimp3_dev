@@ -4,7 +4,7 @@ from unicodedata import category
 from click import option
 from django import forms
 from pytz import timezone
-from .models import AlertLevel, District, DistrictForecast, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, Probability, RiskLevel, Severity
+from .models import AlertLevel, District, DistrictForecast, ForecastGeneral, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, Probability, RiskLevel, Severity
 
 from django_toggle_switch_widget.widgets import DjangoToggleSwitchWidget
 from django.core.exceptions import ValidationError
@@ -263,3 +263,96 @@ class DistrictForecastDetailsForm(forms.ModelForm):
                 Q(category__category_name="Uncategorized")
             ).order_by(Lower('description'))
         )
+
+class ForecastGeneralForm(forms.ModelForm):
+
+    class Meta:
+        model = ForecastGeneral
+        exclude = (
+            "created_by",
+            "created_time",
+            "updated_by",
+            "updated_time",
+            "auto_update",
+        )
+
+        widgets = {
+            "forecast_date": forms.DateInput(
+                attrs={"type": "date", "class": "form-control"}
+            ),
+            "forecast_time": forms.TimeInput(
+                attrs={"type": "time", "class": "form-control"}
+            ),
+
+            "forecast_type": forms.Select(attrs={"class": "form-select"}),
+
+            "general_situation": forms.Textarea(
+                attrs={"rows": 3, "class": "form-control"}
+            ),
+
+            "thr_forecast": forms.Textarea(
+                attrs={"rows": 4, "class": "form-control"}
+            ),
+
+            "sea_state": forms.Textarea(
+                attrs={"rows": 2, "class": "form-control"}
+            ),
+
+            "sea_state_shift": forms.Textarea(
+                attrs={"rows": 2, "class": "form-control"}
+            ),
+
+            "advisory": forms.Textarea(
+                attrs={"rows": 3, "class": "form-control"}
+            ),
+
+            "outlook": forms.Textarea(
+                attrs={"rows": 3, "class": "form-control"}
+            ),
+
+            "wind_speed": forms.TextInput(attrs={"class": "form-control"}),
+            "wind_direction": forms.TextInput(attrs={"class": "form-control"}),
+            "wind_condition": forms.TextInput(attrs={"class": "form-control"}),
+
+            "wind_shift_speed": forms.TextInput(attrs={"class": "form-control"}),
+            "wind_shift_direction": forms.TextInput(attrs={"class": "form-control"}),
+            "wind_shift_condition": forms.TextInput(attrs={"class": "form-control"}),
+
+            "wave": forms.TextInput(attrs={"class": "form-control"}),
+            "wave_shift": forms.TextInput(attrs={"class": "form-control"}),
+
+            "coast_high_f": forms.NumberInput(attrs={"class": "form-control"}),
+            "coast_high_c": forms.NumberInput(attrs={"class": "form-control"}),
+
+            "coast_low_f": forms.NumberInput(attrs={"class": "form-control"}),
+            "coast_low_c": forms.NumberInput(attrs={"class": "form-control"}),
+
+            "inland_high_f": forms.NumberInput(attrs={"class": "form-control"}),
+            "inland_high_c": forms.NumberInput(attrs={"class": "form-control"}),
+
+            "inland_low_f": forms.NumberInput(attrs={"class": "form-control"}),
+            "inland_low_c": forms.NumberInput(attrs={"class": "form-control"}),
+
+            "hills_high_f": forms.NumberInput(attrs={"class": "form-control"}),
+            "hills_high_c": forms.NumberInput(attrs={"class": "form-control"}),
+
+            "hills_low_f": forms.NumberInput(attrs={"class": "form-control"}),
+            "hills_low_c": forms.NumberInput(attrs={"class": "form-control"}),
+
+            "publish_to_web": forms.CheckboxInput(
+                attrs={"class": "form-check-input"}
+            ),
+
+            "light_variable": forms.CheckboxInput(
+                attrs={"class": "form-check-input"}
+            ),
+
+            "forecaster_id": forms.NumberInput(attrs={"class": "form-control"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field in self.fields.values():
+            if not isinstance(field.widget, forms.CheckboxInput):
+                field.widget.attrs.setdefault("class", "form-control")

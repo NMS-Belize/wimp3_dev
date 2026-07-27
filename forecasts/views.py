@@ -30,8 +30,8 @@ from reportlab.platypus import Image, SimpleDocTemplate, Table, TableStyle, Para
 
 
 from forecasts.forms import DistrictForecastDetailsForm, DistrictForecastForm, DistrictForecastInstructionsCategoryForm, DistrictForecastInstructionsForm, DistrictForecastPublishForm, RiskLevelForm, SeverityForm, ProbabilityForm, DistrictForm, AlertLevelForm
-from forecasts.tables import AlertLevelTable, DistrictForecastDetailsTable, DistrictForecastTable, InstructionsCategoryTable, RiskLevelTable, SeverityTable, ProbabilityTable, DistrictTable, InstructionsTable
-from forecasts.models import AlertLevel, District, DistrictForecastDetails, DistrictForecastInstructionsCategory, RiskLevel, Severity, Probability, DistrictForecast, DistrictForecastInstructions
+from forecasts.tables import AlertLevelTable, DistrictForecastDetailsTable, DistrictForecastTable, ForecastGeneralTable, InstructionsCategoryTable, RiskLevelTable, SeverityTable, ProbabilityTable, DistrictTable, InstructionsTable
+from forecasts.models import AlertLevel, District, DistrictForecastDetails, DistrictForecastInstructionsCategory, ForecastGeneral, RiskLevel, Severity, Probability, DistrictForecast, DistrictForecastInstructions
 
 from . import serializers as sx
 
@@ -48,6 +48,31 @@ def index(request):
         'page_name': 'Weather Forecasts',
     }
     return render(request, 'forecasts_home.html', context)
+
+############# DISTRICT FORECASTS: Main Entries #############
+def general_forecast_list(request, id=None):
+    page_name = "General Weather Forecasts"
+    qs = ForecastGeneral.objects.all().order_by('-id')
+    table = ForecastGeneralTable(qs)
+    table.empty_text = "No records available"
+    RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+    if id is not None:
+        entry = get_object_or_404(ForecastGeneral, id=id)
+
+    return render(request, 'general-weather-forecast/table_list_main.html', {
+        'id' : id,
+        'entry': entry,  
+        'page_name': page_name,
+        'prev_page': 'Weather Forecasts',
+        'table': table,
+        'new_url':  reverse('forecasts:district_forecast_entry'),
+        'back_url': reverse('forecasts:index'),
+        'webpage_url': "forecast/general-weather-forecast/",
+        #'api_url':  reverse('forecasts:district-forecast-list'),
+    })
 
 ############# DISTRICT FORECASTS: District Entry #############
 def district_list(request, id=None):
@@ -599,6 +624,7 @@ def district_forecast_list(request, id=None):
         'table': table,
         'new_url':  reverse('forecasts:district_forecast_entry'),
         'back_url': reverse('forecasts:index'),
+        'webpage_url': "forecast/district-forecast/",
         #'api_url':  reverse('forecasts:district-forecast-list'),
     })
 
@@ -653,10 +679,10 @@ def district_forecast_entry(request, id=None):
 
     return render(request, 'district-forecast/entry_form.html', {
         'page_name': page_name,
-        'new_url': reverse('forecasts:district_forecast_entry'),
-        'back_url': reverse('forecasts:district_forecast_list'),
+        'new_url':  reverse('forecasts:district_forecast_entry'),
+        'back_url':  reverse('forecasts:district_forecast_list'),
         'form': form,
-        'entry': entry
+        'entry': entry,
     })
 
 def district_forecast_delete(request, id):

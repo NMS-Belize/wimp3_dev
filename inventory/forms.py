@@ -1,5 +1,10 @@
 from django import forms
-from .models import DepartmentSection, HardwareSpecifications, InventoryCategory, Manufacturer,InventoryItem, DeviceType, NetworkDetails, Vendor
+from django.contrib.auth import get_user_model
+from django.forms import inlineformset_factory
+
+from .models import InventoryItem, InventoryCategory, InventoryItemPhoto, Manufacturer, DeviceType, NetworkDetails, Vendor, HardwareSpecifications
+
+User = get_user_model()
 
 class InventoryCategoryForm(forms.ModelForm):
     class Meta:
@@ -41,19 +46,7 @@ class VendorForm(forms.ModelForm):
             'short_name': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
-class DepartmentSectionForm(forms.ModelForm):
-    class Meta:
-        model = DepartmentSection
-        fields = ['name', 'short_name']
-        labels = {   
-            # <-- add human-friendly labels here
-            'name': 'Department/Section Name:',
-            'short_name': 'Short Name:',
-        }
-        widgets = {            
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'short_name': forms.TextInput(attrs={'class': 'form-control'}),
-        }
+
         
 class ManufacturerForm(forms.ModelForm):
     class Meta:
@@ -67,7 +60,76 @@ class ManufacturerForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
+
+class InventoryItemPhotoForm(forms.ModelForm):
+    class Meta:
+        model = InventoryItemPhoto
+        fields = ["photo","caption","is_primary"]
+
+        widgets = {
+            "photo": forms.ClearableFileInput(
+                attrs={
+                    "class": "form-control",
+                    "accept": "image/*",
+                }
+            ),
+            "caption": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Photo description",
+                }
+            ),
+            "is_primary": forms.CheckboxInput(
+                attrs={
+                    "class": "form-check-input",
+                }
+            ),
+        }
+
+
+InventoryItemPhotoFormSet = inlineformset_factory(
+    InventoryItem,
+    InventoryItemPhoto,
+    form=InventoryItemPhotoForm,
+    fields=[
+        "photo",
+        "caption",
+        "is_primary",
+    ],
+    extra=1,
+    max_num=10,
+    validate_max=True,
+    can_delete=True,
+)
+
+class UserChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        if obj.first_name or obj.last_name:
+            return f"{obj.first_name} {obj.last_name}".strip()
+        return obj.username
+    
 class InventoryItemForm(forms.ModelForm):
+
+    assigned_user = UserChoiceField(
+        queryset=User.objects.filter(is_active=True).order_by(
+            'first_name', 'last_name', 'username'
+        ),
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-select'}),
+    )
+
+    placement_floor = forms.CharField(
+        label="Floor",
+        required=False,
+        disabled=True,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Select a placement to view its floor",
+            }
+        ),
+    )
+
     class Meta:
         model = InventoryItem
         fields = [
@@ -77,7 +139,7 @@ class InventoryItemForm(forms.ModelForm):
             'assigned_user',
             'placement',
             'department_section',
-            'floor_level',
+            #'floor_level',
             'category',
             'manufacturer',
             'model_number',
@@ -93,10 +155,10 @@ class InventoryItemForm(forms.ModelForm):
             'device_label': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Device Label'}),
             'device_name': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Device Name'}),
             'device_type': forms.Select(attrs={'class': 'form-control'}),
-            'assigned_user': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Assigned User'}),
+            'assigned_user': forms.Select(attrs={'class': 'form-select'}),
             'placement': forms.Select(attrs={'class': 'form-select'}),
             'department_section': forms.Select(attrs={'class': 'form-select'}),
-            'floor_level': forms.Select(attrs={'class': 'form-select'}),
+            #'floor_level': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Floor Level'}),
             'category': forms.Select(attrs={'class': 'form-select'}),
             'manufacturer': forms.Select(attrs={'class': 'form-select'}),
             'model_number': forms.TextInput(attrs={'class': 'form-control'}),
@@ -108,6 +170,15 @@ class InventoryItemForm(forms.ModelForm):
             'vendor': forms.Select(attrs={'class': 'form-control'}),
             'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Display the existing floor when editing an inventory item.
+        if self.instance.pk and self.instance.placement:
+            self.fields["placement_floor"].initial = (
+                self.instance.placement.floor
+            )
 
 class NetworkDetailsForm(forms.ModelForm):
     class Meta:

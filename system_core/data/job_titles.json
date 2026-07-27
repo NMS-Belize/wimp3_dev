@@ -1,0 +1,71 @@
+[
+    {
+        "id": 1,
+        "description": "Chief Meteorologist"
+    },
+    {
+        "id": 2,
+        "description": "Deputy Chief Meteorologist"
+    },
+    {
+        "id": 3,
+        "description": "Senior Meteorologist"
+    },
+    {
+        "id": 4,
+        "description": "Senior Climatologist"
+    },
+    {
+        "id": 5,
+        "description": "Senior Electronic Technician"
+    },
+    {
+        "id": 6,
+        "description": "Meteorologist"
+    },
+    {
+        "id": 7,
+        "description": "Climatologist"
+    },
+    {
+        "id": 8,
+        "description": "Software Developer"
+    },
+    {
+        "id": 9,
+        "description": "Electronic Technician"
+    },
+    {
+        "id": 10,
+        "description": "Senior Instrument Technician"
+    },
+    {
+        "id": 11,
+        "description": "Instrument Technician"
+    },
+    {
+        "id": 12,
+        "description": "Climatological Research Assistant"
+    },
+    {
+        "id": 13,
+        "description": "Climate Risk Analyst"
+    },
+    {
+        "id": 14,
+        "description": "Forecaster"
+    },
+    {
+        "id": 15,
+        "description": "Weather Observer"
+    },
+    {
+        "id": 16,
+        "description": "Administrative Assistant"
+    },
+    {
+        "id": 17,
+        "description": "Secretary"
+    }
+    
+]

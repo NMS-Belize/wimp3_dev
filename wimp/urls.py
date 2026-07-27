@@ -1,10 +1,13 @@
 """ URL configuration for wimp project. """
 
+from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.views.generic.base import RedirectView
 
 from django.urls import include, path
+from django.conf.urls.static import static
+
 
 from rest_framework import routers
 from rest_framework.routers import DefaultRouter
@@ -17,6 +20,7 @@ from agro import views as agro_views
 #from alerts import views as alert_views
 from radar import views as radar_views
 from users import views as user_views
+from system_core import views as system_core_views
 
 from radar.api import urls as radar_api_urls
 from radar.api.viewsets import RadarImagesViewSet
@@ -42,7 +46,7 @@ router.register('pest-alert-levels', agro_views.PestAlertLevelViewSet, basename=
 router.register('drought-alert-levels', agro_views.DroughtAlertLevelViewSet, basename='droughtalertlevels')
 router.register('action-items', agro_views.ActionItemsViewSet, basename='actionitems')
 router.register('effect-items', agro_views.EffectItemsViewSet, basename='effectitems')
-router.register('pest-risk', agro_views.PestRiskMainListingViewSet, basename='pestrisk')
+router.register('pest-risk',    agro_views.PestRiskMainListingViewSet, basename='pestrisk')
 
 ### ALERTS API ROUTES ###
 #router.register('cap-alerts', alert_views.CAPAlertsViewSet, basename='capalerts')
@@ -76,6 +80,7 @@ urlpatterns = [
     path('radar/',          include('radar.urls')),
     path('users/',          include('users.urls')),
     path('inventory/',      include('inventory.urls')),
+    path('system/',         include('system_core.urls')),
    
     #path('test_token/', user_views.test_token, name='test_token')
 
@@ -86,3 +91,8 @@ urlpatterns = [
     # Include all default authentication URLs under the /accounts/ path
     #path('', include('django.contrib.auth.urls')),
 ]
+
+urlpatterns += static(
+    settings.MEDIA_URL,
+    document_root=settings.MEDIA_ROOT,
+)

@@ -1,0 +1,7 @@
+<form method="post" action="{% url 'users:user_active_toggle' record.id %}" style="display:inline;">{% csrf_token %}
+    <button type="submit" class="btn_view" style="border:none;background:none;">
+        {% if record.is_active %}<i class="fa-solid fa-circle-check text-success"></i>
+        {% else %}<i class="fa-solid fa-circle-xmark text-muted"></i>
+        {% endif %}
+    </button>
+</form>

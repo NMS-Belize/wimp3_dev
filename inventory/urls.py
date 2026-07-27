@@ -15,6 +15,8 @@ urlpatterns = [
     path('inventory/entry/<int:id>/', views.inventory_entry,name='inventory_entry'),
     path('inventory/entry/<int:id>/delete/', views.inventory_delete,name='inventory_delete'),
 
+    path("get-placement-floor/",views.get_placement_floor,name="get_placement_floor"),
+
     path('inventory/category/list/', views.inventory_category_list, name="inventory_category_list"),
     path('inventory/category/list/<int:id>', views.inventory_category_list, name="inventory_category_list"),
     path('inventory/category/entry/', views.inventory_category_entry, name="inventory_category_entry"),
@@ -26,12 +28,6 @@ urlpatterns = [
     path('inventory/device-type/entry/', views.device_type_entry, name="device_type_entry"),
     path('inventory/device-type/entry/<int:id>/', views.device_type_entry,name='device_type_entry'),
     path('inventory/device-type/entry/<int:id>/delete/', views.device_type_delete,name='device_type_delete'),
-
-    path('inventory/department/list/', views.department_section_list, name="department_section_list"),
-    path('inventory/department/list/<int:id>', views.department_section_list, name="department_section_list"),
-    path('inventory/department/entry/', views.department_section_entry, name="department_section_entry"),
-    path('inventory/department/entry/<int:id>/', views.department_section_entry, name="department_section_entry"),
-    path('inventory/department/entry/<int:id>/delete/', views.department_section_delete, name='department_section_delete'),
 
     path('inventory/manufacturer/list/', views.manufacturer_list, name="manufacturer_list"),
     path('inventory/manufacturer/list/<int:id>', views.manufacturer_list, name="manufacturer_list"),

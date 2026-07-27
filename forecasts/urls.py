@@ -8,6 +8,7 @@ urlpatterns = [
     #path('new/', views.inventory_entry, name='inventory_entry'),
     #path('edit/<int:pk>/', views.inventory_edit, name='inventory_edit'),
 
+
     ## DISTRICT FORECASTS: District
     path('district-forecast/district/list/', views.district_list, name="district_list"),
     path('district-forecast/district/list/<int:id>/', views.district_list, name='district_list'),
@@ -58,6 +59,13 @@ urlpatterns = [
     path('district-forecast/probability-entry/', views.probability_entry, name="probability_entry"),
     path('district-forecast/probability-entry/<int:id>/', views.probability_entry,name='probability_entry'),
     path('district-forecast/probability-entry/<int:id>/delete/', views.probability_delete,name='probability_delete'),
+
+    ## GENERAL WEATHER FORECASTS: District
+    path('general-weather-forecast/list/', views.general_forecast_list, name="general_forecast_list"),
+    path('general-weather-forecast/list/<int:id>/', views.district_list, name='district_list'),
+    path('general-weather-forecast/entry/', views.district_entry, name="district_entry"),
+    path('general-weather-forecast/entry/<int:id>/', views.district_entry, name='district_entry'),
+    path('general-weather-forecast/entry/<int:id>/delete/', views.district_delete, name='district_delete'),
 
     ## DISTRICT FORECASTS: District Forecast
     path('district-forecast/list/', views.district_forecast_list, name="district_forecast_list"),
