@@ -3,6 +3,13 @@ __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
+*$py.class
+
+# Backup files
+*.bak
+*.backup*
+
+*.sqlite3.backup*
 
 # Django
 *.log
