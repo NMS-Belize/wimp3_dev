@@ -239,6 +239,11 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 .item_dashboard .task_desc{ font-weight: 500; text-decoration: none; text-transform: uppercase; line-height: 1.1; color: var(--teal-2); }
 .item_dashboard a{ text-decoration: none; }
 
+.table_item_dashboard{ height: 40px; margin: 0 8px 0 0; }
+.table_item_dashboard img{ height: 40px; display: inline-block; }
+.table_item_dashboard .task_desc{ font-weight: 500; text-decoration: none; text-transform: uppercase; line-height: 1.1; color: var(--teal-2); display: inline-block; }
+.table_item_dashboard a{ text-decoration: none; }
+
 /*********** ALERT LEVELS ************/
 .color-select{ background-color: none !important; }
 .color-select .option{ background-color: inherit;}

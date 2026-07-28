@@ -76,8 +76,26 @@ def inventory_entry(request, id=None):
         form_network    = NetworkDetailsForm(request.POST, request.FILES, instance=entry)
         form_photos     = InventoryItemPhotoFormSet(request.POST,request.FILES,instance=entry,prefix="photos")
 
-        if form_main.is_valid() and form_photos.is_valid() and form_hardware.is_valid() and form_network.is_valid():
+        main_valid = form_main.is_valid()
+        hardware_valid = form_hardware.is_valid()
+        network_valid = form_network.is_valid()
+        photos_valid = form_photos.is_valid()
 
+        print("Main valid:", main_valid)
+        print("Main errors:", form_main.errors)
+        print("Main changed data:", form_main.changed_data)
+
+        print("Hardware valid:", hardware_valid)
+        print("Hardware errors:", form_hardware.errors)
+
+        print("Network valid:", network_valid)
+        print("Network errors:", form_network.errors)
+
+        print("Photos valid:", photos_valid)
+        print("Photo errors:", form_photos.errors)
+        print("Photo non-form errors:", form_photos.non_form_errors())
+
+        if form_main.is_valid() and form_photos.is_valid() and form_hardware.is_valid() and form_network.is_valid():
             try:
                 with transaction.atomic():
 
@@ -115,33 +133,29 @@ def inventory_entry(request, id=None):
 
         else:
             messages.error(request, "Please correct the errors below.")
-            print("Inventory form errors:", form_main.errors)
-            print("Hardware errors:", form_hardware.errors)
-            print("Network Details errors:", form_network.errors)
-            print("Photo errors:", form_photos.errors)
-
-            print("Inventory Item non-form errors:",form_main.non_form_errors())
-            print("Hardware non-form errors:",form_hardware.non_form_errors())
-            print("Network non-form errors:",form_network.non_form_errors())
+            print("Inventory errors:", form_main.errors.as_json())
+            print("Hardware errors:", form_hardware.errors.as_json())
+            print("Network errors:", form_network.errors.as_json())
+            #print("Photo errors:", form_photos.errors.as_json())
             print("Photo non-form errors:",form_photos.non_form_errors())
 
     else:
-        form_main       = InventoryItemForm(instance=entry,prefix="main")
-        form_hardware   = HardwareSpecificationsForm(instance=entry,prefix="hardware")
-        form_network    = NetworkDetailsForm(instance=entry,prefix="network")
-        form_photos     = InventoryItemPhotoFormSet(instance=entry,prefix="photos")
+        form_main = InventoryItemForm(instance=entry)
+        form_hardware = HardwareSpecificationsForm(instance=entry,prefix="hardware")
+        form_network = NetworkDetailsForm(instance=entry,prefix="network")
+        form_photos = InventoryItemPhotoFormSet(instance=entry,prefix="photos")
 
     return render(request,"inventory/entry_form.html",{
-            "page_name": page_name,
-            "new_url": reverse("inventory:inventory_entry"),
-            "back_url": reverse("inventory:inventory_list"),
-            "prev_page": "Inventory Management",
-            "api_url": reverse("sectors-list"),
-            "form": form_main,
-            "form_photos": form_photos,
+            "page_name":    page_name,
+            "new_url":      reverse("inventory:inventory_entry"),
+            "back_url":     reverse("inventory:inventory_list"),
+            "prev_page":    "Inventory Management",
+            "api_url":      reverse("sectors-list"),
+            "form":         form_main,
+            "form_photos":  form_photos,
             "form_hardware": form_hardware,
             "form_network": form_network,
-            "entry": entry
+            "entry":        entry
         }
     )
 

@@ -2,7 +2,12 @@
 {% block title %}{{ page_name }} | Agro-Climat Services | WIMP3 | National Meteorological Service of Belize{% endblock %}
 {% block content %}
 
-<form id="inventory_form" class="pt-3" method="post" enctype="multipart/form-data">
+<form id="inventory_form"  method="post" enctype="multipart/form-data"
+      action="{% if entry.pk %}
+                  {% url 'inventory:inventory_entry' entry.pk %}
+              {% else %}
+                  {% url 'inventory:inventory_entry' %}
+              {% endif %}">
     {% csrf_token %}
     {% if form.errors %}
     <div class="alert alert-danger">
@@ -246,10 +251,9 @@
     </div>
     <div class="clear"></div>
     <div class="col-12 actions mt-4 mb-4">
-            <input id="btn_submit" name="btn_submit" type="submit" value="Save" class="btn" />
-            <input id="btn_submit_close" name="btn_submit_close" type="submit" value="Save & Close" class="btn btn-primary" />
-            <a id="btn_close" class="btn btn-danger" href="{{ back_url }}">Cancel</a>
-        </div>
+        <input id="btn_submit" name="btn_submit" type="submit" value="Save" class="btn" />
+        <input id="btn_submit_close" name="btn_submit_close" type="submit" value="Save & Close" class="btn btn-primary" />
+        <a id="btn_close" class="btn btn-danger" href="{{ back_url }}">Cancel</a>
     </div>
 </form>
 <script type="text/javascript">

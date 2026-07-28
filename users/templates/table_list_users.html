@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}{{ page_name }} | WIMP3 | National Meteorological Service of Belize{% endblock %}
+{% load static %}
+{% block content %}
+
+<div class="row mb-2">
+    <div class="col-12 mb-2 text-end">
+        <div class="table_item_dashboard col">
+            <a class="" href="{% url 'users:user_entry' %}">
+                <img src="{% static 'button_icons/add-user.png' %}" alt="Inventory List" />&nbsp;
+                <span class="task_desc">New User</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+{% if id %}
+<div class="row mb-3">
+    <div class="col-12">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert
+                    {% if message.tags == 'success' %}alert-success
+                    {% elif message.tags == 'error' %}alert-danger
+                    {% elif message.tags == 'warning' %}alert-warning
+                    {% elif message.tags == 'info' %}alert-info
+                    {% else %}alert-secondary
+                    {% endif %}
+                    alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endif %}
+<div class="row">
+    <div class="col-12">
+        {% load render_table from django_tables2 %}
+        {% render_table table %}
+    </div>
+</div>
+{% endblock %}

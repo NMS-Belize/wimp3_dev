@@ -116,6 +116,7 @@ def user_entry_details(request, id=None):
     return render(request, 'entry_form_user_profile.html', context)
         
 def user_list(request, id=None):
+
     page_name = "Users"
     qs = User.objects.all().order_by('id')
     table = UserTable(qs)
@@ -136,7 +137,7 @@ def user_list(request, id=None):
         'back_url': reverse('users:user_list'),
         #'api_url':  reverse('radarimages-list'),
     }
-    return render(request, 'table_list_main.html', context)
+    return render(request, 'table_list_users.html', context)
 
 #@login_required
 def user_delete(request, id):
