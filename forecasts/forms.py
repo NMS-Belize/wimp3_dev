@@ -4,7 +4,7 @@ from unicodedata import category
 from click import option
 from django import forms
 from pytz import timezone
-from .models import AlertLevel, District, DistrictForecast, ForecastGeneral, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, Probability, RiskLevel, Severity
+from .models import DistrictForecast, ForecastGeneral, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, Probability, Severity
 
 from django_toggle_switch_widget.widgets import DjangoToggleSwitchWidget
 from django.core.exceptions import ValidationError
@@ -41,32 +41,6 @@ class ColorSelect(forms.Select):
 
         return option
 
-class DistrictForm(forms.ModelForm):
-    class Meta:
-        model = District
-        fields = ['district_name']
-        labels = {   
-            # <-- add human-friendly labels here
-            'district_name': 'District Name:'
-        }
-        widgets = {            
-            'district_name': forms.TextInput(attrs={'class': 'form-control'})
-        }
-
-class AlertLevelForm(forms.ModelForm):
-    class Meta:
-        model = AlertLevel
-        fields = ['description', 'color']
-        labels = {   
-            # <-- add human-friendly labels here
-            'description': 'Description:',
-            'color': 'Color HEX',
-        }
-        widgets = {            
-            'description': forms.TextInput(attrs={'class': 'form-control'}),
-            'color': forms.TextInput(attrs={'class': 'form-control'})
-        }
-
 class DistrictForecastInstructionsCategoryForm(forms.ModelForm):
     class Meta:
         model = DistrictForecastInstructionsCategory
@@ -91,20 +65,6 @@ class DistrictForecastInstructionsForm(forms.ModelForm):
         widgets = {            
             'description': forms.Textarea(attrs={'class': 'form-control'}),
             'category': forms.Select(attrs={'class': 'form-select'})
-        }
-
-class RiskLevelForm(forms.ModelForm):
-    class Meta:
-        model = RiskLevel
-        fields = ['description', 'color']
-        labels = {   
-            # <-- add human-friendly labels here
-            'description': 'Description:',
-            'color': 'Color HEX',
-        }
-        widgets = {            
-            'description': forms.TextInput(attrs={'class': 'form-control'}),
-            'color': forms.TextInput(attrs={'class': 'form-control'})
         }
 
 class SeverityForm(forms.ModelForm):

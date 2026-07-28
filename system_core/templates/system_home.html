@@ -5,6 +5,24 @@
 <div class="row mb-5">
     <div class="col-12 d-flex flex-row mb-3">
         <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'system_core:district_list' %}">
+                <img src="{% static 'button_icons/belize.png' %}" alt="District" />
+                <span class="task_desc">District</span>
+            </a>
+        </div>
+        <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'system_core:alert_level_list' %}">
+                <img src="{% static 'button_icons/speedometer.png' %}" alt="Alert Level" />
+                <span class="task_desc">Alert Level</span>
+            </a>
+        </div>
+        <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'system_core:risk_level_list' %}">
+                <img src="{% static 'button_icons/speedometer.png' %}" alt="Risk Level" />
+                <span class="task_desc">Risk Level</span>
+            </a>
+        </div>
+        <div class="item_dashboard position-relative">
             <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'system_core:job_title_list' %}">
                 <img src="{% static 'button_icons/device.png' %}" alt="Job Titles" />
                 <span class="task_desc">Job Titles</span>

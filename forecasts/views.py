@@ -18,7 +18,6 @@ from rest_framework import settings, status, viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
-
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
 from reportlab.lib.pagesizes import letter, landscape
@@ -28,10 +27,11 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import Image, SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 
+from forecasts.forms import DistrictForecastDetailsForm, DistrictForecastForm, DistrictForecastInstructionsCategoryForm, DistrictForecastInstructionsForm, DistrictForecastPublishForm, SeverityForm, ProbabilityForm
+from forecasts.tables import DistrictForecastDetailsTable, DistrictForecastTable, ForecastGeneralTable, InstructionsCategoryTable, SeverityTable, ProbabilityTable, InstructionsTable
+from forecasts.models import DistrictForecastDetails, DistrictForecastInstructionsCategory, ForecastGeneral, Severity, Probability, DistrictForecast, DistrictForecastInstructions
 
-from forecasts.forms import DistrictForecastDetailsForm, DistrictForecastForm, DistrictForecastInstructionsCategoryForm, DistrictForecastInstructionsForm, DistrictForecastPublishForm, RiskLevelForm, SeverityForm, ProbabilityForm, DistrictForm, AlertLevelForm
-from forecasts.tables import AlertLevelTable, DistrictForecastDetailsTable, DistrictForecastTable, ForecastGeneralTable, InstructionsCategoryTable, RiskLevelTable, SeverityTable, ProbabilityTable, DistrictTable, InstructionsTable
-from forecasts.models import AlertLevel, District, DistrictForecastDetails, DistrictForecastInstructionsCategory, ForecastGeneral, RiskLevel, Severity, Probability, DistrictForecast, DistrictForecastInstructions
+from system_core.models import District, AlertLevel, RiskLevel
 
 from . import serializers as sx
 
@@ -72,155 +72,6 @@ def general_forecast_list(request, id=None):
         'back_url': reverse('forecasts:index'),
         'webpage_url': "forecast/general-weather-forecast/",
         #'api_url':  reverse('forecasts:district-forecast-list'),
-    })
-
-############# DISTRICT FORECASTS: District Entry #############
-def district_list(request, id=None):
-    page_name = "District Entries"
-    qs = District.objects.all().order_by('id')
-    table = DistrictTable(qs)
-    table.empty_text = "No records available"
-    RequestConfig(request).configure(table)
-
-    # Load entry ONLY if id is provided
-    entry = None
-    if id is not None:
-        entry = get_object_or_404(District, id=id)
-
-    return render(request, 'district-forecast/parameters_table_list.html', {
-        'id' : id, 
-        'entry': entry, 
-        'page_name': page_name,
-        'prev_page': 'Weather Forecasts', 
-        'table' : table,
-        'new_url':  reverse('forecasts:district_entry'),
-        'back_url': reverse('forecasts:index'),
-        #'api_url': "/api/pest-risk/",
-    })
-
-def district_entry(request, id=None):
-
-    page_name = "District Entry"
-
-    # If id exists => update, else => create new
-    if id:
-        entry = get_object_or_404(District, id=id)
-    else:
-        entry = None
-
-    if request.method == 'POST':
-        form = DistrictForm(request.POST, instance=entry)
-
-        if form.is_valid():
-            saved_entry = form.save()    # Creates or updates
-            return redirect('forecasts:district_list', saved_entry.id)
-    else:
-        form = DistrictForm(instance=entry)
-
-    return render(request, 'district-forecast/parameters_entry_form.html', {
-        'page_name': page_name,
-        'new_url':  reverse('forecasts:district_entry'),
-        'back_url': reverse('forecasts:district_list'),
-        #'api_url': reverse('zones-list'),
-        'form': form,
-        'entry': entry
-    })
-
-def district_delete(request, id):
-    
-    entry = get_object_or_404(District, id=id)
-
-    qs = District.objects.all().order_by('id')
-    # Filter details by parent listing
-    qs = qs.order_by('id')
-    
-    page_name = "District Entry"
-
-    if request.method == "POST":
-        entry.delete()
-        
-        return redirect('forecasts:district_list')  # redirect anywhere you prefer
-
-    return render(request, "district-forecast/parameters_delete_district.html", {
-        "entry": entry,
-        'page_name': page_name,
-        'details': qs
-    })
-
-############# DISTRICT FORECATSTS: Alert Level Entry #############
-def alert_level_list(request, id=None):
-    page_name = "Alert Level Entries"
-    qs = AlertLevel.objects.all().order_by('-id')
-    table = AlertLevelTable(qs)
-    table.empty_text = "No records available"
-    RequestConfig(request).configure(table)
-
-    # Load entry ONLY if id is provided
-    entry = None
-    '''if id is not None:
-        entry = get_object_or_404(PestRiskEntryMainListing, id=id)'''
-
-    context = {
-        'entry': entry,  
-        'page_name': page_name,
-        'prev_page': 'Weather Forecasts',
-        'table': table,
-        'new_url':  reverse('forecasts:alert_level_entry'),
-        'back_url': reverse('forecasts:index'),
-        #'api_url': "/api/pest-risk/",
-    }
-    return render(request, 'district-forecast/parameters_table_list.html', context)
-
-def alert_level_entry(request, id=None):
-
-    page_name = "Alert Level Entry"
-
-    # If id exists => update, else => create new
-    if id:
-        entry = get_object_or_404(AlertLevel, id=id)
-    else:
-        entry = None
-
-    if request.method == 'POST':
-        form = AlertLevelForm(request.POST, instance=entry)
-
-        if form.is_valid():
-            saved_entry = form.save()    # Creates or updates
-            return redirect('forecasts:alert_level_list', saved_entry.id)
-        
-    else:
-        #form = PestRiskMainListingForm(instance=entry)
-        form = AlertLevelForm(instance=entry)
-
-    return render(request, 'district-forecast/parameters_entry_form.html', {
-        'page_name':    page_name,
-        'new_url':      reverse('forecasts:alert_level_list'),
-        'details_url':  "",
-        #'back_url':     reverse('forecasts:alert_level_list'),
-        'api_url':      "/api/pest-risk/",
-        'form': form,
-        'entry': entry
-    })
-
-def alert_level_delete(request, id):
-    
-    entry = get_object_or_404(AlertLevel, id=id)
-
-    qs = AlertLevel.objects.all().order_by('id')
-    # Filter details by parent listing
-    qs = qs.order_by('id')
-    
-    page_name = "Alert Level Entry"
-
-    if request.method == "POST":
-        entry.delete()
-        
-        return redirect('forecasts:alert_level_list')  # redirect anywhere you prefer
-
-    return render(request, "district-forecast/parameters_delete.html", {
-        "entry": entry,
-        'page_name': page_name,
-        'details': qs
     })
 
 ############# DISTRICT FORECATSTS: Risk Level Entry #############
@@ -381,81 +232,6 @@ def instructions_category_entry(request, id=None):
         'entry': entry
     })
 
-############# DISTRICT FORECATSTS: Risk Level Entry #############
-def risk_level_list(request, id=None):
-    page_name = "Risk Level Entries"
-    qs = RiskLevel.objects.all().order_by('-id')
-    table = RiskLevelTable(qs)
-    RequestConfig(request).configure(table)
-
-    # Load entry ONLY if id is provided
-    entry = None
-    '''if id is not None:
-        entry = get_object_or_404(PestRiskEntryMainListing, id=id)'''
-
-    context = {
-        #'id' : id,
-        'entry': entry,  
-        'page_name': page_name,
-        'prev_page': 'Weather Forecasts',
-        'table': table,
-        'new_url':  reverse('forecasts:risk_level_entry'),
-        'back_url': reverse('forecasts:index'),
-        #'api_url': "/api/pest-risk/",
-    }
-    return render(request, 'district-forecast/parameters_table_list.html', context)
-
-def risk_level_entry(request, id=None):
-
-    page_name = "Risk Level Entry"
-
-    # If id exists => update, else => create new
-    if id:
-        entry = get_object_or_404(RiskLevel, id=id)
-    else:
-        entry = None
-
-    if request.method == 'POST':
-        form = RiskLevelForm(request.POST, instance=entry)
-
-        if form.is_valid():
-            saved_entry = form.save()    # Creates or updates
-            return redirect('forecasts:risk_level_list', saved_entry.id)
-        
-    else:
-        #form = PestRiskMainListingForm(instance=entry)
-        form = RiskLevelForm(instance=entry,initial={'months': True})
-
-    return render(request, 'district-forecast/parameters_entry_form.html', {
-        'page_name':    page_name,
-        'new_url':      reverse('forecasts:risk_level_list'),
-        'details_url':  "",
-        #'back_url':     reverse('forecasts:risk_level_list'),
-        'api_url':      "/api/pest-risk/",
-        'form': form,
-        'entry': entry
-    })
-
-def risk_level_delete(request, id):
-    
-    entry = get_object_or_404(RiskLevel, id=id)
-
-    qs = RiskLevel.objects.all().order_by('id')
-    # Filter details by parent listing
-    qs = qs.order_by('id')
-    
-    page_name = "Risk Level Entry"
-
-    if request.method == "POST":
-        entry.delete()
-        
-        return redirect('forecasts:risk_level_list')  # redirect anywhere you prefer
-
-    return render(request, "district-forecast/parameters_delete.html", {
-        "entry": entry,
-        'page_name': page_name,
-        'details': qs
-    })
 
 ############# DISTRICT FORECASTS: Severity #############
 def severity_list(request, id=None):

@@ -8,21 +8,6 @@ urlpatterns = [
     #path('new/', views.inventory_entry, name='inventory_entry'),
     #path('edit/<int:pk>/', views.inventory_edit, name='inventory_edit'),
 
-
-    ## DISTRICT FORECASTS: District
-    path('district-forecast/district/list/', views.district_list, name="district_list"),
-    path('district-forecast/district/list/<int:id>/', views.district_list, name='district_list'),
-    path('district-forecast/district/entry/', views.district_entry, name="district_entry"),
-    path('district-forecast/district/entry/<int:id>/', views.district_entry, name='district_entry'),
-    path('district-forecast/district/entry/<int:id>/delete/', views.district_delete, name='district_delete'),
-
-    ## DISTRICT FORECASTS: Alert Level
-    path('district-forecast/alert-level/list/', views.alert_level_list, name="alert_level_list"),
-    path('district-forecast/alert-level/list/<int:id>/', views.alert_level_list, name='alert_level_list'),
-    path('district-forecast/alert-level/entry/', views.alert_level_entry, name="alert_level_entry"),
-    path('district-forecast/alert-level/entry/<int:id>/', views.alert_level_entry, name='alert_level_entry'),
-    path('district-forecast/alert-level/entry/<int:id>/delete/', views.alert_level_delete, name='alert_level_delete'),
-
     ## DISTRICT FORECASTS: Instructions
     path('district-forecast/instructions/list/', views.instructions_list, name="instructions_list"),
     path('district-forecast/instructions/list/<int:id>/', views.instructions_list, name='instructions_list'),
@@ -38,13 +23,6 @@ urlpatterns = [
     path('district-forecast/instructions-category/entry/', views.instructions_category_entry, name="instructions_category_entry"),
     path('district-forecast/instructions-category/entry/<int:id>/', views.instructions_category_entry, name='instructions_category_entry'),
     #path('district-forecast/instructions-category/entry/<int:id>/delete/', views.instructions_category_delete, name='instructions_category_delete'),
-
-    ## DISTRICT FORECASTS: Risk Level
-    path('district-forecast/risk-level-list/', views.risk_level_list, name="risk_level_list"),
-    path('district-forecast/risk-level-list/<int:id>/', views.risk_level_list,name='risk_level_list'),
-    path('district-forecast/risk-level-entry/', views.risk_level_entry, name="risk_level_entry"),
-    path('district-forecast/risk-level-entry/<int:id>/', views.risk_level_entry,name='risk_level_entry'),
-    path('district-forecast/risk-level-entry/<int:id>/delete/', views.risk_level_delete,name='risk_level_delete'),
 
     ## DISTRICT FORECASTS: Severity
     path('district-forecast/severity-list/', views.severity_list, name="severity_list"),
@@ -62,10 +40,10 @@ urlpatterns = [
 
     ## GENERAL WEATHER FORECASTS: District
     path('general-weather-forecast/list/', views.general_forecast_list, name="general_forecast_list"),
-    path('general-weather-forecast/list/<int:id>/', views.district_list, name='district_list'),
-    path('general-weather-forecast/entry/', views.district_entry, name="district_entry"),
-    path('general-weather-forecast/entry/<int:id>/', views.district_entry, name='district_entry'),
-    path('general-weather-forecast/entry/<int:id>/delete/', views.district_delete, name='district_delete'),
+    path('general-weather-forecast/list/<int:id>/', views.general_forecast_list, name='general_forecast_list'),
+    #path('general-weather-forecast/entry/', views.district_entry, name="district_entry"),
+    #path('general-weather-forecast/entry/<int:id>/', views.district_entry, name='district_entry'),
+    #path('general-weather-forecast/entry/<int:id>/delete/', views.district_delete, name='district_delete'),
 
     ## DISTRICT FORECASTS: District Forecast
     path('district-forecast/list/', views.district_forecast_list, name="district_forecast_list"),

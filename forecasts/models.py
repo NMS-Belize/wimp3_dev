@@ -3,12 +3,7 @@ from time import timezone
 from django.db import models
 from django.conf import settings
 
-from system_core.models import (
-    Zone,
-    District,
-    AlertLevel,
-    RiskLevel,
-)
+from system_core.models import District, AlertLevel, RiskLevel
 
 # Create your models here.
      

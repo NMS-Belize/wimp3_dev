@@ -2,6 +2,46 @@ from django import forms
 
 from .models import DepartmentSection, JobTitle, District, Months, OfficeLocation, RiskLevel, AlertLevel
 
+class DistrictForm(forms.ModelForm):
+    class Meta:
+        model = District
+        fields = ['district_name']
+        labels = {   
+            # <-- add human-friendly labels here
+            'district_name': 'District Name:'
+        }
+        widgets = {            
+            'district_name': forms.TextInput(attrs={'class': 'form-control'})
+        }
+
+class AlertLevelForm(forms.ModelForm):
+    class Meta:
+        model = AlertLevel
+        fields = ['description', 'color']
+        labels = {   
+            # <-- add human-friendly labels here
+            'description': 'Description:',
+            'color': 'Color HEX',
+        }
+        widgets = {            
+            'description': forms.TextInput(attrs={'class': 'form-control'}),
+            'color': forms.TextInput(attrs={'class': 'form-control'})
+        }
+
+class RiskLevelForm(forms.ModelForm):
+    class Meta:
+        model = RiskLevel
+        fields = ['description', 'color']
+        labels = {   
+            # <-- add human-friendly labels here
+            'description': 'Description:',
+            'color': 'Color HEX',
+        }
+        widgets = {            
+            'description': forms.TextInput(attrs={'class': 'form-control'}),
+            'color': forms.TextInput(attrs={'class': 'form-control'})
+        }
+
 class JobTitleForm(forms.ModelForm):
     class Meta:
         model = JobTitle
