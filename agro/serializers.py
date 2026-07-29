@@ -65,7 +65,7 @@ class PestRiskEntryDetailsSerializer(serializers.ModelSerializer):
         fields = ['pest_risk_listing_id', 'zone', 'pest_alert','pest_alert_color_hex', 'drought_alert', 'drought_alert_color_hex', 'temp_min','temp_max','precip_min','precip_max','effect','info','actions']
     
     def get_zone(self, obj): 
-        return f"{obj.district_id.district_area}" if obj.district_id is not None else "N/A"
+        return f"{obj.district_id.district_name}" if obj.district_id is not None else "N/A"
     
     def get_pest_alert(self, obj): 
         return f"{obj.pest_alert_lvl_id.description}" if obj.pest_alert_lvl_id is not None else "N/A"
