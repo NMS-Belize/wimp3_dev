@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from . import models as mx
+from agro import models as mx
 
 class MonthSerializer(serializers.ModelSerializer):
     class Meta:
@@ -48,6 +48,7 @@ class EffectItemsSerializer(serializers.ModelSerializer):
 
 class PestRiskEntryDetailsSerializer(serializers.ModelSerializer):
     #pest_risk_listing_id = PestRiskEntryMainListingSerializer(read_only=True)
+    commodity = serializers.SerializerMethodField()
     zone = serializers.SerializerMethodField()
     pest_alert = serializers.SerializerMethodField()
     pest_alert_color_hex = serializers.SerializerMethodField()
@@ -59,10 +60,14 @@ class PestRiskEntryDetailsSerializer(serializers.ModelSerializer):
     precip_max = serializers.SerializerMethodField()
     effect = serializers.SerializerMethodField()
     actions = serializers.SerializerMethodField()
+    is_published = serializers.SerializerMethodField()
 
     class Meta:
         model = mx.PestRiskEntryDetails
-        fields = ['pest_risk_listing_id', 'zone', 'pest_alert','pest_alert_color_hex', 'drought_alert', 'drought_alert_color_hex', 'temp_min','temp_max','precip_min','precip_max','effect','info','actions']
+        fields = ['pest_risk_id', 'commodity', 'zone', 'pest_alert','pest_alert_color_hex', 'drought_alert', 'drought_alert_color_hex', 'temp_min','temp_max','precip_min','precip_max','effect','info','actions', 'is_published']
+
+    def get_commodity(self, obj): 
+            return f"{obj.commodity_id.description}" if obj.commodity_id is not None else "N/A"
     
     def get_zone(self, obj): 
         return f"{obj.district_id.district_name}" if obj.district_id is not None else "N/A"
@@ -71,7 +76,7 @@ class PestRiskEntryDetailsSerializer(serializers.ModelSerializer):
         return f"{obj.pest_alert_lvl_id.description}" if obj.pest_alert_lvl_id is not None else "N/A"
     
     def get_pest_alert_color_hex(self, obj): 
-        return f"{obj.pest_alert_lvl_id.color_hex}" if obj.pest_alert_lvl_id is not None else "N/A"
+        return f"{obj.pest_alert_lvl_id.color}" if obj.pest_alert_lvl_id is not None else "N/A"
     
     def get_drought_alert(self, obj): 
         return f"{obj.drought_alert_lvl_id.description}" if obj.drought_alert_lvl_id is not None else "N/A"
@@ -96,11 +101,13 @@ class PestRiskEntryDetailsSerializer(serializers.ModelSerializer):
     
     def get_actions(self, obj): 
         return f"{obj.actions.action_description}" if obj.actions is not None else "N/A"
+
+    def get_is_published(self, obj): 
+            return f"{obj.is_published}" if obj.is_published is not None else "N/A"
     
 class PestRiskEntryMainListingSerializer(serializers.ModelSerializer):
-    commodity = serializers.SerializerMethodField()
-    months = serializers.SerializerMethodField()
 
+    months = serializers.SerializerMethodField()
     pest_risk_details = PestRiskEntryDetailsSerializer(
         many=True,
         read_only=True,
@@ -108,11 +115,11 @@ class PestRiskEntryMainListingSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = mx.PestRiskEntryMainListing
-        fields = ['id', 'months', 'year', 'commodity', 'pest_risk_details']
+        model = mx.PestRisk
+        fields = ['id', 'months', 'year', 'pest_risk_details' ]
 
-    def get_commodity(self, obj): 
-        return f"{obj.commodity.description}" if obj.commodity is not None else "N/A"
+    #def get_commodity(self, obj): 
+    #    return f"{obj.commodity.description}" if obj.commodity is not None else "N/A"
     
     def get_months(self, obj):
         month_map = {
@@ -123,5 +130,3 @@ class PestRiskEntryMainListingSerializer(serializers.ModelSerializer):
         if obj.months:
             return ", ".join([month_map.get(str(m), f"Unknown({m})") for m in obj.months])
         return "N/A"
-    
-   

@@ -4,8 +4,8 @@ from django.contrib import admin
 from system_core.models import District, Months, RiskLevel, AlertLevel, JobTitle
 
 # Register your models here.
-#admin.site.register(Months)
-#admin.site.register(District)
+admin.site.register(Months)
+admin.site.register(District)
 admin.site.register(RiskLevel)
 admin.site.register(AlertLevel)
 admin.site.register(JobTitle)

@@ -1,0 +1,102 @@
+[
+    {
+        "id": 1,
+        "effect_description": "The conditions during this period will not favour an increase in froghopper populations."
+    },
+    {
+        "id": 2,
+        "effect_description": "The conditions during this period may favour an increase in froghopper populations."
+    },
+    {
+        "id": 3,
+        "effect_description": "Below-normal rainfall is not expected to favour psyllid population growth but may increase mite populations, including vectors of Citrus Leprosis Virus. Conditions are also not expected to favour an increase in Drunken Bayman populations."
+    },
+    {
+        "id": 4,
+        "effect_description": "Conditions may favour psyllid population growth. Rainfall is not expected to favour increased mite populations but may favour an increase in Drunken Bayman populations."
+    },
+    {
+        "id": 5,
+        "effect_description": "Conditions will favour outbreaks of Sigatoka and may increase nematode infestations."
+    },
+    {
+        "id": 6,
+        "effect_description": "Conditions will favour whiteflies, Asian thrips, and mites."
+    },
+    {
+        "id": 7,
+        "effect_description": "Monitor for Asian thrips and mites in the area."
+    },
+    {
+        "id": 8,
+        "effect_description": "Conditions may favour fungal and bacterial diseases."
+    },
+    {
+        "id": 9,
+        "effect_description": "Conditions will favour fungal and bacterial diseases."
+    },
+    {
+        "id": 10,
+        "effect_description": "These conditions may trigger higher incidences of whiteflies, thrips, and mites, while causing water stress to plants."
+    },
+    {
+        "id": 11,
+        "effect_description": "Above-normal rainfall will favour higher incidences of fungal and bacterial diseases."
+    },
+    {
+        "id": 12,
+        "effect_description": "Low rainfall and high temperatures may stress plants. Monitor for pest problems and implement appropriate control measures."
+    },
+    {
+        "id": 13,
+        "effect_description": "Coconut: Conditions may favour coconut weevils, mites, red spider mites, Phytophthora, and Red Ring disease."
+    },
+    {
+        "id": 14,
+        "effect_description": "Avocado: Conditions may favour thrips, scales, red spider mites, mealybugs, and other pests. Drought stress may increase susceptibility to bacterial canker, stem blight, and leaf blight."
+    },
+    {
+        "id": 15,
+        "effect_description": "Soursop: Conditions may favour fruit, stem, and trunk borers, mealybugs, aphids, mites, thrips, scales, lacewings, defoliating caterpillars, and Anthracnose resulting from secondary insect damage."
+    },
+    {
+        "id": 16,
+        "effect_description": "Cacao: High humidity may favour disease development."
+    },
+    {
+        "id": 17,
+        "effect_description": "Pineapple: Conditions may favour sunscald of fruits, mealybugs, and stink bugs."
+    },
+    {
+        "id": 18,
+        "effect_description": "Other pest damage may include birds, rodents, and squirrels."
+    },
+    {
+        "id": 19,
+        "effect_description": "Rainfall during this period will benefit established orchards. Continue monitoring for pest and disease problems and implement appropriate control measures."
+    },
+    {
+        "id": 20,
+        "effect_description": "Coconut: Continue monitoring for coconut weevils, mites, red spider mites, Phytophthora, and Red Ring disease."
+    },
+    {
+        "id": 21,
+        "effect_description": "Avocado: Continue monitoring for thrips, scales, red spider mites, mealybugs, bacterial canker, stem blight, and leaf blight."
+    },
+    {
+        "id": 22,
+        "effect_description": "Soursop: Continue monitoring for fruit, stem, and trunk borers, mealybugs, aphids, mites, thrips, scales, lacewings, defoliating caterpillars, and Anthracnose."
+    },
+    {
+        "id": 23,
+        "effect_description": "Cacao: High humidity may continue to favour disease development."
+    },
+    {
+        "id": 24,
+        "effect_description": "Pineapple: Continue monitoring for sunscald and other pest-related damage."
+    },
+    {
+        "id": 25,
+        "effect_description": "Other pest damage may include birds, rodents, and squirrels."
+    }
+]

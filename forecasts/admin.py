@@ -1,8 +1,9 @@
 from django.contrib import admin
 
-from forecasts.models import District, DistrictForecast, DistrictForecastInstructions, Severity, Probability, RiskLevel
+from forecasts.models import DistrictForecast, DistrictForecastInstructions, Severity, Probability, ForecastGeneral
 
 # Register your models here.
-admin.site.register(District)
 admin.site.register(DistrictForecast)
 admin.site.register(DistrictForecastInstructions)
+
+admin.site.register(ForecastGeneral)

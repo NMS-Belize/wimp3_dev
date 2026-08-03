@@ -1,39 +1,76 @@
 {% extends "base.html" %}
-
 {% block title %}{{ page_name }} | Agro-Climat Services | WIMP3 | National Meteorological Service of Belize{% endblock %}
-
 {% block content %}
-<div class="bg-medium form-container">
-    <div class="container p-5">
-        <div class="row mb-3">
-            <div class="col-6">
-                <a id="btn_back_main" class="btn btn-link" href="{{ back_url }}"><i class="fa-solid fa-arrow-left"></i>&nbsp;Back to Main Listing</a>
-            </div>
-            <div class="col-6 text-end">
-                <a class="btn btn_new" href="{{ details_url }}"><i class="fa-solid fa-plus"></i>&nbsp;Add Details</a>
-                <a class="btn btn_new" href="{{ new_url }}"><i class="fa-solid fa-plus"></i>&nbsp;New Pest Risk Entry</a>
-                <a class="btn btn_api" href="{{ object.get_absolute_url }}/agro-climat-services" target="_blank"><i class="fa-solid fa-list"></i>&nbsp;API Feed</a>
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-12">
-                <h1>Pest Risk Details</h1>
-                <div class="alert alert-light">Main Entry: <strong>{{ page_name }}</strong></div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <form method="post" id="frm_pest_risk_details" id="frm_pest_risk_details" class="wimp3_form">
-                    {% csrf_token %}
-                    {{ form.as_ul }}
-                    <input id="pest_risk_listing_id" name="pest_risk_listing_id" type="hidden" value="{{ parent_id }}" />
-                    <li>
-                        <label for="btn_submit">&nbsp;</label>
-                        <input id="btn_submit" type="submit" value="Submit" class="btn" />
-                    </li>
-                </form>
-            </div>
-        </div>
+
+<div class="row mt-3">
+    <div class="col-12">
+        <form method="post" id="frm_pest_risk_details" id="frm_pest_risk_details" class="wimp3_form">
+            {% csrf_token %}
+            {{ form.commodity_id }}
+            {{ form.district_id }}
+            <ul>
+
+            </ul>
+                <li>{{ form.commodity_name.label_tag }}
+                    {{ form.commodity_name }}
+                </li>
+                <li>
+                    {{ form.district_name.label_tag }}
+                    {{ form.district_name }}
+                </li>
+                <li>
+                    {{ form.pest_alert_lvl_id.label_tag }}
+                    {{ form.pest_alert_lvl_id }}
+                </li>
+                <li>
+                    {{ form.drought_alert_lvl_id.label_tag }}
+                    {{ form.drought_alert_lvl_id }}
+                </li>
+                <li>
+                    {{ form.temp_max.label_tag }}
+                    {{ form.temp_max }}
+                </li>
+                <li>
+                    {{ form.temp_min.label_tag }}
+                    {{ form.temp_min }}
+                </li>
+                <li>
+                    {{ form.precip_min.label_tag }}
+                    {{ form.precip_min }}
+                </li>
+                <li>
+                    {{ form.precip_max.label_tag }}
+                    {{ form.precip_max }}
+                </li>
+                <li>
+                    {{ form.effect.label_tag }}
+                    {{ form.effect }}
+                </li>
+                <li>
+                    {{ form.info.label_tag }}
+                    {{ form.info }}
+                </li>
+                <li>
+                    {{ form.actions.label_tag }}
+                    {{ form.actions }}
+                </li>
+                <li>
+                    <label for="btn_submit">&nbsp;</label>
+                    <input id="btn_submit" type="submit" value="Submit" class="btn" />
+                    <a class="btn btn-danger text-uppercase dt" href="{{ back_url }}">Cancel</a>
+                </li>            
+        </form>
     </div>
 </div>
+{% endblock %}
+{% block extra_js %}
+<script>
+$(document).ready(function () {
+    $('.select2').select2({
+        width: '100%',
+        placeholder: 'Select an option',
+        allowClear: true
+    });
+});
+</script>
 {% endblock %}

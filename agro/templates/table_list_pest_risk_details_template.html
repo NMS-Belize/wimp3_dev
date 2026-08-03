@@ -4,34 +4,17 @@
 {% block content %}
 
 <div class="row mb-3">
-    <div class="col-12 text-end">
-        <a class="btn btn-primary" href="{{ back_url }}"><i class="fa-solid fa-arrow-left"></i>&nbsp;Back to {{ prev_page }}</a>
-        <a class="btn btn_new" href="{% url 'agro:pest_risk_details_create' id %}"><i class="fa-solid fa-plus"></i>&nbsp;Add Details</a>
-    </div>
-</div>
-{% if id %}
-<div class="row mb-3">
-    <div class="col-12">
-        <!--<div class="alert alert-success" role="alert">
-            {% if entry.id %}
-            <strong>{{ entry.description }}</strong> has been successfully added!
-            {% endif %}
-        </div>-->
-    </div>
-{% endif %}
-<div class="row">
-    <div class="col-12">
-        <div class="alert alert-light">
-            <label class="col-1 mb-1">Entry ID:</label> <label class="col-2"><strong>{{ id }}</strong></label>
-            <label class="col-1 mb-1">Months:</label> <label class="col-7"><strong>
-                
-            </strong></label><br />
-            <label class="col-1 mb-1">Year:</label> <label class="col-2"><strong>{{ entry.year }}</strong></label>
-            <label class="col-1 mb-1">Commodity:</label> <label class="col-7"><strong>{{ entry.commodity }}</strong></label>
+    <div class="col-12 d-flex flex-row justify-content-end">
+        <div class="table_item_dashboard">
+            <a class="btn-link" href="{{ back_url }}">
+                <img src="{% static 'button_icons/previous.png' %}" alt="Inventory List" />&nbsp;<span class="task_desc">Back to {{ prev_page }}</span>
+            </a>
         </div>
     </div>
+</div>
+<div class="row">
     <div class="col-12">
-        <h4>Pest Risk Details</h4>
+        <h4>Pest Risk Details for Commodity: <span class="text-danger text-bold">{{ commodity }}</span></h4>
         {% load render_table from django_tables2 %}
         {% render_table table %}
     </div>

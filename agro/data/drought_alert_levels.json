@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "description": "No Drought Concern",
+        "color_hex": "#3CAEA3"
+    },
+    {
+        "id": 2,
+        "description": "Drought Possible",
+        "color_hex": "#EAE2B7"
+    },
+    {
+        "id": 3,
+        "description": "Drought Evolving",
+        "color_hex": "#FCBF49"
+    },
+    {
+        "id": 4,
+        "description": "Immediate Drought Concern",
+        "color_hex": "#D62828"
+    }
+]

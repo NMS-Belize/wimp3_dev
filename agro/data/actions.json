@@ -1,0 +1,62 @@
+[
+    {
+        "id": 1,
+        "action_description": "Monitor pest populations and implement pest control measures as necessary. Biological control using Trichogramma spp. and Metarhizium spp. is recommended."
+    },
+    {
+        "id": 2,
+        "action_description": "Monitor psyllid populations. Use biological control measures where possible. Monitor soil moisture and implement irrigation where necessary. Miticide applications may be required."
+    },
+    {
+        "id": 3,
+        "action_description": "Monitor psyllid populations. Use biological control measures where possible. Area-wide spraying may help slow the spread of Huanglongbing (HLB) in newly planted fields."
+    },
+    {
+        "id": 4,
+        "action_description": "Increase monitoring and implement preventive pest management measures. Maintain drainage systems and continue regular monitoring and control activities."
+    },
+    {
+        "id": 5,
+        "action_description": "Monitor fields two to three times per week. Preventive treatments are recommended where appropriate."
+    },
+    {
+        "id": 6,
+        "action_description": "Monitor fields two to three times per week. Apply preventive or control measures during the early stages of infestation."
+    },
+    {
+        "id": 7,
+        "action_description": "Monitor pests at least twice per week and implement an Integrated Pest Management (IPM) programme. Monitor soil moisture and practice water conservation techniques such as mulching."
+    },
+    {
+        "id": 8,
+        "action_description": "Monitor for diseases and implement an Integrated Pest Management (IPM) programme. Ensure proper land preparation and drainage. Plant on raised beds or ridges where appropriate."
+    },
+    {
+        "id": 9,
+        "action_description": "Maintain adequate irrigation and apply mulch to conserve soil moisture. Paint tree trunks with white paint or lime wash to reduce sunscald."
+    },
+    {
+        "id": 10,
+        "action_description": "Coconut: Monitor for coconut weevils, mites, and red spider mites. Use traps where appropriate. Apply Neem X, Bioneem (5 mL/L of water), sulphur (5–10 mL/L of water), or agricultural oil (1.5 L plus 1 L detergent per 100 L of water) as recommended. Remove and destroy trees infected with Phytophthora or Red Ring Disease, and control coconut weevils to reduce nematode transmission."
+    },
+    {
+        "id": 11,
+        "action_description": "Avocado: Apply sulphocalcic broth or Bordeaux mixture for the prevention and control of pests and diseases. Mix 2 litres of the prepared broth with 18 litres of water before application."
+    },
+    {
+        "id": 12,
+        "action_description": "Soursop: Remove and properly dispose of damaged fruits. Bag fruits where practical and apply sulphocalcic broth for insect and disease management."
+    },
+    {
+        "id": 13,
+        "action_description": "Cacao: Reduce excessive shade by maintaining appropriate tree height. Remove diseased pods promptly and dispose of them properly."
+    },
+    {
+        "id": 14,
+        "action_description": "Pineapple: Monitor fields regularly for pests and diseases, and implement appropriate control measures when necessary."
+    },
+    {
+        "id": 15,
+        "action_description": "Ensure proper drainage in low-lying or waterlogged areas. Maintain an effective pest and disease management programme using approved organic or synthetic pesticides where appropriate. Consult the Ministry of Agriculture, local agro-dealers, or the Belize Agricultural Health Authority (BAHA) for recommendations on suitable pesticides, application rates, and assistance with pest and disease identification."
+    }
+]

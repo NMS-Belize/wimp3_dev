@@ -19,6 +19,29 @@
         </div>
     </div>
 {% endif %}
+<div class="row mb-2">
+    <div class="col-12">
+        <pre>{{ form.errors }}</pre>
+        <form method="post" id="" name="frm_entry_form" class="wimp3_form d-flex justify-content-start">
+            {% csrf_token %}
+            <div class="me-3">
+                <label class="" for="year">Year: </label>
+                {{ form.year }}
+            </div>
+            <div class="">
+                <label class="" for="months">Months: </label>
+                {% for checkbox in form.months %}
+                    {{ checkbox.tag }}
+                    <label class="btn btn-outline-primary me-2 mb-2"
+                        for="{{ checkbox.id_for_label }}">
+                        {{ checkbox.choice_label }}
+                    </label>
+                {% endfor %}
+            </div>
+            <div class=""><input id="btn_submit" type="submit" value="Submit" class="btn" /></div>
+        </form>
+    </div>
+</div>
 <div class="row">
     <div class="col-12">
         {% load render_table from django_tables2 %}

@@ -6,6 +6,8 @@ import calendar
 
 from django.urls import reverse
 from django.utils.html import format_html
+from django.utils.text import Truncator
+
 from django.conf import settings
 
 from forecasts.models import AlertLevel, District, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, ForecastGeneral, RiskLevel, Severity, Probability, DistrictForecast
@@ -135,143 +137,46 @@ class ProbabilityTable(tables.Table):
 
 class ForecastGeneralTable(tables.Table):
     edit            = tables.Column(empty_values=(),verbose_name="Edit",orderable=False,attrs={"th": {"style": "width:60px;","class": "text-center",},"td": {"class": "col_edit text-center",},},)
-    forecast_date   = tables.Column(verbose_name="Forecast Date",attrs={ "th": {"class": "",},"td": {"class": "col_link text-start", },},)
-    forecast_time   = tables.TimeColumn(verbose_name="Forecast Time",format="h:i A",attrs={"th": {"style": "width:130px;","class": "text-center",},"td": {"class": "text-center",},},)
-    forecast_type = tables.Column(verbose_name="Forecast Type",attrs={"th": {"style": "width:150px;",},"td": {},},)
-
+    forecast_date   = tables.Column(verbose_name="Date", attrs={ 
+                            "th": {"class": "", "style": "width:120px;","class": ""},"td": {"class": "text-start", },},)
+    forecast_time   = tables.TimeColumn(verbose_name="Time", format="h:i A", attrs={"th": {"style": "width:120px;","class": ""}, "td": {"class": "",},},)
+    forecast_type   = tables.Column(verbose_name="Forecast Type",attrs={"th": {"style": "width:150px;",},"td": {},},)
     general_situation = tables.Column(verbose_name="General Situation",attrs={"th": {},"td": {"class": "text-start",},},)
-
-    created_by = tables.Column(
-        verbose_name="Created By",
-        attrs={
-            "th": {
-                "style": "width:150px;",
-            },
-            "td": {},
-        },
-    )
-
-    created_time = tables.DateTimeColumn(
-        verbose_name="Created Date",
-        format="M d, Y h:i A",
-        attrs={
-            "th": {
-                "style": "width:200px;",
-            },
-            "td": {
-                "class": "fst-italic",
-            },
-        },
-    )
-
-    updated_by = tables.Column(
-        verbose_name="Updated By",
-        attrs={
-            "th": {
-                "style": "width:150px;",
-            },
-            "td": {},
-        },
-    )
-
-    updated_time = tables.DateTimeColumn(
-        verbose_name="Updated Date",
-        format="M d, Y h:i A",
-        attrs={
-            "th": {
-                "style": "width:200px;",
-            },
-            "td": {},
-        },
-    )
-
-    publish_to_web = tables.TemplateColumn(
-        template_name="general-forecast/general_forecast_publish_toggle.html",
-        verbose_name="Status",
-        orderable=False,
-        attrs={
-            "th": {
-                "style": "width:75px;",
-                "class": "text-center",
-            },
-            "td": {
-                "class": "text-center",
-            },
-        },
-    )
-
-    id = tables.Column(
-        verbose_name="ID",
-        attrs={
-            "th": {
-                "style": "width:80px;",
-                "class": "text-end",
-            },
-            "td": {
-                "class": "text-end",
-            },
-        },
-    )
-
-    delete = tables.Column(
-        empty_values=(),
-        verbose_name="Delete",
-        orderable=False,
-        attrs={
-            "th": {
-                "style": "width:65px;",
-                "class": "text-center col_edit",
-            },
-            "td": {
-                "class": "text-center col_delete",
-            },
-        },
-    )
+    created_by      = tables.Column(verbose_name="Created By",attrs={"th": {"style": "width:150px;",},"td": {},},    )
+    created_time    = tables.DateTimeColumn(verbose_name="Created Date",format="M d, Y h:i A",attrs={"th": {"style": "width:200px;",},"td": {"class": "",},},)
+    updated_by      = tables.Column(verbose_name="Updated By",attrs={"th": {"style": "width:150px;",},"td": {},},)
+    updated_time = tables.DateTimeColumn(verbose_name="Updated Date", format="M d, Y h:i A", attrs={ "th": { "style": "width:200px;", }, "td": {}, })
+    publish_to_web  = tables.TemplateColumn(template_name="general-weather-forecast/general_forecast_publish_toggle.html",verbose_name="Status", orderable=False, attrs={ "th": { "style": "width:75px;", "class": "text-center",},"td": { "class": "text-center", },},)
+    id = tables.Column(verbose_name="ID", attrs={"th": {"style": "width:80px;","class": "text-end",},"td": {"class": "text-end",},},)
+    delete = tables.Column(empty_values=(),verbose_name="Delete",orderable=False,attrs={"th": {"style": "width:65px;","class": "text-center col_edit",},"td": {"class": "text-center col_delete",},},)
 
     class Meta:
         model = ForecastGeneral
-
-        fields = (
-            "edit",
-            "forecast_date",
-            "forecast_time",
-            "forecast_type",
-            "general_situation",
-            "created_by",
-            "created_time",
-            "updated_by",
-            "updated_time",
-            "publish_to_web",
-            "id",
-            "delete",
-        )
-
+        fields = ("edit","forecast_date","forecast_time","forecast_type","general_situation","created_by","created_time","updated_by","updated_time","publish_to_web","id","delete")
         sequence = fields
-
         attrs = {
-            "class": "table table-striped table-hover table-bordered align-middle",
+            "class": "table table-striped table-hover align-middle tbl_wimp3",
             "id": "tbl_general_forecast",
         }
-
         order_by = "-forecast_date"
 
     def render_edit(self, record):
-        return (
-            f'<a href="/general-forecast/{record.pk}/edit/" '
-            f'class="btn btn-sm btn-primary" title="Edit">'
-            f'<i class="fas fa-edit"></i>'
-            f"</a>"
-        )
+            link_html   = '<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>'
+            url         = reverse("forecasts:district_forecast_details_entry", args=[record.id])
+            return format_html(link_html, url, record.forecast_date.strftime("%B %d, %Y"))
 
-    def render_delete(self, record):
-        return (
-            f'<button type="button" '
-            f'class="btn btn-sm btn-danger btn-delete" '
-            f'data-id="{record.pk}" '
-            f'title="Delete">'
-            f'<i class="fas fa-trash"></i>'
-            f"</button>"
+    def render_general_situation(self, value):
+        short = value[:20] + "..." if len(value) > 20 else value
+        return format_html(
+            '<span title="{}">{}</span>',
+            value,
+            short,
         )
+    
+    def render_delete(self, record):
+            link_html   = '<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>'
+            url         = reverse("forecasts:district_forecast_delete", args=[record.id])
+            return format_html(link_html, url)
 
 class DistrictForecastTable(tables.Table):
     edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:60px;","class": "text-center"}, "td": {"style": "","class": "col_edit text-center"}})

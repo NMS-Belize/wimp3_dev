@@ -1,0 +1,67 @@
+[
+    {
+        "id": 1,
+        "commodity": 1,
+        "sector":1
+    },
+    {
+        "id": 2,
+        "commodity": 2,
+        "sector":1
+    },
+    {
+        "id": 3,
+        "commodity": 3,
+        "sector":1
+    },
+    {
+        "id": 4,
+        "commodity": 4,
+        "sector":1
+    },
+    {
+        "id": 5,
+        "commodity": 5,
+        "sector":1
+    },
+    {
+        "id": 6,
+        "commodity": 6,
+        "sector":1
+    },
+    {
+        "id": 7,
+        "commodity": 7,
+        "sector":2
+    },
+    {
+        "id": 8,
+        "commodity": 8,
+        "sector":2
+    },
+    {
+        "id": 9,
+        "commodity": 9,
+        "sector":3
+    },
+    {
+        "id": 10,
+        "commodity": 10,
+        "sector":3
+    },
+    {
+        "id": 11,
+        "commodity": 11,
+        "sector":3
+    },
+    {
+        "id": 12,
+        "commodity": 12,
+        "sector":3
+    },
+    {
+        "id": 13,
+        "commodity": 13,
+        "sector":3
+    }
+]

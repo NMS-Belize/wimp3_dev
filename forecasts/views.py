@@ -176,7 +176,6 @@ def district_forecast_instructions_ajax_add(request):
         "category": item.category.category_name if item.category else None
     })
 
-
 ############# DISTRICT FORECASTS: Instructions Category #############
 def instructions_category_list(request, id=None):
     page_name = "Instructions Category Entries"
@@ -231,7 +230,6 @@ def instructions_category_entry(request, id=None):
         'form': form,
         'entry': entry
     })
-
 
 ############# DISTRICT FORECASTS: Severity #############
 def severity_list(request, id=None):

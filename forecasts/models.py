@@ -98,7 +98,7 @@ class ForecastGeneral(models.Model):
     forecast_type = models.IntegerField(null=True, blank=True)
 
     general_situation = models.CharField(max_length=255)
-    twenty_four_hour_forecast = models.CharField(max_length=1000)
+    thr_forecast = models.CharField(max_length=1000)
 
     light_variable = models.IntegerField(null=True, blank=True)
 
@@ -141,11 +141,14 @@ class ForecastGeneral(models.Model):
 
     forecaster_id = models.IntegerField()
 
-    created_by = models.CharField(max_length=11)
-    created_time = models.DateTimeField(null=True, blank=True)
+    #created_by      = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="general_forecasts_created")
+    #updated_by      = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="general_forecasts_updated")
 
-    updated_by = models.CharField(max_length=11)
-    updated_time = models.DateTimeField(null=True, blank=True)
+    #created_by = models.CharField(max_length=11)
+    #created_time = models.DateTimeField(null=True, blank=True)
+
+    #updated_by = models.CharField(max_length=11)
+    #updated_time = models.DateTimeField(null=True, blank=True)
 
     auto_update = models.DateTimeField(null=True, blank=True)
 

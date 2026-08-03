@@ -17,6 +17,14 @@
             <form action="../add/" method="post" id="frm_PestRiskNew">
                 {% csrf_token %}
                 <div class="form-group row">
+                    <label for="month" class="col-2">Months: </label>
+                    <div class="col-10 m-0">{{ form.months }}</div>
+                </div>
+                <div class="form-group row">
+                    <label for="year" class="col-2">Year: </label>
+                    <div class="col-3">{{ form.year }}</div>
+                </div>
+                <div class="form-group row">
                     <label for="commodity_type" class="col-2">Commodity Type: </label>
                     <div class="col-3">{{ form.commodity }}</div>
                 </div>

@@ -34,7 +34,6 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     '[::1]', # IPv6 localhost
-    '192.168.x.x',
     '.nms.gov.bz',
     '.nmsapps.gov.bz',
     '*'
@@ -46,6 +45,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8000",
     'https://wimp3.nms.gov.bz',
     'https://wimp3.nmsapps.gov.bz',
+    'https://website.nmsapps.gov.bz',
 ]
 
 CSRF_COOKIE_SECURE = True
@@ -78,11 +78,12 @@ INSTALLED_APPS = [
     'django_toggle_switch_widget',
     'corsheaders',
     'django_filters',
+    "django_select2",
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -92,14 +93,12 @@ MIDDLEWARE = [
     'wimp.middleware.LoginRequiredMiddleware',
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
+#CORS_ALLOW_ALL_ORIGINS = True
 
-'''CORS_ALLOWED_ORIGINS  = [
-    "http://localhost:3000",
-    "http://192.168.3.62",
-    "http://192.168.3.66",
-    "http://192.168.3.68",
-]'''
+CORS_ALLOWED_ORIGINS  = [
+    'https://wimp3.nms.gov.bz',
+    'https://wimp3.nmsapps.gov.bz',
+]
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
     "accept",

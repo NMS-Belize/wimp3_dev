@@ -81,6 +81,8 @@ urlpatterns = [
     path('users/',          include('users.urls')),
     path('inventory/',      include('inventory.urls')),
     path('system/',         include('system_core.urls')),
+
+    path("select2/", include("django_select2.urls")),
    
     #path('test_token/', user_views.test_token, name='test_token')
 

@@ -13,7 +13,7 @@ class Months(models.Model):
         verbose_name = "Month"
         verbose_name_plural = "Months"
 
-    def __str__(self): return self.month_name
+    def __str__(self): return self.short_name.upper()
 
 class Zone(models.Model):
     id = models.BigAutoField(primary_key=True)
