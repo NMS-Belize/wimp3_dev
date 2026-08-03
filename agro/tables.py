@@ -246,14 +246,12 @@ class PestRiskMainListTable(tables.Table):
     id          = tables.Column(verbose_name="ID", attrs={"th": {"style": "width:60px; text-align:right;","class": "col_id"},"td": {"style": "text-align:right;","class": "col_id"}})
     description = tables.Column(verbose_name="Commodity", accessor="description", attrs={"th": {"style": "","class": ""},"td": {"class": "col_category"}})
     sector      = tables.Column(verbose_name="Sector", accessor="sector", attrs={"th": {"style": ""},"td": {"class": ""}})
-    
     view_details = tables.Column(verbose_name="Details", orderable=False, empty_values=(), attrs={"th": {"style": "width:70px; text-align:center;","class": ""}, "td": {"style": "text-align:center;","class": "col_view"}})
-    delete      = tables.Column(empty_values=(), verbose_name="Delete",orderable=False, attrs={"th": {"style": "width:75px;","class": "text-center"}, "td": {"style": "","class": "col_delete text-center"}})
 
     class Meta:
         model = Commodity
         template_name = "django_tables2/bootstrap4.html"  # or bootstrap5
-        fields = ("view_details","description","sector","id","delete")
+        fields = ("view_details","description","sector","id")
         sequence = fields
         
         attrs = {
@@ -268,10 +266,6 @@ class PestRiskMainListTable(tables.Table):
     def render_description(self, record):
         url = reverse("agro:pest_risk_details_list", args=[record.id]) 
         return format_html('<a href="{}" class="btn btn_edit_link p-0">{}</a>', url, record.description)
-
-    def render_delete(self, record):
-        url = reverse("agro:pest_risk_delete", args=[record.id])
-        return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
     
 class PestRiskDetailsTable(tables.Table):
 

@@ -79,13 +79,12 @@ def pest_risk_list(request, id=None):
         'prev_page': "Agro-Climat Services",
         'table': table,
         'form': form,
-        'new_url':  reverse('agro:pest_risk_entry'),
         'back_url': reverse('agro:index'),
         'api_url': "/api/pest-risk/",
     }
     return render(request, 'table_list_main.html', context)
 
-'''def pest_risk_entry(request, id=None):
+def pest_risk_entry(request, id=None):
 
     page_name = "Pest Risk Entry"
 
@@ -123,7 +122,7 @@ def pest_risk_list(request, id=None):
         'api_url':      "/api/pest-risk/",
         'form': form,
         'entry': entry
-    })'''
+    })
 
 '''def pest_risk_delete(request, id):
     
@@ -179,7 +178,6 @@ def pest_risk_details_list(request,c_id=None):
         'page_name': page_name,
         'prev_page': "Pest Risk List",
         'table': table,
-        'new_url': reverse('agro:pest_risk_entry'),
         'back_url': reverse('agro:pest_risk_list'),
         'api_url': reverse('pestrisk-list'),
     }
@@ -244,7 +242,6 @@ def pest_risk_details_entry(request, id=None):
 
     return render(request, 'entry_form_pest_risk.html', {
         'page_name': page_name,
-        'new_url':      reverse('agro:pest_risk_entry'),
         #'details_url':  reverse('agro:pest_risk_details_create', args=[parent_entry.id]),
         'back_url':     reverse('agro:pest_risk_list'),
         'api_url': "/api/pest-risk-entries/",
