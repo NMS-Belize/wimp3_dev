@@ -1,7 +1,10 @@
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required, permission_required, user_passes_test 
+from django.core.management import call_command
 from django.http import HttpResponse
 from django.shortcuts import render, loader, get_object_or_404, redirect
 from django.urls import reverse
+from django.views.decorators.http import require_POST
 
 from .models import RadarImages
 
@@ -92,3 +95,32 @@ def radar_image_delete(request, id):
         "entry": entry,
         'page_name': page_name,
     })
+
+def is_admin(user):
+    return user.is_authenticated and user.is_staff
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def import_radar_data(request):
+    try:
+        call_command("import_radar_data")
+        messages.success(request,"Radar data imported successfully.")
+
+    except Exception as error:
+        messages.error(request,f"Radar data import failed: {error}")
+
+    return redirect("radar:radar_images_list")
+
+@require_POST
+@permission_required("radar.change_radarimages", raise_exception=True)
+def radar_image_toggle_is_published(request, id):
+    record = get_object_or_404(RadarImages, id=id)
+
+    record.is_published = not record.is_published
+    record.save(update_fields=["is_published"])
+
+    status = "published" if record.is_published else "unpublished"
+    messages.success(request, f"Record {status} successfully.")
+
+    return redirect("radar:radar_images_list",id)

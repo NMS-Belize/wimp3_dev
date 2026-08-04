@@ -13,6 +13,7 @@ class RadarImagesTable(tables.Table):
     id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
     image_title = tables.Column(verbose_name="Image Title", attrs={"th": {"style": "width:700px;","class": ""}, "td": {"style": "","class": ""}})
     image_url = tables.Column(verbose_name="Image URL", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+    is_published = tables.TemplateColumn(verbose_name="Published", template_name="publish_toggle_radar.html", orderable=False, attrs={"th": {"style": "width:75px;","class": "text-center"},"td": {"style": "","class": "text-center"}})
     delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
 
     class Meta:

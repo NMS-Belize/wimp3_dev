@@ -16,9 +16,14 @@ app_name = 'radar'
 
 urlpatterns = [
     path('', views.index, name="index"),
+    path('import-radar-data/', views.import_radar_data, name="import_radar_data"),
+    
+
     path('radar-images/', views.radar_image_entry, name="radar_image_entry"),
     path('radar-images/<int:id>/', views.radar_image_entry,name='radar_image_entry'),
     path('radar-images-list/', views.radar_images_list, name="radar_images_list"),
     path('radar-images-list/<int:id>/', views.radar_images_list,name='radar_images_list'),
+    path('radar-images/<int:id>/toggle-publish/',views.radar_image_toggle_is_published,name='radar_image_toggle_is_published'),
+
     path('radar-images/<int:id>/delete/', views.radar_image_delete,name='radar_image_delete'),
 ]

@@ -9,8 +9,19 @@
             <h1 class="display-1">Radar Images</h1>  
         </div>
     </div>
+    <div class="col-12">
+        <h4>Get Data</h4>
+    </div>
     <div class="row">
-        
+        <div class="col-12 d-flex flex-row mb-3 item_dashboard">
+            <form method="post" action="{% url 'radar:import_radar_data' %}" onsubmit="return confirm('Import Radar data now? Existing records may be updated.');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link">
+                    <img src="{% static 'button_icons/file-import.png' %}" alt="Effects" />
+                    <span class="task_desc">Import Radar Data</span>
+                </button>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}

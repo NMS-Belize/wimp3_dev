@@ -49,12 +49,16 @@ def pest_risk_list(request, id=None):
     table = PestRiskMainListTable(qs)
 
     RequestConfig(request).configure(table)    
-
+    
     # Load entry ONLY if id is provided
     entry = None
 
     if id is not None:
         entry = get_object_or_404(PestRisk, id=id)
+        print(type(entry.months))
+        
+        #if entry.months:
+        #    entry.months = json.loads(entry.months)
 
     if request.method == 'POST':
         form = PestRiskForm(request.POST, instance=entry)
@@ -90,7 +94,7 @@ def pest_risk_entry(request, id=None):
 
     # If id exists => update, else => create new
     if id:
-        entry = get_object_or_404(PestRiskEntryMainListing, id=id)
+        entry = get_object_or_404(PestRisk, id=id)
 
         #if entry.months:
         #    entry.months = json.loads(entry.months)
