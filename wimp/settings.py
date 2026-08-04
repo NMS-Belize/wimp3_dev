@@ -98,6 +98,9 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS  = [
     'https://wimp3.nms.gov.bz',
     'https://wimp3.nmsapps.gov.bz',
+    "https://www.nms.gov.bz",
+    "https://nms.gov.bz",
+    "https://website.nmsapps.gov.bz",
 ]
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
