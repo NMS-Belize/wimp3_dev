@@ -4,75 +4,111 @@
 {% block title %}{{ page_name }} | WIMP3{% endblock %}
 {% block content %}
 <div id="dashboard" class="container-full">
-    <div class="row mb-5">
-        <div class="col-12">
-            <h1 class="mb-4">NMS Apps</h1>
+    <div class="row mb-5 pt-3">
+        <div class="col-8">
+            <h3 class="dashboard_title">NMS Apps / Quick Links</h3>
+            <div class="d-flex flex-row mb-3">
+                <div class="item_dashboard_app">
+                    <a class=" top-50 start-50 translate-middle" href="https://wimp.nms.gov.bz" target="_blank" rel="noopener noreferrer">
+                        <img class="" src="{% static 'app_icons/wimp_thumb.png' %}" alt="NMS Website" />
+                        <span class="task_desc">WIMP2</span>
+                    </a>
+                </div>
+                <div class="item_dashboard_app">
+                    <a class=" top-50 start-50 translate-middle" href="https://nms.gov.bz" target="_blank" rel="noopener noreferrer">
+                        <img class="" src="{% static 'button_icons/world-wide-web.png' %}" alt="NMS Website" />
+                        <span class="task_desc">NMS Website</span>
+                    </a>
+                </div>
+                <div class="item_dashboard_app">
+                    <a class="top-50 start-50 translate-middle" href="http://200.32.229.83/index.html" target="_blank" rel="noopener noreferrer">
+                        <img class="" src="{% static 'app_icons/radar_thumb.png' %}" alt="Radar Imagery" />
+                        <span class="task_desc">Radar Imagery</span>
+                    </a>
+                </div>
+            </div>
+
+            <h3 class="dashboard_title">Let's Get Started</h3>
+
+            <div class="d-flex flex-row mb-3">
+                {% if perms.forecasts.view_districtforecast %}
+                <div class="item_dashboard position-relative">
+                    <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:index' %}">
+                        <img src="{% static 'button_icons/meteorology.png' %}" alt="Forecasts" />
+                        <span class="task_desc">Forecasts</span>
+                    </a>
+                </div>
+                {% endif %}
+                {% if perms.observations.view_observation %}
+                <div class="item_dashboard position-relative">
+                    <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'observations:index' %}">
+                        <img src="{% static 'button_icons/cloudy.png' %}" alt="Weather Observations" />
+                        <span class="task_desc">Weather Observations</span>
+                    </a>
+                </div>
+                {% endif %}
+                {% if perms.agro.view_agroclimatservice %}
+                <div class="item_dashboard position-relative">
+                    <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'agro:index' %}">
+                        <img src="{% static 'button_icons/agriculture.png' %}" alt="Agricultural Services" />
+                        <span class="task_desc">Agricultural Services</span>
+                    </a>
+                </div>
+                {% endif %}
+                {% if perms.alerts.view_alert %}
+                <div class="item_dashboard position-relative">
+                    <a class="position-absolute top-50 start-50 translate-middle" href="#">
+                        <img src="{% static 'button_icons/alert.png' %}" alt="Weather Alerts" />
+                        <span class="task_desc">Weather Alerts</span>
+                    </a>
+                </div>
+                {% endif %}
+                {% if perms.radar.view_radarimage %}
+                <div class="item_dashboard position-relative">
+                    <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'radar:radar_images_list' %}">
+                        <img src="{% static 'button_icons/radar.png' %}" alt="Radar Imagery" />
+                        <span class="task_desc">Radar Imagery</span>
+                    </a>
+                </div>
+                {% endif %}
+                {% if perms.inventory.view_inventoryitem %}
+                <div class="item_dashboard position-relative"></div>
+                {% endif %}
+            </div>
+            {% if request.user.is_superuser %}
+                <h3 class="dashboard_title">Administrative Management</h3>
+
+                <div class="d-flex flex-row mb-3">
+                    <div class="item_dashboard position-relative">
+                        <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'system_core:index' %}">
+                            <img src="{% static 'button_icons/settings.png' %}" alt="System Parameters" />
+                            <span class="task_desc">System Parameters</span>
+                        </a>
+                    </div>
+                    <div class="item_dashboard position-relative">
+                        <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'inventory:index' %}">
+                            <img src="{% static 'button_icons/inventory-management.png' %}" alt="Inventory Management" />
+                            <span class="task_desc">Inventory Management</span>
+                        </a>
+                    </div>
+                    <div class="item_dashboard position-relative">
+                        <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'users:index' %}">
+                            <img src="{% static 'button_icons/management.png' %}" alt="User Management" />
+                            <span class="task_desc">User Management</span>
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
         </div>
-        <div class="col-12 d-flex flex-row mb-3">
-            <div class="item_dashboard position-relative">
-                <a class="position-absolute top-50 start-50 translate-middle" href="https://nms.gov.bz" target="_blank" rel="noopener noreferrer">
-                    <img class="img-fluid" src="{% static 'images/app_icons/nms_logo.png' %}" alt="NMS Website" />
-                    <span class="task_desc">NMS Website</span>
-                </a>
+        <div class="col-4">
+            <h3 class="dashboard_title">User Information</h3>
+            <div class="alert alert-light">
+                <h4>Welcome, {{ user.first_name }} {{ user.last_name }}!</h4>
+                <p>Role: {{ user.groups.all|join:", " }}</p>
+                <p>User Activity:</p>
+                <p>Last Login: {{ user.last_login }}</p>
+                <p>User Role: {% if user.is_superuser %}Administrator{% else %}Standard User{% endif %}</p>
             </div>
-            <div class="item_dashboard position-relative">
-                <a class="position-absolute top-50 start-50 translate-middle" href="http://200.32.229.83/index.html" target="_blank" rel="noopener noreferrer">
-                    <img class="img-fluid" src="{% static 'images/app_icons/radarpic.gif' %}" alt="Radar Imagery" />
-                    <span class="task_desc">Radar Imagery</span>
-                </a>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-12 d-flex flex-row mb-3">
-            {% if perms.forecasts.view_districtforecast %}
-            <div class="item_dashboard position-relative">
-                <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:index' %}">
-                    <img class="img-fluid" src="{% static 'button_icons/meteorology.png' %}" alt="Forecasts" />
-                    <span class="task_desc">Forecasts</span>
-                </a>
-            </div>
-            {% endif %}
-            {% if perms.observations.view_observation %}
-            <div class="item_dashboard position-relative">
-                <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'observations:index' %}">
-                    <img class="img-fluid" src="{% static 'button_icons/cloudy.png' %}" alt="Weather Observations" />
-                    <span class="task_desc">Weather Observations</span>
-                </a>
-            </div>
-            {% endif %}
-            {% if perms.agro.view_agroclimatservice %}
-            <div class="item_dashboard position-relative">
-                <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'agro:index' %}">
-                    <img class="img-fluid" src="{% static 'button_icons/agriculture.png' %}" alt="Agro-Met Services" />
-                    <span class="task_desc">Agro-Met Services</span>
-                </a>
-            </div>
-            {% endif %}
-            {% if perms.alerts.view_alert %}
-            <div class="item_dashboard position-relative">
-                <a class="position-absolute top-50 start-50 translate-middle" href="#">
-                    <img class="img-fluid" src="{% static 'button_icons/alert.png' %}" alt="Weather Alerts" />
-                    <span class="task_desc">Weather Alerts</span>
-                </a>
-            </div>
-            {% endif %}
-            {% if perms.radar.view_radarimage %}
-            <div class="item_dashboard position-relative">
-                <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'radar:radar_images_list' %}">
-                    <img class="img-fluid" src="{% static 'button_icons/radar.png' %}" alt="Radar Imagery" />
-                    <span class="task_desc">Radar Imagery</span>
-                </a>
-            </div>
-            {% endif %}
-            {% if perms.inventory.view_inventoryitem %}
-            <div class="item_dashboard position-relative">
-                <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'inventory:index' %}">
-                    <img class="img-fluid" src="{% static 'button_icons/inventory-management.png' %}" alt="Inventory Management" />
-                    <span class="task_desc">Inventory Management</span>
-                </a>
-            </div>
-            {% endif %}           
         </div>
     </div>
 </div>

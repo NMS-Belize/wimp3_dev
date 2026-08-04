@@ -1,8 +1,7 @@
-{% extends "base_table.html" %}
+{% extends "base.html" %}
 {% block title %}Radar Imagery Configuration | Radar Services | WIMP3 | National Meteorological Service of Belize{% endblock %}
 {% load static %}
 {% block content %}
-
 <div class="col-12">
     <div class="row">
         <div class="col-12 d-flex flex-row mb-3 item_dashboard">
@@ -21,6 +20,5 @@
         {% load render_table from django_tables2 %}
         {% render_table table %}
     </div>
-</div>
 </div>
 {% endblock %}

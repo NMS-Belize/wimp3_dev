@@ -63,6 +63,7 @@ def district_entry(request, id=None):
         'page_name': page_name,
         'new_url':  reverse('system_core:district_entry'),
         'back_url': reverse('system_core:district_list'),
+        'prev_page': 'Districts',
         #'api_url': reverse('zones-list'),
         'form': form,
         'entry': entry
@@ -128,7 +129,7 @@ def alert_level_entry(request, id=None):
 
         if form.is_valid():
             saved_entry = form.save()    # Creates or updates
-            return redirect('forecasts:alert_level_list', saved_entry.id)
+            return redirect('system_core:alert_level_list', saved_entry.id)
         
     else:
         #form = PestRiskMainListingForm(instance=entry)
@@ -136,9 +137,10 @@ def alert_level_entry(request, id=None):
 
     return render(request, 'system/parameters_entry_form.html', {
         'page_name':    page_name,
-        'new_url':      reverse('forecasts:alert_level_list'),
+        'prev_page': 'Alert Levels',
+        'new_url':      reverse('system_core:alert_level_entry'),
         'details_url':  "",
-        #'back_url':     reverse('forecasts:alert_level_list'),
+        'back_url':     reverse('system_core:alert_level_list'),
         'api_url':      "/api/pest-risk/",
         'form': form,
         'entry': entry
@@ -287,6 +289,7 @@ def job_title_entry(request, id=None):
 
     return render(request, 'system/parameters_entry_form.html', {
         'page_name': page_name,
+        'prev_page': 'Job Titles',
         'new_url':  reverse('system_core:job_title_entry'),
         'back_url': reverse('system_core:job_title_list'),
         #'api_url':  reverse('sectors-list'),
@@ -357,6 +360,7 @@ def department_section_entry(request, id=None):
 
     return render(request, 'system/parameters_entry_form.html', {
         'page_name': page_name,
+        'prev_page': 'Department Sections',
         'new_url':  reverse('system_core:department_section_entry'),
         'back_url': reverse('system_core:department_section_list'),
         #'api_url':  reverse('sectors-list'),
@@ -427,6 +431,7 @@ def office_location_entry(request, id=None):
 
     return render(request, 'system/parameters_entry_form.html', {
         'page_name': page_name,
+        'prev_page': 'Office Locations',
         'new_url':  reverse('system_core:office_location_entry'),
         'back_url': reverse('system_core:office_location_list'),
         #'api_url':  reverse('sectors-list'),

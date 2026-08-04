@@ -73,7 +73,7 @@ class RiskLevelTable(tables.Table):
     id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
     description = tables.Column(verbose_name="Risk Alert Level", attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "","class": ""}})
     color = tables.Column(verbose_name="Color")
-    delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
+    delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit text-center"},"td": {"style": "","class": "col_delete text-center"}})
 
     class Meta:
         model = RiskLevel
@@ -154,14 +154,15 @@ class OfficeLocationTable(tables.Table):
     edit    = tables.Column(empty_values=(), verbose_name="Edit", orderable=False, attrs={"th": {"style": "width:60px;","class": "col_edit text-center"}, "td": {"style": "","class": "text-center col_edit"}})
     id      = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": "text-end"}, "td": {"style": "","class": "text-end"}})
     name    = tables.Column(verbose_name="Office Location Name",attrs={"th": {"style": "width:350px;","class": ""}, "td": {"style": "","class": ""}})
-    floor   = tables.Column(verbose_name="Floor",attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+    floor   = tables.Column(verbose_name="Floor",attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "","class": ""}})
+    description   = tables.Column(verbose_name="Description",attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
     delete  = tables.Column(empty_values=(), verbose_name="Delete", orderable=False, attrs={"th": {"style": "width:75px;","class": "col_edit text-center"},"td": {"style": "","class": "col_delete text-center", }})
 
     class Meta:
         model = OfficeLocation
         template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
-        fields = ("edit","id","name","floor","delete")
-        sequence = ("edit","name","floor","id","delete")
+        fields = ("edit","id","name","floor","description","delete")
+        sequence = ("edit","name","floor","description","id","delete")
 
         # Add table HTML id and CSS classes here
         attrs = {

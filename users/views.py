@@ -19,7 +19,6 @@ User = get_user_model()
 # Create your views here.
 
 #@login_required
-#@login_required
 def index(request):
     template = loader.get_template('index.html')
     context = {
@@ -35,7 +34,12 @@ def user_dashboard(request):
     return render(request, 'home.html', context)
 
 def login(request, id=None):
+
     page_name = "User Login"
+
+    # User is already logged in
+    if request.user.is_authenticated:
+        return redirect('site_home')  # Replace with your URL name
    
     if request.method == 'POST':     
         form = AuthenticationForm(data=request.POST)

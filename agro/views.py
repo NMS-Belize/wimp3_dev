@@ -34,7 +34,7 @@ from . import serializers as sx
 #################### Create/Define Views ####################
 def index(request):
     context = {
-        'page_name': 'Agro-Climat Services'
+        'page_name': 'Agriculture Services'
     }
     return render(request, 'agro_home.html', context) 
 
@@ -80,7 +80,7 @@ def pest_risk_list(request, id=None):
         'id' : id,
         'entry': entry,
         'page_name': page_name,
-        'prev_page': "Agro-Climat Services",
+        'prev_page': "Agriculture Services",
         'table': table,
         'form': form,
         'back_url': reverse('agro:index'),
@@ -310,7 +310,7 @@ def sector_list(request, id=None):
         'id' : id,
         'entry': entry,  
         'page_name': page_name,
-        'prev_page': "Agro-Climat Services",
+        'prev_page': "Agriculture Services",
         'table': table,
         'new_url': reverse('agro:sector_entry'),
         'back_url': reverse('agro:index'),
@@ -339,6 +339,7 @@ def sector_entry(request, id=None):
 
     return render(request, 'entry_form.html', {
         'page_name': page_name,
+        'prev_page': "Sector List",
         'new_url':  reverse('agro:sector_entry'),
         'back_url': reverse('agro:sector_list'),
         'api_url':  reverse('sectors-list'),
@@ -378,7 +379,7 @@ def zone_area_list(request, id=None):
         'id' : id,
         'entry': entry,  
         'page_name': page_name,
-        'prev_page': "Agro-Climat Services",
+        'prev_page': "Agriculture Services",
         'table': table,
         'new_url': reverse('agro:zone_area_entry'),
         'api_url': reverse('zones-list'),
@@ -407,6 +408,7 @@ def zone_area_entry(request, id=None):
 
     return render(request, 'entry_form.html', {
         'page_name': page_name,
+        'prev_page': "Zone/Area List",
         'new_url':  reverse('agro:zone_area_entry'),
         'back_url': reverse('agro:zone_area_list'),
         'api_url': reverse('zones-list'),
@@ -447,7 +449,7 @@ def district_zone_list(request, id=None):
         'id' : id,
         'entry': entry,  
         'page_name': page_name,
-        'prev_page': "Agro-Climat Services",
+        'prev_page': "Agriculture Services",
         'table': table,
         'new_url': reverse('agro:district_zone_entry'),
         'api_url': reverse('districts-list'),
@@ -515,7 +517,7 @@ def commodity_list(request, id=None):
         'id' : id,
         'entry': entry,  
         'page_name': page_name,
-        'prev_page': "Agro-Climat Services",
+        'prev_page': "Agriculture Services",
         'table': table,
         'new_url': reverse('agro:commodity_entry'),
         'api_url': reverse('commodity-list'),
@@ -544,6 +546,7 @@ def commodity_entry(request, id=None):
 
     return render(request, 'entry_form.html', {
         'page_name': page_name,
+        'prev_page': "Commodity List",
         'new_url':  reverse('agro:commodity_entry'),
         'back_url': reverse('agro:commodity_list'),
         'api_url':  reverse('commodity-list'),
@@ -583,7 +586,7 @@ def pest_alert_level_list(request, id=None):
         'id' : id,
         'entry': entry,  
         'page_name': page_name,
-        'prev_page': "Agro-Climat Services",
+        'prev_page': "Agriculture Services",
         'table': table,
         'new_url': reverse('agro:pest_alert_level_entry'),
         'back_url': reverse('agro:index'),
@@ -651,7 +654,7 @@ def drought_alert_level_list(request, id=None):
         'id' : id,
         'entry': entry,  
         'page_name':    page_name,
-        'prev_page':    "Agro-Climat Services",
+        'prev_page':    "Agriculture Services",
         'new_url':      reverse('agro:drought_alert_level_entry'),
         'back_url':     reverse('agro:index'),
         'api_url':      reverse('droughtalertlevels-list'),
@@ -680,6 +683,7 @@ def drought_alert_level_entry(request, id=None):
 
     return render(request, 'entry_form.html', {
         'page_name':    page_name,
+        'prev_page':    "Drought Alert Level List",
         'new_url':      reverse('agro:drought_alert_level_entry'),
         'back_url':     reverse('agro:drought_alert_level_list'),
         'api_url':      reverse('droughtalertlevels-list'),
@@ -718,7 +722,7 @@ def action_items_list(request, id=None):
         'id' :      id,
         'entry':    entry,  
         'page_name': page_name,
-        'prev_page': "Agro-Climat Services",
+        'prev_page': "Agriculture Services",
         'table':    table,
         'new_url':  reverse('agro:action_items_entry'),
         'back_url': reverse('agro:index'),
@@ -747,8 +751,9 @@ def action_items_entry(request, id=None):
 
     return render(request, 'entry_form.html', {
         'page_name':    page_name,
-        'new_url':      "/agro-climat-services/pest-risk/action-items-entry/",
-        'back_url':     "/agro-climat-services/pest-risk/action-items-list/",
+        'prev_page':    "Action Items List",
+        'new_url':      reverse('agro:action_items_entry'),
+        'back_url':     reverse('agro:action_items_list'),
         'api_url':      reverse('actionitems-list'),
         'form':         form,
         'entry':        entry
@@ -813,7 +818,7 @@ def effect_items_list(request, id=None):
         'id' : id,
         'entry': entry,  
         'page_name': page_name,
-        'prev_page': "Agro-Climat Services",
+        'prev_page': "Agriculture Services",
         'table': table,
         'new_url': reverse('agro:effect_items_entry'),
         'back_url': reverse('agro:index'),
@@ -842,6 +847,7 @@ def effect_items_entry(request, id=None):
 
     return render(request, 'entry_form.html', {
         'page_name':    page_name,
+        'prev_page':    "Effect Items List",
         'new_url':      reverse('agro:effect_items_entry'),
         'back_url':     reverse('agro:effect_items_list'),
         'api_url':      reverse('effectitems-list'),

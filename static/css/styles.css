@@ -124,9 +124,6 @@ h1{ font-weight: 300; font-size: 50px; }
 }
 #logo{ font-size: 30px; font-weight: 600; color: #fff; }
 
-#main_pr_start, #main_pr_details, #main_pr_list, #main_agro_services{
-  background: #fff;;
-}
 .user-initials{ 
   border-radius: 50%;
   height: 60px;
@@ -165,6 +162,9 @@ h1{ font-weight: 300; font-size: 50px; }
   width: 800px;
 }
 .page-name{ font-weight: 600; color:var(--teal-2); }
+
+.col_edit, .col_delete{ text-align: center; }
+.api_link{ color: var(--teal-1); text-decoration: none; font-weight: 600; font-size: 16px; }
 
 
 /*********** BUTTONS & ICONS ************/
@@ -226,16 +226,23 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 .text-delete{ color: var(--red); }
 
 /*********** TOP ICONS ************/
-#top_buttons { padding: 10px 30px 0 0; }
 #top_buttons img{ width: 30px; height: 30px; }
 #top_buttons a{ text-decoration: none; font-weight: 600; }
 
 /*********** DASHBOARD ICONS ************/
-#dashboard .item_dashboard{  position: relative; }
+#dashboard .dashboard_title{ font-size: 18px; font-weight: 600; text-transform: uppercase; background: var(--aqua-2); color: #fff; padding: 5px 10px; margin-bottom: 15px; }
+.dashboard_title{ font-size: 18px; font-weight: 600; text-transform: uppercase; background: var(--aqua-2); color: #fff; padding: 5px 10px; margin-bottom: 15px; }
+
+.item_dashboard{ text-align: center;}
 #dashboard .item_dashboard .task_desc{ font-size: 18px; }
 
-.item_dashboard{ width:125px; height: 125px; padding: 5px; margin: 0 8px; text-align: center; border-radius: 20px; }
-.item_dashboard img{ width: auto; height: 80px; display: block; margin: 0 auto; }
+.item_dashboard_app{  padding: 5px; margin: 0 10px; overflow:auto; position: relative; text-align: center;  }
+.item_dashboard_app img{ width: 100px; display: inline-block; }
+.item_dashboard_app a{ text-decoration: none; }
+.item_dashboard_app .task_desc{ font-weight: 500; text-decoration: none; text-transform: uppercase; line-height: 1.1; color: var(--teal-2); font-size:18px; }
+
+.item_dashboard{ width:125px; height: 125px; padding: 5px; margin: 0 8px; text-align: center;  }
+.item_dashboard img{ width: 80px; }
 .item_dashboard .task_desc{ font-weight: 500; text-decoration: none; text-transform: uppercase; line-height: 1.1; color: var(--teal-2); }
 .item_dashboard a{ text-decoration: none; }
 

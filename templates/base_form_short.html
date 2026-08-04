@@ -16,13 +16,12 @@
     <main class="main-content">
         <div class="container-fluid p-0">
             {% block header %}
-            <div id="header" class="header pt-3 ps-3 pe-4 pb-0 mb-0">
+            <div id="header" class="header pt-3 ps-4 pe-4 pb-0 mb-0">
                 <div class="row">
                     <div class="col-6">
-                        <h1>{{ page_name }}</h1>
+                        <h1 class="mb-0">{{ page_name }}</h1>
                     </div>
                     <div class="col-6 d-flex justify-content-end align-items-center">
-                        <a class="me-4" href="{% url 'site_home' %}" id="logo"><img id="main_logo" src="{% static 'images/wimp3_logo_v2.png' %}" alt="WIMP3 Logo" style="width: 150px; margin-top:-6px;" /></a>
                         {% include "top_buttons.html" %}
                     </div>
                 </div>
@@ -30,7 +29,7 @@
             {% endblock %}
             <div id="block_content" class="p-4">
                 {% include "section_buttons.html" %}
-                {% include "messages.html" %}
+                {% include "messages.html" %}  
                 {% block content %}{% endblock %}
             </div>
             {% block footer %}

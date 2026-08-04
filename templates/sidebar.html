@@ -29,7 +29,7 @@
         {% if perms.agro.view_agroclimatservice or user.is_superuser %}
         <a href="{% url 'agro:index' %}" class="sidebar-link">
             <i class="fa-solid fa-seedling me-3"></i>
-            <span class="hide-on-collapse">Agro-Climat Services</span>
+            <span class="hide-on-collapse">Agriculture Services</span>
         </a>
         {% endif %}
         {% if perms.inventory.view_inventoryitem or user.is_superuser %}
@@ -64,7 +64,7 @@
                 <div class="user-info">{{ user.first_name }} {{ user.last_name }}</div>
                 <div class="profile-info">
                     <small>
-                        {% if user.is_superuser %}
+                        {% if request.user.is_superuser %}
                             Super Admin
                         {% else %}
                             {% for group in user.groups.all %}
@@ -81,7 +81,7 @@
             {% else %}
                 <a class="btn btn-warning" href="{% url 'login' %}">Login <i class="fa-solid fa-user"></i></a>
             {% endif %}
-            {% if user.is_superuser %}
+            {% if request.user.is_superuser %}
             <div class="pt-4 pb-2">
                 <a id="admin_link" href="{% url 'admin:index' %}" class="sidebar-link text-decoration-none" target="_blank">
                     <i class="fas fa-gear"></i>

@@ -31,7 +31,7 @@ from forecasts.forms import DistrictForecastDetailsForm, DistrictForecastForm, D
 from forecasts.tables import DistrictForecastDetailsTable, DistrictForecastTable, ForecastGeneralTable, InstructionsCategoryTable, SeverityTable, ProbabilityTable, InstructionsTable
 from forecasts.models import DistrictForecastDetails, DistrictForecastInstructionsCategory, ForecastGeneral, Severity, Probability, DistrictForecast, DistrictForecastInstructions
 
-from system_core.models import District, AlertLevel, RiskLevel
+from system_core.models import District
 
 from . import serializers as sx
 
@@ -91,7 +91,7 @@ def instructions_list(request, id=None):
         #'id' : id,
         'entry': entry,  
         'page_name': page_name,
-        'prev_page': 'District Forecast Instructions',
+        'prev_page': 'District Forecast',
         'table': table,
         'new_url':  reverse('forecasts:instructions_entry'),
         'back_url': reverse('forecasts:index'),
@@ -121,6 +121,7 @@ def instructions_entry(request, id=None):
 
     return render(request, 'district-forecast/parameters_entry_form.html', {
         'page_name':    page_name,
+        'prev_page':    'District Forecast Instructions',
         'new_url':      reverse('forecasts:instructions_list'),
         'details_url':  "",
         'back_url':     reverse('forecasts:instructions_list'),

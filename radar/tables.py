@@ -5,13 +5,12 @@ import calendar
 from django.urls import reverse
 from django.utils.html import format_html
 
-#from .models import PestRiskEntryMainListing, PestRiskEntryDetails, Months, PestAlertLevel, PestRiskAction, PestRiskEffect
 from .models import RadarImages
     
 class RadarImagesTable(tables.Table):
     edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "col_edit"}, "td": {"style": "","class": "col_edit"}})
-    id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
-    image_title = tables.Column(verbose_name="Image Title", attrs={"th": {"style": "width:700px;","class": ""}, "td": {"style": "","class": ""}})
+    id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": "text-end"}, "td": {"style": "","class": "text-end"}})
+    image_title = tables.Column(verbose_name="Image Title", attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "","class": ""}})
     image_url = tables.Column(verbose_name="Image URL", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
     is_published = tables.TemplateColumn(verbose_name="Published", template_name="publish_toggle_radar.html", orderable=False, attrs={"th": {"style": "width:75px;","class": "text-center"},"td": {"style": "","class": "text-center"}})
     delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})

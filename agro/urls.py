@@ -50,26 +50,12 @@ urlpatterns = [
     path('pest-risk/zone-area-entry/<int:id>/', views.zone_area_entry,name='zone_area_entry'),
     path('pest-risk/zone-area-entry/<int:id>/delete/', views.zone_area_delete,name='zone_area_delete'),
 
-    ## PEST RISK VARIABLE: District/Zone
-    #path('pest-risk/district-zone-list/', views.district_zone_list, name="district_zone_list"),
-    #path('pest-risk/district-zone-list/<int:id>/', views.district_zone_list,name='district_zone_list'),
-    #path('pest-risk/district-zone-entry/', views.district_zone_entry, name="district_zone_entry"),
-    #path('pest-risk/district-zone-entry/<int:id>/', views.district_zone_entry,name='district_zone_entry'),
-    #path('pest-risk/district-zone-entry/<int:id>/delete/', views.district_zone_delete,name='district_zone_delete'),
-
     ## PEST RISK VARIABLE: Commodity
     path('pest-risk/commodity-list/', views.commodity_list, name="commodity_list"),
     path('pest-risk/commodity-list/<int:id>/', views.commodity_list,name='commodity_list'),
     path('pest-risk/commodity-entry/', views.commodity_entry, name="commodity_entry"),
     path('pest-risk/commodity-entry/<int:id>/', views.commodity_entry,name='commodity_entry'),
     path('pest-risk/commodity-entry/<int:id>/delete/', views.commodity_type_delete,name='commodity_type_delete'),
-
-    ## PEST RISK VARIABLE: Pest Alert Level
-    path('pest-risk/pest-alert-level-list/', views.pest_alert_level_list, name="pest_alert_level_list"),
-    path('pest-risk/pest-alert-level-list/<int:id>/', views.pest_alert_level_list,name='pest_alert_level_list'),
-    path('pest-risk/pest-alert-level-entry/', views.pest_alert_level_entry, name="pest_alert_level_entry"),
-    path('pest-risk/pest-alert-level-entry/<int:id>/', views.pest_alert_level_entry,name='pest_alert_level_entry'),
-    path('pest-risk/pest-alert-level-entry/<int:id>/delete/', views.pest_alert_level_delete,name='pest_alert_level_delete'),
 
     ## PEST RISK VARIABLE: Drought Alert Level
     path('pest-risk/drought-alert-level-list/', views.drought_alert_level_list, name="drought_alert_level_list"),
