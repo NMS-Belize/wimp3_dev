@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from forecasts.views import WIMP2FilesAPIView
 
 app_name = 'forecasts'
 
@@ -41,10 +42,18 @@ urlpatterns = [
     ## GENERAL WEATHER FORECASTS: District
     path('general-weather-forecast/list/', views.general_forecast_list, name="general_forecast_list"),
     path('general-weather-forecast/list/<int:id>/', views.general_forecast_list, name='general_forecast_list'),
-    #path('general-weather-forecast/entry/', views.district_entry, name="district_entry"),
-    #path('general-weather-forecast/entry/<int:id>/', views.district_entry, name='district_entry'),
-    #path('general-weather-forecast/entry/<int:id>/delete/', views.district_delete, name='district_delete'),
+    path('general-weather-forecast/entry/', views.general_forecast_entry, name="general_forecast_entry"),
+    path('general-weather-forecast/entry/<int:id>/', views.general_forecast_entry, name='general_forecast_entry'),
+    #path('general-weather-forecast/entry/<int:id>/delete/', views.general_forecast_delete, name='general_forecast_delete'),
 
+    path('general-weather-forecast/category/list/', views.general_forecast_category_list, name="general_forecast_category_list"),
+    path('general-weather-forecast/category/list/<int:id>/', views.general_forecast_category_list, name='general_forecast_category_list'),
+    path('general-weather-forecast/category/entry/', views.general_forecast_category_entry, name="general_forecast_category_entry"),
+    path('general-weather-forecast/category/entry/<int:id>/', views.general_forecast_category_entry, name="general_forecast_category_entry"),
+    path('general-weather-forecast/category/entry/<int:id>/delete/', views.general_forecast_category_delete, name='general_forecast_category_delete'),
+    path("general-weather-forecast/import-data/", views.import_general_weather_forecast_categories, name="import_general_weather_forecast_categories"),
+
+    
     ## DISTRICT FORECASTS: District Forecast
     path('district-forecast/list/', views.district_forecast_list, name="district_forecast_list"),
     path('district-forecast/list/<int:id>/', views.district_forecast_list,name='district_forecast_list'),

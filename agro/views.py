@@ -22,14 +22,15 @@ from rest_framework import permissions, viewsets
 from rest_framework_api_key.permissions import HasAPIKey
 from wimp.serializers import GroupSerializer, UserSerializer
 
-from agro.models import PestRisk, PestRiskEntryDetails, PestAlertLevel, PestRiskAction, PestRiskEffect, Sector, Commodity, DroughtAlertLevel
+from agro.models import PestRisk, PestRiskEntryDetails, PestRiskAction, PestRiskEffect, Sector, Commodity, DroughtAlertLevel
 from agro.forms import PestRiskForm, PestRiskEntryDetailsForm, PestAlertLevelForm, PestRiskMainListingForm, ZoneAreaForm, SectorForm, CommodityTypeForm, DroughtAlertLevelForm, ActionItemsForm, EffectItemsForm
 from agro.tables import PestRiskMainListTable, PestRiskDetailsTable, PestAlertLevelsTable, SectorTable, ZoneAreaTable, ActionItemsTable, CommodityTable, DroughtAlertLevelsTable, EffectItemsTable
+from agro.serializers import CommodityCategorySerializer, SectorSerializer, PestRiskEntryDetailsSerializer, PestRiskSerializer, ActionItemsSerializer, EffectItemsSerializer, DroughtAlertLevelSerializer
 
 from system_core.models import Zone, District
+from system_core.serializers import ZoneSerializer, DistrictSerializer, AlertLevelSerializer
 
 #from .serializers import CommodityTypeSerializer, CommodityCategorySerializer
-from . import serializers as sx
 
 #################### Create/Define Views ####################
 def index(request):
@@ -895,39 +896,43 @@ class GroupViewSet(viewsets.ModelViewSet):
 #API endpoint that allows groups to be viewed or edited.
 class SectorViewSet(viewsets.ModelViewSet):
    queryset = Sector.objects.all().order_by('id')
-   serializer_class = sx.SectorSerializer
+   serializer_class = SectorSerializer
+   http_method_names = ['get', 'head','options']
 
 class ZoneViewSet(viewsets.ModelViewSet):
    queryset = Zone.objects.all().order_by('id')
-   serializer_class = sx.ZoneSerializer
+   serializer_class = ZoneSerializer
+   http_method_names = ['get', 'head','options']
 
 class DistrictViewSet(viewsets.ModelViewSet):
    queryset = District.objects.all().order_by('id')
-   serializer_class = sx.DistrictSerializer
+   serializer_class = DistrictSerializer
+   http_method_names = ['get', 'head','options']
 
 class CommodityTypeViewSet(viewsets.ModelViewSet):
    queryset = Commodity.objects.all().order_by('id')
-   serializer_class = sx.CommodityTypeSerializer
+   serializer_class = CommodityCategorySerializer
+   http_method_names = ['get', 'head','options']
 
 class ActionItemsViewSet(viewsets.ModelViewSet):
    queryset = PestRiskAction.objects.all().order_by('id')
-   serializer_class = sx.ActionItemsSerializer
+   serializer_class = ActionItemsSerializer
+   http_method_names = ['get', 'head','options']
 
 class EffectItemsViewSet(viewsets.ModelViewSet):
    queryset = PestRiskEffect.objects.all().order_by('id')
-   serializer_class = sx.EffectItemsSerializer
-
-class PestAlertLevelViewSet(viewsets.ModelViewSet):
-   queryset = PestAlertLevel.objects.all().order_by('id')
-   serializer_class = sx.PestAlertLevelSerializer
+   serializer_class = EffectItemsSerializer
+   http_method_names = ['get', 'head','options']
 
 class DroughtAlertLevelViewSet(viewsets.ModelViewSet):
    queryset = DroughtAlertLevel.objects.all().order_by('id')
-   serializer_class = sx.DroughtAlertLevelSerializer    
+   serializer_class = DroughtAlertLevelSerializer
+   http_method_names = ['get', 'head','options']   
 
 class PestRiskEntryDetailsViewSet(viewsets.ModelViewSet):
    queryset = PestRiskEntryDetails.objects.filter(is_published=True).order_by('id')
-   serializer_class = sx.PestRiskEntryDetailsSerializer
+   serializer_class = PestRiskEntryDetailsSerializer
+   http_method_names = ['get', 'head','options']
 
 class PestRiskMainListingViewSet(viewsets.ModelViewSet):
    queryset = PestRisk.objects.filter(id=1).prefetch_related(Prefetch(
@@ -944,5 +949,6 @@ class PestRiskMainListingViewSet(viewsets.ModelViewSet):
                         ).order_by("id"),
                     )
                 )
-   serializer_class = sx.PestRiskEntryMainListingSerializer
+   serializer_class = PestRiskSerializer
    pagination_class = None
+   http_method_names = ['get', 'head','options']

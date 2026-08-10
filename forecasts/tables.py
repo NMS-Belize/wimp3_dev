@@ -10,13 +10,16 @@ from django.utils.text import Truncator
 
 from django.conf import settings
 
-from forecasts.models import AlertLevel, District, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, ForecastGeneral, RiskLevel, Severity, Probability, DistrictForecast
-
+from forecasts.models import (
+    DistrictForecast, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, 
+    ForecastGeneral, ForescastGeneralCategory,
+    Severity, Probability
+)
 
 class InstructionsTable(tables.Table):
     edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "text-center"}, "td": {"style": "","class": "col_edit text-center"}})
     id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
-    description = tables.Column(verbose_name="Instructions", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+    description = tables.Column(verbose_name="Instruction", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
     category = tables.Column(verbose_name="Category", attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "","class": ""}})
     delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
 
@@ -24,6 +27,7 @@ class InstructionsTable(tables.Table):
         model = DistrictForecastInstructions
         template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
         fields = ("edit","description","category","id","delete")
+        #order_by = ("category__category_name", "description")
 
         # Add table HTML id and CSS classes here
         attrs = {
@@ -36,7 +40,7 @@ class InstructionsTable(tables.Table):
         return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
     
     def render_description(self, record):
-        link_html = '<a href="{}" class="btn btn-link p-0 text-decoration-none">{}</a>'
+        link_html = '<a href="{}" class="btn btn_edit_link p-0 text-decoration-none">{}</a>'
         url = reverse("forecasts:instructions_entry", args=[record.id])
         return format_html(link_html, url, record.description)
 
@@ -48,8 +52,8 @@ class InstructionsTable(tables.Table):
         return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
 
 class InstructionsCategoryTable(tables.Table):
-    edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "text-center"}, "td": {"style": "","class": "col_edit text-center"}})
-    id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
+    edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "text-center"}, "td": {"style": "","class": "col_edit"}})
+    id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": "col_id"}, "td": {"style": "","class": "col_id"}})
     category_name = tables.Column(verbose_name="Instructions Category", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
     delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
 
@@ -69,7 +73,7 @@ class InstructionsCategoryTable(tables.Table):
         return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
     
     def render_category_name(self, record):
-        link_html = '<a href="{}" class="btn btn-link p-0 text-decoration-none">{}</a>'
+        link_html = '<a href="{}" class="btn btn_edit_link p-0 text-decoration-none">{}</a>'
         url = reverse("forecasts:instructions_entry", args=[record.id])
         return format_html(link_html, url, record.category_name)
 
@@ -135,24 +139,54 @@ class ProbabilityTable(tables.Table):
         url = reverse("forecasts:probability_delete", args=[record.id])
         return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
 
+class ForecastGeneralCategoryTable(tables.Table):
+    edit    = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "text-center"}, "td": {"style": "","class": "col_edit"}})
+    id      = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": "col_id"}, "td": {"style": "","class": "col_id"}})
+    description = tables.Column(verbose_name="Description", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+    delete  = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
+
+    class Meta:
+        model = ForescastGeneralCategory
+        template_name = "django_tables2/bootstrap5.html"
+        fields = ("edit","description","id","delete")
+
+        attrs = {
+            "id": "table_pest_alert_level", 
+            "class": "table table-striped table-condensed table-hover tbl_wimp3" 
+        }
+    
+    def render_edit(self, record):
+        url = reverse("forecasts:general_forecast_category_entry", args=[record.id])
+        return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
+    
+    def render_description(self, record):
+        link_html = '<a href="{}" class="btn btn_edit_link p-0 text-decoration-none">{}</a>'
+        url = reverse("forecasts:general_forecast_category_entry", args=[record.id])
+        return format_html(link_html, url, record.description)
+
+    def render_delete(self, record):
+        url = reverse("forecasts:general_forecast_category_delete", args=[record.id])
+        return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
+    
 class ForecastGeneralTable(tables.Table):
     edit            = tables.Column(empty_values=(),verbose_name="Edit",orderable=False,attrs={"th": {"style": "width:60px;","class": "text-center",},"td": {"class": "col_edit text-center",},},)
     forecast_date   = tables.Column(verbose_name="Date", attrs={ 
-                            "th": {"class": "", "style": "width:120px;","class": ""},"td": {"class": "text-start", },},)
-    forecast_time   = tables.TimeColumn(verbose_name="Time", format="h:i A", attrs={"th": {"style": "width:120px;","class": ""}, "td": {"class": "",},},)
-    forecast_type   = tables.Column(verbose_name="Forecast Type",attrs={"th": {"style": "width:150px;",},"td": {},},)
+                            "th": {"class": "", "style": "width:100px;","class": ""},"td": {"class": "text-start", },},)
+    forecast_time   = tables.TimeColumn(verbose_name="Time", format="h:i A", attrs={"th": {"style": "width:80px;","class": ""}, "td": {"class": "",},},)
+    forecast_category = tables.Column(verbose_name="Forecast Type",attrs={"th": {"style": "width:150px;",},"td": {},},)
     general_situation = tables.Column(verbose_name="General Situation",attrs={"th": {},"td": {"class": "text-start",},},)
     created_by      = tables.Column(verbose_name="Created By",attrs={"th": {"style": "width:150px;",},"td": {},},    )
-    created_time    = tables.DateTimeColumn(verbose_name="Created Date",format="M d, Y h:i A",attrs={"th": {"style": "width:200px;",},"td": {"class": "",},},)
+    created_datetime    = tables.DateTimeColumn(verbose_name="Created Date",format="M d, Y h:i A",attrs={"th": {"style": "width:200px;",},"td": {"class": "",},},)
     updated_by      = tables.Column(verbose_name="Updated By",attrs={"th": {"style": "width:150px;",},"td": {},},)
-    updated_time = tables.DateTimeColumn(verbose_name="Updated Date", format="M d, Y h:i A", attrs={ "th": { "style": "width:200px;", }, "td": {}, })
-    publish_to_web  = tables.TemplateColumn(template_name="general-weather-forecast/general_forecast_publish_toggle.html",verbose_name="Status", orderable=False, attrs={ "th": { "style": "width:75px;", "class": "text-center",},"td": { "class": "text-center", },},)
-    id = tables.Column(verbose_name="ID", attrs={"th": {"style": "width:80px;","class": "text-end",},"td": {"class": "text-end",},},)
-    delete = tables.Column(empty_values=(),verbose_name="Delete",orderable=False,attrs={"th": {"style": "width:65px;","class": "text-center col_edit",},"td": {"class": "text-center col_delete",},},)
+    updated_datetime = tables.DateTimeColumn(verbose_name="Updated Date", format="M d, Y h:i A", attrs={ "th": { "style": "width:200px;", }, "td": {}, })
+    publish_to_web  = tables.TemplateColumn(template_name="general-weather-forecast/general_forecast_publish_toggle.html",verbose_name="Status", orderable=False, attrs={ "th": { "style": "width:65px;", "class": "text-center",},"td": { "class": "text-center", },},)
+    legacy_id       = tables.Column(verbose_name="LID", attrs={"th": {"style": "width:80px;","class": "text-end",},"td": {"class": "text-end",},},)
+    id              = tables.Column(verbose_name="ID", attrs={"th": {"style": "width:80px;","class": "text-end",},"td": {"class": "text-end",},},)
+    delete          = tables.Column(empty_values=(),verbose_name="Delete",orderable=False,attrs={"th": {"style": "width:65px;","class": "text-center col_edit",},"td": {"class": "text-center col_delete",},},)
 
     class Meta:
         model = ForecastGeneral
-        fields = ("edit","forecast_date","forecast_time","forecast_type","general_situation","created_by","created_time","updated_by","updated_time","publish_to_web","id","delete")
+        fields = ("edit","forecast_date","forecast_time","forecast_category","general_situation","created_by","created_datetime","updated_by","updated_datetime","publish_to_web","legacy_id","id","delete")
         sequence = fields
         attrs = {
             "class": "table table-striped table-hover align-middle tbl_wimp3",
@@ -162,16 +196,12 @@ class ForecastGeneralTable(tables.Table):
 
     def render_edit(self, record):
             link_html   = '<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>'
-            url         = reverse("forecasts:district_forecast_details_entry", args=[record.id])
+            url         = reverse("forecasts:general_forecast_entry", args=[record.id])
             return format_html(link_html, url, record.forecast_date.strftime("%B %d, %Y"))
 
     def render_general_situation(self, value):
         short = value[:20] + "..." if len(value) > 20 else value
-        return format_html(
-            '<span title="{}">{}</span>',
-            value,
-            short,
-        )
+        return format_html('<span title="{}">{}</span>', value, short)
     
     def render_delete(self, record):
             link_html   = '<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>'

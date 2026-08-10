@@ -1,49 +1,32 @@
 from rest_framework import serializers
-from agro import models as mx
+from agro.models import Sector, Commodity, PestRiskAction, PestRiskEffect, PestRiskEntryDetails, PestRisk
+from system_core.models import AlertLevel
 
-class MonthSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = mx.Months
-        fields = '__all__'
+from system_core.serializers import DistrictSerializer, AlertLevelSerializer, ZoneSerializer
 
 class SectorSerializer(serializers.ModelSerializer):
     class Meta:
-        model = mx.Sector
+        model = Sector
         fields = '__all__'
 
-class ZoneSerializer(serializers.ModelSerializer):
+class CommodityCategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = mx.Zone
-        fields = '__all__'
-
-class DistrictSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = mx.District
-        fields = '__all__'
-
-class CommodityTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = mx.Commodity
-        fields = '__all__'
-    
-class PestAlertLevelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = mx.PestAlertLevel
+        model = Commodity
         fields = '__all__'
 
 class DroughtAlertLevelSerializer(serializers.ModelSerializer):
     class Meta:
-        model = mx.DroughtAlertLevel
+        model = AlertLevel
         fields = '__all__'
 
 class ActionItemsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = mx.PestRiskAction
+        model = PestRiskAction
         fields = '__all__'
 
 class EffectItemsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = mx.PestRiskEffect
+        model = PestRiskEffect
         fields = '__all__'
 
 class PestRiskEntryDetailsSerializer(serializers.ModelSerializer):
@@ -63,8 +46,8 @@ class PestRiskEntryDetailsSerializer(serializers.ModelSerializer):
     is_published = serializers.SerializerMethodField()
 
     class Meta:
-        model = mx.PestRiskEntryDetails
-        fields = ['pest_risk_id', 'commodity', 'zone', 'pest_alert','pest_alert_color_hex', 'drought_alert', 'drought_alert_color_hex', 'temp_min','temp_max','precip_min','precip_max','effect','info','actions', 'is_published']
+        model = PestRiskEntryDetails
+        fields = ['commodity', 'zone', 'pest_alert','pest_alert_color_hex', 'drought_alert', 'drought_alert_color_hex', 'temp_min','temp_max','precip_min','precip_max','effect','info','actions', 'is_published']
 
     def get_commodity(self, obj): 
             return f"{obj.commodity_id.description}" if obj.commodity_id is not None else "N/A"
@@ -105,7 +88,7 @@ class PestRiskEntryDetailsSerializer(serializers.ModelSerializer):
     def get_is_published(self, obj): 
             return f"{obj.is_published}" if obj.is_published is not None else "N/A"
     
-class PestRiskEntryMainListingSerializer(serializers.ModelSerializer):
+class PestRiskSerializer(serializers.ModelSerializer):
 
     months = serializers.SerializerMethodField()
     pest_risk_details = PestRiskEntryDetailsSerializer(
@@ -115,7 +98,7 @@ class PestRiskEntryMainListingSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = mx.PestRisk
+        model = PestRisk
         fields = ['id', 'months', 'year', 'pest_risk_details' ]
 
     #def get_commodity(self, obj): 

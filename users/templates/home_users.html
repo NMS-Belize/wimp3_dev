@@ -1,16 +1,24 @@
 {% extends "base.html" %}
-
-{% block title %}Dashboard | WIMP3{% endblock %}
-
+{% load static %}
+{% block title %}{{ page_name }} | WIMP3{% endblock %}
 {% block content %}
-<div id="" class="container-full p-5">
-    <div class="row mb-3">
-        <div class="col-12">
-            <h1 class="display-1">Welcome, {{ user.username }}</h1>  
-        </div>
+<div class="row mb-4">
+    <div class="col-12 mb-3">
+        <h3 class="dashboard_title">User Modules</h3>
     </div>
-    <div class="row">
-        
+    <div class="col-12 d-flex flex-row mb-3">
+        <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'users:user_list' %}">
+                <img src="{% static 'button_icons/management.png' %}" alt="Users" />
+                <span class="task_desc">Users</span>
+            </a>
+        </div>
+        <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'users:employee_list' %}">
+                <img src="{% static 'button_icons/grouping.png' %}" alt="Employees" />
+                <span class="task_desc">Employees</span>
+            </a>
+        </div>
     </div>
 </div>
 {% endblock %}

@@ -1,6 +1,6 @@
 from django import forms
 
-from users.models import UserProfile
+from users.models import UserProfile, Employee
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 
@@ -33,11 +33,7 @@ class UserProfileForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = (
-            "phone",
-            "department",
-            "job_title",
-        )
+        fields = ["phone","department","job_title"]
         widgets = {
             "phone": forms.TextInput(attrs={"class": "form-control", "type": "text", "width": "100%"}),
             "department": forms.Select(attrs={"class": "form-select", "width": "100%"}),
@@ -49,3 +45,18 @@ class UserProfileForm(forms.ModelForm):
 
         for field in self.fields.values():
             field.widget.attrs["class"] = "form-control"
+
+class EmployeeForm(forms.ModelForm):
+    class Meta:
+        model = Employee
+        fields = ["first_name","last_name","job_title","department","email","phone","office_location","has_user_account","user"]
+        widgets = {            
+            'first_name':   forms.TextInput(attrs={'class': 'form-control', 'placeholder':'First Name'}),
+            'last_name':    forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Last Name'}),
+            'email':        forms.EmailInput(attrs={'class': 'form-control'}),
+            "phone":        forms.TextInput(attrs={"class": "form-control", "type": "text", "width": "100%"}),
+            "department":   forms.Select(attrs={"class": "form-select", "width": "100%"}),
+            "job_title":    forms.Select(attrs={"class": "form-select", "width": "100%"}),
+            'has_user_account': forms.CheckboxInput(attrs={'class': 'form-check-input', 'role': 'switch'}),
+            'user':         forms.Select(attrs={"class": "form-select", }),
+        }

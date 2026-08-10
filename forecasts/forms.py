@@ -4,7 +4,9 @@ from unicodedata import category
 from click import option
 from django import forms
 from pytz import timezone
-from .models import DistrictForecast, ForecastGeneral, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, Probability, Severity
+from .models import DistrictForecast, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, Probability, Severity, ForecastGeneral, ForescastGeneralCategory
+
+from django.forms import inlineformset_factory
 
 from django_toggle_switch_widget.widgets import DjangoToggleSwitchWidget
 from django.core.exceptions import ValidationError
@@ -93,6 +95,18 @@ class ProbabilityForm(forms.ModelForm):
         widgets = {            
             'description': forms.TextInput(attrs={'class': 'form-control'}),
             'color': forms.TextInput(attrs={'class': 'form-control'})
+        }
+
+class GeneralForecastCategoryForm(forms.ModelForm):
+    class Meta:
+        model = ForescastGeneralCategory
+        fields = ['description']
+        labels = {   
+            # <-- add human-friendly labels here
+            'description': 'Description:',
+        }
+        widgets = {            
+            'description': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
 class DistrictForecastForm(forms.ModelForm):
@@ -236,39 +250,37 @@ class ForecastGeneralForm(forms.ModelForm):
             "auto_update",
         )
 
+        def clean_forecast_file(self):
+            uploaded_file = self.cleaned_data.get("forecast_file")
+    
+            if not uploaded_file:
+                return uploaded_file
+    
+            allowed_extensions = (".mp3")
+    
+            if not uploaded_file.name.lower().endswith(allowed_extensions):
+                raise forms.ValidationError("Only MP3 files are allowed.")
+    
+            maximum_size = 10 * 1024 * 1024
+    
+            if uploaded_file.size > maximum_size:
+                raise forms.ValidationError("The uploaded file cannot be larger than 10 MB.")
+    
+            return uploaded_file
+
         widgets = {
-            "forecast_date": forms.DateInput(
-                attrs={"type": "date", "class": "form-control"}
-            ),
-            "forecast_time": forms.TimeInput(
-                attrs={"type": "time", "class": "form-control"}
-            ),
+            "forecast_date":    forms.DateInput(attrs={"type": "date", "class": "form-control"}),
+            "forecast_time":    forms.TimeInput(attrs={"type": "time", "class": "form-control"}),
+            "forecast_type":    forms.Select(attrs={"class": "form-select"}),
+            "general_situation": forms.Textarea(attrs={"rows": 5, "class": "form-control"}),
+            "audio_file":       forms.ClearableFileInput(attrs={"class": "form-control mb-2","accept": ".mp3"}),
+            "twenty_four_hour_forecast": forms.Textarea(attrs={"rows": 5, "class": "form-control"}),
 
-            "forecast_type": forms.Select(attrs={"class": "form-select"}),
+            "sea_state":        forms.TextInput(attrs={"rows": 2, "class": "form-control"}),
+            "sea_state_shift":  forms.TextInput(attrs={"rows": 2, "class": "form-control"}),
 
-            "general_situation": forms.Textarea(
-                attrs={"rows": 3, "class": "form-control"}
-            ),
-
-            "thr_forecast": forms.Textarea(
-                attrs={"rows": 4, "class": "form-control"}
-            ),
-
-            "sea_state": forms.Textarea(
-                attrs={"rows": 2, "class": "form-control"}
-            ),
-
-            "sea_state_shift": forms.Textarea(
-                attrs={"rows": 2, "class": "form-control"}
-            ),
-
-            "advisory": forms.Textarea(
-                attrs={"rows": 3, "class": "form-control"}
-            ),
-
-            "outlook": forms.Textarea(
-                attrs={"rows": 3, "class": "form-control"}
-            ),
+            "advisory":         forms.Textarea(attrs={"rows": 3, "class": "form-control"}),
+            "outlook":          forms.Textarea(attrs={"rows": 5, "class": "form-control"}),
 
             "wind_speed": forms.TextInput(attrs={"class": "form-control"}),
             "wind_direction": forms.TextInput(attrs={"class": "form-control"}),
@@ -299,13 +311,9 @@ class ForecastGeneralForm(forms.ModelForm):
             "hills_low_f": forms.NumberInput(attrs={"class": "form-control"}),
             "hills_low_c": forms.NumberInput(attrs={"class": "form-control"}),
 
-            "publish_to_web": forms.CheckboxInput(
-                attrs={"class": "form-check-input"}
-            ),
+            "publish_to_web": forms.CheckboxInput(attrs={"class": "form-check-input"}),
 
-            "light_variable": forms.CheckboxInput(
-                attrs={"class": "form-check-input"}
-            ),
+            "light_variable": forms.CheckboxInput(attrs={"class": "form-check-input"}),
 
             "forecaster_id": forms.NumberInput(attrs={"class": "form-control"}),
         }
@@ -316,3 +324,5 @@ class ForecastGeneralForm(forms.ModelForm):
         for field in self.fields.values():
             if not isinstance(field.widget, forms.CheckboxInput):
                 field.widget.attrs.setdefault("class", "form-control")
+
+    

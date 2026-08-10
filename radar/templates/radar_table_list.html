@@ -2,9 +2,10 @@
 {% block title %}Radar Imagery Configuration | Radar Services | WIMP3 | National Meteorological Service of Belize{% endblock %}
 {% load static %}
 {% block content %}
-<div class="col-12">
-    <div class="row">
-        <div class="col-12 d-flex flex-row mb-3 item_dashboard">
+{% if request.user.is_superuser %}
+<div class="form-group mb-3">
+    <div class="d-flex flex-row justify-content-end p-2 bg-light border border-light-subtle">
+        <div class="table_item_dashboard">
             <form method="post" action="{% url 'radar:import_radar_data' %}" onsubmit="return confirm('Import Radar data now? Existing records may be updated.');">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-link">
@@ -15,6 +16,7 @@
         </div>
     </div>
 </div>
+{% endif %}
 <div class="row">
     <div class="col-12">
         {% load render_table from django_tables2 %}

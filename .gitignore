@@ -30,6 +30,8 @@ venv/
 .venv/
 env/
 
+logs/
+
 # Project-specific directories
 sensors/
 removed/
@@ -40,3 +42,5 @@ removed/
 # OS files
 .DS_Store
 Thumbs.db
+
+.env

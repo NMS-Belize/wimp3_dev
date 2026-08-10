@@ -8,6 +8,10 @@ from .models import JobTitle, DepartmentSection, OfficeLocation, AlertLevel, Ris
 from .tables import DepartmentSectionTable, JobTitleTable, OfficeLocationTable, DistrictTable, RiskLevelTable, AlertLevelTable
 from .forms import DepartmentSectionForm, JobTitleForm, OfficeLocationForm, AlertLevelForm, DistrictForm, RiskLevelForm
 
+from rest_framework import viewsets
+
+from .serializers import DistrictSerializer, AlertLevelSerializer
+
 # Create your views here.
 
 def index(request):
@@ -455,3 +459,13 @@ def office_location_delete(request, id):
         'page_name': page_name,
         'back_url': reverse('system_core:office_location_list'),
     })
+
+class DistrictViewSet(viewsets.ModelViewSet):
+   queryset = District.objects.all().order_by('id')
+   serializer_class = DistrictSerializer
+   http_method_names = ['get', 'head','options']
+
+class AlertLevelViewSet(viewsets.ModelViewSet):
+   queryset = AlertLevel.objects.all().order_by('id')
+   serializer_class = AlertLevelSerializer
+   http_method_names = ['get', 'head','options']

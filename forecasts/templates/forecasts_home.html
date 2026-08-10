@@ -38,18 +38,29 @@
                 <span class="task_desc">Instructions Category</span>
             </a>
         </div>
-        <!--<div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:probability_list' %}">
-                <img src="{% static 'button_icons/curve.png' %}" alt="Probability" />
-                <span class="task_desc">Probability</span>
+        <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:general_forecast_category_list' %}">
+                <img src="{% static 'button_icons/chronometer.png' %}" alt="General Forecast Category" />
+                <span class="task_desc">General Forecast Category</span>
             </a>
         </div>
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:severity_list' %}">
-                <img src="{% static 'button_icons/severe-weather.png' %}" alt="Severity" />
-                <span class="task_desc">Severity Level</span>
-            </a>
-        </div>-->
+    </div>
+</div>
+<div class="row mb-5">
+    <div class="col-12">
+        <h3 class="dashboard_title">Get Data</h3>
+    </div>
+    <div class="row">
+        <div class="col-12 d-flex flex-row mb-3 item_dashboard">
+            <form method="post" action="{% url 'forecasts:import_general_weather_forecast_categories' %}" onsubmit="return confirm('Import General Weather Forecast Categories now? Existing records may be updated.');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link">
+                    <img src="{% static 'button_icons/file-import.png' %}" alt="Effects" />
+                    <span class="task_desc">Import General Weather Forecast Categories</span>
+                </button>
+            </form>
+        </div>
+    </div>
     </div>
 </div>
 {% endblock %}

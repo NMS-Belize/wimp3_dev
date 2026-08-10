@@ -24,13 +24,20 @@ class Severity(models.Model):
 class DistrictForecastInstructionsCategory(models.Model):
     category_name = models.CharField(max_length=200)
 
+    class Meta:
+            verbose_name = "District Level Forecast Instructions Category"
+            verbose_name_plural = "District Level Forecast Instructions Categories"
+
     def __str__(self):
         return str(self.category_name)
         
 class DistrictForecastInstructions(models.Model):
     description = models.CharField(max_length=200)
-    #category = models.ForeignKey(DistrictForecastInstructionsCategory,on_delete=models.SET_NULL,null=True,blank=True,related_name="instructions_category")
     category = models.ForeignKey(DistrictForecastInstructionsCategory,on_delete=models.CASCADE,related_name="instructions_category")
+
+    class Meta:
+        verbose_name = "District Level Forecast Instruction"
+        verbose_name_plural = "District Level Forecast Instructions"
 
     def __str__(self):
         return str(self.description)
@@ -42,6 +49,10 @@ class DistrictForecast(models.Model):
     updated_by      = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="district_forecasts_updated")
     created_datetime = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_datetime = models.DateTimeField(auto_now=True,null=True)
+
+    class Meta:
+        verbose_name = "District Level Forecast"
+        verbose_name_plural = "District Level Forecasts"
 
     def __str__(self):
         return f"{self.forecast_date}"
@@ -89,20 +100,42 @@ class DistrictForecastDetails(models.Model):
             )
         ]
 
+        verbose_name = "District Level Forecast Details"
+        verbose_name_plural = "District Level Forecast Details"
+
     def __str__(self):
         return f"{self.district} - {self.forecast.forecast_date}"
 
-class ForecastGeneral(models.Model):
-    forecast_date = models.DateField()
-    forecast_time = models.TimeField(null=True, blank=True)
-    forecast_type = models.IntegerField(null=True, blank=True)
+class ForescastGeneralCategory(models.Model):
+    description = models.CharField(max_length=200)
+    created_by      = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="general_forecasts_category_created")
+    updated_by      = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="general_forecasts_category_updated")
+    created_datetime = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_datetime = models.DateTimeField(auto_now=True,null=True)
 
-    general_situation = models.CharField(max_length=255)
-    thr_forecast = models.CharField(max_length=1000)
+    class Meta:
+        verbose_name = "General Weather Forecast Category"
+        verbose_name_plural = "General Weather Forecast Categories"
+
+    def __str__(self):
+        return str(self.description)
+
+class ForecastGeneral(models.Model):
+
+    legacy_id = models.PositiveBigIntegerField(null=True,blank=True,unique=True,db_index=True,)
+
+    forecast_date       = models.DateField()
+    forecast_time       = models.TimeField(null=True, blank=True)
+    forecast_category   = models.ForeignKey(ForescastGeneralCategory,on_delete=models.SET_NULL,null=True,blank=True,related_name="forecast_general_category")
+
+    audio_file = models.FileField(upload_to="general_forecast/{self.forecast_date}/", null=True, blank=True)
+
+    general_situation = models.CharField(max_length=255,null=True, blank=True)
+    twenty_four_hour_forecast = models.CharField(max_length=1000,null=True, blank=True)
 
     light_variable = models.IntegerField(null=True, blank=True)
 
-    wind_speed = models.CharField(max_length=10)
+    wind_speed = models.CharField(max_length=10,null=True, blank=True)
     wind_direction = models.CharField(max_length=50, null=True, blank=True)
     wind_condition = models.CharField(max_length=50, null=True, blank=True)
 
@@ -110,50 +143,49 @@ class ForecastGeneral(models.Model):
     wind_shift_direction = models.CharField(max_length=50, null=True, blank=True)
     wind_shift_condition = models.CharField(max_length=50, null=True, blank=True)
 
-    sea_state = models.CharField(max_length=255)
+    sea_state = models.CharField(max_length=255,null=True, blank=True)
     wave = models.CharField(max_length=10, null=True, blank=True)
 
     sea_state_shift = models.CharField(max_length=255, null=True, blank=True)
     wave_shift = models.CharField(max_length=10, null=True, blank=True)
 
-    advisory = models.CharField(max_length=1000)
-    outlook = models.CharField(max_length=1000)
+    advisory = models.CharField(max_length=1000,null=True, blank=True)
+    outlook = models.CharField(max_length=1000,null=True, blank=True)
 
-    coast_high_f = models.IntegerField()
+    coast_high_f = models.IntegerField(null=True, blank=True)
     coast_high_c = models.IntegerField(null=True, blank=True)
 
-    coast_low_f = models.IntegerField()
+    coast_low_f = models.IntegerField(null=True, blank=True)
     coast_low_c = models.IntegerField(null=True, blank=True)
 
-    inland_high_f = models.IntegerField()
+    inland_high_f = models.IntegerField(null=True, blank=True)
     inland_high_c = models.IntegerField(null=True, blank=True)
 
-    inland_low_f = models.IntegerField()
+    inland_low_f = models.IntegerField(null=True, blank=True)
     inland_low_c = models.IntegerField(null=True, blank=True)
 
-    hills_high_f = models.IntegerField()
+    hills_high_f = models.IntegerField(null=True, blank=True)
     hills_high_c = models.IntegerField(null=True, blank=True)
 
-    hills_low_f = models.IntegerField()
+    hills_low_f = models.IntegerField(null=True, blank=True)
     hills_low_c = models.IntegerField(null=True, blank=True)
 
-    publish_to_web = models.BooleanField()
+    is_published = models.BooleanField(default=False)
 
-    forecaster_id = models.IntegerField()
+    forecaster_id = models.IntegerField(null=True, blank=True)
 
     #created_by      = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="general_forecasts_created")
     #updated_by      = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="general_forecasts_updated")
 
-    #created_by = models.CharField(max_length=11)
-    #created_time = models.DateTimeField(null=True, blank=True)
+    created_by = models.CharField(max_length=11,null=True, blank=True)
+    created_datetime = models.DateTimeField(null=True, blank=True)
 
-    #updated_by = models.CharField(max_length=11)
-    #updated_time = models.DateTimeField(null=True, blank=True)
-
-    auto_update = models.DateTimeField(null=True, blank=True)
+    updated_by = models.CharField(max_length=11,null=True, blank=True)
+    updated_datetime = models.DateTimeField(null=True, blank=True)
 
     class Meta:
-        db_table = "tbl_forecast_general"
+        verbose_name = "General Weather Forecast"
+        verbose_name_plural = "General Weather Forecasts"
 
     def __str__(self):
         return f"{self.forecast_date} ({self.id})"

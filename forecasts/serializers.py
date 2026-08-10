@@ -1,15 +1,7 @@
 from rest_framework import serializers
-from . import models as mx
+#from system_core.serializers import DistrictSerializer, AlertLevelSerializer
 
-class DistrictSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = mx.District
-        fields = '__all__'
-
-class AlertLevelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = mx.AlertLevel
-        fields = '__all__'
+from forecasts.models import DistrictForecast, DistrictForecastDetails
 
 class DistrictForecastDetailsSerializer(serializers.ModelSerializer):
     
@@ -47,8 +39,8 @@ class DistrictForecastDetailsSerializer(serializers.ModelSerializer):
     ins_weather_conditions = serializers.SerializerMethodField()
 
     class Meta:
-        model = mx.DistrictForecastDetails
-        fields = ['id', 'district', 
+        model = DistrictForecastDetails
+        fields = ['id', 'district',
                   'temp_min', 'prob_temp_min', 'sev_temp_min', 'risk_temp_min', 'ins_temp_min',
                   'temp_max', 'prob_temp_max', 'sev_temp_max', 'risk_temp_max', 'ins_temp_max',
                   'precip_max', 'prob_precip_max', 'sev_precip_max', 'risk_precip_max', 'ins_precip_max',
@@ -58,7 +50,6 @@ class DistrictForecastDetailsSerializer(serializers.ModelSerializer):
     
     def get_district(self, obj): return obj.district.district_name if obj.district_id else ""
     
-
     # Precipitation Max
     def get_precip_max(self, obj): return f"{obj.precip_max:.1f} in" if obj.precip_max is not None else ""
 
@@ -172,18 +163,16 @@ class DistrictForecastDetailsSerializer(serializers.ModelSerializer):
             return { "value": risk.description, "color": risk.color if risk.color else "" }
         return { "value": "", "color": "" }
     def get_ins_weather_conditions(self, obj): return obj.ins_weather_conditions.description if obj.ins_weather_conditions else ""
-
-    
-
+   
 class DistrictForecastSerializer(serializers.ModelSerializer):
 
-    created_by = serializers.SerializerMethodField()
-    updated_by = serializers.SerializerMethodField()
+    district    = serializers.SerializerMethodField()
+    created_by  = serializers.SerializerMethodField()
+    updated_by  = serializers.SerializerMethodField()
 
     class Meta:
-        model = mx.DistrictForecast
-        fields = ['id', 'forecast_date', 'is_published', 'created_by', 'created_datetime', 'updated_by', 'updated_datetime', 'risk_level', 'details']
-        #fields = '__all__'
+        model   = DistrictForecast
+        fields  = ['id', 'forecast_date', 'created_by', 'created_datetime', 'updated_by', 'updated_datetime', 'district']
 
     def get_created_by(self, obj):
         if obj.created_by:
@@ -195,14 +184,23 @@ class DistrictForecastSerializer(serializers.ModelSerializer):
             return obj.updated_by.get_full_name() or obj.updated_by.username
         return ""
 
-    risk_level = AlertLevelSerializer(
-        many=True,
-        read_only=True,
-        source='district_alerts'
-    )
+    def get_district(self, obj):
 
-    details = DistrictForecastDetailsSerializer(
-        many=True,
-        read_only=True,
-        source='district_forecast_details'
-    )
+        results = []
+
+        for detail in obj.district_forecast_details.all():
+
+            if detail.district:
+
+                results.append({
+                    "id": detail.district.id,
+                    "district_name": detail.district.district_name,
+                    "details": DistrictForecastDetailsSerializer(detail).data
+                })
+
+        return results
+
+    #risk_level  = AlertLevelSerializer(many=True,read_only=True,source='district_alerts')
+    #details     = DistrictForecastDetailsSerializer(many=True,read_only=True,source='district_forecast_details')
+
+    #district    = DistrictSerializer(read_only=True,)

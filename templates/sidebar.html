@@ -26,29 +26,31 @@
             <span class="hide-on-collapse">Alerts</span>
         </a>
         {% endif %}
-        {% if perms.agro.view_agroclimatservice or user.is_superuser %}
+        {% if perms.agro.view_pestrisk or user.is_superuser %}
         <a href="{% url 'agro:index' %}" class="sidebar-link">
             <i class="fa-solid fa-seedling me-3"></i>
             <span class="hide-on-collapse">Agriculture Services</span>
         </a>
         {% endif %}
-        {% if perms.inventory.view_inventoryitem or user.is_superuser %}
+        {% if perms.radar.view_radarimages or user.is_superuser %}
         <a href="{% url 'radar:radar_images_list' %}" class="sidebar-link">
             <i class="fa-solid fa-satellite-dish me-3"></i>
             <span class="hide-on-collapse">Radar</span>
         </a>
+        {% endif %}
+        {% if perms.inventory.view_inventoryitem or user.is_superuser %}
         <a href="{% url 'inventory:inventory_list' %}" class="sidebar-link">
             <i class="fa-solid fa-box me-3"></i>
             <span class="hide-on-collapse">Inventory</span>
         </a>
         {% endif %}
         {% if perms.users.view_users or user.is_superuser %}
-        <a href="{% url 'users:user_list' %}" class="sidebar-link">
+        <a href="{% url 'users:index' %}" class="sidebar-link">
             <i class="fa-solid fa-users me-3"></i>
             <span class="hide-on-collapse">Users</span>
         </a>
         {% endif %}
-        {% if perms.users.view_users or user.is_superuser %}
+        {% if user.is_superuser %}
         <a href="{% url 'system_core:index' %}" class="sidebar-link">
             <i class="fa-solid fa-gear me-3"></i>
             <span class="hide-on-collapse">System Parameters</span>

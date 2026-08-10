@@ -1,0 +1,220 @@
+{% extends "base_form.html" %}
+{% block title %}{{ page_name }} | WIMP3 | NMS Belize{% endblock %}
+{% load static %}
+{% block content %}
+
+<form method="post">
+    {% csrf_token %}
+
+    <div class="row mb-4">
+        <div class="col-12 mb-2">
+            <h3 class="dashboard_title">General Information</h3>
+        </div>
+        <div class="col-2">
+            <label class="form-label">Forecast Date:</label>
+            {{ form.forecast_date }}
+        </div>
+        <div class="col-2">
+            <label class="form-label">Forecast Time:</label>
+            {{ form.forecast_time }}
+        </div>
+        <div class="col-2">
+            <label class="form-label">Forecast Category:</label>
+            {{ form.forecast_category }}
+        </div>
+        <div class="clear mb-4"></div>
+        <div class="col-6">
+            <label class="form-label">General Situation:</label>
+            {{ form.general_situation }}
+        </div>
+        <div class="col-6">
+            <label class="form-label">24-Hour Forecast:</label>
+            {{ form.twenty_four_hour_forecast }}
+        </div>
+        <div class="clear mb-4"></div>
+        <div class="col-6">
+            <label class="form-label">24-Hour Outlook</label>
+            {{ form.outlook }}
+        </div>
+    </div>   
+        
+    <div class="row mb-4">
+        <div class="col-12 mb-0">
+            <h3 class="dashboard_title">Marine Conditions</h3>
+        </div>
+        <div class="col-12 mb-3">
+            <div class="fs-5 text-uppercase fw-bold mb-0 fst-italic">Winds</div>
+        </div>
+        <div class="col-4">
+            <label class="form-label">Wind Speed:</label>
+            <div class="d-flex flex-row">
+                <div class="input-group mb-3">
+                    {{ form.wind_speed }}
+                    <span class="input-group-text">kts</span>
+                </div>
+                <span class="ms-3 me-3 pt-2">BECOMING</span>
+                <div class="input-group mb-3">
+                    {{ form.wind_shift_speed }}
+                    <span class="input-group-text">kts</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <label class="form-label">Wind Direction:</label>
+            <div class="d-flex flex-row">
+                {{ form.wind_direction }}<span class="ms-3 me-3 pt-2">BECOMING</span>{{ form.wind_shift_direction }}
+            </div>
+        </div>
+        <div class="col-6">
+            <label class="form-label">Wind Conditions:</label>
+            <div class="d-flex flex-row">
+                {{ form.wind_condition }}<span class="ms-3 me-3 pt-2">BECOMING</span>{{ form.wind_shift_condition }}
+            </div>
+        </div>
+
+        <div class="clear mb-4"></div>
+
+        <div class="col-12 mb-3">
+            <div class="fs-5 text-uppercase fw-bold mb-0 fst-italic">Sea Conditions</div>
+        </div>
+
+        <div class="col-6">
+            <label class="form-label">Sea State:</label>
+            <div class="d-flex flex-row">
+                {{ form.sea_state }}<span class="ms-3 me-3 pt-2">BECOMING</span>{{ form.sea_state_shift }}
+            </div>
+        </div>
+        <div class="col-6">
+            <label class="form-label">Waves:</label>
+            <div class="d-flex flex-row">
+                <div class="input-group mb-3">
+                    {{ form.wave }}
+                    <span class="input-group-text">ft</span>
+                </div>
+                <span class="ms-3 me-3 pt-2">BECOMING</span>
+                <div class="input-group mb-3">
+                    {{ form.wave_shift }}
+                    <span class="input-group-text">ft</span>
+                </div>
+            </div>
+        </div>
+    </div>
+            
+        <div class="row mb-4">
+            <div class="col-12 mb-2">
+                <h3 class="dashboard_title">Temperatures</h3>
+            </div>
+            <div class="col-4 border border-secondary-subtle p-3">
+                <div class="fs-5 text-uppercase fw-bold mb-3 fst-italic">Coast</div>
+                <div class="row">
+                    <div class="col-6">
+                        <label class="form-label">High</label>
+                        <div class="input-group mb-3">
+                            {{ form.coast_high_c }}
+                            <span class="input-group-text">&deg;C</span>
+                        </div>
+                        <label class="form-label">Low</label>
+                        <div class="input-group mb-3">
+                            {{ form.coast_low_c }}
+                            <span class="input-group-text">&deg;C</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">High</label>
+                        <div class="input-group mb-3">
+                            {{ form.coast_high_f }}
+                            <span class="input-group-text">&deg;F</span>
+                        </div>
+
+                        <label class="form-label">Low</label>
+                        <div class="input-group mb-3">
+                                {{ form.coast_low_f }}
+                            <span class="input-group-text">&deg;F</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4 border border-secondary-subtle p-3">
+                <div class="fs-5 text-uppercase fw-bold mb-3 fst-italic">Inland</div>
+                <div class="row">
+                    <div class="col-6">
+                        <label class="form-label">High</label>
+                        <div class="input-group mb-3">
+                            {{ form.inland_high_c }}
+                            <span class="input-group-text">&deg;C</span>
+                        </div>
+                        
+                        <label class="form-label">Low</label>
+                        <div class="input-group mb-3">
+                            {{ form.inland_low_c }}
+                            <span class="input-group-text">&deg;C</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">High</label>
+                        <div class="input-group mb-3">
+                            {{ form.inland_high_f }}
+                            <span class="input-group-text">&deg;F</span>
+                        </div>
+                        
+                        <label class="form-label">Low</label>
+                        <div class="input-group mb-3">
+                            {{ form.inland_low_f }}
+                            <span class="input-group-text">&deg;F</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4 border border-secondary-subtle p-3">
+                <div class="fs-5 text-uppercase fw-bold mb-3 fst-italic">Hills</div>
+                <div class="row">
+                    <div class="col-6">
+                        <label class="form-label">High</label>
+                        <div class="input-group mb-3">
+                            {{ form.hills_high_c }}
+                            <span class="input-group-text">&deg;C</span>
+                        </div>
+                        <label class="form-label">Low</label>
+                        <div class="input-group mb-3">
+                            {{ form.hills_low_c }}
+                            <span class="input-group-text">&deg;C</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">High</label>
+                        <div class="input-group mb-3">
+                            {{ form.hills_high_f }}
+                            <span class="input-group-text">&deg;F</span>
+                        </div>
+
+                        <label class="form-label">Low</label>
+                        <div class="input-group mb-3">
+                            {{ form.hills_low_f }}
+                            <span class="input-group-text">&deg;F</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-12">
+                <h3 class="dashboard_title">Uploads</h3>
+            </div>
+            <div class="col-6">
+                <label class="form-label">Audio Recording:</label>
+                {{ form.audio_file }}
+
+                {% if forecast.audio_file %}
+                    <a href="{{ forecast.forecast_file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">View Uploaded File</a>
+                {% else %}
+                    <p><span class="text-muted mt-2 mb-0 clear">No file uploaded</span></p>
+                {% endif %}
+            </div>
+        </div>
+        <input id="btn_submit" type="submit" value="Save" class="btn ms-2" />
+        <a href="{{ back_url }}" class="btn btn-danger">Cancel</a>
+            
+        
+</form>
+{% endblock %}

@@ -5,6 +5,7 @@
   --aqua-2: #63bbcf;
   --teal-1: #013c58;
   --teal-2: #001823;
+  --teal-3: #235558;
   --blue-1: #00296B;
   --tan: #E8DAA0;
   --tan-2: #eadda9;
@@ -138,7 +139,6 @@ h1{ font-weight: 300; font-size: 50px; }
   margin: 0 auto 10px auto;
 }
 
-
 #id_months{ display: inline-block ; width: 800px; height: 72px; border: 0; overflow: hidden; margin-top: 0; }
 #id_months label{ width:auto; }
 #id_months input{ width: 20px; }
@@ -166,7 +166,6 @@ h1{ font-weight: 300; font-size: 50px; }
 .col_edit, .col_delete{ text-align: center; }
 .api_link{ color: var(--teal-1); text-decoration: none; font-weight: 600; font-size: 16px; }
 
-
 /*********** BUTTONS & ICONS ************/
 #btn_back_main{ color: var(--teal-2); text-decoration: none; font-weight: 700; font-size: 18px; padding: 0; }
 
@@ -189,8 +188,8 @@ a.btn_duplicate {
   padding-top: 0;
   padding-bottom: 0;
 }
-a.btn_edit {
-  color:var(--teal-2);
+.btn_edit {
+  color:var(--teal-3) !important;
   padding-top: 0;
   padding-bottom: 0;
 }
@@ -221,7 +220,6 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 
 .item_task_main .task_desc{ color: var(--emerald); }
 .item_task .task_desc{ color: var(--aqua-1); }
-
 
 .text-delete{ color: var(--red); }
 
@@ -270,42 +268,26 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 .tbl_wimp3 th a{ color:#fff !important; text-decoration: none !important; }
 .tbl_wimp3 td{ padding: 8px 5px; }
 
-.col_id, .col_id a{ color:#b7b7b7; }
+.col_id, .col_id a{ color:#b7b7b7; text-align: right; }
 .col_view, .col_view a{ color:var(--teal-2); }
 .col_pdf, .col_pdf a{ color:var(--rose); }
-.btn_edit_link { font-weight: 700 !important; color: var(--teal-2); text-decoration: none; }
+.btn_edit_link { font-weight: 600 !important; color: var(--teal-1); text-decoration: none; line-height: 1; }
 
-
-.errorlist{
-  color: red;
-}
-.errorlist li{
-  list-style-type: none;
-  margin: 0;
-}
-
+.errorlist li{ list-style-type: none; margin: 0; }
 .errorlist {
   position: relative;
   padding: 0.75rem 1.25rem;
   margin-bottom: 1rem;
   border: 1px solid transparent;
   border-radius: 0.25rem;
-    color: #721c24;
+  color: #721c24;
   background-color: #f8d7da;
   border-color: #f5c6cb;
 }
-.alert-heading {
-  color: inherit;
-}
-.alert-link {
-  font-weight: 700;
-}
-.alert-danger hr {
-  border-top-color: #f1b0b7;
-}
-.alert-danger .alert-link {
-  color: #491217;
-}
+.alert-heading { color: inherit; }
+.alert-link { font-weight: 700; }
+.alert-danger hr { border-top-color: #f1b0b7; }
+.alert-danger .alert-link { color: #491217; }
 
 #main_agro_services .list-group-item{
   padding-left:0;

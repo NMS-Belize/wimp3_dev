@@ -10,21 +10,18 @@ from django.urls import reverse
 from django.http import HttpResponse, request
 from django_tables2 import RequestConfig
 
-from users.forms import UserEntryForm, UserProfileForm
-from users.models import UserProfile
-from users.tables import UserTable
+from users.forms import UserEntryForm, UserProfileForm, EmployeeForm
+from users.models import UserProfile, Employee
+from users.tables import UserTable, EmployeeTable
 
 User = get_user_model()
 
 # Create your views here.
-
-#@login_required
 def index(request):
-    template = loader.get_template('index.html')
     context = {
-        'page_name': 'Home'
+        'page_name': 'User Dashboard',
     }
-    return HttpResponse(template.render(context))
+    return render(request, 'home_users.html', context)
 
 @login_required
 def user_dashboard(request):
@@ -136,9 +133,10 @@ def user_list(request, id=None):
         'id' : id,
         #'entry': entry,
         'page_name': page_name,
+        'prev_page': 'User Dashboard',
         'table': table,
         'new_url':  reverse('users:user_entry'),
-        'back_url': reverse('users:user_list'),
+        'back_url': reverse('users:index'),
         #'api_url':  reverse('radarimages-list'),
     }
     return render(request, 'table_list_users.html', context)
@@ -190,3 +188,68 @@ def logout(request):
     if request.method == "POST":
         logout(request)
         return redirect('users:login')
+
+def employee_list(request, id=None):
+
+    page_name   = "Employee List"
+    qs          = Employee.objects.all().order_by('id')
+    table       = EmployeeTable(qs)
+    table.empty_text = "No records available"
+    RequestConfig(request, paginate={"per_page": 25}).configure(table)
+
+    context = {
+        'id' : id,
+        'page_name': page_name,
+        'prev_page': 'User Dashboard',
+        'table': table,
+        'new_url':  reverse('users:employee_entry'),
+        'back_url': reverse('users:index'),
+        #'api_url':  reverse('radarimages-list'),
+    }
+    return render(request, 'table_list_users.html', context)
+
+def employee_entry(request, id=None):
+
+    page_name = "Employee Entry"
+
+    if id:
+        entry = get_object_or_404(Employee, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = EmployeeForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('users:employee_list', saved_entry.id)
+    else:
+        form = EmployeeForm(instance=entry)
+
+    return render(request, 'employees/entry_form.html', {
+        'page_name':    page_name,
+        'prev_page':    'Employee List',
+        'new_url':      reverse('users:employee_entry'),
+        'back_url':     reverse('users:employee_list'),
+        'form':         form,
+        'entry':        entry
+    })
+
+def employee_delete(request, id):
+    
+    entry = get_object_or_404(Employee, id=id)
+
+    qs = Employee.objects.all().order_by('id')
+    qs = qs.order_by('id')
+    
+    page_name = "Employee Entry"
+
+    if request.method == "POST":
+        entry.delete()
+        return redirect('users:employee_list')  # redirect anywhere you prefer
+
+    return render(request, "employees/entry_delete.html", {
+        'entry':        entry,
+        'page_name':    page_name,
+        'back_url':     reverse('users:employee_list'),
+    })

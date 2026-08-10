@@ -11,16 +11,9 @@ from django.template import loader
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-#from django_tables2 import RequestConfig
-
-#from django import forms
-#from .forms import FormPestRisk
-
-# Create your views here.
-
 def index(request):
     template = loader.get_template('entry_form_user_login.html')
-    context = {'name': 'World'}  # Data to pass to the template
+    context = {'page_name': 'Home'}  
     return HttpResponse(template.render(context))
 
 @login_required
@@ -29,7 +22,3 @@ def dashboard(request):
         'page_name': 'Dashboard'
     }
     return render(request, 'dashboard.html', context)
-
-#def test_token(request):
-    
-   # @api_view(['POST'])

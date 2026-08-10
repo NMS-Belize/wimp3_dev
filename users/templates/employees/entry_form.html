@@ -1,0 +1,93 @@
+{% extends "base_form.html" %}
+{% block title %}{{ page_name }} | WIMP3 | NMS Belize{% endblock %}
+{% load static %}
+{% block content %}
+<form class="">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <!--<div class="row mb-3">
+        <div class="col-3">
+            <label class="form-label">Username:</label>
+            {{ form.username }}
+        </div>
+    </div>-->
+    <div class="row">
+        <div class="col-12 mb-2">
+            <h3 class="dashboard_title">General Information</h3>
+        </div>
+        <div class="col-12">
+            <label class="form-label">Employee Name:</label>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-3">
+            {{ form.first_name }}
+        </div>   
+        <div class="col-3">
+            {{ form.last_name }}
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-3">
+            <div class="form-check form-switch">
+                {{ form.has_user_account }}
+                <label class="form-check-label" for="has_user_account">Has User Account?</label>
+            </div>
+        </div>
+        {% if form.has_user_account %}    
+        <div class="col-2" id="user-account-container">
+            <label class="form-label">Link User Account:</label>
+            {{ form.user }}
+        </div>
+        {% endif %}
+    </div>
+    <div class="row mb-3">
+        <div class="col-12 mb-2">
+            <h3 class="dashboard_title">Job Description</h3>
+        </div>
+        <div class="col-3">
+            <label class="form-label">Job Title:</label>
+            {{ form.job_title }}
+        </div>
+        <div class="col-3">
+            <label class="form-label">Department:</label>
+            {{ form.department }}
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-12 mb-2">
+            <h3 class="dashboard_title">Contact Information</h3>
+        </div>
+        <div class="col-3">
+            <label class="form-label">Email:</label>
+            {{ form.email }}
+        </div>
+        <div class="col-3">
+            <label class="form-label">Phone:</label>
+            {{ form.phone }}
+        </div>
+    </div>
+    <div class="row mb-4">
+        <input id="btn_submit" type="submit" value="Submit" class="btn ms-2" />
+    </div> 
+</form>
+{% endblock %}
+{% block extra_js %}
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function () {
+
+    const checkbox = document.getElementById("id_has_user_account");
+    const userContainer = document.getElementById("user-account-container");
+
+    function toggleUserAccount() {
+        if (checkbox.checked) {
+            userContainer.style.display = "";
+        } else {
+            userContainer.style.display = "none";
+        }
+    }
+    toggleUserAccount();
+    checkbox.addEventListener("change", toggleUserAccount);
+});
+</script>
+{% endblock %}

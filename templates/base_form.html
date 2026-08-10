@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
     <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
-    <title>{% block title %}WIMP3 | Web-based Information Management Platform{% endblock %}</title>
+    <title>{% block title %}WIMP3{% endblock %}</title>
 </head>
 <body>
     <div class="d-flex">
@@ -16,10 +16,12 @@
     <main class="main-content">
         <div class="container-fluid p-0">
             {% block header %}
-            <div id="header" class="header pt-3 ps-3 pe-3 pb-0 mb-0">
+            <div id="header" class="header pt-4 ps-3 pe-3 pb-0 mb-3">
                 <div class="row">
-                    <div class="col-12 d-flex justify-content-end align-items-center">
-                        <a class="me-4" href="{% url 'site_home' %}" id="logo"><img id="main_logo" src="{% static 'images/wimp3_logo_v2.png' %}" alt="WIMP3 Logo" style="width: 150px; margin-top:-6px;" /></a>
+                    <div class="col-6">
+                        <h1 class="mb-0">{{ page_name }}</h1>
+                    </div>
+                    <div class="col-6 d-flex justify-content-end align-items-center">
                         {% include "top_buttons.html" %}
                     </div>
                 </div>
@@ -28,10 +30,7 @@
             <div id="block_content" class="p-4">
                 {% include "section_buttons.html" %}
                 {% include "messages.html" %}
-                {% block content %}{% endblock %}
-                <div class="row m-0 text-center">
-                    <a class="btn btn-link btn-sm text-decoration-none p-0" href="{{ api_url }}" target="_blank"><i class="fa-solid fa-list"></i>&nbsp;Load API Feed...</a>
-                </div>    
+                {% block content %}{% endblock %}  
             </div>
             {% block footer %}
             <footer id="footer" class="footer p-4 text-center">

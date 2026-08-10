@@ -17,7 +17,13 @@
                 <div class="item_dashboard_app">
                     <a class=" top-50 start-50 translate-middle" href="https://nms.gov.bz" target="_blank" rel="noopener noreferrer">
                         <img class="" src="{% static 'button_icons/world-wide-web.png' %}" alt="NMS Website" />
-                        <span class="task_desc">NMS Website</span>
+                        <span class="task_desc">NMS Website [LIVE]</span>
+                    </a>
+                </div>
+                <div class="item_dashboard_app">
+                    <a class=" top-50 start-50 translate-middle" href="https://website.nmspps.gov.bz" target="_blank" rel="noopener noreferrer">
+                        <img class="" src="{% static 'button_icons/world-wide-web.png' %}" alt="NMS Website" />
+                        <span class="task_desc">NMS Website [TEST]</span>
                     </a>
                 </div>
                 <div class="item_dashboard_app">
@@ -47,7 +53,7 @@
                     </a>
                 </div>
                 {% endif %}
-                {% if perms.agro.view_agroclimatservice %}
+                {% if perms.agro.view_pestrisk %}
                 <div class="item_dashboard position-relative">
                     <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'agro:index' %}">
                         <img src="{% static 'button_icons/agriculture.png' %}" alt="Agricultural Services" />

@@ -1,0 +1,14 @@
+[
+    {
+        "id": 1,
+        "description": "Morning Forecast"
+    },
+    {
+        "id": 2,
+        "description": "Afternoon Forecast"
+    },
+    {
+        "id": 3,
+        "description": "Evening Forecast"
+    }
+]

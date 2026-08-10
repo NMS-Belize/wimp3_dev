@@ -1,12 +1,10 @@
-import calendar, io
 import os
-from unicodedata import category
 from click import style
-from click import style
-from django.contrib import messages
-from sqlite3 import IntegrityError
 
 from django.conf import settings as jsettings
+from django.contrib import messages
+from django.core.management import call_command
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import JsonResponse, FileResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
@@ -15,8 +13,9 @@ from django.views.decorators.http import require_POST
 from django_tables2 import RequestConfig
 from reportlab.lib import styles
 from rest_framework import settings, status, viewsets
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
@@ -27,9 +26,13 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import Image, SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 
-from forecasts.forms import DistrictForecastDetailsForm, DistrictForecastForm, DistrictForecastInstructionsCategoryForm, DistrictForecastInstructionsForm, DistrictForecastPublishForm, SeverityForm, ProbabilityForm
-from forecasts.tables import DistrictForecastDetailsTable, DistrictForecastTable, ForecastGeneralTable, InstructionsCategoryTable, SeverityTable, ProbabilityTable, InstructionsTable
-from forecasts.models import DistrictForecastDetails, DistrictForecastInstructionsCategory, ForecastGeneral, Severity, Probability, DistrictForecast, DistrictForecastInstructions
+from forecasts.forms import DistrictForecastDetailsForm, DistrictForecastForm, DistrictForecastInstructionsCategoryForm, DistrictForecastInstructionsForm, DistrictForecastPublishForm, SeverityForm, ProbabilityForm, GeneralForecastCategoryForm, ForecastGeneralForm
+from forecasts.tables import DistrictForecastDetailsTable, DistrictForecastTable, InstructionsCategoryTable, SeverityTable, ProbabilityTable, InstructionsTable, ForecastGeneralTable, ForecastGeneralCategoryTable
+from forecasts.models import (
+    ForecastGeneral, ForescastGeneralCategory,
+    DistrictForecast, DistrictForecastInstructions, DistrictForecastDetails, DistrictForecastInstructionsCategory, 
+    Severity, Probability
+)
 
 from system_core.models import District
 
@@ -42,7 +45,6 @@ pdfmetrics.registerFont(TTFont("OpenSans-Light","static/fonts/OpenSans-Light.ttf
 pdfmetrics.registerFont(TTFont("OpenSans-SemiBold","static/fonts/OpenSans-SemiBold.ttf"))
 pdfmetrics.registerFont(TTFont("OpenSans-Bold","static/fonts/OpenSans-Bold.ttf"))
 
-# Create your views here.
 def index(request):
     context = {
         'page_name': 'Weather Forecasts',
@@ -74,10 +76,133 @@ def general_forecast_list(request, id=None):
         #'api_url':  reverse('forecasts:district-forecast-list'),
     })
 
+def general_forecast_entry(request, id=None):
+
+    page_name = "General Forecast Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(ForecastGeneral, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = ForecastGeneralForm(request.POST, request.FILES, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('forecasts:general_forecast_list', saved_entry.id)
+        
+    else:
+        form = ForecastGeneralForm(instance=entry)
+
+    return render(request, 'general-weather-forecast/entry_form.html', {
+        'page_name':    page_name,
+        'prev_page':    'General Weather Forecast',
+        'new_url':      reverse('forecasts:general_forecast_list'),
+        'back_url':     reverse('forecasts:general_forecast_list'),
+        'form': form,
+        'entry': entry
+    })
+
+############# GENERAL FORECASTS: Category #############
+def general_forecast_category_list(request, id=None):
+    page_name = "General Forecast Categories"
+    qs = ForescastGeneralCategory.objects.all().order_by('id')
+
+    table = ForecastGeneralCategoryTable(qs)
+    table.empty_text = "No records available"
+    RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+
+    context = {
+        #'id' : id,
+        'entry': entry,  
+        'page_name': page_name,
+        'prev_page': 'Weather Forecasts',
+        'table': table,
+        'new_url':  reverse('forecasts:general_forecast_category_entry'),
+        'back_url': reverse('forecasts:index'),
+        #'api_url': "/api/pest-risk/",
+    }
+    return render(request, 'district-forecast/parameters_table_list.html', context)
+
+def general_forecast_category_entry(request, id=None):
+
+    page_name = "General Forecast Category Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(ForescastGeneralCategory, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = GeneralForecastCategoryForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('forecasts:general_forecast_category_list', saved_entry.id)
+        
+    else:
+        form = GeneralForecastCategoryForm(instance=entry)
+
+    return render(request, 'district-forecast/parameters_entry_form.html', {
+        'page_name':    page_name,
+        'prev_page':    'General Weather Forecast Categories',
+        'new_url':      reverse('forecasts:general_forecast_category_entry'),
+        'details_url':  "",
+        'back_url':     reverse('forecasts:general_forecast_category_list'),
+        'api_url':      "/api/pest-risk/",
+        'form': form,
+        'entry': entry
+    })
+
+def general_forecast_category_delete(request, id):
+    
+    entry = get_object_or_404(ForescastGeneralCategory, id=id)
+
+    qs = ForescastGeneralCategory.objects.all().order_by('id')
+    qs = qs.order_by('id')
+    
+    page_name = "General Forecast Categories Entry"
+
+    if request.method == "POST":
+        entry.delete()
+        return redirect('forecasts:general_forecast_category_list')  # redirect anywhere you prefer
+
+    return render(request, "district-forecast/parameters_delete.html", {
+        "entry": entry,
+        'page_name': page_name,
+        'back_url': reverse('forecasts:general_forecast_category_list'),
+        'details': qs
+    })
+
+def is_admin(user):
+    return user.is_authenticated and user.is_staff
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def import_general_weather_forecast_categories(request):
+    try:
+        call_command("import_forecast_general_category")
+        messages.success(request,"General Weather Forecast Categories imported successfully.")
+
+    except Exception as error:
+        messages.error(request,f"General Weather Forecast Categories import failed: {error}")
+
+    return redirect("forecasts:index")
+
 ############# DISTRICT FORECATSTS: Risk Level Entry #############
 def instructions_list(request, id=None):
     page_name = "Instructions Entries"
-    qs = DistrictForecastInstructions.objects.all().order_by('-id')
+    qs = DistrictForecastInstructions.objects.select_related("category").order_by(
+            "category__category_name",
+            "description",
+        )
     table = InstructionsTable(qs)
     table.empty_text = "No records available"
     RequestConfig(request).configure(table)
@@ -135,19 +260,18 @@ def instructions_delete(request, id):
     entry = get_object_or_404(DistrictForecastInstructions, id=id)
 
     qs = DistrictForecastInstructions.objects.all().order_by('id')
-    # Filter details by parent listing
     qs = qs.order_by('id')
     
     page_name = "District Forecast Instructions Entry"
 
     if request.method == "POST":
         entry.delete()
-        
         return redirect('forecasts:instructions_list')  # redirect anywhere you prefer
 
     return render(request, "district-forecast/parameters_delete.html", {
         "entry": entry,
         'page_name': page_name,
+        'back_url': reverse('forecasts:instructions_list'),
         'details': qs
     })
 
@@ -873,18 +997,104 @@ def generate_pdf(request, id=None):
         filename=filename
     )
 
+class WIMP2FilesAPIView(APIView):
+
+    #permission_classes = [AllowAny]
+    http_method_names = ['get', 'head','options']
+
+    def get(self, request):
+        audio_dir   = os.path.join(jsettings.MEDIA_ROOT, "forecast", "general", "audio")
+        gen_pdf_dir = os.path.join(jsettings.MEDIA_ROOT, "forecast", "general", "doc")
+        mar_pdf_dir = os.path.join(jsettings.MEDIA_ROOT, "forecast", "marine", "doc")
+        avi_pdf_dir = os.path.join(jsettings.MEDIA_ROOT, "forecast", "aviation", "doc")
+        day_pdf_dir = os.path.join(jsettings.MEDIA_ROOT, "forecast", "daily", "doc")
+
+        audio_url = None
+        gen_pdf_url = None
+        mar_pdf_url = None
+        avi_pdf_url = None
+        day_pdf_url = None
+
+        # Find newest audio file
+        if os.path.exists(audio_dir):
+            audio_files = [
+                f for f in os.listdir(audio_dir)
+                if f.lower().endswith(".mp3")
+            ]
+
+            if audio_files:
+                newest_audio = max(audio_files, key=lambda f: os.path.getmtime(os.path.join(audio_dir, f)))
+                audio_url = request.build_absolute_uri(jsettings.MEDIA_URL + "forecast/general/audio/" + newest_audio)
+
+        # Find newest General / PDF file
+        if os.path.exists(gen_pdf_dir):
+            gen_pdf_url = [
+                f for f in os.listdir(gen_pdf_dir)
+                if f.lower().endswith(".pdf")
+            ]
+
+            if gen_pdf_url:
+                newest_pdf_gen  = max(gen_pdf_url, key=lambda f: os.path.getmtime(os.path.join(gen_pdf_dir, f)))
+                gen_pdf_url     = request.build_absolute_uri(jsettings.MEDIA_URL + "forecast/general/doc/" + newest_pdf_gen)
+
+        # Find newest Marine / PDF file
+        if os.path.exists(mar_pdf_dir):
+            mar_pdf_url = [
+                f for f in os.listdir(mar_pdf_dir)
+                if f.lower().endswith(".pdf")
+            ]
+
+            if mar_pdf_url:
+                newest_pdf_mar  = max(mar_pdf_url, key=lambda f: os.path.getmtime(os.path.join(mar_pdf_dir, f)))
+                mar_pdf_url     = request.build_absolute_uri(jsettings.MEDIA_URL + "forecast/marine/doc/" + newest_pdf_mar)
+
+        # Find newest Aviation / PDF file
+        if os.path.exists(avi_pdf_dir):
+            avi_pdf_url = [
+                f for f in os.listdir(avi_pdf_dir)
+                if f.lower().endswith(".pdf")
+            ]
+
+            if avi_pdf_url:
+                newest_pdf_avi  = max(avi_pdf_url, key=lambda f: os.path.getmtime(os.path.join(avi_pdf_dir, f)))
+                avi_pdf_url     = request.build_absolute_uri(jsettings.MEDIA_URL + "forecast/aviation/doc/" + newest_pdf_avi)
+
+
+        # Find newest Daily (4-Day) / PDF file
+        if os.path.exists(day_pdf_dir):
+            day_pdf_url = [
+                f for f in os.listdir(day_pdf_dir)
+                if f.lower().endswith(".pdf")
+            ]
+
+            if day_pdf_url:
+                newest_pdf_day  = max(day_pdf_url, key=lambda f: os.path.getmtime(os.path.join(day_pdf_dir, f)))
+                day_pdf_url     = request.build_absolute_uri(jsettings.MEDIA_URL + "forecast/daily/doc/" + newest_pdf_day)
+
+        return Response({
+            "audio":        audio_url,
+            "general_pdf":  gen_pdf_url,
+            "marine_pdf":   mar_pdf_url,
+            "aviation_pdf": avi_pdf_url,
+            "daily_pdf":    day_pdf_url
+        })
+    
 class DistrictForecastDetailsViewSet(viewsets.ModelViewSet):
    queryset = DistrictForecastDetails.objects.all().order_by('id')
    serializer_class = sx.DistrictForecastDetailsSerializer
+   http_method_names = ['get', 'head','options']
 
 class DistrictForecastAllViewSet(viewsets.ModelViewSet):
     queryset = DistrictForecast.objects.all().order_by("-forecast_date").prefetch_related("district_forecast_details")
     serializer_class = sx.DistrictForecastSerializer
     pagination_class = None
+    http_method_names = ['get', 'head','options']
 
 class DistrictForecastViewSet(viewsets.ModelViewSet):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    #authentication_classes = [TokenAuthentication]
+    #permission_classes = [IsAuthenticated]
     queryset = DistrictForecast.objects.filter(is_published=True).prefetch_related("district_forecast_details")
     serializer_class = sx.DistrictForecastSerializer
     pagination_class = None
+    http_method_names = ['get', 'head','options']
+

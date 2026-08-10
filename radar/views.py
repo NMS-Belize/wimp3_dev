@@ -11,11 +11,12 @@ from .models import RadarImages
 from django.template import loader
 from django_tables2 import RequestConfig
 
-from .forms import RadarImageForm
-from .models import RadarImages
-from .tables import RadarImagesTable
+from radar.forms import RadarImageForm
+from radar.models import RadarImages
+from radar.tables import RadarImagesTable
+from radar.serializers import RadarImagesSerializer
 
-from rest_framework import permissions
+from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
 
 def index(request):
@@ -124,3 +125,8 @@ def radar_image_toggle_is_published(request, id):
     messages.success(request, f"Record {status} successfully.")
 
     return redirect("radar:radar_images_list",id)
+
+class RadarImagesViewSet(viewsets.ReadOnlyModelViewSet):
+   queryset = RadarImages.objects.filter(is_published=True).order_by('id')
+   serializer_class = RadarImagesSerializer
+   http_method_names = ['get', 'head','options']

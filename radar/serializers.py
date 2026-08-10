@@ -1,18 +1,15 @@
-from rest_framework import serializers
-from .. import models as mx
 import os
-from urllib.parse import urljoin
+from rest_framework import serializers
+from radar.models import RadarImages
 
-from ..models import RadarImages
+from urllib.parse import urljoin
 
 class RadarImagesSerializer(serializers.ModelSerializer):
 
-    # Custom field
     image_url_full = serializers.SerializerMethodField()
 
     class Meta:
-        model = mx.RadarImages
-        #fields = '__all__' #Remove all
+        model = RadarImages
         fields = ['image_url','web_directory','image_title','image_url_full']
 
     def get_image_url_full(self, obj):
