@@ -118,19 +118,22 @@ class VendorTable(tables.Table):
         return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
 
 class InventoryTable(tables.Table):
-    edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "col_edit"}, "td": {"style": "","class": "col_edit"}})
-    device_label = tables.Column(verbose_name="Device Label",attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
-    device_name = tables.Column(verbose_name="Device Name",attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
-    category = tables.Column(verbose_name="Category",attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
-    assigned_user   = tables.Column(verbose_name="Assigned User",attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
-    id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": "text-end"}, "td": {"style": "","class": "text-end"}})
-    delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "text-center"},"td": {"style": "","class": "col_delete text-center"}})
+    edit            = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "col_edit"}, "td": {"style": "","class": "col_edit"}})
+    #device_label = tables.Column(verbose_name="Device Label",attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+    device_name     = tables.Column(verbose_name="Device Name",attrs={"th": {"style": "width:200px","class": ""}, "td": {"style": "","class": ""}})
+    manufacturer     = tables.Column(verbose_name="Manufacturer",attrs={"th": {"style": "width:140px","class": ""}, "td": {"style": "","class": ""}})
+    model_number     = tables.Column(verbose_name="Model Number",attrs={"th": {"style": "width:200px","class": ""}, "td": {"style": "","class": ""}})
+    category        = tables.Column(verbose_name="Category",attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+    device_status        = tables.Column(verbose_name="Status",attrs={"th": {"style": "width:100px","class": ""}, "td": {"style": "","class": ""}})
+    assigned_user   = tables.Column(verbose_name="Assigned User",attrs={"th": {"style": "width:125px","class": ""}, "td": {"style": "","class": ""}})
+    id              = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": "text-end"}, "td": {"style": "","class": "text-end"}})
+    delete          = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "text-center"},"td": {"style": "","class": "col_delete text-center"}})
 
     class Meta:
         model = InventoryItem
         template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
-        fields = ("edit","id","device_label","device_name","category","assigned_user","delete")
-        sequence = ("edit","device_label","device_name","category","assigned_user","id","delete")
+        fields = ("edit","device_name","manufacturer","model_number","category","device_status","assigned_user","id","delete")
+        sequence = fields
 
         # Add table HTML id and CSS classes here
         attrs = {
