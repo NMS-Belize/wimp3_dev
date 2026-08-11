@@ -66,6 +66,14 @@
     {
         "id": 17,
         "description": "Secretary"
+    },
+    {
+        "id": 18,
+        "description": "Driver"
+    },
+    {
+        "id": 19,
+        "description": "Janitor / Caretaker"
     }
     
 ]
