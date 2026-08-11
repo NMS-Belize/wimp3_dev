@@ -112,6 +112,7 @@ class InventoryItemForm(forms.ModelForm):
     assigned_user = UserChoiceField(
         queryset    = Employee.objects.order_by('first_name', 'last_name'),
         required    = False,
+        empty_label = "Unassigned",
         widget      = forms.Select(attrs={'class': 'form-select'}),
     )
 
