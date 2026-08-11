@@ -445,3 +445,10 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
   color:var(--aqua-1);
   font-weight: 600;
 }
+
+.pagination { justify-content: right !important; margin-top: 20px; }
+.pagination a{ color: var(--teal-1); font-weight: 800; text-decoration: none;}
+.pagination li{ padding: 5px 10px;  }
+.pagination .active{ background-color: var(--aqua-1); }
+.pagination .active a{ color: #fff; }
+.pagination .next, .pagination .previous{ text-transform: uppercase; }
