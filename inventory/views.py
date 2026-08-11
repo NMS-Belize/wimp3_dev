@@ -10,6 +10,7 @@ from django.views.decorators.http import require_GET
 from django_tables2 import RequestConfig
 
 from system_core.models import OfficeLocation
+from users.models import Employee
 
 from .forms     import InventoryCategoryForm, InventoryItemPhotoFormSet, HardwareSpecificationsForm, NetworkDetailsForm, ManufacturerForm, InventoryItemForm, DeviceTypeForm, VendorForm
 from .models    import DeviceType, InventoryCategory, InventoryItem, Manufacturer, Vendor
@@ -133,11 +134,11 @@ def inventory_entry(request, id=None):
 
         else:
             messages.error(request, "Please correct the errors below.")
-            print("Inventory errors:", form_main.errors.as_json())
-            print("Hardware errors:", form_hardware.errors.as_json())
-            print("Network errors:", form_network.errors.as_json())
+            messages.error(request, "Inventory errors:", form_main.errors)
+            messages.error(request, "Hardware errors:", form_hardware.errors)
+            messages.error(request, "Network errors:", form_network.errors)
             #print("Photo errors:", form_photos.errors.as_json())
-            print("Photo non-form errors:",form_photos.non_form_errors())
+            messages.error(request, "Photo non-form errors:",form_photos.non_form_errors())
 
     else:
         form_main = InventoryItemForm(instance=entry)
@@ -197,7 +198,7 @@ def inventory_category_list(request, id=None):
         'back_url': reverse('inventory:index'),
         #'api_url': reverse('sectors-list'),
     }
-    return render(request, 'inventory_table_list.html', context)
+    return render(request, 'inventory/parameters_table_list.html', context)
 
 def inventory_category_entry(request, id=None):
     entry = None
@@ -270,6 +271,24 @@ def get_placement_floor(request):
             "floor": "",
             "error": "Placement was not found.",
         }, status=404)
+
+@require_GET
+def get_assigned_details(request):
+    
+    user_id = request.GET.get("user_id")
+    print(user_id)
+    if not user_id:
+        return JsonResponse({ "success": False, "department": "", "error": "No User was selected." })
+
+    try:
+        employee = Employee.objects.get(pk=user_id)
+        return JsonResponse({ 
+            "success": True, 
+            "department": employee.department_id or ""
+        })
+    
+    except Employee.DoesNotExist:
+        return JsonResponse({ "success": False, "department": "", "error": "Department was not found." }, status=404)
     
 def device_type_list(request, id=None):
     page_name = "Device Type List"
@@ -293,7 +312,7 @@ def device_type_list(request, id=None):
         'back_url': reverse('inventory:index'),
         #'api_url': reverse('sectors-list'),
     }
-    return render(request, 'inventory_table_list.html', context)
+    return render(request, 'inventory/parameters_table_list.html', context)
 
 def device_type_entry(request, id=None):
     entry = None

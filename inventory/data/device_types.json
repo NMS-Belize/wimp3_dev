@@ -1,0 +1,43 @@
+[
+    { "id": 1, "name": "Monitor", "inventory_category": 4 },
+    { "id": 2, "name": "CPU", "inventory_category": 1 },
+    { "id": 3, "name": "Desktop", "inventory_category": 1 },
+    {
+        "id": 4,
+        "name": "Workstation",
+        "inventory_category": 3
+    },
+    {
+        "id": 5,
+        "name": "Tower Servers",
+        "inventory_category": 3
+    },
+    {
+        "id": 6,
+        "name": "Laptop",
+        "inventory_category": 2
+    },
+    {
+        "id": 7,
+        "name": "Toughbook",
+        "inventory_category": 2
+    },
+    {
+        "id": 8,
+        "name": "UPS",
+        "inventory_category": 5
+    },
+    {
+        "id": 9,
+        "name": "Printer",
+        "inventory_category": 8
+    },
+    {
+        "id": 10,
+        "name": "Router",
+        "inventory_category": 6
+    },
+    { "id": 11, "name": "Network Switch", "inventory_category": 6 },
+    { "id": 12, "name": "Television", "inventory_category": 4 },
+    { "id": 12, "name": "Smartboard", "inventory_category": 4 }
+]

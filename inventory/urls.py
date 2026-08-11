@@ -16,6 +16,7 @@ urlpatterns = [
     path('inventory/entry/<int:id>/delete/', views.inventory_delete,name='inventory_delete'),
 
     path("get-placement-floor/",views.get_placement_floor,name="get_placement_floor"),
+    path("get-assigned-user-details/",views.get_assigned_details,name="get_assigned_details"),
 
     path('inventory/category/list/', views.inventory_category_list, name="inventory_category_list"),
     path('inventory/category/list/<int:id>', views.inventory_category_list, name="inventory_category_list"),

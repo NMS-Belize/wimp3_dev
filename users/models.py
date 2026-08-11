@@ -25,7 +25,8 @@ class Employee(models.Model):
 
     #photo       = models.ImageField(upload_to="images/users/profile", blank=True, null=True)
     has_user_account = models.BooleanField(default=False)
-    user        = models.OneToOneField(settings.AUTH_USER_MODEL,on_delete=models.CASCADE, blank=True, null=True)
+    #user        = models.OneToOneField(settings.AUTH_USER_MODEL,on_delete=models.CASCADE, blank=True, null=True)
+    user        = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True,blank=True)
     
     def __str__(self):
         return self.user.first_name

@@ -3,19 +3,22 @@ from django.contrib.auth import get_user_model
 from django.forms import inlineformset_factory
 
 from .models import InventoryItem, InventoryCategory, InventoryItemPhoto, Manufacturer, DeviceType, NetworkDetails, Vendor, HardwareSpecifications
+from users.models import Employee
 
 User = get_user_model()
 
 class InventoryCategoryForm(forms.ModelForm):
     class Meta:
         model = InventoryCategory
-        fields = ['name']
+        fields = ['name','description']
         labels = {   
             # <-- add human-friendly labels here
-            'name': 'Category Name:',
+            'name':         'Category Name:',
+            'description':  'Description:',
         }
         widgets = {            
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'name':         forms.TextInput(attrs={'class': 'form-control'}),
+            'description':  forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
         }
 
 class DeviceTypeForm(forms.ModelForm):
@@ -45,9 +48,7 @@ class VendorForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'short_name': forms.TextInput(attrs={'class': 'form-control'}),
         }
-
-
-        
+       
 class ManufacturerForm(forms.ModelForm):
     class Meta:
         model = Manufacturer
@@ -59,7 +60,6 @@ class ManufacturerForm(forms.ModelForm):
         widgets = {     
             'name': forms.TextInput(attrs={'class': 'form-control'}),
         }
-
 
 class InventoryItemPhotoForm(forms.ModelForm):
     class Meta:
@@ -86,7 +86,6 @@ class InventoryItemPhotoForm(forms.ModelForm):
             ),
         }
 
-
 InventoryItemPhotoFormSet = inlineformset_factory(
     InventoryItem,
     InventoryItemPhoto,
@@ -104,30 +103,21 @@ InventoryItemPhotoFormSet = inlineformset_factory(
 
 class UserChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
-        if obj.first_name or obj.last_name:
-            return f"{obj.first_name} {obj.last_name}".strip()
-        return obj.username
+        #if obj.first_name or obj.last_name:
+        return f"{obj.first_name} {obj.last_name}".strip()
+        #return obj.username
     
 class InventoryItemForm(forms.ModelForm):
 
     assigned_user = UserChoiceField(
-        queryset=User.objects.filter(is_active=True).order_by(
-            'first_name', 'last_name', 'username'
-        ),
-        required=False,
-        widget=forms.Select(attrs={'class': 'form-select'}),
+        queryset    = Employee.objects.order_by('first_name', 'last_name'),
+        required    = False,
+        widget      = forms.Select(attrs={'class': 'form-select'}),
     )
 
     placement_floor = forms.CharField(
-        label="Floor",
-        required=False,
-        disabled=True,
-        widget=forms.TextInput(
-            attrs={
-                "class": "form-control",
-                "placeholder": "Select a placement to view its floor",
-            }
-        ),
+        label = "Floor", required = False, disabled = True,
+        widget=forms.TextInput(attrs={ "class": "form-control", "placeholder": "Select a placement to view its floor" }),
     )
 
     class Meta:
@@ -139,36 +129,32 @@ class InventoryItemForm(forms.ModelForm):
             'assigned_user',
             'placement',
             'department_section',
-            #'floor_level',
             'category',
             'manufacturer',
             'model_number',
             'device_status',
             'serial_number',
-            #'service_tag',
             'acquisition_date',
             'date_issued',
             'vendor',
             'notes',
         ]
         widgets = {
-            'device_label': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Device Label'}),
-            'device_name': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Device Name'}),
-            'device_type': forms.Select(attrs={'class': 'form-control'}),
-            'assigned_user': forms.Select(attrs={'class': 'form-select'}),
-            'placement': forms.Select(attrs={'class': 'form-select'}),
+            'device_label':     forms.TextInput(attrs={'class': 'form-control','placeholder': 'Device Label'}),
+            'device_name':      forms.TextInput(attrs={'class': 'form-control','placeholder': 'Device Name'}),
+            'device_type':      forms.Select(attrs={'class': 'form-control'}),
+            'assigned_user':    forms.Select(attrs={'class': 'form-select'}),
+            'placement':        forms.Select(attrs={'class': 'form-select'}),
             'department_section': forms.Select(attrs={'class': 'form-select'}),
-            #'floor_level': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Floor Level'}),
-            'category': forms.Select(attrs={'class': 'form-select'}),
-            'manufacturer': forms.Select(attrs={'class': 'form-select'}),
-            'model_number': forms.TextInput(attrs={'class': 'form-control'}),
-            'device_status': forms.Select(attrs={'class': 'form-select'}),
-            'serial_number': forms.TextInput(attrs={'class': 'form-control'}),
-            #'service_tag': forms.TextInput(attrs={'class': 'form-control'}),
+            'category':         forms.Select(attrs={'class': 'form-select'}),
+            'manufacturer':     forms.Select(attrs={'class': 'form-select'}),
+            'model_number':     forms.TextInput(attrs={'class': 'form-control'}),
+            'device_status':    forms.Select(attrs={'class': 'form-select'}),
+            'serial_number':       forms.TextInput(attrs={'class': 'form-control'}),
             'acquisition_date': forms.DateInput(attrs={'class': 'form-control','type': 'date'}),
-            'date_issued': forms.DateInput(attrs={'class': 'form-control','type': 'date'}),
-            'vendor': forms.Select(attrs={'class': 'form-control'}),
-            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            'date_issued':      forms.DateInput(attrs={'class': 'form-control','type': 'date'}),
+            'vendor':           forms.Select(attrs={'class': 'form-control'}),
+            'notes':            forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -186,16 +172,20 @@ class NetworkDetailsForm(forms.ModelForm):
         fields = [
             'inventory_item',
             'mac_address',
+            'mac_address_wireless',
             'ip_address',
             'cabinet',
             'switch_port_number',
+            'rack_number',
         ]
         widgets = {
-            'inventory_item': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Inventory Item'}),
-            'mac_address': forms.TextInput(attrs={'class': 'form-control','placeholder': 'MAC Address'}),
-            'ip_address': forms.TextInput(attrs={'class': 'form-control','placeholder': 'IP Address'}),
-            'cabinet': forms.Select(attrs={'class': 'form-select'}),
+            'inventory_item':   forms.TextInput(attrs={'class': 'form-control','placeholder': 'Inventory Item'}),
+            'mac_address':      forms.TextInput(attrs={'class': 'form-control','placeholder': 'MAC Address (LAN)'}),
+            'mac_address_wireless': forms.TextInput(attrs={'class': 'form-control','placeholder': 'MAC Address (Wireless)'}),
+            'ip_address':       forms.TextInput(attrs={'class': 'form-control','placeholder': 'IP Address'}),
+            'cabinet':          forms.Select(attrs={'class': 'form-select'}),
             'switch_port_number': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Switch Port Number'}),
+            'rack_number':      forms.TextInput(attrs={'class': 'form-control','placeholder': 'Rack'}),
         }
     
 class HardwareSpecificationsForm(forms.ModelForm):

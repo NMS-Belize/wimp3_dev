@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_form.html" %}
 {% block title %}{{ page_name }} | Agro-Climat Services | WIMP3 | National Meteorological Service of Belize{% endblock %}
 {% block content %}
 
@@ -22,16 +22,15 @@
         </ul>
     </div>
     {% endif %}
-
     <nav>
-    <div class="nav nav-tabs" id="nav-tab" role="tablist">
-        <button class="nav-link active" id="nav_tab_general" data-bs-toggle="tab" data-bs-target="#tab_general" type="button" role="tab" aria-controls="tab_general" aria-selected="true">General Device Details</button>
-        <button class="nav-link" id="nav_tab_placement" data-bs-toggle="tab" data-bs-target="#tab_placement" type="button" role="tab" aria-controls="tab_placement" aria-selected="false">Placement & Assignment</button>
-        <button class="nav-link" id="nav_tab_hardware"  data-bs-toggle="tab" data-bs-target="#tab_hardware" type="button" role="tab" aria-controls="tab_hardware" aria-selected="false">Hardware Specifications</button>
-        <button class="nav-link" id="nav_tab_network"   data-bs-toggle="tab" data-bs-target="#tab_network" type="button" role="tab" aria-controls="tab_network" aria-selected="false">Network Information</button>
-        <button class="nav-link" id="nav_tab_photos"    data-bs-toggle="tab" data-bs-target="#tab_photos" type="button" role="tab" aria-controls="tab_photos" aria-selected="false">Photos</button>
-        <button class="nav-link" id="nav_tab_info"      data-bs-toggle="tab" data-bs-target="#tab_info" type="button" role="tab" aria-controls="tab_info" aria-selected="false">Additional Information</button>
-    </div>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <button class="nav-link active" id="nav_tab_general" data-bs-toggle="tab" data-bs-target="#tab_general" type="button" role="tab" aria-controls="tab_general" aria-selected="true">General Device Details</button>
+            <button class="nav-link" id="nav_tab_hardware"  data-bs-toggle="tab" data-bs-target="#tab_hardware" type="button" role="tab" aria-controls="tab_hardware" aria-selected="false">Hardware Specifications</button>
+            <button class="nav-link" id="nav_tab_network"   data-bs-toggle="tab" data-bs-target="#tab_network" type="button" role="tab" aria-controls="tab_network" aria-selected="false">Network Information</button>
+            <button class="nav-link" id="nav_tab_placement" data-bs-toggle="tab" data-bs-target="#tab_placement" type="button" role="tab" aria-controls="tab_placement" aria-selected="false">Placement & Assignment</button>
+            <button class="nav-link" id="nav_tab_photos"    data-bs-toggle="tab" data-bs-target="#tab_photos" type="button" role="tab" aria-controls="tab_photos" aria-selected="false">Photos</button>
+            <button class="nav-link" id="nav_tab_info"      data-bs-toggle="tab" data-bs-target="#tab_info" type="button" role="tab" aria-controls="tab_info" aria-selected="false">Additional Information</button>
+        </div>
     </nav>
     <div class="tab-content" id="nav-tabContent">
         <div class="tab-pane fade show active pt-4" id="tab_general" role="tabpanel" aria-labelledby="nav_tab_general" tabindex="1">
@@ -40,75 +39,41 @@
                     <h2>General Device Details</h2>
                 </div>
                 <div class="col-4">
-                    <label class="form-label">Device Label</label>
+                    <label class="form-label">Device Label:</label>
                     {{ form.device_label }}
                 </div>
                 <div class="col-4">
-                    <label class="form-label">Device Name</label>
+                    <label class="form-label">Device Name:</label>
                     {{ form.device_name }}
                 </div>
                 <div class="col-4">
-                    <label class="form-label">Category</label>
+                    <label class="form-label">Category:</label>
                     {{ form.category }}
                 </div>
                 <div class="col-4">
-                    <label class="form-label">Device Type</label>
+                    <label class="form-label">Device Type:</label>
                     {{ form.device_type }}
                 </div>
                 <div class="col-4">
-                    <label class="form-label">Manufacturer</label>
+                    <label class="form-label">Manufacturer:</label>
                     {{ form.manufacturer }}
                 </div>
                 <div class="col-4">
-                    <label class="form-label">Model Number</label>
+                    <label class="form-label">Model Number:</label>
                     {{ form.model_number }}
-                </div>
-                <div class="col-4">
-                    <label class="form-label">Serial Number</label>
-                    {{ form.serial_number }}
                 </div>
                 <div class="clear"></div>
                 <div class="col-4">
-                    <label class="form-label">Device Status</label>
+                    <label class="form-label">Device Status:</label>
                     {{ form.device_status }}
                 </div>
                 <div class="col-4">
-                    <label class="form-label">Vendor</label>
+                    <label class="form-label">Vendor / Supplier:</label>
                     {{ form.vendor }}
                 </div>
                 <div class="col-4">
-                    <label class="form-label">Acquisition Date</label>
+                    <label class="form-label">Acquisition Date:</label>
                     {{ form.acquisition_date }}
-                </div>
-            </div>
-        </div>
-        <div class="tab-pane fade pt-4" id="tab_placement" role="tabpanel" aria-labelledby="nav_tab_placement" tabindex="2">
-            <!-- Placement & Assignment -->
-            <div class="row mb-4">
-                <div class="col-12 mb-4">
-                    <h2>Placement & Assignment</h2>
-                </div>
-                <div class="col-4">
-                    <label class="form-label">Assigned User</label>
-                    {{ form.assigned_user }}
-                </div>
-
-                <div class="col-4">
-                    <label class="form-label">Placement</label>
-                    {{ form.placement }}
-                </div>
-                <div class="col-4">
-                    <label class="form-label">Department/Section</label>
-                    {{ form.department_section }}
-                </div>
-
-                <div class="col-4">
-                    <label class="form-label">Floor Level</label>
-                    {{ form.placement_floor }}
-                </div>
-                <div class="col-4">
-                    <label class="form-label">Date Issued</label>
-                    {{ form.date_issued }}
                 </div>
             </div>
         </div>
@@ -119,23 +84,27 @@
                     <h2>Hardware Specifications</h2>
                 </div>
                 <div class="col-4">
-                    <label class="form-label">Service Tag</label>
+                    <label class="form-label">Serial Number:</label>
+                    {{ form.serial_number }}
+                </div>
+                <div class="col-4">
+                    <label class="form-label">Service Tag:</label>
                     {{ form_hardware.service_tag }}
                 </div>
                 <div class="col-4">
-                    <label class="form-label">Processor</label>
+                    <label class="form-label">Processor:</label>
                     {{ form_hardware.processor }}
                 </div>
                 <div class="col-4">
-                    <label class="form-label">RAM</label>
+                    <label class="form-label">RAM:</label>
                     {{ form_hardware.ram }}
                 </div>
                 <div class="col-4">
-                    <label class="form-label">Disk Size</label>
+                    <label class="form-label">Disk Size:</label>
                     {{ form_hardware.disk_size }}
                 </div>
                 <div class="col-4">
-                    <label class="form-label">Operating System</label>
+                    <label class="form-label">Operating System:</label>
                     {{ form_hardware.operating_system }}
                 </div>
             </div>
@@ -147,16 +116,59 @@
                     <h2>Network Information</h2>
                 </div>
                 <div class="col-4">
-                    <label class="form-label">MAC Address</label>
+                    <label class="form-label">IP Address:</label>
+                    {{ form_network.ip_address }}
+                </div>
+                <div class="col-4">
+                    <label class="form-label">MAC Address (LAN):</label>
                     {{ form_network.mac_address }}
                 </div>
                 <div class="col-4">
-                    <label class="form-label">IP Address</label>
-                    {{ form_network.ip_address }}
+                    <label class="form-label">MAC Address (Wireless):</label>
+                    {{ form_network.mac_address_wireless }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    <label class="form-label">Cabinet:</label>
+                    {{ form_network.cabinet }}
+                </div>
+                <div class="col-4">
+                    <label class="form-label">Rack:</label>
+                    {{ form_network.rack_number }}
+                </div>
+                <div class="col-4">
+                    <label class="form-label">Switch Port Number:</label>
+                    {{ form_network.switch_port_number }}
                 </div>
             </div>
         </div>
-        <div class="tab-pane fade pt-4" id="tab_photos" role="tabpanel" aria-labelledby="nav_tab_photos" tabindex="4">
+        <div class="tab-pane fade pt-4" id="tab_placement" role="tabpanel" aria-labelledby="nav_tab_placement" tabindex="4">
+            <!-- Placement & Assignment -->
+            <div class="row mb-4">
+                <div class="col-12 mb-4">
+                    <h2>Placement & Assignment</h2>
+                </div>
+                <div class="col-4">
+                    <label class="form-label">Assigned User:</label>
+                    {{ form.assigned_user }}
+                </div>
+
+                <div class="col-4">
+                    <label class="form-label">Placement:</label>
+                    {{ form.placement }}
+                </div>
+                <div class="col-4">
+                    <label class="form-label">Department/Section:</label>
+                    {{ form.department_section }}
+                </div>
+                <div class="col-4">
+                    <label class="form-label">Date Issued:</label>
+                    {{ form.date_issued }}
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade pt-4" id="tab_photos" role="tabpanel" aria-labelledby="nav_tab_photos" tabindex="5">
             
             <div class="col-12">
                 <h2>Photos</h2>
@@ -239,7 +251,7 @@
                 </div>
             </div>
         </div>
-        <div class="tab-pane fade pt-4" id="tab_info" role="tabpanel" aria-labelledby="nav_tab_info" tabindex="5">
+        <div class="tab-pane fade pt-4" id="tab_info" role="tabpanel" aria-labelledby="nav_tab_info" tabindex="6">
             <div class="col-12">
                 <h2>Additional Information</h2>
             </div>
@@ -256,71 +268,64 @@
         <a id="btn_close" class="btn btn-danger" href="{{ back_url }}">Cancel</a>
     </div>
 </form>
+{% endblock %}
+{% block extra_js %}
 <script type="text/javascript">
     document.addEventListener("DOMContentLoaded", function () {
 
-    const placementSelect = document.getElementById("id_placement");
-    const floorInput = document.getElementById("id_placement_floor");
+        const userSelect = document.getElementById("id_assigned_user");
+        const placementSelect = document.getElementById("id_placement");
 
-    if (!placementSelect || !floorInput) {
-        return;
-    }
+        const floorInput = document.getElementById("id_placement_floor");
+        const deptInput = document.getElementById("id_department");
 
-    async function updatePlacementFloor() {
-        const placementId = placementSelect.value;
+        // Update when placement changes
+        //userSelect.addEventListener("change", updatePlacementDetails);
 
-        if (!placementId) {
-            floorInput.value = "";
-            return;
-        }
+        // Update immediately when the page loads
+        //updatePlacementFloor();
+        //updatePlacementDetails();
 
-        floorInput.value = "Loading...";
+        async function updatePlacementDetails() {
+            
+            const placementId = placementSelect.value;
+            const userid = userSelect.value;
 
-        try {
-            const url = new URL(
-                "{% url 'inventory:get_placement_floor' %}",
-                window.location.origin
-            );
+            //deptInput.value = "Loading...";
 
-            url.searchParams.set("placement_id", placementId);
+            try {
+                const url = new URL("{% url 'inventory:get_assigned_details' %}", window.location.origin);
 
-            const response = await fetch(url, {
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest"
+                url.searchParams.set("user_id", userid);
+
+                const response = await fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } });
+
+                if (!response.ok) {
+                    throw new Error("Unable to retrieve details.");
                 }
-            });
 
-            if (!response.ok) {
-                throw new Error("Unable to retrieve the floor.");
+                const data = await response.json();
+
+                if (data.success) {
+                    const floorNames = {
+                        "1": "First Floor",
+                        "2": "Second Floor",
+                        "3": "Third Floor"
+                    };
+
+                    deptInput.value = data.department;
+
+                } 
+                else {
+                    deptInput.value = "";
+                }
+
+            } 
+            catch (error) {
+                console.error(error);
+                //floorInput.value = "";
             }
-
-            const data = await response.json();
-
-            if (data.success) {
-
-                const floorNames = {
-                    "1": "First Floor",
-                    "2": "Second Floor",
-                    "3": "Third Floor"
-                };
-
-                floorInput.value = floorNames[String(data.floor)] || data.floor;
-
-            } else {
-                floorInput.value = "";
-            }
-
-        } catch (error) {
-            console.error(error);
-            floorInput.value = "";
         }
-    }
-
-    // Update when placement changes
-    placementSelect.addEventListener("change", updatePlacementFloor);
-
-    // Update immediately when the page loads
-    updatePlacementFloor();
 });
 </script>
 {% endblock %}

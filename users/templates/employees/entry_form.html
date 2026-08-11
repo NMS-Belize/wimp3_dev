@@ -2,7 +2,7 @@
 {% block title %}{{ page_name }} | WIMP3 | NMS Belize{% endblock %}
 {% load static %}
 {% block content %}
-<form class="">
+<form class="" method="post">
     {% csrf_token %}
     {{ form.non_field_errors }}
     <!--<div class="row mb-3">
@@ -78,6 +78,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const checkbox = document.getElementById("id_has_user_account");
     const userContainer = document.getElementById("user-account-container");
+    const userSelect = document.getElementById("id_user");
+
+    toggleUserAccount();
+    checkbox.addEventListener("change", toggleUserAccount);
+
+    if (!userSelect) {
+        return;
+    }
 
     function toggleUserAccount() {
         if (checkbox.checked) {
@@ -86,8 +94,55 @@ document.addEventListener("DOMContentLoaded", function () {
             userContainer.style.display = "none";
         }
     }
-    toggleUserAccount();
-    checkbox.addEventListener("change", toggleUserAccount);
+    
+    userSelect.addEventListener("change", function () {
+
+        const userId = this.value;
+
+        if (!userId) {
+            return;
+        }
+
+        fetch(`/users/user-profile-data/${userId}/`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Unable to retrieve user profile.");
+                }
+                return response.json();
+            })
+            .then(data => {
+
+                //document.getElementById("id_first_name").value =
+                //    data.first_name || "";
+
+                //document.getElementById("id_last_name").value =
+                //    data.last_name || "";
+
+                document.getElementById("id_email").value =
+                    data.email || "";
+
+                document.getElementById("id_phone").value =
+                    data.phone || "";
+
+                if (document.getElementById("id_department")) {
+                    document.getElementById("id_department").value =
+                        data.department || "";
+                }
+
+                if (document.getElementById("id_job_title")) {
+                    document.getElementById("id_job_title").value =
+                        data.job_title || "";
+                }
+
+                //if (document.getElementById("id_office_location")) {
+                //    document.getElementById("id_office_location").value =
+                //        data.office_location || "";
+                //}
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    });
 });
 </script>
 {% endblock %}

@@ -29,7 +29,6 @@ class DeviceType(models.Model):
     def __str__(self):
         return self.name
     
-
 class Manufacturer(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
@@ -66,7 +65,7 @@ class InventoryItem(models.Model):
     device_type     = models.ForeignKey(DeviceType, on_delete=models.SET_NULL, blank=True, null=True)
 
     #assigned_user   = models.CharField(max_length=100, unique=False)
-    assigned_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True, related_name="assigned_inventory") # , limit_choices_to={"is_active": True},    
+    assigned_user   = models.ForeignKey("users.Employee", on_delete=models.SET_NULL, blank=True, null=True, related_name="assigned_inventory") # , limit_choices_to={"is_active": True},    
     placement       = models.ForeignKey("system_core.OfficeLocation",on_delete=models.SET_NULL,related_name='items',blank=True,null=True)
     department_section = models.ForeignKey("system_core.DepartmentSection", on_delete=models.SET_NULL, blank=True, null=True)
     #floor_level     = models.CharField(max_length=100, choices=FLOOR_CHOICES, blank=True, null=True)
@@ -154,7 +153,8 @@ class InventoryItemPhoto(models.Model):
         return f"Photo for {self.inventory_item.device_label}"
     
 class HardwareSpecifications(models.Model):
-    inventory_item  = models.CharField(max_length=200, unique=True, null=False)
+    inventory_item      = models.ForeignKey(InventoryItem, on_delete=models.SET_NULL, null=True,blank=True,related_name="inventory_item_hardware")
+    #inventory_item  = models.CharField(max_length=200, unique=True, null=False)
     service_tag     = models.CharField(max_length=30, blank=True, null=True)
     express_service_code = models.CharField(max_length=30, blank=True, null=True)
     processor       = models.CharField(max_length=100, blank=True, null=True)
@@ -177,8 +177,10 @@ class NetworkDetails(models.Model):
         ('B', 'Cabinet B')
     ]
 
-    inventory_item      = models.CharField(max_length=200, unique=True, null=False)
+    inventory_item      = models.ForeignKey(InventoryItem, on_delete=models.SET_NULL, null=True,blank=True,related_name="inventory_item_network")
+    #inventory_item      = models.CharField(max_length=200, unique=True, null=False)
     mac_address         = models.CharField(max_length=150, blank=True, null=True)
+    mac_address_wireless = models.CharField(max_length=150, blank=True, null=True)
     ip_address          = models.CharField(max_length=150, blank=True, null=True)
     switch_port_number  = models.CharField(max_length=150, blank=True, null=True)
     cabinet             = models.CharField(max_length=150, blank=True, null=True, choices=CABINET_CHOICES)

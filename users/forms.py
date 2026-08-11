@@ -30,7 +30,6 @@ class UserEntryForm(forms.ModelForm):
             #self.fields["password1"].help_text = ""
 
 class UserProfileForm(forms.ModelForm):
-
     class Meta:
         model = UserProfile
         fields = ["phone","department","job_title"]

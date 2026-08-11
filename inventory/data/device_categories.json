@@ -36,7 +36,7 @@
     },
     {
         "id": 8,
-        "name": "Printers, Copiers & Scanners",
+        "name": "Printers & Scanners",
         "description": "Printers, copiers, and scanners are office productivity devices used for document printing, duplication, digitization, and imaging. This category includes laser printers, inkjet printers, multifunction printers, photocopiers, flatbed scanners, and document scanning systems."
     },
     {
@@ -51,7 +51,7 @@
     },
     {
         "id": 11,
-        "name": "Audio & Video Equipment",
+        "name": "Audio, Video & Multimedia Equipment",
         "description": "Audio and video equipment includes devices used for multimedia communication, conferencing, recording, and presentation purposes. This category includes microphones, speakers, webcams, conference systems, televisions, digital cameras, and video recording equipment."
     },
     {
@@ -61,32 +61,17 @@
     },
     {
         "id": 13,
-        "name": "Telecommunication Equipment",
-        "description": "Telecommunication equipment includes hardware used for voice, video, and data communication within and between organizations. This category includes IP phones, PBX systems, radios, satellite communication devices, VoIP systems, and related communication infrastructure."
+        "name": "Radar Equipment",
+        "description": "Radar equipment includes specialized hardware and supporting components used for meteorological radar operations, weather monitoring, detection, and data acquisition. This category may include radar transmitters, receivers, antennas, signal processors, control units, display systems, communication components, and other equipment used to detect and analyze precipitation, storms, and atmospheric conditions."
     },
     {
         "id": 14,
-        "name": "Data Center & Rack Equipment",
-        "description": "Data center and rack equipment includes infrastructure used to house, organize, cool, and manage enterprise computing and networking hardware. This category includes server racks, patch panels, rack-mounted equipment, cable management systems, and environmental monitoring devices."
+        "name": "Hydrogen Generator",
+        "description": "Hydrogen generators are specialized systems used to produce hydrogen gas for meteorological and atmospheric observation activities. These systems support upper-air observations by supplying hydrogen for weather balloons and radiosonde operations. This category may include hydrogen generation units, control systems, storage and delivery components, safety equipment, and related accessories."
     },
     {
         "id": 15,
-        "name": "Software Licenses & Digital Assets",
-        "description": "Software licenses and digital assets include licensed software products, operating systems, productivity suites, security applications, subscriptions, and other digital resources managed as organizational IT assets."
-    },
-    {
-        "id": 16,
-        "name": "Cables, Adapters & Connectivity Accessories",
-        "description": "Cables, adapters, and connectivity accessories are supporting hardware components used to connect, extend, and integrate electronic devices and network systems. This category includes HDMI cables, Ethernet cables, USB adapters, power cords, docking adapters, and signal converters."
-    },
-    {
-        "id": 17,
-        "name": "IoT & Smart Devices",
-        "description": "Internet of Things (IoT) and smart devices are network-enabled electronic devices capable of collecting, transmitting, and processing data automatically. This category includes smart sensors, smart controllers, environmental monitoring devices, automation systems, and connected field equipment."
-    },
-    {
-        "id": 18,
-        "name": "Laboratory & Technical Equipment",
-        "description": "Laboratory and technical equipment includes specialized electronic or scientific devices used for testing, diagnostics, calibration, environmental monitoring, and technical operations. This category may include meteorological instruments, measurement devices, testing tools, and calibration systems."
+        "name": "Data Loggers",
+        "description": "Data loggers are electronic devices used to automatically collect, record, store, and transmit measurements from meteorological and environmental sensors. They are commonly used with automatic weather stations and monitoring systems to capture data such as temperature, humidity, atmospheric pressure, rainfall, wind speed, wind direction, solar radiation, and other environmental parameters."
     }
 ]

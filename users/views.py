@@ -7,7 +7,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required
 
 from django.urls import reverse
-from django.http import HttpResponse, request
+from django.http import HttpResponse, request, JsonResponse
 from django_tables2 import RequestConfig
 
 from users.forms import UserEntryForm, UserProfileForm, EmployeeForm
@@ -223,6 +223,8 @@ def employee_entry(request, id=None):
         if form.is_valid():
             saved_entry = form.save()    # Creates or updates
             return redirect('users:employee_list', saved_entry.id)
+        else:
+            print(form.errors)  # check terminal
     else:
         form = EmployeeForm(instance=entry)
 
@@ -252,4 +254,19 @@ def employee_delete(request, id):
         'entry':        entry,
         'page_name':    page_name,
         'back_url':     reverse('users:employee_list'),
+    })
+
+def user_profile_data(request, user_id):
+
+    user    = get_object_or_404(User, id=user_id)
+    #profile = getattr(user, "userprofile", None)
+
+    return JsonResponse({
+        #"first_name": user.first_name or "",
+        #"last_name": user.last_name or "",
+        "email": user.email or "",
+        "phone": user.phone if user else "",
+        "department": user.department_id if user and user.department else "",
+        "job_title": user.job_title_id if user and user.job_title else "",
+        #"office_location": user.office_location_id if profile and profile.office_location else "",
     })

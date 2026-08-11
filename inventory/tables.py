@@ -10,14 +10,15 @@ from .models import DeviceType, InventoryItem, InventoryCategory, Manufacturer, 
 class InventoryCategoryTable(tables.Table):
     edit = tables.Column(empty_values=(), verbose_name="Edit", orderable=False, attrs={"th": {"style": "width:60px;","class": "col_edit text-center"}, "td": {"style": "","class": "text-center col_edit"}})
     id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": "text-end"}, "td": {"style": "","class": "text-end"}})
-    name = tables.Column(verbose_name="Category Name",attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+    name = tables.Column(verbose_name="Category Name",attrs={"th": {"style": "width:400px;","class": ""}, "td": {"style": "","class": ""}})
+    description = tables.Column(verbose_name="Description",attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
     delete = tables.Column(empty_values=(), verbose_name="Delete", orderable=False, attrs={"th": {"style": "width:75px;","class": "col_edit text-center"},"td": {"style": "","class": "col_delete text-center", }})
 
     class Meta:
         model = InventoryCategory
         template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
-        fields = ("edit","id","name","delete")
-        sequence = ("edit","name","id","delete")
+        fields = ("edit","id","name","description","delete")
+        sequence = ("edit","name","description","id","delete")
 
         # Add table HTML id and CSS classes here
         attrs = {
@@ -28,6 +29,10 @@ class InventoryCategoryTable(tables.Table):
     def render_edit(self, record):
         url = reverse("inventory:inventory_category_entry", args=[record.id])
         return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
+
+    def render_description(self, value):
+        short = value[:80] + "..." if len(value) > 80 else value
+        return format_html('<span title="{}">{}</span>', value, short)
     
     def render_delete(self, record):
         url = reverse("inventory:inventory_category_delete", args=[record.id])

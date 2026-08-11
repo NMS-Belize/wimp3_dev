@@ -35,6 +35,8 @@ urlpatterns = [
     path('employee/entry/<int:id>/', views.employee_entry, name="employee_entry"),
     path('employee/entry/delete/<int:id>/', views.employee_delete, name="employee_delete"),
 
+    path("user-profile-data/<int:user_id>/",views.user_profile_data,name="user_profile_data"),
+
     #path('entry-details/<int:id>/', views.user_entry_details, name="user_entry_details"),
     #path('entry/<int:id>/', views.user_entry, name="user_entry"),
     #path('entry/<int:id>/toggle-active/', views.user_active_toggle, name='user_active_toggle'),
