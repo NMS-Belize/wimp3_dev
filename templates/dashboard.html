@@ -61,7 +61,7 @@
                     </a>
                 </div>
                 {% endif %}
-                {% if perms.alerts.view_alert %}
+                {% if perms.alerts.view_tropicalweatheralerts %}
                 <div class="item_dashboard position-relative">
                     <a class="position-absolute top-50 start-50 translate-middle" href="#">
                         <img src="{% static 'button_icons/alert.png' %}" alt="Weather Alerts" />
@@ -69,7 +69,7 @@
                     </a>
                 </div>
                 {% endif %}
-                {% if perms.radar.view_radarimage %}
+                {% if perms.radar.view_radarimages %}
                 <div class="item_dashboard position-relative">
                     <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'radar:radar_images_list' %}">
                         <img src="{% static 'button_icons/radar.png' %}" alt="Radar Imagery" />
