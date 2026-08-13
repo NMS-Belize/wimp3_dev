@@ -26,8 +26,10 @@ router.register('users',    agro_views.UserViewSet)
 router.register('groups',   agro_views.GroupViewSet)
 
 ### FORECASTS API ROUTES ###
-router.register('district-forecast',        forecasts_views.DistrictForecastViewSet,    basename='district-forecast')
-router.register('district-forecasts-all',   forecasts_views.DistrictForecastAllViewSet, basename='district-forecasts-all')
+router.register('district-forecast',            forecasts_views.DistrictForecastViewSet,        basename='district-forecast')
+router.register('district-forecasts-all',       forecasts_views.DistrictForecastAllViewSet,     basename='district-forecasts-all')
+router.register('general-weather-forecast',     forecasts_views.GeneralForecastViewSet,         basename='general-weather-forecast')
+router.register('general-weather-forecast-all', forecasts_views.GeneralForecastAllViewSet,      basename='general-weather-forecast-all')
 
 ### AGRO API ROUTES ###
 router.register('sectors',      agro_views.SectorViewSet, basename='sectors')
@@ -42,7 +44,8 @@ router.register('pest-risk',    agro_views.PestRiskMainListingViewSet, basename=
 #router.register('alert-levels', agro_views.AlertLevelViewSet, basename='pestalertlevels')
 
 ### ALERTS API ROUTES ###
-#router.register('cap-alerts', alert_views.CAPAlertsViewSet, basename='capalerts')
+router.register('cap', alert_views.CAPAlertsViewSet, basename='cap')
+router.register('cap-all', alert_views.CAPAlertsAllViewSet, basename='cap-all')
 #router.register('cap-alert-details', alert_views.CAPAlertDetailsViewSet, basename='capalertdetails')
 
 ### RADAR SERVICES API ROUTES ###

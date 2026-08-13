@@ -1,7 +1,7 @@
 from rest_framework import serializers
 #from system_core.serializers import DistrictSerializer, AlertLevelSerializer
 
-from forecasts.models import DistrictForecast, DistrictForecastDetails
+from forecasts.models import DistrictForecast, DistrictForecastDetails, ForecastGeneral
 
 class DistrictForecastDetailsSerializer(serializers.ModelSerializer):
     
@@ -204,3 +204,23 @@ class DistrictForecastSerializer(serializers.ModelSerializer):
     #details     = DistrictForecastDetailsSerializer(many=True,read_only=True,source='district_forecast_details')
 
     #district    = DistrictSerializer(read_only=True,)
+
+class GeneralForecastSerializer(serializers.ModelSerializer):
+
+    created_by  = serializers.SerializerMethodField()
+    updated_by  = serializers.SerializerMethodField()
+    forecast_category = serializers.StringRelatedField()
+
+    class Meta:
+        model   = ForecastGeneral
+        fields = '__all__'
+
+    def get_created_by(self, obj):
+        if obj.created_by:
+            return obj.created_by.get_full_name() or obj.created_by.username
+        return ""
+
+    def get_updated_by(self, obj):
+        if obj.updated_by:
+            return obj.updated_by.get_full_name() or obj.updated_by.username
+        return ""

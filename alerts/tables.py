@@ -141,7 +141,7 @@ class CAPAlertsTable(tables.Table):
     
     pubdate     = tables.Column(verbose_name="Published Date", attrs={"th": {"style": "width:160px","class": ""}, "td": {"style": "","class": "fst-italic"}})
 
-    is_published = tables.TemplateColumn(verbose_name="Status", empty_values=(), template_name="tables/publish_cap_toggle.html",
+    is_published = tables.TemplateColumn(verbose_name="Status", empty_values=(), template_name="cap/publish_toggle.html",
                         attrs={ "th": {"style": "width:40px;","class": "text-center"}, "td": {"style": "","class": "text-center"}, }, orderable=False)
     
     view_details = tables.Column(verbose_name="Details", empty_values=(), attrs={ "th": {"style": "width:40px; text-align:center;","class": ""}, "td": {"style": "text-align:center;","class": "col_details"} })

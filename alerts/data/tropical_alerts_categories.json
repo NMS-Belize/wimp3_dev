@@ -1,0 +1,34 @@
+[
+    {
+        "id": 1,
+        "description": "Tropical Depression"
+    },
+    {
+        "id": 2,
+        "description": "Tropical Wave"
+    },
+    {
+        "id": 3,
+        "description": "Tropical Storm"
+    },
+    {
+        "id": 4,
+        "description": "Hurricane: Category 1"
+    },
+    {
+        "id": 5,
+        "description": "Hurricane: Category 2"
+    },
+    {
+        "id": 6,
+        "description": "Hurricane: Category 3"
+    },
+    {
+        "id": 7,
+        "description": "Hurricane: Category 4"
+    },
+    {
+        "id": 8,
+        "description": "Hurricane: Category 5"
+    }    
+]

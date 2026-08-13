@@ -19,8 +19,8 @@ from wimp import serializers
 from .models import CAPAlerts, CAPAlertDetails, TropicalWeatherAlerts, TropicalWeatherAlertsCategory
 from .tables import CAPAlertsTable, CAPAlertsDetailsTable, TropicalWeatherALertsCategoryTable, TropicalWeatherALertsTable
 from .forms import TropicalWeatherAlertsCategoryForm, TropicalWeatherAlertsForm
+from .serializers import  CAPAlertsSerializer, CAPAlertDetailsSerializer, CAPAlertsAllSerializer, TropicalAlertsSerializer, TropicalAlertsCategoriesSerializer
 
-from . import serializers as sx
 from rest_framework import viewsets
 
 def index(request):
@@ -50,8 +50,7 @@ def cap_alerts_list(request, id=None):
         'table': table,
         'new_url': reverse('alerts:cap_alerts_import'),
         'back_url': reverse('alerts:index'),
-
-        #'api_url': reverse('alerts:capalerts-list'),
+        'api_url': reverse('cap-list'),
     }
     return render(request, 'cap_list_template.html', context)
 
@@ -68,22 +67,19 @@ def cap_alerts_import(request, id=None):
 
 def cap_alerts_details(request, id=None):
 
-    if guid is not None:
-        entry   = get_object_or_404(CAPAlerts, guid=guid)
-        qs      = CAPAlertDetails.objects.filter(identifier=guid)
-        data    = data = qs.values().first()
+    if id is not None:
+        main_entry   = get_object_or_404(CAPAlerts, id=id)
+        guid = main_entry.guid
 
-        entry_details = JsonResponse(data, safe=False)
-        
-        #table = CAPAlertsDetailsTable(qs)
-        #RequestConfig(request).configure(table)
+        entry_details = get_object_or_404(CAPAlertDetails, identifier=guid)
 
     context = {
-        #'table': table,
         'page_name': "CAP Alerts Details",
+        'prev_page': 'CAP Alerts List',
         'entry_details': entry_details,
+        'back_url': reverse('alerts:cap_alerts_list'),
     }
-    return render(request, 'cap_details_template.html', context)
+    return render(request, 'cap/table_list_details.html', context)
 
 def cap_alert_toggle_is_published(request, id):
 
@@ -267,10 +263,17 @@ def tropical_alerts_toggle_is_published(request, id):
     return redirect("alerts:tropical_alerts_list")
 
 #API endpoint that allows groups to be viewed or edited.
-class CAPAlertsViewSet(viewsets.ModelViewSet):
+class CAPAlertsAllViewSet(viewsets.ModelViewSet):
    queryset = CAPAlerts.objects.all()
-   serializer_class = sx.CAPAlertsSerializer
+   serializer_class = CAPAlertsAllSerializer
+   http_method_names = ['get', 'head','options']
+
+class CAPAlertsViewSet(viewsets.ModelViewSet):
+   queryset = CAPAlerts.objects.filter(is_published=True)
+   serializer_class = CAPAlertsSerializer
+   http_method_names = ['get', 'head','options']
 
 class CAPAlertDetailsViewSet(viewsets.ModelViewSet):
    queryset = CAPAlertDetails.objects.all()
-   serializer_class = sx.CAPAlertDetailsSerializer
+   serializer_class = CAPAlertDetailsSerializer
+   http_method_names = ['get', 'head','options']

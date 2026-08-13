@@ -1,16 +1,20 @@
 {% load static %}
 <div class="form-group mb-3">
     <div class="d-flex flex-row justify-content-end p-2 bg-light border border-light-subtle">
+        {% if back_url %}
         <div class="table_item_dashboard">
             <a class="btn-link" href="{{ back_url }}">
                 <img src="{% static 'button_icons/previous.png' %}" alt="Inventory List" />&nbsp;<span class="task_desc">Back to {{ prev_page }}</span>
             </a>
         </div>
+        {% endif %}
+        {% if new_url %}
         <div class="table_item_dashboard">
             <a class="btn-link" href="{{ new_url }}">
                 <img src="{% static 'button_icons/add-file.png' %}" alt="Inventory List" />&nbsp;<span class="task_desc">New Entry</span>
             </a>
         </div>
+        {% endif %}
         {% if weburl %}
         <div class="table_item_dashboard">
             <a class="btn-link" href="{{ back_url }}">

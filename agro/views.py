@@ -4,22 +4,18 @@ from django.db import IntegrityError
 from django.db.models import Prefetch
 
 from django.contrib import messages
-from django.contrib.auth import login as auth_login, logout, authenticate
+#from django.contrib.auth import login as auth_login, logout, authenticate
 from django.contrib.auth.models import Group, User
 from django.core.management import call_command
 from django.forms.models import model_to_dict
-from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, redirect, get_object_or_404
-from django.template import loader
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
 
 from django_tables2 import RequestConfig
 from rest_framework import permissions, viewsets
-from rest_framework_api_key.permissions import HasAPIKey
 from wimp.serializers import GroupSerializer, UserSerializer
 
 from agro.models import PestRisk, PestRiskEntryDetails, PestRiskAction, PestRiskEffect, Sector, Commodity, DroughtAlertLevel
@@ -28,7 +24,7 @@ from agro.tables import PestRiskMainListTable, PestRiskDetailsTable, PestAlertLe
 from agro.serializers import CommodityCategorySerializer, SectorSerializer, PestRiskEntryDetailsSerializer, PestRiskSerializer, ActionItemsSerializer, EffectItemsSerializer, DroughtAlertLevelSerializer
 
 from system_core.models import Zone, District
-from system_core.serializers import ZoneSerializer, DistrictSerializer, AlertLevelSerializer
+from system_core.serializers import ZoneSerializer, DistrictSerializer
 
 #from .serializers import CommodityTypeSerializer, CommodityCategorySerializer
 

@@ -1,0 +1,23 @@
+{% extends "base_table.html" %}
+{% block title %}{{ page_name }} | Alerts | WIMP3{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        {% load render_table from django_tables2 %}
+        <form method="get" class="mb-3 alert alert-light">
+            <div class="row">
+                {% for field in filter.form %}
+                    <div class="col-2 mb-2">
+                        {{ field }}
+                    </div>
+                {% endfor %}
+                <div class="col-4 mb-2">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                    <a href="{% url 'alerts:cap_alerts_list' %}" class="btn btn-secondary">Clear</a>
+                </div>
+            </div>
+        </form>
+        {% render_table table %}
+    </div>
+</div>
+{% endblock %}

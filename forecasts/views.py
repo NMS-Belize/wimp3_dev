@@ -37,7 +37,7 @@ from forecasts.models import (
 from forecasts.filters import ForecastGeneralFilter
 from system_core.models import District
 
-from . import serializers as sx
+from forecasts.serializers import DistrictForecastSerializer, DistrictForecastDetailsSerializer, GeneralForecastSerializer
 
 PAGE_WIDTH, PAGE_HEIGHT = letter
 
@@ -80,7 +80,7 @@ def general_forecast_list(request, id=None):
         'new_url':  reverse('forecasts:district_forecast_entry'),
         'back_url': reverse('forecasts:index'),
         'webpage_url': "forecast/general-weather-forecast/",
-        #'api_url':  reverse('forecasts:district-forecast-list'),
+        'api_url':  reverse('general-weather-forecast-list'),
     })
 
 def general_forecast_entry(request, id=None):
@@ -530,8 +530,7 @@ def district_forecast_list(request, id=None):
         'table': table,
         'new_url':  reverse('forecasts:district_forecast_entry'),
         'back_url': reverse('forecasts:index'),
-        'webpage_url': "forecast/district-forecast/",
-        #'api_url':  reverse('forecasts:district-forecast-list'),
+        'api_url':  reverse('district-forecast-list'),
     })
 
 def district_forecast_entry(request, id=None):
@@ -647,6 +646,150 @@ def district_forecast_toggle_is_published_ajax(request, id):
         "success": True,
         "is_published": record.is_published
     })
+
+def district_forecast_generate_pdf(request, id=None):
+
+    forecast = get_object_or_404(DistrictForecast, id=id)
+
+    # Create a file-like buffer to receive PDF data
+    #buffer = io.BytesIO()
+
+    # Folder where PDF will be saved
+    folder_path = os.path.join(jsettings.MEDIA_ROOT, "forecast", "district_forecasts","doc")
+    os.makedirs(folder_path, exist_ok=True)
+
+    # Full PDF file path
+    filename = f"District_Forecast_{forecast.forecast_date}_NMS_BZ.pdf"
+    file_path = os.path.join(folder_path, filename)
+
+    doc = SimpleDocTemplate(file_path, pagesize=letter, leftMargin=0.5 * inch, rightMargin=0.5 * inch, topMargin=2 * inch, bottomMargin=0.5 * inch)
+
+    styles = getSampleStyleSheet()
+    elements = []
+
+    main_title  = ParagraphStyle("MainTitle",   parent = styles["Title"],   fontName = "OpenSans-SemiBold", fontSize = 22, leading = 26, alignment = TA_LEFT, textColor = "#00537A", spaceAfter = 10)
+    sub_title   = ParagraphStyle("SubTitle",    parent = styles["Title"],   fontName = "OpenSans-Bold",     fontSize = 10, leading = 14, alignment = TA_LEFT, textColor = "#000000", spaceAfter = 10)
+    main_text   = ParagraphStyle("MainText",    parent = styles["Normal"],  fontName = "OpenSans-Regular",  fontSize = 10, leading = 18, alignment = TA_LEFT, textColor = "#000000", spaceAfter = 6)
+    foot_text   = ParagraphStyle("FootText",    parent = styles["Normal"],  fontName = "OpenSans-Regular",  fontSize = 8, leading = 12, alignment = TA_LEFT, textColor = "#000000", spaceAfter = 2)
+    table_head  = ParagraphStyle("TableHeader", parent = styles["Normal"],  fontName = "OpenSans-Bold",     fontSize = 9, leading = 9, spaceAfter = 10 )
+    table_first = ParagraphStyle("TableCol1",   parent = styles["Normal"],  fontName="OpenSans-Bold",       fontSize = 10 )
+    table_body  = ParagraphStyle("TableBody",   parent = styles["Normal"],  fontName = "OpenSans-Regular",  fontSize = 10, leading = 12, spaceAfter = 0 )
+    risk_text   = ParagraphStyle("RiskText",    parent = styles["Normal"],  fontName = "OpenSans-Bold",     fontSize = 10, spaceAfter = 40 )
+
+    details = DistrictForecastDetails.objects.filter(forecast=forecast).select_related("district").order_by("district__district_name")
+
+    data = [[
+        Paragraph("DISTRICT", table_head),
+        Paragraph("WEATHER CONDITIONS", table_head),
+        Paragraph("TEMP<br/><font size='8'>(MIN)</font>", table_head),
+        Paragraph("TEMP<br/><font size='8'>(MAX)</font>", table_head),
+        Paragraph("RAINFALL<br/><font size='8'>(24HR)</font>", table_head),
+        Paragraph("WINDS", table_head),
+    ]]
+
+    for item in details:
+        wind = ""
+        if item.winds_min is not None and item.winds_max is not None:
+            wind = f"{item.winds_min}-{item.winds_max} kts"
+        
+        weather_prob    = item.prob_weather_conditions.description.upper() if item.prob_weather_conditions else ""
+        temp_min_prob   = item.prob_temp_min.description.upper() if item.prob_temp_min else ""
+        temp_max_prob   = item.prob_temp_max.description.upper() if item.prob_temp_max else ""
+        precip_prob     = item.prob_precip_max.description.upper() if item.prob_precip_max else ""
+        wind_prob       = item.prob_winds.description.upper() if item.prob_winds else ""
+
+        weather_color   = get_risk_color(item.prob_weather_conditions_id)
+        temp_min_color  = get_risk_color(item.prob_temp_min_id)
+        temp_max_color  = get_risk_color(item.prob_temp_max_id)
+        precip_color    = get_risk_color(item.prob_precip_max_id)
+        wind_color      = get_risk_color(item.prob_winds_id)
+
+        weather_text    = item.weather_conditions or ""
+        temp_min_text   = f"{item.temp_min}°F" if item.temp_min is not None else ""
+        temp_max_text   = f"{item.temp_max}°F" if item.temp_max is not None else ""
+        precip_text     = f"{item.precip_max:.1f} in" if item.precip_max is not None else ""
+        wind_text       = wind
+        
+        weather_prob_text   = (f"<font size='8' color='{weather_color}'>{weather_prob}</font>") if weather_prob else ""
+        temp_min_prob_text  = (f"<font size='8' color='{temp_min_color}'>{temp_min_prob}</font>") if temp_min_prob else ""
+        temp_max_prob_text  = (f"<font size='8' color='{temp_max_color}'>{temp_max_prob}</font>") if temp_max_prob else ""
+        precip_prob_text    = (f"<font size='8' color='{precip_color}'>{precip_prob}</font>") if precip_prob else ""
+        wind_prob_text      = (f"<font size='8' color='{wind_color}'>{wind_prob}</font>") if wind_prob else ""
+
+        data.append([
+            Paragraph(item.district.district_name if item.district else "", table_first),
+            Paragraph(weather_text, table_body),
+            Paragraph(temp_min_text, table_body),
+            Paragraph(temp_max_text, table_body),
+            Paragraph(precip_text, table_body),
+            Paragraph(wind_text, table_body),
+        ])
+        data.append([
+            Paragraph("<font color='#000000' size='8'>Risk Level: </font>", table_body),
+            Paragraph(weather_prob_text, risk_text),
+            Paragraph(temp_min_prob_text, risk_text),
+            Paragraph(temp_max_prob_text, risk_text),
+            Paragraph(precip_prob_text, risk_text),
+            Paragraph(wind_prob_text, risk_text),
+        ])
+
+    available_width = doc.width
+
+    table = Table(
+        data,
+        colWidths=[
+            available_width * 0.15,
+            available_width * 0.38,
+            available_width * 0.10,
+            available_width * 0.10,
+            available_width * 0.12,
+            available_width * 0.15,
+        ],
+        repeatRows = 1
+    )
+
+    style = TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#b2d9d0")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.black),
+        ("ALIGN", (1, 1), (4, -1), "CENTER"),
+        #("VALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("VALIGN", (0, 0), (-1, 0), "MIDDLE"),
+
+        ("ALIGN", (0, 1), (-1, -1), "LEFT"),
+        
+        # Data rows
+        ("VALIGN", (0, 1), (-1, -1), "TOP"),
+        #("GRID", (0, 0), (-1, -1), 0.5, colors.white),
+        ("LEFTPADDING", (0, 0), (-1, -1), 4),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 4),
+        ("TOPPADDING", (0, 0), (-1, -1), 2),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
+    ])
+
+    for row in range(2, len(data), 2):
+        style.add("LINEBELOW",(0, row),(-1, row),0.5, colors.HexColor("#b2d9d0"))
+    
+    table.setStyle(style)
+
+    forecaster = ""
+    if forecast.created_by:
+        forecaster = forecast.created_by.get_full_name() or forecast.created_by.username
+
+    elements.append(Paragraph("District Level Forecast", main_title))
+    elements.append(Paragraph(f"Forecast Date: {forecast.forecast_date.strftime('%B %d, %Y')}", sub_title))
+    elements.append(table)
+    elements.append(Spacer(1, 12))
+    elements.append(Paragraph(f"Forecaster: {forecaster}", foot_text))
+    elements.append(Paragraph(f"Date Created: {forecast.created_datetime.strftime('%B %d, %Y | %I:%M %p')}; Last Updated: {forecast.updated_datetime.strftime('%B %d, %Y | %I:%M %p')}", foot_text))
+
+    doc.build(elements,
+        onFirstPage=add_background_wafs_full,
+        onLaterPages=add_background_wafs_full
+    )
+    available_width = doc.width
+
+    # Return saved PDF as download
+    return FileResponse(open(file_path, "rb"), as_attachment=False, filename=filename)
 
 ############# DISTRICT FORECASTS: Details List #############
 def district_forecast_details_list(request, id=None, fk=None):
@@ -839,170 +982,7 @@ def get_risk_color(level):
 
     return "#000000"
 
-def generate_pdf(request, id=None):
 
-    forecast = get_object_or_404(DistrictForecast, id=id)
-
-    # Create a file-like buffer to receive PDF data
-    #buffer = io.BytesIO()
-
-    # Folder where PDF will be saved
-    folder_path = os.path.join(jsettings.DOCS_ROOT, "District_Forecasts")
-    os.makedirs(folder_path, exist_ok=True)
-
-    # Full PDF file path
-    filename = f"District_Forecast_NMS_BZ_{forecast.forecast_date}.pdf"
-    file_path = os.path.join(folder_path, filename)
-
-    doc = SimpleDocTemplate(file_path, pagesize=letter, leftMargin=0.5 * inch, rightMargin=0.5 * inch, topMargin=2 * inch, bottomMargin=0.5 * inch)
-
-    styles = getSampleStyleSheet()
-    elements = []
-
-    main_title  = ParagraphStyle("MainTitle",   parent = styles["Title"],   fontName = "OpenSans-SemiBold", fontSize = 22, leading = 26, alignment = TA_LEFT, textColor = "#00537A", spaceAfter = 10)
-    sub_title   = ParagraphStyle("SubTitle",    parent = styles["Title"],   fontName = "OpenSans-Bold",     fontSize = 10, leading = 14, alignment = TA_LEFT, textColor = "#000000", spaceAfter = 10)
-    main_text   = ParagraphStyle("MainText",    parent = styles["Normal"],  fontName = "OpenSans-Regular",  fontSize = 10, leading = 18, alignment = TA_LEFT, textColor = "#000000", spaceAfter = 6)
-    foot_text   = ParagraphStyle("FootText",    parent = styles["Normal"],  fontName = "OpenSans-Regular",  fontSize = 8, leading = 12, alignment = TA_LEFT, textColor = "#000000", spaceAfter = 2)
-    table_head  = ParagraphStyle("TableHeader", parent = styles["Normal"],  fontName = "OpenSans-Bold",     fontSize = 9, leading = 9, spaceAfter = 10 )
-    table_first = ParagraphStyle("TableCol1",   parent = styles["Normal"],  fontName="OpenSans-Bold",       fontSize = 10 )
-    table_body  = ParagraphStyle("TableBody",   parent = styles["Normal"],  fontName = "OpenSans-Regular",  fontSize = 10, leading = 12, spaceAfter = 0 )
-    risk_text   = ParagraphStyle("RiskText",    parent = styles["Normal"],  fontName = "OpenSans-Bold",     fontSize = 10, spaceAfter = 40 )
-
-    details = DistrictForecastDetails.objects.filter(forecast=forecast).select_related("district").order_by("district__district_name")
-
-    data = [[
-        Paragraph("DISTRICT", table_head),
-        Paragraph("WEATHER CONDITIONS", table_head),
-        Paragraph("TEMP<br/><font size='8'>(MIN)</font>", table_head),
-        Paragraph("TEMP<br/><font size='8'>(MAX)</font>", table_head),
-        Paragraph("RAINFALL<br/><font size='8'>(24HR)</font>", table_head),
-        Paragraph("WINDS", table_head),
-    ]]
-
-    for item in details:
-        wind = ""
-        if item.winds_min is not None and item.winds_max is not None:
-            wind = f"{item.winds_min}-{item.winds_max} kts"
-        
-        weather_prob    = item.prob_weather_conditions.description.upper() if item.prob_weather_conditions else ""
-        temp_min_prob   = item.prob_temp_min.description.upper() if item.prob_temp_min else ""
-        temp_max_prob   = item.prob_temp_max.description.upper() if item.prob_temp_max else ""
-        precip_prob     = item.prob_precip_max.description.upper() if item.prob_precip_max else ""
-        wind_prob       = item.prob_winds.description.upper() if item.prob_winds else ""
-
-        weather_color   = get_risk_color(item.prob_weather_conditions_id)
-        temp_min_color  = get_risk_color(item.prob_temp_min_id)
-        temp_max_color  = get_risk_color(item.prob_temp_max_id)
-        precip_color    = get_risk_color(item.prob_precip_max_id)
-        wind_color      = get_risk_color(item.prob_winds_id)
-
-        weather_text    = item.weather_conditions or ""
-        temp_min_text   = f"{item.temp_min}°F" if item.temp_min is not None else ""
-        temp_max_text   = f"{item.temp_max}°F" if item.temp_max is not None else ""
-        precip_text     = f"{item.precip_max:.1f} in" if item.precip_max is not None else ""
-        wind_text       = wind
-        
-        if weather_prob:
-            weather_prob_text = (f"<font size='8' color='{weather_color}'>{weather_prob}</font>")
-
-        if temp_min_prob:
-            temp_min_prob_text = (f"<font size='8' color='{temp_min_color}'>{temp_min_prob}</font>")
-
-        if temp_max_prob:
-            temp_max_prob_text = (f"<font size='8' color='{temp_max_color}'>{temp_max_prob}</font>")
-
-        if precip_prob:
-            precip_prob_text = (f"<font size='8' color='{precip_color}'>{precip_prob}</font>")
-        
-        if wind_prob:
-            wind_prob_text = (f"<font size='8' color='{wind_color}'>{wind_prob}</font>")
-
-        data.append([
-            Paragraph(item.district.district_name if item.district else "", table_first),
-            Paragraph(weather_text, table_body),
-            Paragraph(temp_min_text, table_body),
-            Paragraph(temp_max_text, table_body),
-            Paragraph(precip_text, table_body),
-            Paragraph(wind_text, table_body),
-        ])
-        data.append([
-            Paragraph("<font color='#000000' size='8'>Risk Level: </font>", table_body),
-            Paragraph(weather_prob_text, risk_text),
-            Paragraph(temp_min_prob_text, risk_text),
-            Paragraph(temp_max_prob_text, risk_text),
-            Paragraph(precip_prob_text, risk_text),
-            Paragraph(wind_prob_text, risk_text),
-        ])
-
-    available_width = doc.width
-
-    table = Table(
-        data,
-        colWidths=[
-            available_width * 0.15,
-            available_width * 0.38,
-            available_width * 0.10,
-            available_width * 0.10,
-            available_width * 0.12,
-            available_width * 0.15,
-        ],
-        repeatRows = 1
-    )
-
-    style = TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#b2d9d0")),
-        ("TEXTCOLOR", (0, 0), (-1, 0), colors.black),
-        ("ALIGN", (1, 1), (4, -1), "CENTER"),
-        #("VALIGN", (0, 0), (-1, -1), "CENTER"),
-        ("VALIGN", (0, 0), (-1, 0), "MIDDLE"),
-
-        ("ALIGN", (0, 1), (-1, -1), "LEFT"),
-        
-        # Data rows
-        ("VALIGN", (0, 1), (-1, -1), "TOP"),
-        #("GRID", (0, 0), (-1, -1), 0.5, colors.white),
-        ("LEFTPADDING", (0, 0), (-1, -1), 4),
-        ("RIGHTPADDING", (0, 0), (-1, -1), 4),
-        ("TOPPADDING", (0, 0), (-1, -1), 2),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
-    ])
-
-    for row in range(2, len(data), 2):
-        style.add("LINEBELOW",(0, row),(-1, row),0.5, colors.HexColor("#b2d9d0"))
-    
-    table.setStyle(style)
-
-    forecaster = ""
-    if forecast.created_by:
-        forecaster = forecast.created_by.get_full_name() or forecast.created_by.username
-
-    elements.append(Paragraph("District Level Forecast", main_title))
-    elements.append(Paragraph(f"Forecast Date: {forecast.forecast_date.strftime('%B %d, %Y')}", sub_title))
-    elements.append(table)
-    elements.append(Spacer(1, 12))
-    elements.append(Paragraph(f"Forecaster: {forecaster}", foot_text))
-    elements.append(Paragraph(f"Date Created: {forecast.created_datetime.strftime('%B %d, %Y | %I:%M %p')}; Last Updated: {forecast.updated_datetime.strftime('%B %d, %Y | %I:%M %p')}", foot_text))
-
-    doc.build(elements,
-        onFirstPage=add_background_wafs_full,
-        onLaterPages=add_background_wafs_full
-    )
-    available_width = doc.width
-
-    #buffer.seek(0)
-
-    # Display in browser
-    '''return FileResponse(
-        buffer,
-        content_type='application/pdf'
-    )'''
-
-    # Return saved PDF as download
-    return FileResponse(
-        open(file_path, "rb"),
-        as_attachment=False,
-        filename=filename
-    )
 
 class WIMP2FilesAPIView(APIView):
 
@@ -1088,20 +1068,29 @@ class WIMP2FilesAPIView(APIView):
     
 class DistrictForecastDetailsViewSet(viewsets.ModelViewSet):
    queryset = DistrictForecastDetails.objects.all().order_by('id')
-   serializer_class = sx.DistrictForecastDetailsSerializer
+   serializer_class = DistrictForecastDetailsSerializer
    http_method_names = ['get', 'head','options']
 
 class DistrictForecastAllViewSet(viewsets.ModelViewSet):
     queryset = DistrictForecast.objects.all().order_by("-forecast_date").prefetch_related("district_forecast_details")
-    serializer_class = sx.DistrictForecastSerializer
+    serializer_class = DistrictForecastSerializer
     pagination_class = None
     http_method_names = ['get', 'head','options']
 
 class DistrictForecastViewSet(viewsets.ModelViewSet):
-    #authentication_classes = [TokenAuthentication]
-    #permission_classes = [IsAuthenticated]
     queryset = DistrictForecast.objects.filter(is_published=True).prefetch_related("district_forecast_details")
-    serializer_class = sx.DistrictForecastSerializer
+    serializer_class = DistrictForecastSerializer
     pagination_class = None
     http_method_names = ['get', 'head','options']
 
+class GeneralForecastAllViewSet(viewsets.ModelViewSet):
+    queryset = ForecastGeneral.objects.all().order_by("-forecast_date","-forecast_time")
+    serializer_class = GeneralForecastSerializer
+    pagination_class = None
+    http_method_names = ['get', 'head','options']
+
+class GeneralForecastViewSet(viewsets.ModelViewSet):
+    queryset = ForecastGeneral.objects.filter(is_published=True)
+    serializer_class = GeneralForecastSerializer
+    pagination_class = None
+    http_method_names = ['get', 'head','options']

@@ -9,6 +9,24 @@ urlpatterns = [
     #path('new/', views.inventory_entry, name='inventory_entry'),
     #path('edit/<int:pk>/', views.inventory_edit, name='inventory_edit'),
 
+    ## DISTRICT FORECASTS
+    path('district-forecast/list/', views.district_forecast_list, name="district_forecast_list"),
+    path('district-forecast/list/<int:id>/', views.district_forecast_list,name='district_forecast_list'),
+
+    path('district-forecast/entry/', views.district_forecast_entry, name="district_forecast_entry"),
+    path('district-forecast/entry/<int:id>/', views.district_forecast_entry,name='district_forecast_entry'),
+    path('district-forecast/entry/<int:id>/delete/', views.district_forecast_delete,name='district_forecast_delete'),
+    path('district-forecast/entry/<int:id>/generate-pdf/', views.district_forecast_generate_pdf, name="district_forecast_generate_pdf"),
+    path('district-forecast/entry/<int:id>/toggle-publish/', views.district_forecast_toggle_is_published, name='district_forecast_toggle_is_published'),
+    path('district-forecast/entry/<int:id>/toggle-publish-ajax/', views.district_forecast_toggle_is_published_ajax, name='district_forecast_toggle_is_published_ajax'),
+
+    path('district-forecast/entry/<int:fk>/item/<int:id>/', views.district_forecast_details_entry_item, name='district_forecast_details_entry_item'),
+
+    ## DISTRICT FORECASTS: Details
+    path('district-forecast/entry/<int:id>/details/',views.district_forecast_details_entry,name='district_forecast_details_entry'),
+    path('district-forecast/entry/details-list/',           views.district_forecast_details_list, name="district_forecast_details_list"),
+    path('district-forecast/entry/details-list/<int:id>/',  views.district_forecast_details_list, name="district_forecast_details_list_id"),
+    
     ## DISTRICT FORECASTS: Instructions
     path('district-forecast/instructions/list/', views.instructions_list, name="instructions_list"),
     path('district-forecast/instructions/list/<int:id>/', views.instructions_list, name='instructions_list'),
@@ -54,23 +72,7 @@ urlpatterns = [
     path("general-weather-forecast/import-data/", views.import_general_weather_forecast_categories, name="import_general_weather_forecast_categories"),
 
     
-    ## DISTRICT FORECASTS: District Forecast
-    path('district-forecast/list/', views.district_forecast_list, name="district_forecast_list"),
-    path('district-forecast/list/<int:id>/', views.district_forecast_list,name='district_forecast_list'),
-
-    path('district-forecast/entry/', views.district_forecast_entry, name="district_forecast_entry"),
-    path('district-forecast/entry/<int:id>/', views.district_forecast_entry,name='district_forecast_entry'),
-    path('district-forecast/entry/<int:id>/delete/', views.district_forecast_delete,name='district_forecast_delete'),
-    path('district-forecast/entry/<int:id>/toggle-publish/', views.district_forecast_toggle_is_published, name='district_forecast_toggle_is_published'),
-    path('district-forecast/entry/<int:id>/toggle-publish-ajax/', views.district_forecast_toggle_is_published_ajax, name='district_forecast_toggle_is_published_ajax'),
-
-    path('district-forecast/entry/<int:id>/generate-pdf/', views.generate_pdf, name="generate_pdf"),
-
-    path('district-forecast/entry/<int:id>/details/',views.district_forecast_details_entry,name='district_forecast_details_entry'),
-    path('district-forecast/entry/<int:fk>/item/<int:id>/', views.district_forecast_details_entry_item, name='district_forecast_details_entry_item'),
-
-    path('district-forecast/entry/details-list/',           views.district_forecast_details_list, name="district_forecast_details_list"),
-    path('district-forecast/entry/details-list/<int:id>/',  views.district_forecast_details_list, name="district_forecast_details_list_id"),
+    
 
     #path('district-forecast/forecast-entry/<int:fk>/details/entry/',views.district_forecast_details_entry,name='district_forecast_details_entry'),
     #path('district-forecast/forecast-entry/<int:fk>/details/entry/<int:id>/',views.district_forecast_details_entry,name='district_forecast_details_entry'),

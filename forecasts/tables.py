@@ -250,7 +250,7 @@ class ForecastGeneralTable(tables.Table):
             url = (f"{settings.MEDIA_URL}forecast/general/audio/{filename}")
             pdf_class = "btn_mp3"
         else:
-            url = reverse("forecasts:generate_pdf", args=[record.id])
+            url = reverse("forecasts:general_forecast_entry", args=[record.id])
             pdf_class = "btn_mp3_new"
 
         link_html   = '<a href="{}" class="{}" target="_blank"><i class="fa-solid fa-volume-high"></i></a>'
@@ -269,7 +269,7 @@ class ForecastGeneralTable(tables.Table):
             url = (f"{settings.MEDIA_URL}forecast/general/doc/{filename}")
             pdf_class = "btn_pdf"
         else:
-            url = reverse("forecasts:generate_pdf", args=[record.id])
+            url = reverse("forecasts:general_forecast_entry", args=[record.id])
             pdf_class = "btn_pdf_new"
 
         link_html   = '<a href="{}" class="{}" target="_blank"><i class="fa-solid fa-file-pdf"></i></a>'
@@ -290,7 +290,7 @@ class ForecastGeneralTable(tables.Table):
                 url = (f"{settings.MEDIA_URL}forecast/general/image/{filename}")
                 pdf_class = "btn_mp3"
             else:
-                url = reverse("forecasts:generate_pdf", args=[record.id])
+                url = reverse("forecasts:general_forecast_entry", args=[record.id])
                 pdf_class = "btn_mp3_new"
     
             link_html   = '<a href="{}" class="{}" target="_blank"><i class="fa-regular fa-image"></i></a>'
@@ -349,16 +349,16 @@ class DistrictForecastTable(tables.Table):
         return record.updated_by.get_full_name() if record.updated_by else ""
     
     def render_pdf_file(self, record):
-        filename    = f"District_Forecast_NMS_BZ_{record.forecast_date}.pdf"
-        url         = reverse("forecasts:generate_pdf", args=[record.id])  # change "pest_edit" to your URL name
+        filename    = f"District_Forecast_{record.forecast_date}_NMS_BZ.pdf"
+        url         = reverse("forecasts:district_forecast_generate_pdf", args=[record.id])  # change "pest_edit" to your URL name
 
-        pdf_path    = os.path.join(settings.DOCS_ROOT,"District_Forecasts",filename)
-
+        pdf_path    = os.path.join(settings.MEDIA_ROOT, "forecast", "district_forecasts", "doc", filename)
+        
         if os.path.exists(pdf_path):
-            url = f"{settings.DOCS_URL}/District_Forecasts/{filename}"
+            url = f"{settings.MEDIA_ROOT}/forecast/district_forecasts/doc/{filename}"
             pdf_class = "btn_pdf"
         else:
-            url = reverse("forecasts:generate_pdf", args=[record.id])
+            url = reverse("forecasts:district_forecast_generate_pdf", args=[record.id])
             pdf_class = "btn_pdf_new"
 
         link_html   = '<a href="{}" class="{}" target="_blank"><i class="fa-solid fa-file-pdf"></i></a>'

@@ -53,7 +53,7 @@ class CAPAlerts(models.Model):
     def __str__(self): return self.title
 
 class CAPAlertDetails(models.Model):
-    identifier  = models.ForeignKey(CAPAlerts, to_field="guid", db_column="identifier", on_delete=models.CASCADE)
+    identifier  = models.ForeignKey(CAPAlerts, to_field="guid", db_column="identifier", on_delete=models.CASCADE, related_name="details")
     sender      = models.CharField(max_length=200)
     sent        = models.CharField(max_length=100)
     status      = models.CharField(max_length=25)
@@ -65,16 +65,15 @@ class CAPAlertDetails(models.Model):
     response_type = models.CharField(max_length=20)
     severity    = models.CharField(max_length=20)
     certainty   = models.CharField(max_length=20)
-    event_code  = models.CharField(max_length=50)
-    value_name  = models.CharField(max_length=15)
-    value       = models.CharField(max_length=10)
+    urgency     = models.CharField(max_length=30, null=True, blank=True)
+    event_code_value_name  = models.CharField(max_length=15)
+    event_code_value       = models.CharField(max_length=10)
     onset       = models.CharField(max_length=50)
     expires     = models.CharField(max_length=50)
     sender_name = models.CharField(max_length=30)
     headline    = models.CharField(max_length=100)
     description = models.TextField()
     instruction = models.TextField()
-    area        = models.CharField(max_length=30)
     area_description    = models.CharField(max_length=30)
     polygon     = models.TextField()
 

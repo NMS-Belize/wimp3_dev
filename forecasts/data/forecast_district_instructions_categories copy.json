@@ -1,0 +1,7 @@
+[
+    { "id": 1, "description": "Weather Conditions" },
+    { "id": 2, "description": "Temperature" },
+    { "id": 3, "description": "Winds" },
+    { "id": 4, "description": "Precipitation" },
+    { "id": 5, "description": "Uncategorized" }
+]

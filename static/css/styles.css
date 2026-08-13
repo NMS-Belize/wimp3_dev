@@ -281,6 +281,7 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 .col_pdf a{ color:var(--rose); }
 .col_delete a{ color: var(--red) !important; }
 
+
 .errorlist li{ list-style-type: none; margin: 0; }
 .errorlist {
   position: relative;
