@@ -12,7 +12,7 @@ from rest_framework.routers import DefaultRouter
 
 from agro import views as agro_views
 from forecasts import views as forecasts_views
-#from alerts import views as alert_views
+from alerts import views as alert_views
 from radar import views as radar_views
 from system_core import views as system_core_views
 from users import views as user_views
@@ -68,7 +68,7 @@ urlpatterns = [
     path('forecasts/',      include('forecasts.urls')),
     path('observations/',   include('observations.urls')),
     path('agro/',           include('agro.urls')),
-    #path('alerts/',         include('alerts.urls')),
+    path('alerts/',         include('alerts.urls')),
     path('radar/',          include('radar.urls')),
     path('users/',          include('users.urls')),
     path('inventory/',      include('inventory.urls')),

@@ -163,7 +163,7 @@ h1{ font-weight: 300; font-size: 50px; }
 }
 .page-name{ font-weight: 600; color:var(--teal-2); }
 
-.col_edit, .col_delete{ text-align: center; }
+
 .api_link{ color: var(--teal-1); text-decoration: none; font-weight: 600; font-size: 16px; }
 
 /*********** BUTTONS & ICONS ************/
@@ -260,18 +260,26 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 
 /*********** TABLE STYLES ************/
 .tbl_wimp3 th{
-  background-color: var(--aqua-1);
+  background-color: var(--teal-green);
   color: #fff;
-  padding: 10px 5px;
+  padding: 8px 5px;
+  font-weight: 500;
 }
 
-.tbl_wimp3 th a{ color:#fff !important; text-decoration: none !important; }
 .tbl_wimp3 td{ padding: 8px 5px; }
+
+.tbl_wimp3 th a{ color:#fff !important; text-decoration: none !important; }
+.tbl_wimp3 td a{ color: var(--teal-1); font-weight: 600; text-decoration: none !important; }
 
 .col_id, .col_id a{ color:#b7b7b7; text-align: right; }
 .col_view, .col_view a{ color:var(--teal-2); }
-.col_pdf, .col_pdf a{ color:var(--rose); }
+
 .btn_edit_link { font-weight: 600 !important; color: var(--teal-1); text-decoration: none; line-height: 1; }
+
+.col_edit, .col_delete{ text-align: center; }
+
+.col_pdf a{ color:var(--rose); }
+.col_delete a{ color: var(--red) !important; }
 
 .errorlist li{ list-style-type: none; margin: 0; }
 .errorlist {
@@ -425,12 +433,14 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 }
 #inventory_form .row div{ margin-bottom: 15px; }
 
-.btn_pdf{
-  color: var(--rose) !important;
-}
-.btn_pdf_new{
+.btn_pdf{ color: var(--rose) !important; }
+.btn_mp3{ color: var(--emerald) !important; }
+.btn_details{ color: var(--emerald) !important; }
+
+.btn_pdf_new, .btn_mp3_new, .btn_details{
   color:var(--dark) !important;
 }
+
 #id_winds_min,#winds_max{
   line-height: 1 !important;
 }

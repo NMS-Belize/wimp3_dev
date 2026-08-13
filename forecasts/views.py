@@ -34,6 +34,7 @@ from forecasts.models import (
     Severity, Probability
 )
 
+from forecasts.filters import ForecastGeneralFilter
 from system_core.models import District
 
 from . import serializers as sx
@@ -59,6 +60,11 @@ def general_forecast_list(request, id=None):
     table.empty_text = "No records available"
     RequestConfig(request).configure(table)
 
+    filterset = ForecastGeneralFilter(
+            request.GET,
+            queryset=qs
+        )
+
     # Load entry ONLY if id is provided
     entry = None
     if id is not None:
@@ -70,6 +76,7 @@ def general_forecast_list(request, id=None):
         'page_name': page_name,
         'prev_page': 'Weather Forecasts',
         'table': table,
+        "filter": filterset,
         'new_url':  reverse('forecasts:district_forecast_entry'),
         'back_url': reverse('forecasts:index'),
         'webpage_url': "forecast/general-weather-forecast/",

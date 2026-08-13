@@ -170,52 +170,146 @@ class ForecastGeneralCategoryTable(tables.Table):
     
 class ForecastGeneralTable(tables.Table):
     edit            = tables.Column(empty_values=(),verbose_name="Edit",orderable=False,attrs={"th": {"style": "width:60px;","class": "text-center",},"td": {"class": "col_edit text-center",},},)
-    forecast_date   = tables.Column(verbose_name="Date", attrs={ 
-                            "th": {"class": "", "style": "width:100px;","class": ""},"td": {"class": "text-start", },},)
-    forecast_time   = tables.TimeColumn(verbose_name="Time", format="h:i A", attrs={"th": {"style": "width:80px;","class": ""}, "td": {"class": "",},},)
-    forecast_category = tables.Column(verbose_name="Forecast Type",attrs={"th": {"style": "width:150px;",},"td": {},},)
-    general_situation = tables.Column(verbose_name="General Situation",attrs={"th": {},"td": {"class": "text-start",},},)
-    created_by      = tables.Column(verbose_name="Created By",attrs={"th": {"style": "width:150px;",},"td": {},},    )
-    created_datetime    = tables.DateTimeColumn(verbose_name="Created Date",format="M d, Y h:i A",attrs={"th": {"style": "width:200px;",},"td": {"class": "",},},)
-    updated_by      = tables.Column(verbose_name="Updated By",attrs={"th": {"style": "width:150px;",},"td": {},},)
-    updated_datetime = tables.DateTimeColumn(verbose_name="Updated Date", format="M d, Y h:i A", attrs={ "th": { "style": "width:200px;", }, "td": {}, })
-    publish_to_web  = tables.TemplateColumn(template_name="general-weather-forecast/general_forecast_publish_toggle.html",verbose_name="Status", orderable=False, attrs={ "th": { "style": "width:65px;", "class": "text-center",},"td": { "class": "text-center", },},)
-    legacy_id       = tables.Column(verbose_name="LID", attrs={"th": {"style": "width:80px;","class": "text-end",},"td": {"class": "text-end",},},)
+
+    forecast_date       = tables.Column(verbose_name="Forecast Date", attrs={"th": {"class": "", "style": "width:120px;","class": "col_link"},"td": {"class": "text-start", },},)
+    forecast_time       = tables.TimeColumn(verbose_name="Time", format="h:i A", attrs={"th": {"style": "width:80px;","class": ""}, "td": {"class": "",},},)
+    forecast_category   = tables.Column(verbose_name="Forecast Type",attrs={"th": {"style": "width:150px;",},"td": {},},)
+    general_situation   = tables.Column(verbose_name="General Situation",attrs={"th": {},"td": {"class": "text-start",},},)
+
+    created_by          = tables.Column(verbose_name="Created By",attrs={"th": {"style": "width:120px;",},"td": {},},    )
+    created_datetime    = tables.DateTimeColumn(verbose_name="Created Date",format="M d, Y h:i A",attrs={"th": {"style": "width:160px;",},"td": {"class": "fst-italic"},},)
+
+    updated_by          = tables.Column(verbose_name="Updated By",attrs={"th": {"style": "width:120px;",},"td": {},},)
+    updated_datetime    = tables.DateTimeColumn(verbose_name="Updated Date", format="M d, Y h:i A", attrs={ "th": { "style": "width:160px;", }, "td": {"class": "fst-italic",} })
+
+    image_file      = tables.Column(empty_values=(),verbose_name="IMG",orderable=False, attrs={"th": {"style": "width:40px; text-align:center;","class": ""},"td": {"style": "text-align:center;","class": "col_pdf"}})
+    audio_file      = tables.Column(empty_values=(),verbose_name="MP3",orderable=False, attrs={"th": {"style": "width:40px; text-align:center;","class": ""},"td": {"style": "text-align:center;","class": "col_mp3"}})
+    pdf_file        = tables.Column(empty_values=(),verbose_name="PDF",orderable=False, attrs={"th": {"style": "width:40px; text-align:center;","class": ""},"td": {"style": "text-align:center;","class": "col_pdf"}})
+
+    is_published    = tables.TemplateColumn(template_name="general-weather-forecast/general_forecast_publish_toggle.html",verbose_name="Status", orderable=False, attrs={ "th": { "style": "width:60px;", "class": "text-center",},"td": { "class": "text-center", },},)
     id              = tables.Column(verbose_name="ID", attrs={"th": {"style": "width:80px;","class": "text-end",},"td": {"class": "text-end",},},)
     delete          = tables.Column(empty_values=(),verbose_name="Delete",orderable=False,attrs={"th": {"style": "width:65px;","class": "text-center col_edit",},"td": {"class": "text-center col_delete",},},)
 
     class Meta:
         model = ForecastGeneral
-        fields = ("edit","forecast_date","forecast_time","forecast_category","general_situation","created_by","created_datetime","updated_by","updated_datetime","publish_to_web","legacy_id","id","delete")
+        fields = ("edit","forecast_date","forecast_time","forecast_category","general_situation","created_by","created_datetime","updated_by","updated_datetime","audio_file","pdf_file","image_file","is_published","id","delete")
         sequence = fields
-        attrs = {
-            "class": "table table-striped table-hover align-middle tbl_wimp3",
-            "id": "tbl_general_forecast",
-        }
-        order_by = "-forecast_date"
+        attrs = {"class": "table table-striped table-hover align-middle tbl_wimp3"}
+        order_by = "-id"
 
     def render_edit(self, record):
-            link_html   = '<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>'
-            url         = reverse("forecasts:general_forecast_entry", args=[record.id])
-            return format_html(link_html, url, record.forecast_date.strftime("%B %d, %Y"))
+        link_html   = '<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>'
+        url         = reverse("forecasts:general_forecast_entry", args=[record.id])
+        return format_html(link_html, url, record.forecast_date.strftime("%B %d, %Y"))
+
+    def render_forecast_date(self, record):
+        forecast_date   = record.forecast_date.strftime("%b %d, %Y").upper()
+        link_html   = '<a href="{}" class="btn_link">{}</a>'
+        url         = reverse("forecasts:general_forecast_entry", args=[record.id])
+        return format_html(link_html, url, forecast_date)
 
     def render_general_situation(self, value):
         short = value[:20] + "..." if len(value) > 20 else value
         return format_html('<span title="{}">{}</span>', value, short)
+
+    def render_created_by(self, record):
+        if not record:
+            return ""
+        
+        first_name  = f"{record.created_by.first_name[:1]}"
+        last_name   = f"{record.created_by.last_name}"
+
+        if first_name and last_name:
+            return f"{first_name[0].upper()}. {last_name}"
+
+        return record.created_by
+
+    def render_updated_by(self, record):
+        if not record:
+            return ""
+        
+        first_name  = f"{record.updated_by.first_name[:1]}"
+        last_name   = f"{record.updated_by.last_name}"
+
+        if first_name and last_name:
+            return f"{first_name[0].upper()}. {last_name}"
+
+        return record.updated_by
+
+    def render_audio_file(self, record):
+    
+        forecast_date   = record.forecast_date.strftime("%Y-%m-%d")
+        forecast_time   = record.forecast_time.strftime("%I%M_%p")
+
+        filename        = (f"{forecast_date}_{forecast_time}_NMS_BZ.mp3")
+
+        # Actual filesystem path
+        pdf_path = os.path.join(settings.MEDIA_ROOT,"forecast","general","audio",filename)
+
+        if os.path.exists(pdf_path):
+            url = (f"{settings.MEDIA_URL}forecast/general/audio/{filename}")
+            pdf_class = "btn_mp3"
+        else:
+            url = reverse("forecasts:generate_pdf", args=[record.id])
+            pdf_class = "btn_mp3_new"
+
+        link_html   = '<a href="{}" class="{}" target="_blank"><i class="fa-solid fa-volume-high"></i></a>'
+        
+        return format_html(link_html, url, pdf_class)
+    
+    def render_pdf_file(self, record):
+
+        forecast_time   = record.forecast_time.strftime("%I%M_%p")
+        filename        = (f"General_Forecast_{record.forecast_date}_{forecast_time}_NMS_BZ.pdf")
+
+        # Actual filesystem path
+        pdf_path = os.path.join(settings.MEDIA_ROOT,"forecast","general","doc",filename)
+
+        if os.path.exists(pdf_path):
+            url = (f"{settings.MEDIA_URL}forecast/general/doc/{filename}")
+            pdf_class = "btn_pdf"
+        else:
+            url = reverse("forecasts:generate_pdf", args=[record.id])
+            pdf_class = "btn_pdf_new"
+
+        link_html   = '<a href="{}" class="{}" target="_blank"><i class="fa-solid fa-file-pdf"></i></a>'
+        
+        return format_html(link_html, url, pdf_class)
+
+    def render_image_file(self, record):
+        
+            forecast_date   = record.forecast_date.strftime("%Y-%m-%d")
+            forecast_time   = record.forecast_time.strftime("%I%M_%p")
+    
+            filename        = (f"{forecast_date}_{forecast_time}_NMS_BZ.jpg")
+    
+            # Actual filesystem path
+            pdf_path = os.path.join(settings.MEDIA_ROOT,"forecast","general","image",filename)
+    
+            if os.path.exists(pdf_path):
+                url = (f"{settings.MEDIA_URL}forecast/general/image/{filename}")
+                pdf_class = "btn_mp3"
+            else:
+                url = reverse("forecasts:generate_pdf", args=[record.id])
+                pdf_class = "btn_mp3_new"
+    
+            link_html   = '<a href="{}" class="{}" target="_blank"><i class="fa-regular fa-image"></i></a>'
+            
+            return format_html(link_html, url, pdf_class)
     
     def render_delete(self, record):
-            link_html   = '<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>'
-            url         = reverse("forecasts:district_forecast_delete", args=[record.id])
-            return format_html(link_html, url)
+        link_html   = '<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>'
+        url         = reverse("forecasts:district_forecast_delete", args=[record.id])
+        return format_html(link_html, url)
 
 class DistrictForecastTable(tables.Table):
     edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:60px;","class": "text-center"}, "td": {"style": "","class": "col_edit text-center"}})
     
     forecast_date       = tables.Column(verbose_name="Forecast Date", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": "col_link text-start"}})
     created_by          = tables.Column(verbose_name="Created By", attrs={"th": {"style": "width:150px;","class": ""}, "td": {"style": "","class": ""}})
-    created_datetime    = tables.Column(verbose_name="Created Date", attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "fst-italic;","class": ""}})
+    created_datetime    = tables.Column(verbose_name="Created Date", attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "","class": "fst-italic" }})
     updated_by          = tables.Column(verbose_name="Updated By", attrs={"th": {"style": "width:150px;","class": ""}, "td": {"style": "","class": ""}})
-    updated_datetime    = tables.Column(verbose_name="Updated Date", attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "","class": ""}})
+    updated_datetime    = tables.Column(verbose_name="Updated Date", attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "","class": "fst-italic" }})
     
     pdf_file            = tables.Column(empty_values=(),verbose_name="PDF",orderable=False, attrs={"th": {"style": "width:65px; text-align:center;","class": ""},"td": {"style": "text-align:center;","class": "col_pdf"}})
     is_published        = tables.TemplateColumn(template_name="district-forecast/district_forecast_publish_toggle.html", verbose_name="Status", orderable=False, 

@@ -21,7 +21,7 @@
         </a>
         {% endif %}
         {% if perms.alerts.view_alert or user.is_superuser %}
-        <a href="#" class="sidebar-link hidden" disabled>
+        <a href="{% url 'alerts:index' %}" class="sidebar-link hidden" disabled>
             <i class="fa-solid fa-triangle-exclamation me-3"></i>
             <span class="hide-on-collapse">Alerts</span>
         </a>

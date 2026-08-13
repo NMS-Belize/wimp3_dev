@@ -73,16 +73,9 @@ class InventoryItem(models.Model):
     vendor          = models.ForeignKey(Vendor, on_delete=models.SET_NULL, blank=True, null=True)
     manufacturer    = models.ForeignKey(Manufacturer, on_delete=models.SET_NULL, blank=True, null=True)
     model_number    = models.CharField(max_length=100, blank=True, null=True)
-    
-    '''processor       = models.CharField(max_length=100, blank=True, null=True)
-    ram             = models.CharField(max_length=100, blank=True, null=True)
-    operating_system = models.CharField(max_length=100, blank=True, null=True)
-    disk            = models.CharField(max_length=100, blank=True, null=True)'''
 
     device_status   = models.IntegerField(choices=STATUS_CHOICES, default=1)
     serial_number   = models.CharField(max_length=150, blank=True, null=True)
-    '''mac_address     = models.CharField(max_length=150, blank=True, null=True)
-    ip_address      = models.CharField(max_length=150, blank=True, null=True)'''
 
     acquisition_date    = models.DateField(blank=True, null=True)
     date_issued         = models.DateField(blank=True, null=True)

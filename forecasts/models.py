@@ -174,13 +174,13 @@ class ForecastGeneral(models.Model):
 
     forecaster_id = models.IntegerField(null=True, blank=True)
 
-    #created_by      = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="general_forecasts_created")
-    #updated_by      = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="general_forecasts_updated")
+    created_by      = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="general_forecasts_created")
+    updated_by      = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="general_forecasts_updated")
 
-    created_by = models.CharField(max_length=11,null=True, blank=True)
+    #created_by = models.CharField(max_length=11,null=True, blank=True)
     created_datetime = models.DateTimeField(null=True, blank=True)
 
-    updated_by = models.CharField(max_length=11,null=True, blank=True)
+    #updated_by = models.CharField(max_length=11,null=True, blank=True)
     updated_datetime = models.DateTimeField(null=True, blank=True)
 
     class Meta:

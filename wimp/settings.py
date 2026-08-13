@@ -63,7 +63,7 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'agro.apps.AgroConfig',
-    #'alerts.apps.AlertsConfig',
+    'alerts.apps.AlertsConfig',
     'radar.apps.RadarConfig',
     'inventory.apps.InventoryConfig',
     'observations.apps.ObservationsConfig',
