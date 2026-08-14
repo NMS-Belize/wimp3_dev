@@ -1,62 +1,172 @@
 [
     {
         "id": 1,
-        "action_description": "Monitor pest populations and implement pest control measures as necessary. Biological control using Trichogramma spp. and Metarhizium spp. is recommended."
+        "action_description": "Monitor pest populations and implement pest control measures as necessary. Biological control using Trichogramma spp. and Metarhizium spp. is recommended.",
+        "sector": 1
     },
     {
         "id": 2,
-        "action_description": "Monitor psyllid populations. Use biological control measures where possible. Monitor soil moisture and implement irrigation where necessary. Miticide applications may be required."
+        "action_description": "Monitor psyllid populations. Use biological control measures where possible. Monitor soil moisture and implement irrigation where necessary. Miticide applications may be required.",
+        "sector": 1
     },
     {
         "id": 3,
-        "action_description": "Monitor psyllid populations. Use biological control measures where possible. Area-wide spraying may help slow the spread of Huanglongbing (HLB) in newly planted fields."
+        "action_description": "Monitor psyllid populations. Use biological control measures where possible. Area-wide spraying may help slow the spread of Huanglongbing (HLB) in newly planted fields.",
+        "sector": 1
     },
     {
         "id": 4,
-        "action_description": "Increase monitoring and implement preventive pest management measures. Maintain drainage systems and continue regular monitoring and control activities."
+        "action_description": "Increase monitoring and implement preventive pest management measures. Maintain drainage systems and continue regular monitoring and control activities.",
+        "sector": 1
     },
     {
         "id": 5,
-        "action_description": "Monitor fields two to three times per week. Preventive treatments are recommended where appropriate."
+        "action_description": "Monitor fields two to three times per week. Preventive treatments are recommended where appropriate.",
+        "sector": 1
     },
     {
         "id": 6,
-        "action_description": "Monitor fields two to three times per week. Apply preventive or control measures during the early stages of infestation."
+        "action_description": "Monitor fields two to three times per week. Apply preventive or control measures during the early stages of infestation.",
+        "sector": 1
     },
     {
         "id": 7,
-        "action_description": "Monitor pests at least twice per week and implement an Integrated Pest Management (IPM) programme. Monitor soil moisture and practice water conservation techniques such as mulching."
+        "action_description": "Monitor pests at least twice per week and implement an Integrated Pest Management (IPM) programme. Monitor soil moisture and practice water conservation techniques such as mulching.",
+        "sector": 1
     },
     {
         "id": 8,
-        "action_description": "Monitor for diseases and implement an Integrated Pest Management (IPM) programme. Ensure proper land preparation and drainage. Plant on raised beds or ridges where appropriate."
+        "action_description": "Monitor for diseases and implement an Integrated Pest Management (IPM) programme. Ensure proper land preparation and drainage. Plant on raised beds or ridges where appropriate.",
+        "sector": 1
     },
     {
         "id": 9,
-        "action_description": "Maintain adequate irrigation and apply mulch to conserve soil moisture. Paint tree trunks with white paint or lime wash to reduce sunscald."
+        "action_description": "Maintain adequate irrigation and apply mulch to conserve soil moisture. Paint tree trunks with white paint or lime wash to reduce sunscald.",
+        "sector": 1
     },
     {
         "id": 10,
-        "action_description": "Coconut: Monitor for coconut weevils, mites, and red spider mites. Use traps where appropriate. Apply Neem X, Bioneem (5 mL/L of water), sulphur (5–10 mL/L of water), or agricultural oil (1.5 L plus 1 L detergent per 100 L of water) as recommended. Remove and destroy trees infected with Phytophthora or Red Ring Disease, and control coconut weevils to reduce nematode transmission."
+        "action_description": "Coconut: Monitor for coconut weevils, mites, and red spider mites. Use traps where appropriate. Apply Neem X, Bioneem (5 mL/L of water), sulphur (5–10 mL/L of water), or agricultural oil (1.5 L plus 1 L detergent per 100 L of water) as recommended. Remove and destroy trees infected with Phytophthora or Red Ring Disease, and control coconut weevils to reduce nematode transmission.",
+        "sector": 1
     },
     {
         "id": 11,
-        "action_description": "Avocado: Apply sulphocalcic broth or Bordeaux mixture for the prevention and control of pests and diseases. Mix 2 litres of the prepared broth with 18 litres of water before application."
+        "action_description": "Avocado: Apply sulphocalcic broth or Bordeaux mixture for the prevention and control of pests and diseases. Mix 2 litres of the prepared broth with 18 litres of water before application.",
+        "sector": 1
     },
     {
         "id": 12,
-        "action_description": "Soursop: Remove and properly dispose of damaged fruits. Bag fruits where practical and apply sulphocalcic broth for insect and disease management."
+        "action_description": "Soursop: Remove and properly dispose of damaged fruits. Bag fruits where practical and apply sulphocalcic broth for insect and disease management.",
+        "sector": 1
     },
     {
         "id": 13,
-        "action_description": "Cacao: Reduce excessive shade by maintaining appropriate tree height. Remove diseased pods promptly and dispose of them properly."
+        "action_description": "Cacao: Reduce excessive shade by maintaining appropriate tree height. Remove diseased pods promptly and dispose of them properly.",
+        "sector": 1
     },
     {
         "id": 14,
-        "action_description": "Pineapple: Monitor fields regularly for pests and diseases, and implement appropriate control measures when necessary."
+        "action_description": "Pineapple: Monitor fields regularly for pests and diseases, and implement appropriate control measures when necessary.",
+        "sector": 1
     },
     {
         "id": 15,
-        "action_description": "Ensure proper drainage in low-lying or waterlogged areas. Maintain an effective pest and disease management programme using approved organic or synthetic pesticides where appropriate. Consult the Ministry of Agriculture, local agro-dealers, or the Belize Agricultural Health Authority (BAHA) for recommendations on suitable pesticides, application rates, and assistance with pest and disease identification."
+        "action_description": "Ensure proper drainage in low-lying or waterlogged areas. Maintain an effective pest and disease management programme using approved organic or synthetic pesticides where appropriate. Consult the Ministry of Agriculture, local agro-dealers, or the Belize Agricultural Health Authority (BAHA) for recommendations on suitable pesticides, application rates, and assistance with pest and disease identification.",
+        "sector": 1
+    },
+    {
+        "id": 16,
+        "action_description": "Monitor poultry for heat stress and heat stroke. Ensure poultry coops have proper ventilation and provide adequate water and feed during dry periods. Maintain appropriate biosecurity measures on poultry farms and in poultry barns. Prevent wildlife from sharing the same water and feed supplies. Continue monitoring and report any suspected cases of disease.",
+        "sector": 3
+    },
+    {
+        "id": 17,
+        "action_description": "Administer timely parasite control measures, including deworming of animals, along with appropriate pasture management practices such as silvopastoral systems.",
+        "sector": 3
+    },
+    {
+        "id": 18,
+        "action_description": "Ensure troughs, ponds, and other water sources have adequate water for the herd during dry periods. Provide natural or artificial shade where possible to reduce heat stress.",
+        "sector": 3
+    },
+    {
+        "id": 19,
+        "action_description": "Continue monitoring and vaccinate against rabies. Farmers are encouraged to report any suspected cases.",
+        "sector": 3
+    },
+    {
+        "id": 20,
+        "action_description": "Monitor the herd for heat stress and heat stroke. Ensure pens have proper ventilation and provide adequate water and feed during dry periods. Continue monitoring and report any suspected cases of disease.",
+        "sector": 3
+    },
+    {
+        "id": 21,
+        "action_description": "Monitor the herd for heat stress and heat stroke. Ensure pens have proper ventilation and provide adequate water and feed during dry periods. Ensure troughs and water reservoirs have adequate water for the herd during drought conditions. Continue monitoring and report any suspected cases of disease.",
+        "sector": 3
+    },
+    {
+        "id": 22,
+        "action_description": "Continue monitoring. No treatment is recommended during the harvest season.",
+        "sector": 3
+    },
+    {
+        "id": 23,
+        "action_description": "Maintain the apiary with appropriate exposure to sunlight.",
+        "sector": 3
+    },
+    {
+        "id": 24,
+        "action_description": "Ensure adequate water and feed supplies for livestock during prolonged dry spells. Provide natural or artificial shade and monitor animals closely for signs of heat stress.",
+        "sector": 3
+    },
+    {
+        "id": 25,
+        "action_description": "Monitor pest populations and implement pest control measures where necessary. Biological control using Trichogramma spp., Trichoderma spp., and Metarhizium spp. is recommended.",
+        "sector": 1
+    },
+    {
+        "id": 26,
+        "action_description": "Monitor pest populations and implement pest control measures where necessary.",
+        "sector": 1
+    },
+    {
+        "id": 27,
+        "action_description": "Increase monitoring and apply preventive fungicide treatments where appropriate. Improve drainage and use resistant varieties where possible. Biological control measures are recommended.",
+        "sector": 1
+    },
+    {
+        "id": 28,
+        "action_description": "Coconut: Monitor for weevils, beetles, and mite damage. Use traps where applicable. Manage mites initially with lower-impact options such as horticultural oil or neem, and escalate control measures only if infestations spread. Remove and properly dispose of severely affected fronds and infested plant material.\n\nAvocado: Monitor for thrips, mites, scales, and mealybugs. Manage ants where they are protecting scales or mealybugs. Use selective control measures and avoid unnecessary broad-spectrum pesticide applications that may trigger mite outbreaks.\n\nSoursop: Maintain good field sanitation by collecting and destroying damaged fruit. Monitor for borers and prune affected limbs. Bag fruit where feasible and manage sucking pests early to reduce sooty mould and fruit damage.\n\nCacao: Maintain strict black pod sanitation by frequently removing diseased pods and keeping infected pods off the ground. Prune trees to improve airflow and maintain an appropriate shade balance. Use approved fungicides where appropriate when disease is active.\n\nPineapple: Reduce sunscald through appropriate mulching and maintenance of adequate leaf cover. Monitor and control mealybugs and manage ants. Remove heavily infested plants where mealybug wilt is present.",
+        "sector": 1
+    },
+    {
+        "id": 29,
+        "action_description": "Prioritize soil moisture monitoring and targeted irrigation, especially for young trees and fruiting blocks. Apply mulch and control weeds to conserve soil moisture. Increase pest scouting to at least once per week, manage ants, and avoid repeated broad-spectrum pesticide applications that may trigger mite outbreaks. Maintain good sanitation by removing and destroying damaged fruit, pruning borer-infested limbs, maintaining appropriate cacao shade and airflow, and reducing sunscald through canopy retention and whitewash or lime wash on exposed trunks and limbs.\n\nCoconut: Monitor for mite damage. Use horticultural oil or neem where appropriate, remove and properly dispose of heavily infested fronds when necessary, and maintain adequate soil moisture.\n\nAvocado: Monitor for thrips, mites, scales, and mealybugs. Protect young fruit from thrips damage and maintain consistent irrigation to reduce fruit drop.\n\nSoursop: Maintain strict sanitation by collecting and destroying damaged fruit. Prune and destroy borer-infested limbs and monitor trunks for signs of infestation, including frass and entry holes.\n\nCacao: Maintain balanced shade and adequate airflow. Remove diseased pods promptly and maintain good sanitation to reduce the risk of black pod outbreaks following periods of rainfall.\n\nPineapple: Reduce sunscald through mulching and maintenance of adequate leaf cover. Control mealybugs early and manage ants to reduce the risk of mealybug wilt.\n\nFire Risk: Clear dry grass and brush, maintain firebreaks around orchard boundaries, and keep combustible plant debris away from tree trunks.",
+        "sector": 1
+    },
+    {
+        "id": 30,
+        "action_description": "Monitor river water quality parameters, especially dissolved oxygen levels, before pumping water into the farm and hatchery.",
+        "sector": 2
+    },
+    {
+        "id": 31,
+        "action_description": "Closely monitor dissolved oxygen levels. Increase water flow, water exchange, or aeration where necessary. If these measures are not sufficient or feasible, reduce stocking density through partial harvesting.",
+        "sector": 2
+    },
+    {
+        "id": 32,
+        "action_description": "Closely monitor feed rates, feed consumption, waste, organic matter, and the buildup of hydrogen sulfide (H2S) on the pond bottom. Increase the frequency of waste and sludge removal where necessary.",
+        "sector": 2
+    },
+    {
+        "id": 33,
+        "action_description": "Closely monitor shrimp health and increase probiotic supplementation where necessary. Reduce stocking densities through partial harvesting and promptly report any signs of disease or unusual mortalities to the BAHA Aquatic Unit.",
+        "sector": 2
+    },
+    {
+        "id": 34,
+        "action_description": "Closely monitor salinity levels. Add fresh water as necessary to maintain appropriate levels, increase water depth, and reduce direct penetration of sunlight.",
+        "sector": 2
     }
 ]

@@ -1,12 +1,11 @@
 from django import forms
-from .models import Sector, Commodity, DroughtAlertLevel, PestRiskEntryMainListing, PestRiskEntryDetails,  PestAlertLevel, PestRiskEffect, PestRiskAction, PestRisk
+from .models import Sector, Commodity, DroughtAlertLevel, PestRiskEntryMainListing, PestRiskEntryDetails,  PestAlertLevel, PestRiskEffect, PestRiskAction, PestRisk, PestRiskInfo
 
 from system_core.models import District, Zone, Months, AlertLevel
 
 from django_toggle_switch_widget.widgets import DjangoToggleSwitchWidget
 from django.core.exceptions import ValidationError
 from django_select2.forms import Select2Widget
-
 
 MONTH_CHOICES   = [(1,'January'),(2,'February'),(3,'March'),(4,'April'),(5,'May'),(6,'June'),(7,'July'),(8,'August'),(9,'September'),(10,'October'),(11,'November'),(12,'December')]
 YEAR_CHOICES    = [('2026', '2026'),('2027', '2027')]
@@ -203,16 +202,16 @@ class PestRiskEntryDetailsForm(forms.ModelForm):
         }
         widgets = {
             "commodity_id": forms.HiddenInput(),
-            "district_id": forms.HiddenInput(),
-            'pest_alert_lvl_id': forms.Select(attrs={'class': 'form-control'}),
-            'drought_alert_lvl_id': forms.Select(attrs={'class': 'form-control'}),
-            'temp_min': forms.TextInput(attrs={'class': 'form-control'}),
-            'temp_max': forms.TextInput(attrs={'class': 'form-control'}),
-            'precip_min': forms.TextInput(attrs={'class': 'form-control'}),
-            'precip_max': forms.TextInput(attrs={'class': 'form-control'}),
-            'effect': forms.Select(attrs={'class': 'form-control'}),
-            'info': forms.Textarea(attrs={'class': 'form-control'}),
-            'actions': forms.Select(attrs={'class': 'form-control select2'}),
+            "district_id":  forms.HiddenInput(),
+            'pest_alert_lvl_id': forms.Select(attrs={'class': 'form-select select2'}),
+            'drought_alert_lvl_id': forms.Select(attrs={'class': 'form-select select2'}),
+            'temp_min':     forms.TextInput(attrs={'class': 'form-control'}),
+            'temp_max':     forms.TextInput(attrs={'class': 'form-control'}),
+            'precip_min':   forms.TextInput(attrs={'class': 'form-control'}),
+            'precip_max':   forms.TextInput(attrs={'class': 'form-control'}),
+            'effect':       forms.Select(attrs={'class': 'form-control form-select select2'}),
+            'info':         forms.Select(attrs={'class': 'form-select select2'}),
+            'actions':      forms.Select(attrs={'class': 'form-control select2'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -263,9 +262,10 @@ class PestRiskEntryDetailsForm(forms.ModelForm):
         self.fields['effect'].empty_label = "Possible Effects"
 
         self.fields['actions'].queryset = PestRiskAction.objects.all().order_by("id")
-        self.fields['actions'].empty_label = "Select Actions"
+        self.fields['actions'].empty_label = "Select Actions"  
 
-        
+        self.fields['info'].queryset = PestRiskInfo.objects.all().order_by("id")
+        self.fields['info'].empty_label = "Select Actions"    
 
 class SectorForm(forms.ModelForm):
     class Meta:
@@ -364,11 +364,13 @@ class ActionItemsForm(forms.ModelForm):
 class EffectItemsForm(forms.ModelForm):
     class Meta:
         model = PestRiskEffect
-        fields = ['effect_description']
+        fields = ['sector','effect_description']
         labels = {   
             # <-- add human-friendly labels here
             'effect_description': 'Description:',
+            'sector': 'Sector:'
         }
         widgets = {            
             'effect_description': forms.Textarea(attrs={'class': 'form-control'}),
+            'sector': forms.Select(attrs={'class': 'form-select color-select'})
         }

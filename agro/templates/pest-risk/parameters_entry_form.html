@@ -1,0 +1,16 @@
+{% extends "base_form_short.html" %}
+{% block title %}{{ page_name }} | Agro-Climat Services | WIMP3 | National Meteorological Service of Belize{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <form method="post" class="wimp3_form">
+            {% csrf_token %}
+            {{ form.as_ul }}
+            <li>
+                <label for="btn_submit">&nbsp;</label>
+                <input id="btn_submit" type="submit" value="Submit" class="btn" />
+            </li>
+        </form>
+    </div>
+</div>
+{% endblock %}

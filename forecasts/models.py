@@ -43,12 +43,12 @@ class DistrictForecastInstructions(models.Model):
         return str(self.description)
 
 class DistrictForecast(models.Model):
-    forecast_date   = models.DateField(unique=True)
-    is_published    = models.BooleanField(default=False)
-    created_by      = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="district_forecasts_created")
-    updated_by      = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="district_forecasts_updated")
-    created_datetime = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    updated_datetime = models.DateTimeField(auto_now=True,null=True)
+    forecast_date       = models.DateField(unique=True)
+    is_published        = models.BooleanField(default=False)
+    created_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="district_forecasts_created")
+    updated_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="district_forecasts_updated")
+    created_datetime    = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_datetime    = models.DateTimeField(auto_now=True,null=True)
 
     class Meta:
         verbose_name = "District Level Forecast"
@@ -106,6 +106,30 @@ class DistrictForecastDetails(models.Model):
     def __str__(self):
         return f"{self.district} - {self.forecast.forecast_date}"
 
+class WindDirection(models.Model):
+    description         = models.CharField(max_length=20)
+    long_description    = models.CharField(max_length=100)
+    value               = models.DecimalField(default=0.00,max_digits=5,decimal_places=1)
+
+    created_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="wind_direction_created")
+    updated_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="wind_direction_updated")
+    created_datetime    = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_datetime    = models.DateTimeField(auto_now=True,null=True)
+    
+    def __str__(self):
+        return self.description
+
+class WindCondition(models.Model):
+    description         = models.CharField(max_length=20)
+
+    created_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="wind_condition_created")
+    updated_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="wind_condition_updated")
+    created_datetime    = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_datetime    = models.DateTimeField(auto_now=True,null=True)
+    
+    def __str__(self):
+        return self.description
+
 class ForescastGeneralCategory(models.Model):
     description = models.CharField(max_length=200)
     created_by      = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="general_forecasts_category_created")
@@ -136,7 +160,7 @@ class ForecastGeneral(models.Model):
     light_variable = models.IntegerField(null=True, blank=True)
 
     wind_speed = models.CharField(max_length=10,null=True, blank=True)
-    wind_direction = models.CharField(max_length=50, null=True, blank=True)
+    wind_direction = models.ManyToManyField(WindDirection, blank=True, related_name="forecasts")
     wind_condition = models.CharField(max_length=50, null=True, blank=True)
 
     wind_shift_speed = models.CharField(max_length=10, null=True, blank=True)

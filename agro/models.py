@@ -64,6 +64,7 @@ class DroughtAlertLevel(models.Model):
 class PestRiskEffect(models.Model):
     id                  = models.BigAutoField(primary_key=True)
     effect_description  = models.TextField(blank=False,null=False)
+    sector              = models.ForeignKey(Sector, on_delete=models.CASCADE, related_name='pest_risk_effect_category', blank=True, null=True)
     published_date      = models.DateTimeField(auto_now=True,null=True)
     updated_datetime    = models.DateTimeField(auto_now_add=True,null=True)
 
@@ -76,6 +77,7 @@ class PestRiskEffect(models.Model):
 class PestRiskAction(models.Model):
     id                  = models.BigAutoField(primary_key=True)
     action_description  = models.TextField(blank=False,null=False)
+    sector              = models.ForeignKey(Sector, on_delete=models.CASCADE, related_name='pest_risk_actions_category', blank=True, null=True)
     published_date      = models.DateTimeField(auto_now=True,null=True)
     updated_datetime    = models.DateTimeField(auto_now_add=True,null=True)
 
@@ -84,6 +86,19 @@ class PestRiskAction(models.Model):
         verbose_name_plural = "Pest Risk Actions"
 
     def __str__(self): return self.action_description
+
+class PestRiskInfo(models.Model):
+    id                  = models.BigAutoField(primary_key=True)
+    info_description  = models.TextField(blank=False,null=False)
+    sector              = models.ForeignKey(Sector, on_delete=models.CASCADE, related_name='pest_risk_info_category', blank=True, null=True)
+    published_date      = models.DateTimeField(auto_now=True,null=True)
+    updated_datetime    = models.DateTimeField(auto_now_add=True,null=True)
+
+    class Meta:
+        verbose_name = "Pest Risk Info"
+        verbose_name_plural = "Pest Risk Info"
+
+    def __str__(self): return self.info_description
 
 class PestRisk(models.Model):
     id              = models.BigAutoField(primary_key=True)
@@ -126,19 +141,19 @@ class PestRiskEntryDetails(models.Model):
     id                      = models.BigAutoField(primary_key=True)
     pest_risk_id            = models.ForeignKey(PestRisk, on_delete=models.CASCADE,related_name='pest_risk_entries')
     commodity_id            = models.ForeignKey(Commodity, on_delete=models.CASCADE,null=True,related_name='pr_commodity')
-    district_id             = models.ForeignKey(District, on_delete=models.CASCADE,null=True)
-    pest_alert_lvl_id       = models.ForeignKey("system_core.AlertLevel", on_delete=models.CASCADE, null=True)
-    drought_alert_lvl_id    = models.ForeignKey(DroughtAlertLevel, on_delete=models.CASCADE,null=True)
-    temp_min    = models.DecimalField(default=0.00,max_digits=5,decimal_places=2)
-    temp_max    = models.DecimalField(default=0.00,max_digits=5,decimal_places=2)
-    precip_min  = models.DecimalField(default=0.0,max_digits=20,decimal_places=1)
-    precip_max  = models.DecimalField(default=0.0,max_digits=20,decimal_places=1)
-    effect      = models.ForeignKey(PestRiskEffect, on_delete=models.CASCADE,null=True)
-    info        = models.CharField(max_length=500,null=True,blank=True)
-    actions     = models.ForeignKey(PestRiskAction, on_delete=models.CASCADE,null=True)
-    is_published = models.BooleanField(default=False)
-    updated_by      = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="pest_risk_item_updated")
-    updated_datetime    = models.DateTimeField(auto_now_add=True,null=True)
+    district_id             = models.ForeignKey(District, on_delete=models.CASCADE, null=True)
+    pest_alert_lvl_id       = models.ForeignKey("system_core.AlertLevel", on_delete=models.CASCADE, blank=True, null=True)
+    drought_alert_lvl_id    = models.ForeignKey(DroughtAlertLevel, on_delete=models.CASCADE, blank=True, null=True)
+    temp_min                = models.DecimalField(default=0.00,max_digits=5,decimal_places=2, blank=True, null=True)
+    temp_max                = models.DecimalField(default=0.00,max_digits=5,decimal_places=2, blank=True, null=True)
+    precip_min              = models.DecimalField(default=0.0,max_digits=20,decimal_places=1, blank=True, null=True)
+    precip_max              = models.DecimalField(default=0.0,max_digits=20,decimal_places=1, blank=True, null=True)
+    effect                  = models.ForeignKey(PestRiskEffect, on_delete=models.CASCADE,blank=True, null=True)
+    info                    = models.ForeignKey(PestRiskInfo, on_delete=models.CASCADE,blank=True, null=True)
+    actions                 = models.ForeignKey(PestRiskAction, on_delete=models.CASCADE,blank=True, null=True)
+    is_published            = models.BooleanField(default=False)
+    updated_by              = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="pest_risk_item_updated")
+    updated_datetime        = models.DateTimeField(auto_now_add=True,null=True)
 
     class Meta:
         verbose_name = "Pest Risk Detail"

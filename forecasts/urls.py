@@ -63,6 +63,7 @@ urlpatterns = [
     path('general-weather-forecast/entry/', views.general_forecast_entry, name="general_forecast_entry"),
     path('general-weather-forecast/entry/<int:id>/', views.general_forecast_entry, name='general_forecast_entry'),
     #path('general-weather-forecast/entry/<int:id>/delete/', views.general_forecast_delete, name='general_forecast_delete'),
+    path('general-weather-forecast/entry/<int:id>/generate-pdf/', views.general_forecast_generate_pdf, name="general_forecast_generate_pdf"),
 
     path('general-weather-forecast/category/list/', views.general_forecast_category_list, name="general_forecast_category_list"),
     path('general-weather-forecast/category/list/<int:id>/', views.general_forecast_category_list, name='general_forecast_category_list'),

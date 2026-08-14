@@ -210,19 +210,19 @@ class ActionItemsTable(tables.Table):
         return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
     
 class EffectItemsTable(tables.Table):
-    edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "text-center"}, "td": {"style": "","class": "col_edit text-center"}})
-    id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": "text-center"}, "td": {"style": "","class": "text-center"}})
+    edit        = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:50px;","class": "text-center"}, "td": {"style": "","class": "col_edit text-center"}})
+    id          = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:80px;","class": "text-end"}, "td": {"style": "","class": "text-end"}})
+
     effect_description = tables.Column(verbose_name="Description")  # override column header
-    duplicate = tables.Column(empty_values=(),verbose_name="Duplicate",attrs={
-        "th": {"style": "width:75px;", "class": "text-center"},
-        "td": {"class": "text-center"},
-    })   
-    delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "text-center"},"td": {"style": "","class": "col_delete text-center"}})
+    sector      = tables.Column(verbose_name="Sector", attrs={"th": {"style": "width:100px","class": ""}, "td": {"style": "","class": ""}})
+
+    duplicate   = tables.Column(empty_values=(),verbose_name="Duplicate",attrs={ "th": {"style": "width:50px;", "class": "text-center"}, "td": {"class": "text-center"} })   
+    delete      = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:50px;","class": "text-center"},"td": {"style": "","class": "col_delete text-center"}})
     
     class Meta:
         model = PestRiskEffect
         template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
-        fields = ("edit","effect_description","duplicate","id","delete")
+        fields = ("edit","effect_description","sector","duplicate","id","delete")
 
         # Add table HTML id and CSS classes here
         attrs = {
@@ -233,6 +233,11 @@ class EffectItemsTable(tables.Table):
     def render_edit(self, record):
         url = reverse("agro:effect_items_entry", args=[record.id])  # change "pest_edit" to your URL name
         return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i><a>', url)
+
+    def render_effect_description(self, value):
+            short = value[:200] + "..." if len(value) > 200 else value
+            return format_html('<span title="{}">{}</span>', value, short)
+    
     
     def render_duplicate(self, record):
         url = reverse("agro:effect_items_entry_duplicate", args=[record.id])  # change "pest_edit" to your URL name

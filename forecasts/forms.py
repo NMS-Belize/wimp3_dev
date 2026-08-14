@@ -4,9 +4,7 @@ from unicodedata import category
 from click import option
 from django import forms
 from pytz import timezone
-from .models import DistrictForecast, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, Probability, Severity, ForecastGeneral, ForescastGeneralCategory
-
-from django.forms import inlineformset_factory
+from .models import DistrictForecast, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, Probability, Severity, ForecastGeneral, ForescastGeneralCategory, WindCondition, WindDirection
 
 from django_toggle_switch_widget.widgets import DjangoToggleSwitchWidget
 from django.core.exceptions import ValidationError
@@ -242,12 +240,12 @@ class ForecastGeneralForm(forms.ModelForm):
 
     class Meta:
         model = ForecastGeneral
-        exclude = (
-            "created_by",
-            "created_time",
-            "updated_by",
-            "updated_time",
-            "auto_update",
+        exclude = ("created_by", "created_time", "updated_by", "updated_time", "auto_update")
+
+        wind_direction = forms.ModelMultipleChoiceField(
+            queryset    = WindDirection.objects.all(),
+            required    = False,
+            widget      = forms.SelectMultiple(attrs={"class": "form-select select2-multiple"})
         )
 
         def clean_forecast_file(self):
@@ -267,7 +265,45 @@ class ForecastGeneralForm(forms.ModelForm):
                 raise forms.ValidationError("The uploaded file cannot be larger than 10 MB.")
     
             return uploaded_file
-
+        fields = [ "wind_direction", 
+                  "forecast_date", "forecast_time", "forecast_category","general_situation","audio_file","twenty_four_hour_forecast","sea_state","sea_state_shift",
+                
+                            "advisory",
+                            "outlook",
+                
+                            "wind_speed",    
+                            #"wind_direction":   forms.ManyToManyField(queryset=WindDirection.objects.all(), required=False, attrs={"class": "form-control"}),
+                            "wind_condition", 
+                
+                            "wind_shift_speed",
+                            "wind_shift_direction", 
+                            "wind_shift_condition",
+                
+                            "wave",
+                            "wave_shift",
+                
+                            "coast_high_f",
+                            "coast_high_c",
+                
+                            "coast_low_f",
+                            "coast_low_c",
+                
+                            "inland_high_f",
+                            "inland_high_c",
+                
+                            "inland_low_f",
+                            "inland_low_c",
+                
+                            "hills_high_f",
+                            "hills_high_c",
+                
+                            "hills_low_f",
+                            "hills_low_c",
+                
+                
+                            "light_variable",
+            ]
+    
         widgets = {
             "forecast_date":    forms.DateInput(attrs={"type": "date", "class": "form-control"}),
             "forecast_time":    forms.TimeInput(attrs={"type": "time", "class": "form-control"}),
@@ -282,9 +318,9 @@ class ForecastGeneralForm(forms.ModelForm):
             "advisory":         forms.Textarea(attrs={"rows": 3, "class": "form-control"}),
             "outlook":          forms.Textarea(attrs={"rows": 5, "class": "form-control"}),
 
-            "wind_speed": forms.TextInput(attrs={"class": "form-control"}),
-            "wind_direction": forms.TextInput(attrs={"class": "form-control"}),
-            "wind_condition": forms.TextInput(attrs={"class": "form-control"}),
+            "wind_speed":       forms.TextInput(attrs={"class": "form-control"}),
+            #"wind_direction":   forms.ManyToManyField(queryset=WindDirection.objects.all(), required=False, attrs={"class": "form-control"}),
+            "wind_condition":   forms.TextInput(attrs={"class": "form-control"}),
 
             "wind_shift_speed": forms.TextInput(attrs={"class": "form-control"}),
             "wind_shift_direction": forms.TextInput(attrs={"class": "form-control"}),
@@ -311,7 +347,7 @@ class ForecastGeneralForm(forms.ModelForm):
             "hills_low_f": forms.NumberInput(attrs={"class": "form-control"}),
             "hills_low_c": forms.NumberInput(attrs={"class": "form-control"}),
 
-            "publish_to_web": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            #"publish_to_web": forms.CheckboxInput(attrs={"class": "form-check-input"}),
 
             "light_variable": forms.CheckboxInput(attrs={"class": "form-check-input"}),
 

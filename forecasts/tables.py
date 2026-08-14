@@ -265,12 +265,12 @@ class ForecastGeneralTable(tables.Table):
         # Actual filesystem path
         pdf_path = os.path.join(settings.MEDIA_ROOT,"forecast","general","doc",filename)
 
-        if os.path.exists(pdf_path):
-            url = (f"{settings.MEDIA_URL}forecast/general/doc/{filename}")
-            pdf_class = "btn_pdf"
-        else:
-            url = reverse("forecasts:general_forecast_entry", args=[record.id])
-            pdf_class = "btn_pdf_new"
+        #if os.path.exists(pdf_path):
+        #    url = (f"{settings.MEDIA_URL}forecast/general/doc/{filename}")
+        #    pdf_class = "btn_pdf"
+        #else:
+        url = reverse("forecasts:general_forecast_generate_pdf", args=[record.id])
+        pdf_class = "btn_pdf_new"
 
         link_html   = '<a href="{}" class="{}" target="_blank"><i class="fa-solid fa-file-pdf"></i></a>'
         

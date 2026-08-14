@@ -241,7 +241,7 @@ def pest_risk_details_entry(request, id=None):
     else:
         form = PestRiskEntryDetailsForm(instance=entry)
 
-    return render(request, 'entry_form_pest_risk.html', {
+    return render(request, 'pest-risk/entry_form_details.html', {
         'page_name': page_name,
         #'details_url':  reverse('agro:pest_risk_details_create', args=[parent_entry.id]),
         'back_url':     reverse('agro:pest_risk_list'),
@@ -802,9 +802,11 @@ def import_agro_data(request):
 def effect_items_list(request, id=None):
     
     page_name = "Effect Items"
-    qs = PestRiskEffect.objects.all().order_by('id')
+    qs = PestRiskEffect.objects.all().order_by('sector','effect_description')
     table = EffectItemsTable(qs)
-    RequestConfig(request).configure(table)
+    table.empty_text = "No records available"
+
+    RequestConfig(request, paginate={"per_page": 50}).configure(table)
 
     # Load entry ONLY if id is provided
     entry = None
@@ -842,7 +844,7 @@ def effect_items_entry(request, id=None):
     else:
         form = EffectItemsForm(instance=entry)
 
-    return render(request, 'entry_form.html', {
+    return render(request, 'pest-risk/parameters_entry_form.html', {
         'page_name':    page_name,
         'prev_page':    "Effect Items List",
         'new_url':      reverse('agro:effect_items_entry'),

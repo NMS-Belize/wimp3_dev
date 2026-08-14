@@ -189,7 +189,7 @@ a.btn_duplicate {
   padding-bottom: 0;
 }
 .btn_edit {
-  color:var(--teal-3) !important;
+  color:var(--emerald) !important;
   padding-top: 0;
   padding-bottom: 0;
 }
@@ -458,8 +458,6 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 }
 
 .pagination { justify-content: right !important; margin-top: 20px; }
-.pagination a{ color: var(--teal-1); font-weight: 800; text-decoration: none;}
-.pagination li{ padding: 5px 10px;  }
-.pagination .active{ background-color: var(--aqua-1); }
-.pagination .active a{ color: #fff; }
+.pagination a{ color: var(--emerald); font-weight: 800; text-decoration: none;}
+.pagination .active .page-link{ background-color: var(--teal-green); border-color: var(--emerald); }
 .pagination .next, .pagination .previous{ text-transform: uppercase; }
