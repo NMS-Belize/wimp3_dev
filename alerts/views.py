@@ -17,7 +17,7 @@ from wimp import serializers
 
 #from .forms import *
 from .models import CAPAlerts, CAPAlertDetails, TropicalWeatherAlerts, TropicalWeatherAlertsCategory
-from .tables import CAPAlertsTable, CAPAlertsDetailsTable, TropicalWeatherALertsCategoryTable, TropicalWeatherALertsTable
+from .tables import CAPAlertsTable, TropicalWeatherALertsCategoryTable, TropicalWeatherALertsTable
 from .forms import TropicalWeatherAlertsCategoryForm, TropicalWeatherAlertsForm
 from .serializers import  CAPAlertsSerializer, CAPAlertDetailsSerializer, CAPAlertsAllSerializer, TropicalAlertsSerializer, TropicalAlertsCategoriesSerializer
 

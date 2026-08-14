@@ -8,3 +8,25 @@
     </div>
 </div>
 {% endblock %}
+{% block extra_js %}
+<script type="text/javascript">
+$(function() {
+    function refreshCAPTable() {
+
+        $.ajax({
+            url:    window.location.href,
+            type:   'GET',
+            success: function(response) {
+                const newRows = $(response).find('#table_cap_alerts tbody').html();
+                $('#table_cap_alerts tbody').html(newRows);
+            },
+            error: function(xhr, status, error) {
+                console.log('CAP table refresh failed:', error);
+            }
+        });
+    }
+    // Refresh every 30 seconds
+    setInterval(refreshCAPTable, 30000) 
+});
+</script>
+{% endblock %}

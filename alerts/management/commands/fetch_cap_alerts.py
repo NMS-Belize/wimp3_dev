@@ -2,6 +2,9 @@ import feedparser
 import requests
 import xml.etree.ElementTree as ET
 
+from datetime import datetime
+from django.utils import timezone
+
 from django.core.management.base import BaseCommand
 from alerts.models import CAPAlerts, CAPAlertDetails
 
@@ -23,7 +26,7 @@ def fetch_cap_alerts():
         guid = entry.get("guid") or entry.get("id") or entry.get("link")
 
         if not guid:
-            print("Skipping RSS entry with no GUID or link")
+            #print("Skipping RSS entry with no GUID or link")
             continue
 
         # Check whether alert already exists
@@ -34,7 +37,7 @@ def fetch_cap_alerts():
             "link":         entry.get("link", ""),
             "description":  entry.get("summary", ""),
             "author":       entry.get("author", ""),
-            "category": (entry.tags[0]["term"]
+            "category":     (entry.tags[0]["term"]
                 if entry.get("tags")
                 else ""
             ),
@@ -98,6 +101,8 @@ def parse_cap_xml(xml_data):
         print(f"CAP details skipped: no CAPAlerts record found for {identifier}")
         return
 
+    expires = root.findtext(".//cap:expires", "", ns)
+
     # Create OR update CAP details
     details, created = CAPAlertDetails.objects.update_or_create(
         identifier = alert,
@@ -133,6 +138,31 @@ def parse_cap_xml(xml_data):
         print(f"Created CAP details: {identifier}")
     else:
         print(f"Updated CAP details: {identifier}")
+
+
+    # --------------------------------------------------
+    # Automatically unpublish expired alerts
+    # --------------------------------------------------
+    if expires:
+        try:
+            expires_datetime = datetime.fromisoformat(expires)
+
+            if expires_datetime <= timezone.now():
+
+                if alert.is_published:
+                    alert.is_published = False
+                    alert.save(update_fields=["is_published"])
+
+                    print(
+                        f"Expired alert unpublished: "
+                        f"{alert.title} ({expires})"
+                    )
+
+        except (ValueError, TypeError) as e:
+            print(
+                f"Could not parse expiration date "
+                f"for {identifier}: {expires}"
+            )
 
 class Command(BaseCommand):
 

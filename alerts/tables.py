@@ -1,16 +1,17 @@
 # tables.py
 import django_tables2 as tables
 
+from datetime import datetime
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.timezone import localtime
-
-from datetime import datetime
+from django.utils import timezone
+from django.shortcuts import get_object_or_404
 
 User = get_user_model()
 
-from .models import CAPAlerts, TropicalWeatherAlertsCategory, TropicalWeatherAlerts
+from .models import CAPAlerts, CAPAlertDetails, TropicalWeatherAlertsCategory, TropicalWeatherAlerts
 
 class TropicalWeatherALertsCategoryTable(tables.Table):
 
@@ -143,15 +144,16 @@ class CAPAlertsTable(tables.Table):
 
     is_published = tables.TemplateColumn(verbose_name="Status", empty_values=(), template_name="cap/publish_toggle.html",
                         attrs={ "th": {"style": "width:40px;","class": "text-center"}, "td": {"style": "","class": "text-center"}, }, orderable=False)
+
+    expires     = tables.Column(verbose_name="Expires", empty_values=(), attrs={ "th": {"style": "width:160px","class": ""}, "td": {"style": "","class": ""} }, orderable=False)
     
-    view_details = tables.Column(verbose_name="Details", empty_values=(), attrs={ "th": {"style": "width:40px; text-align:center;","class": ""}, "td": {"style": "text-align:center;","class": "col_details"} })
-    link        = tables.Column(verbose_name="URL",     attrs={"th": {"style": "width:40px;","class": ""}, "td": {"style": "","class": ""}})
-    id          = tables.Column(verbose_name="ID",      attrs={"th": {"style": "width:80px;","class": "text-end",},"td": {"class": "text-end",}},  orderable=False,)
+    link        = tables.Column(verbose_name="URL",     attrs={"th": {"style": "width:40px;","class": "text-center"}, "td": {"style": "","class": "text-center"}}, orderable=False)
+    id          = tables.Column(verbose_name="ID",      attrs={"th": {"style": "width:80px;","class": "text-end",},"td": {"class": "text-end",}})
     
     class Meta:
         model = CAPAlerts
         template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
-        fields = ("guid","title","description","author","pubdate","is_published","view_details","link","id")
+        fields = ("guid","title","description","author","pubdate",'expires',"link","is_published","id")
         order_by = "-pubdate"
 
         # Add table HTML id and CSS classes here
@@ -162,6 +164,12 @@ class CAPAlertsTable(tables.Table):
 
     def render_guid(self, value):
         return format_html('<i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-bs-placement="top" title="{}" style="cursor: pointer;"></i>', value)
+
+    def render_title(self, record):
+        link_html   = '<a href="{}" class="btn_link">{}</a>'
+        url = reverse("alerts:cap_alerts_details", args=[record.id])
+        return format_html('<a href="{}" class="btn_view_details">{}</a>', url, record.title)
+
 
     def render_pubdate(self, record):
         try:
@@ -194,43 +202,25 @@ class CAPAlertsTable(tables.Table):
 
         return username
     
-    def render_view_details(self, record):
-        url = reverse("alerts:cap_alerts_details", args=[record.id])
-        return format_html('<a href="{}" class="btn_view_details"><i class="fa-solid fa-circle-info"></i></a>', url)
-    
-class CAPAlertsDetailsTable(tables.Table):
-    id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
-    title = tables.Column(verbose_name="Title", attrs={"th": {"style": "width:250px;","class": ""}, "td": {"style": "","class": ""}})
-    description = tables.Column(verbose_name="Description", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
-    author = tables.Column(verbose_name="Author", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
-    '''is_published = tables.TemplateColumn(
-        template_name="tables/publish_toggle.html",
-        verbose_name="Published",
-        orderable=False,
-        attrs={
-            "th": {"style": "width:75px;","class": "text-center"},
-            "td": {"style": "","class": "text-center"}
-        })'''
-    view_details = tables.Column(
-        empty_values=(), 
-        verbose_name="Details",
-        orderable=False,
-        attrs={
-            "th": {"style": "width:100px; text-align:center;","class": ""},
-            "td": {"style": "text-align:center;","class": "col_view"}
-        })
-    
-    class Meta:
-        model = CAPAlerts
-        template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
-        fields = ("title","description","author","link","is_published","view_details","id")
+    def render_expires(self, record):
 
-        # Add table HTML id and CSS classes here
-        attrs = {
-            "id": "table_cap_alerts",           # unique table ID
-            "class": "table table-striped table-condensed table-hover tbl_wimp3" # Bootstrap-friendly styling
-        }
+        entry_details = get_object_or_404(CAPAlertDetails, identifier=record.guid)
+        exp_date = entry_details.expires
 
-    def render_view_details(self, record):
-        url = reverse("alerts:cap_alerts_details", args=[record.id])
-        return format_html('<a href="{}" class="btn_view_details"><i class="fa-solid fa-eye"></i></a>', url)
+        try:
+            # Convert ISO string to datetime
+            edate = datetime.fromisoformat(exp_date)
+
+            # Current date/time
+            now = timezone.now()
+
+            formatted_date = edate.strftime("%d %b %Y, %I:%M %p")
+
+            # Red if the alert has NOT expired
+            if edate > now:
+                return format_html('<span class="fw-medium text-danger">{}</span>', formatted_date)
+
+            return formatted_date
+
+        except (ValueError, TypeError):
+            return exp_date
