@@ -4,7 +4,7 @@ import django_filters
 from django import forms
 
 from django.contrib.auth.models import User
-from .models import PestRiskInfo, Sector, PestRiskEffect
+from .models import PestRiskInfo, Sector, PestRiskEffect, Commodity
 
 class UserChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, user):
@@ -17,11 +17,11 @@ class UserModelChoiceFilter(django_filters.ModelChoiceFilter):
 class InfoItemFilter(django_filters.FilterSet):
 
     info_description    = django_filters.CharFilter(lookup_expr="icontains", label="Description")
-    sector              = django_filters.ModelChoiceFilter(queryset=Sector.objects.all(), label="Sector", empty_label="All Sectors")
+    commodity              = django_filters.ModelChoiceFilter(queryset=Commodity.objects.all(), label="Commodity", empty_label="All Commodities")
     
     class Meta:
         model = PestRiskInfo
-        fields = [ "info_description", "sector"]
+        fields = [ "info_description", "commodity"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -31,18 +31,18 @@ class InfoItemFilter(django_filters.FilterSet):
             "placeholder": "Search Description..."
         })
 
-        self.form.fields["sector"].widget.attrs.update({
+        self.form.fields["commodity"].widget.attrs.update({
             "class": "form-select color-select"
         })
 
 class EffectItemFilter(django_filters.FilterSet):
 
-    effect_description    = django_filters.CharFilter(lookup_expr="icontains", label="Description")
-    sector              = django_filters.ModelChoiceFilter(queryset=Sector.objects.all(), label="Sector", empty_label="All Sectors")
+    effect_description  = django_filters.CharFilter(lookup_expr="icontains", label="Description")
+    commodity              = django_filters.ModelChoiceFilter(queryset=Sector.objects.all(), label="Sector", empty_label="All Commodities")
     
     class Meta:
         model = PestRiskEffect
-        fields = [ "effect_description", "sector"]
+        fields = [ "effect_description", "commodity"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -52,6 +52,27 @@ class EffectItemFilter(django_filters.FilterSet):
             "placeholder": "Search Description..."
         })
 
-        self.form.fields["sector"].widget.attrs.update({
+        self.form.fields["commodity"].widget.attrs.update({
+            "class": "form-select color-select"
+        })
+
+class ActionItemFilter(django_filters.FilterSet):
+
+    action_description  = django_filters.CharFilter(lookup_expr="icontains", label="Description")
+    commodity              = django_filters.ModelChoiceFilter(queryset=Sector.objects.all(), label="Sector", empty_label="All Commodities")
+    
+    class Meta:
+        model = PestRiskEffect
+        fields = [ "action_description", "commodity"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.form.fields["action_description"].widget.attrs.update({
+            "class": "form-control",
+            "placeholder": "Search Description..."
+        })
+
+        self.form.fields["commodity"].widget.attrs.update({
             "class": "form-select color-select"
         })

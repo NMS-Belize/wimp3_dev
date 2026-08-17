@@ -20,7 +20,7 @@ from wimp.serializers import GroupSerializer, UserSerializer
 
 from agro.models import PestRisk, PestRiskEntryDetails, PestRiskAction, PestRiskEffect, Sector, Commodity, DroughtAlertLevel, PestRiskInfo
 from agro.forms import PestRiskForm, PestRiskEntryDetailsForm, PestAlertLevelForm, PestRiskMainListingForm, SectorForm, CommodityTypeForm, DroughtAlertLevelForm, ActionItemsForm, EffectItemsForm, InfoItemsForm
-from agro.filters import InfoItemFilter
+from agro.filters import InfoItemFilter, EffectItemFilter, ActionItemFilter
 from agro.tables import PestRiskMainListTable, PestRiskDetailsTable, PestAlertLevelsTable, SectorTable, ActionItemsTable, CommodityTable, DroughtAlertLevelsTable, EffectItemsTable, InfoItemsTable
 from agro.serializers import CommodityCategorySerializer, SectorSerializer, PestRiskEntryDetailsSerializer, PestRiskSerializer, ActionItemsSerializer, EffectItemsSerializer, DroughtAlertLevelSerializer
 
@@ -638,8 +638,12 @@ def drought_alert_level_delete(request, id):
 def action_items_list(request, id=None):
 
     page_name = "Action Items"
-    qs = PestRiskAction.objects.all().order_by('id')
-    table = ActionItemsTable(qs)
+    qs = PestRiskAction.objects.all().order_by('commodity','action_description')
+    filterset = ActionItemFilter(request.GET, queryset=qs)
+
+    table = ActionItemsTable(filterset.qs)
+    table.empty_text = "No records available"
+
     RequestConfig(request).configure(table)
 
     # Load entry ONLY if id is provided
@@ -653,11 +657,12 @@ def action_items_list(request, id=None):
         'page_name': page_name,
         'prev_page': "Agriculture Services",
         'table':    table,
+        'filter':   filterset,
         'new_url':  reverse('agro:action_items_entry'),
         'back_url': reverse('agro:index'),
         'api_url':  reverse('actionitems-list'),
     }
-    return render(request, 'table_list_template.html', context)
+    return render(request, 'pest-risk/parameters_table_list.html', context)
 
 def action_items_entry(request, id=None):
 
@@ -734,9 +739,9 @@ def import_agro_data(request):
 def effect_items_list(request, id=None):
     
     page_name = "Effect Items"
-    qs = PestRiskEffect.objects.all().order_by('sector','effect_description')
+    qs = PestRiskEffect.objects.all().order_by('commodity','effect_description')
 
-    filterset = InfoItemFilter(request.GET, queryset=qs)
+    filterset = EffectItemFilter(request.GET, queryset=qs)
 
     table = EffectItemsTable(filterset.qs)
     table.empty_text = "No records available"
@@ -820,7 +825,7 @@ def effect_items_entry_duplicate(request, id):
 def info_items_list(request, id=None):
 
     page_name = "Additional Info Items"
-    qs = PestRiskInfo.objects.all().order_by('sector','info_description')
+    qs = PestRiskInfo.objects.all().order_by('commodity','info_description')
 
     filterset = InfoItemFilter(request.GET, queryset=qs)
 

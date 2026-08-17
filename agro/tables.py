@@ -162,7 +162,7 @@ class ActionItemsTable(tables.Table):
 
         # Add table HTML id and CSS classes here
         attrs = {
-            "id": "tbl_pest_risk_action",           # unique table ID
+            "id": "table_pest_risk_info",
             "class": "table table-striped table-hover tbl_wimp3" # Bootstrap-friendly styling
         }
 
@@ -195,7 +195,7 @@ class EffectItemsTable(tables.Table):
 
         # Add table HTML id and CSS classes here
         attrs = {
-            "id": "table_pest_alert_level",           # unique table ID
+            "id": "table_pest_risk_info",           # unique table ID
             "class": "table table-striped table-hover tbl_wimp3" # Bootstrap-friendly styling
         }
 
@@ -232,7 +232,7 @@ class InfoItemsTable(tables.Table):
 
         # Add table HTML id and CSS classes here
         attrs = {
-            "id": "table_pest_risk_info",           # unique table ID
+            "id": "table_pest_risk_info", 
             "class": "table table-striped table-hover tbl_wimp3" # Bootstrap-friendly styling
         }
 

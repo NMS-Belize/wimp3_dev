@@ -19,7 +19,6 @@
                 </div>
             </div>
             <!--<button type="submit" class="btn btn-primary">Filter</button>-->
-            
         </form>
         {% render_table table %}
     </div>
@@ -55,8 +54,18 @@ $(document).ready(function () {
         filterTimer = setTimeout(function () { filterTable(); }, 300);
     });
 
+    $("#id_action_description").on("keyup", function () {
+        clearTimeout(filterTimer);
+        filterTimer = setTimeout(function () { filterTable(); }, 300);
+    });
+
+    $("#id_effect_description").on("keyup", function () {
+        clearTimeout(filterTimer);
+        filterTimer = setTimeout(function () { filterTable(); }, 300);
+    });
+
     // Filter immediately when sector changes
-    $("#id_sector").on("change", function () {
+    $("#id_commodity").on("change", function () {
         filterTable();
     });
 });
