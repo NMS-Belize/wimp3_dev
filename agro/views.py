@@ -18,9 +18,10 @@ from django_tables2 import RequestConfig
 from rest_framework import permissions, viewsets
 from wimp.serializers import GroupSerializer, UserSerializer
 
-from agro.models import PestRisk, PestRiskEntryDetails, PestRiskAction, PestRiskEffect, Sector, Commodity, DroughtAlertLevel
-from agro.forms import PestRiskForm, PestRiskEntryDetailsForm, PestAlertLevelForm, PestRiskMainListingForm, ZoneAreaForm, SectorForm, CommodityTypeForm, DroughtAlertLevelForm, ActionItemsForm, EffectItemsForm
-from agro.tables import PestRiskMainListTable, PestRiskDetailsTable, PestAlertLevelsTable, SectorTable, ZoneAreaTable, ActionItemsTable, CommodityTable, DroughtAlertLevelsTable, EffectItemsTable
+from agro.models import PestRisk, PestRiskEntryDetails, PestRiskAction, PestRiskEffect, Sector, Commodity, DroughtAlertLevel, PestRiskInfo
+from agro.forms import PestRiskForm, PestRiskEntryDetailsForm, PestAlertLevelForm, PestRiskMainListingForm, SectorForm, CommodityTypeForm, DroughtAlertLevelForm, ActionItemsForm, EffectItemsForm, InfoItemsForm
+from agro.filters import InfoItemFilter
+from agro.tables import PestRiskMainListTable, PestRiskDetailsTable, PestAlertLevelsTable, SectorTable, ActionItemsTable, CommodityTable, DroughtAlertLevelsTable, EffectItemsTable, InfoItemsTable
 from agro.serializers import CommodityCategorySerializer, SectorSerializer, PestRiskEntryDetailsSerializer, PestRiskSerializer, ActionItemsSerializer, EffectItemsSerializer, DroughtAlertLevelSerializer
 
 from system_core.models import Zone, District
@@ -356,75 +357,6 @@ def sector_delete(request, id):
         return redirect('agro:sector_list')  # redirect anywhere you prefer
     
     return render(request, "delete_sector.html", {
-        "entry": entry,
-        'page_name': page_name,
-    })
-
-############# PEST RISK VARIABlE - Zone/Area
-def zone_area_list(request, id=None):
-    page_name = "Zone/Area"
-    qs = Zone.objects.all().order_by('id')
-    table = ZoneAreaTable(qs)
-    RequestConfig(request).configure(table)
-
-    # Load entry ONLY if id is provided
-    entry = None
-    if id is not None:
-        entry = get_object_or_404(Zone, id=id)
-
-    context = {
-        'id' : id,
-        'entry': entry,  
-        'page_name': page_name,
-        'prev_page': "Agriculture Services",
-        'table': table,
-        'new_url': reverse('agro:zone_area_entry'),
-        'api_url': reverse('zones-list'),
-        'back_url': reverse('agro:index'),
-    }
-    return render(request, 'table_list_template.html', context)
-
-def zone_area_entry(request, id=None):
-
-    page_name = "Zone/Area Entry"
-
-    # If id exists => update, else => create new
-    if id:
-        entry = get_object_or_404(Zone, id=id)
-    else:
-        entry = None
-
-    if request.method == 'POST':
-        form = ZoneAreaForm(request.POST, instance=entry)
-
-        if form.is_valid():
-            saved_entry = form.save()    # Creates or updates
-            return redirect('agro:zone_area_list', saved_entry.id)
-    else:
-        form = ZoneAreaForm(instance=entry)
-
-    return render(request, 'entry_form.html', {
-        'page_name': page_name,
-        'prev_page': "Zone/Area List",
-        'new_url':  reverse('agro:zone_area_entry'),
-        'back_url': reverse('agro:zone_area_list'),
-        'api_url': reverse('zones-list'),
-        'form': form,
-        'entry': entry
-    })
-
-def zone_area_delete(request, id):
-    
-    entry = get_object_or_404(Zone, id=id)
-    
-    page_name = "Zone/Area Entry"
-
-    if request.method == "POST":
-        entry.delete()
-        messages.success(request, "deleted")  # acts like True
-        return redirect('agro:zone_area_list')  # redirect anywhere you prefer
-    
-    return render(request, "delete_zone.html", {
         "entry": entry,
         'page_name': page_name,
     })
@@ -766,7 +698,7 @@ def action_items_delete(request, id):
         entry.delete()
         return redirect('agro:action_items_list')  # redirect anywhere you prefer
 
-    return render(request, "delete_pest_risk_action.html", {
+    return render(request, "pest-risk/parameters_delete.html", {
         "entry": entry,
         'page_name': page_name,
     })
@@ -803,7 +735,10 @@ def effect_items_list(request, id=None):
     
     page_name = "Effect Items"
     qs = PestRiskEffect.objects.all().order_by('sector','effect_description')
-    table = EffectItemsTable(qs)
+
+    filterset = InfoItemFilter(request.GET, queryset=qs)
+
+    table = EffectItemsTable(filterset.qs)
     table.empty_text = "No records available"
 
     RequestConfig(request, paginate={"per_page": 50}).configure(table)
@@ -819,11 +754,12 @@ def effect_items_list(request, id=None):
         'page_name': page_name,
         'prev_page': "Agriculture Services",
         'table': table,
+        'filter':   filterset,
         'new_url': reverse('agro:effect_items_entry'),
         'back_url': reverse('agro:index'),
         'api_url':  reverse('effectitems-list'),
     }
-    return render(request, 'table_list_template.html', context)
+    return render(request, 'pest-risk/parameters_table_list.html', context)
 
 def effect_items_entry(request, id=None):
 
@@ -864,7 +800,7 @@ def effect_items_delete(request, id):
         entry.delete()
         return redirect('agro:effect_items_list')  # redirect anywhere you prefer
 
-    return render(request, "delete_pest_risk_effect.html", {
+    return render(request, "pest-risk/parameters_delete.html", {
         "entry": entry,
         'page_name': page_name,
     })
@@ -879,6 +815,109 @@ def effect_items_entry_duplicate(request, id):
     obj = get_object_or_404(PestRiskEffect, pk=id)
     duplicate_object_pest_risk_effect(obj)
     return redirect('agro:effect_items_list')
+
+#################### PEST RISK Additional Info ITEMS - TABLE ####################
+def info_items_list(request, id=None):
+
+    page_name = "Additional Info Items"
+    qs = PestRiskInfo.objects.all().order_by('sector','info_description')
+
+    filterset = InfoItemFilter(request.GET, queryset=qs)
+
+    table = InfoItemsTable(filterset.qs)
+    table.empty_text = "No records available"
+
+    RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+
+    if id is not None:
+        entry = get_object_or_404(PestRiskInfo, id=id)
+
+    context = {
+        'id' :      id,
+        'entry':    entry,  
+        'page_name': page_name,
+        'prev_page': "Agriculture Services",
+        'table':    table,
+        'filter':   filterset,
+        'new_url':  reverse('agro:info_items_entry'),
+        'back_url': reverse('agro:index'),
+        #'api_url':  reverse('actionitems-list'),
+    }
+    return render(request, 'pest-risk/parameters_table_list.html', context)
+
+def info_items_entry(request, id=None):
+
+    page_name = "Action Items Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(PestRiskInfo, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = InfoItemsForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('agro:info_items_list', saved_entry.id)
+    else:
+        form = InfoItemsForm(instance=entry)
+
+    return render(request, 'pest-risk/parameters_entry_form.html', {
+        'page_name':    page_name,
+        'prev_page':    "Action Items List",
+        'new_url':      reverse('agro:action_items_entry'),
+        'back_url':     reverse('agro:action_items_list'),
+        'api_url':      reverse('actionitems-list'),
+        'form':         form,
+        'entry':        entry
+    })
+
+def info_items_delete(request, id):
+    
+    entry = get_object_or_404(PestRiskInfo, id=id)
+    
+    page_name = "Additional Info Item Entry"
+
+    if request.method == "POST":
+        entry.delete()
+        return redirect('agro:info_items_list')  # redirect anywhere you prefer
+
+    return render(request, "pest-risk/parameters_delete.html", {
+        "entry": entry,
+        'page_name': page_name,
+    })
+
+def info_items_entry_duplicate(request, id):
+    obj = get_object_or_404(PestRiskInfo, pk=id)
+    info_items_duplicate_object(obj)
+    return redirect('agro:info_items_entry', obj.id)
+
+def info_items_duplicate_object(obj):
+    data = model_to_dict(obj)
+    data.pop('id', None)
+    data['info_description'] = f"{obj.info_description}"
+    data['sector'] = obj.sector
+
+    return obj.__class__.objects.create(**data)
+
+def duplicate_object_pest_risk_action(obj):
+    data = model_to_dict(obj)
+    data.pop('id', None)
+    data['action_description'] = f"{obj.action_description}"
+    return obj.__class__.objects.create(**data)
+
+def action_items_entry_duplicate(request, id):
+    obj = get_object_or_404(PestRiskAction, pk=id)
+    duplicate_object_pest_risk_action(obj)
+    return redirect('agro:action_items_list')
+
+
+
 
 #API endpoint that allows groups to be viewed or edited.
 class UserViewSet(viewsets.ModelViewSet):

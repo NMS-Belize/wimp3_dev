@@ -4,9 +4,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django_tables2 import RequestConfig
 
-from .models import JobTitle, DepartmentSection, OfficeLocation, AlertLevel, RiskLevel, District
-from .tables import DepartmentSectionTable, JobTitleTable, OfficeLocationTable, DistrictTable, RiskLevelTable, AlertLevelTable
-from .forms import DepartmentSectionForm, JobTitleForm, OfficeLocationForm, AlertLevelForm, DistrictForm, RiskLevelForm
+from .models import JobTitle, DepartmentSection, OfficeLocation, AlertLevel, RiskLevel, District, Zone
+from .tables import DepartmentSectionTable, JobTitleTable, OfficeLocationTable, DistrictTable, RiskLevelTable, AlertLevelTable, ZoneAreaTable
+from .forms import DepartmentSectionForm, JobTitleForm, OfficeLocationForm, AlertLevelForm, DistrictForm, RiskLevelForm, ZoneAreaForm
 
 from rest_framework import viewsets
 
@@ -94,6 +94,75 @@ def district_delete(request, id):
         'details': qs
     })
 
+############# Zone/Area #############
+def zone_area_list(request, id=None):
+    page_name = "Zone/Area"
+    qs = Zone.objects.all().order_by('id')
+    table = ZoneAreaTable(qs)
+    RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+    if id is not None:
+        entry = get_object_or_404(Zone, id=id)
+
+    context = {
+        'id' : id,
+        'entry': entry,  
+        'page_name': page_name,
+        'prev_page': "System Parameters",
+        'table': table,
+        'new_url':  reverse('system_core:zone_area_entry'),
+        'api_url':  reverse('zones-list'),
+        'back_url': reverse('system_core:index'),
+    }
+    return render(request, 'pest-risk/parameters_table_list.html', context)
+
+def zone_area_entry(request, id=None):
+
+    page_name = "Zone/Area Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(Zone, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = ZoneAreaForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('system_core:zone_area_list', saved_entry.id)
+    else:
+        form = ZoneAreaForm(instance=entry)
+
+    return render(request, 'entry_form.html', {
+        'page_name': page_name,
+        'prev_page': "Zone/Area List",
+        'new_url':  reverse('system_core:zone_area_entry'),
+        'back_url': reverse('system_core:zone_area_list'),
+        'api_url': reverse('zones-list'),
+        'form': form,
+        'entry': entry
+    })
+
+def zone_area_delete(request, id):
+    
+    entry = get_object_or_404(Zone, id=id)
+    
+    page_name = "Zone/Area Entry"
+
+    if request.method == "POST":
+        entry.delete()
+        messages.success(request, "deleted")  # acts like True
+        return redirect('system_core:zone_area_list')  # redirect anywhere you prefer
+    
+    return render(request, "pest-risk/parameters_delete.html", {
+        "entry": entry,
+        'page_name': page_name,
+    })
+
 #############  Alert Level #############
 def alert_level_list(request, id=None):
     page_name = "Alert Level Entries"
@@ -163,7 +232,7 @@ def alert_level_delete(request, id):
     if request.method == "POST":
         entry.delete()
         
-        return redirect('forecasts:alert_level_list')  # redirect anywhere you prefer
+        return redirect('system_core:alert_level_list')  # redirect anywhere you prefer
 
     return render(request, "system/parameters_delete.html", {
         "entry": entry,
@@ -180,18 +249,14 @@ def risk_level_list(request, id=None):
 
     # Load entry ONLY if id is provided
     entry = None
-    '''if id is not None:
-        entry = get_object_or_404(PestRiskEntryMainListing, id=id)'''
 
     context = {
-        #'id' : id,
         'entry': entry,  
         'page_name': page_name,
         'prev_page': 'System Parameters',
         'table': table,
         'new_url':  reverse('system_core:risk_level_entry'),
         'back_url': reverse('system_core:index'),
-        #'api_url': "/api/pest-risk/",
     }
     return render(request, 'system/parameters_table_list.html', context)
 
@@ -210,7 +275,7 @@ def risk_level_entry(request, id=None):
 
         if form.is_valid():
             saved_entry = form.save()    # Creates or updates
-            return redirect('forecasts:risk_level_list', saved_entry.id)
+            return redirect('system_core:risk_level_list', saved_entry.id)
         
     else:
         #form = PestRiskMainListingForm(instance=entry)
@@ -218,9 +283,9 @@ def risk_level_entry(request, id=None):
 
     return render(request, 'system/parameters_entry_form.html', {
         'page_name':    page_name,
-        'new_url':      reverse('forecasts:risk_level_list'),
+        'new_url':      reverse('system_core:risk_level_list'),
         'details_url':  "",
-        #'back_url':     reverse('forecasts:risk_level_list'),
+        #'back_url':     reverse('system_core:risk_level_list'),
         'api_url':      "/api/pest-risk/",
         'form': form,
         'entry': entry
@@ -239,7 +304,7 @@ def risk_level_delete(request, id):
     if request.method == "POST":
         entry.delete()
         
-        return redirect('forecasts:risk_level_list')  # redirect anywhere you prefer
+        return redirect('system_core:risk_level_list')  # redirect anywhere you prefer
 
     return render(request, "system/parameters_delete.html", {
         "entry": entry,
@@ -247,6 +312,7 @@ def risk_level_delete(request, id):
         'details': qs
     })
 
+############# Job Title #############
 def job_title_list(request, id=None):
     page_name = "Job Title List"
     qs = JobTitle.objects.all().order_by('id')
@@ -318,6 +384,7 @@ def job_title_delete(request, id):
         'back_url': reverse('system_core:job_title_list'),
     })
 
+############# Deaprtment #############
 def department_section_list(request, id=None):
     page_name = "Department Section List"
     qs = DepartmentSection.objects.all().order_by('id')
@@ -389,6 +456,7 @@ def department_section_delete(request, id):
         'back_url': reverse('system_core:department_section_list'),
     })
 
+############# Office Location/Placement #############
 def office_location_list(request, id=None):
     page_name = "Office Location List"
     qs = OfficeLocation.objects.all().order_by('id')

@@ -13,6 +13,13 @@ urlpatterns = [
     path('district/entry/<int:id>/', views.district_entry, name='district_entry'),
     path('district/entry/<int:id>/delete/', views.district_delete, name='district_delete'),
 
+    ## PEST RISK VARIABLE: Zone Area
+    path('zone/list/', views.zone_area_list, name="zone_area_list"),
+    path('zone/list/<int:id>/', views.zone_area_list,name='zone_area_list'),
+    path('zone/entry/', views.zone_area_entry, name="zone_area_entry"),
+    path('zone/entry/<int:id>/', views.zone_area_entry,name='zone_area_entry'),
+    path('zone/entry/<int:id>/delete/', views.zone_area_delete,name='zone_area_delete'),
+
     ## Alert Level
     path('alert-level/list/', views.alert_level_list, name="alert_level_list"),
     path('alert-level/list/<int:id>/', views.alert_level_list, name='alert_level_list'),

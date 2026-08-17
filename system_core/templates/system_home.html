@@ -12,6 +12,12 @@
             </a>
         </div>
         <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'system_core:zone_area_list' %}">
+                <img src="{% static 'button_icons/province.png' %}" alt="Zone/Area" />
+                <span class="task_desc">Zone/Area</span>
+            </a>
+        </div>
+        <div class="item_dashboard position-relative">
             <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'system_core:alert_level_list' %}">
                 <img src="{% static 'button_icons/speedometer.png' %}" alt="Alert Level" />
                 <span class="task_desc">Alert Level</span>

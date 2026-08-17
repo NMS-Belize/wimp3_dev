@@ -279,18 +279,6 @@ class SectorForm(forms.ModelForm):
             'description': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
-class ZoneAreaForm(forms.ModelForm):
-    class Meta:
-        model = Zone
-        fields = ['zone_name']
-        labels = {   
-            # <-- add human-friendly labels here
-            'zone_name': 'Zone Name:',
-        }
-        widgets = {            
-            'zone_name': forms.TextInput(attrs={'class': 'form-control'}),
-        }
-
 class DistrictZoneForm(forms.ModelForm):
     class Meta:
         model = District
@@ -352,25 +340,41 @@ class CommodityTypeForm(forms.ModelForm):
 class ActionItemsForm(forms.ModelForm):
     class Meta:
         model = PestRiskAction
-        fields = ['action_description']
+        fields = ['commodity','action_description']
         labels = {   
             # <-- add human-friendly labels here
+            'commodity': 'Commodity:',
             'action_description': 'Description:',
         }
-        widgets = {            
+        widgets = { 
+            'commodity': forms.Select(attrs={'class': 'form-select color-select'}),
             'action_description': forms.Textarea(attrs={'class': 'form-control'}),
+        }
+
+class InfoItemsForm(forms.ModelForm):
+    class Meta:
+        model = PestRiskInfo
+        fields = ['commodity','info_description']
+        labels = {   
+            # <-- add human-friendly labels here
+            'commodity': 'Commodity:',
+            'info_description': 'Description:'
+        }
+        widgets = { 
+            'commodity': forms.Select(attrs={'class': 'form-select color-select'}),           
+            'info_description': forms.Textarea(attrs={'class': 'form-control'})
         }
 
 class EffectItemsForm(forms.ModelForm):
     class Meta:
         model = PestRiskEffect
-        fields = ['sector','effect_description']
+        fields = ['commodity','effect_description']
         labels = {   
             # <-- add human-friendly labels here
-            'effect_description': 'Description:',
-            'sector': 'Sector:'
+            'commodity': 'Commodity:',
+            'effect_description': 'Description:'
         }
         widgets = {            
-            'effect_description': forms.Textarea(attrs={'class': 'form-control'}),
-            'sector': forms.Select(attrs={'class': 'form-select color-select'})
+            'commodity': forms.Select(attrs={'class': 'form-select color-select'}),
+            'effect_description': forms.Textarea(attrs={'class': 'form-control'})
         }

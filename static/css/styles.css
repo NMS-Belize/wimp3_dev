@@ -57,7 +57,7 @@ body{
 
 .bg-medium{ background-color: var(--grey-3); }
 .bg-medium .container{ background-color: var(--white); }
-.form-container{ padding: 60px;  }
+
 h1,h2,h3,h4,h5,h6{
    font-family: "Encode Sans", sans-serif;
    font-optical-sizing: auto;
@@ -143,6 +143,8 @@ h1{ font-weight: 300; font-size: 50px; }
 #id_months label{ width:auto; }
 #id_months input{ width: 20px; }
 #id_months div{ width: 14.5%; float: left; margin: 0 0 20px 0; }
+
+.title_filter{ text-transform: uppercase; font-size: 16px; font-weight: 600; }
 
 .wimp3_form li {
     list-style-type: none;

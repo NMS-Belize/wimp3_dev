@@ -1,9 +1,12 @@
-{% extends "base_form_short.html" %}
+{% extends "base.html" %}
 {% block title %}{{ page_name }} | District Forecast | WIMP3 | National Meteorological Service of Belize{% endblock %}
 {% block content %}
 <div class="row mb-3">
     <div class="col-12">
-        <h2>Delete Entry: <span class="text-bold text-danger">{{ entry.description }}</span></h2>
+        {% if entry.description %}<h2>Delete Entry: <span class="text-bold text-danger">{{ entry.description }}</span></h2>{% endif %}
+        {% if entry.info_description %}<h2>Delete Entry: <span class="text-bold text-danger">{{ entry.info_description }}</span></h2>{% endif %}
+        {% if entry.action_description %}<h2>Delete Entry: <span class="text-bold text-danger">{{ entry.action_description }}</span></h2>{% endif %}
+        {% if entry.zone_name %}<h2>Delete Entry: <span class="text-bold text-danger">{{ entry.zone_name }}</span></h2>{% endif %}
     </div>
 </div>
 <div class="row">
@@ -16,6 +19,8 @@
             <ul class="m-0">
                 <li>ID: <strong>{{ entry.id }}</strong></li>
                 {% if entry.description %}<li>Description: <strong>{{ entry.description }}</strong></li>{% endif %}
+                {% if entry.info_description %}<li>Description: <strong>{{ entry.info_description }}</strong></li>{% endif %}
+                {% if entry.action_description %}<li>Description: <strong>{{ entry.action_description }}</strong></li>{% endif %}
                 {% if entry.category.category_name %}<li>Category: <strong>{{ entry.category.category_name }}</strong></li>{% endif %}
                 {% if entry.sector.description %}<li>Category: <strong>{{ entry.sector.description }}</strong></li>{% endif %}
                 {% if entry.zone_name %}<li>Zone: <strong>{{ entry.zone_name }}</strong></li>{% endif %}

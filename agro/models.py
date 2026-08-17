@@ -65,6 +65,7 @@ class PestRiskEffect(models.Model):
     id                  = models.BigAutoField(primary_key=True)
     effect_description  = models.TextField(blank=False,null=False)
     sector              = models.ForeignKey(Sector, on_delete=models.CASCADE, related_name='pest_risk_effect_category', blank=True, null=True)
+    commodity           = models.ForeignKey(Commodity, on_delete=models.CASCADE,related_name='pest_risk_effect_commodity',null=True)
     published_date      = models.DateTimeField(auto_now=True,null=True)
     updated_datetime    = models.DateTimeField(auto_now_add=True,null=True)
 
@@ -78,6 +79,7 @@ class PestRiskAction(models.Model):
     id                  = models.BigAutoField(primary_key=True)
     action_description  = models.TextField(blank=False,null=False)
     sector              = models.ForeignKey(Sector, on_delete=models.CASCADE, related_name='pest_risk_actions_category', blank=True, null=True)
+    commodity           = models.ForeignKey(Commodity, on_delete=models.CASCADE,related_name='pest_risk_actions_commodity',null=True)
     published_date      = models.DateTimeField(auto_now=True,null=True)
     updated_datetime    = models.DateTimeField(auto_now_add=True,null=True)
 
@@ -89,8 +91,9 @@ class PestRiskAction(models.Model):
 
 class PestRiskInfo(models.Model):
     id                  = models.BigAutoField(primary_key=True)
-    info_description  = models.TextField(blank=False,null=False)
+    info_description    = models.TextField(blank=False,null=False)
     sector              = models.ForeignKey(Sector, on_delete=models.CASCADE, related_name='pest_risk_info_category', blank=True, null=True)
+    commodity           = models.ForeignKey(Commodity, on_delete=models.CASCADE,related_name='pest_risk_info_commodity',null=True)
     published_date      = models.DateTimeField(auto_now=True,null=True)
     updated_datetime    = models.DateTimeField(auto_now_add=True,null=True)
 

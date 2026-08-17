@@ -27,12 +27,6 @@
             </a>
         </div>
         <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'agro:zone_area_list' %}">
-                <img src="{% static 'button_icons/province.png' %}" alt="Zone/Area" />
-                <span class="task_desc">Zone/Area</span>
-            </a>
-        </div>
-        <div class="item_dashboard position-relative">
             <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'agro:commodity_list' %}">
                 <img src="{% static 'button_icons/commodity.png' %}" alt="Commodity" />
                 <span class="task_desc">Commodity</span>
@@ -54,6 +48,12 @@
             <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'agro:effect_items_list' %}">
                 <img src="{% static 'button_icons/productivity.png' %}" alt="Effects" />
                 <span class="task_desc">Effects</span>
+            </a>
+        </div>
+        <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'agro:info_items_list' %}">
+                <img src="{% static 'button_icons/pencil.png' %}" alt="Effects" />
+                <span class="task_desc">Additional Info</span>
             </a>
         </div>
     </div>

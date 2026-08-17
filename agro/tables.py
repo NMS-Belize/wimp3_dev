@@ -5,7 +5,7 @@ import calendar
 from django.urls import reverse
 from django.utils.html import format_html
 
-from agro.models import PestRiskEntryDetails, Months, PestAlertLevel, PestRiskAction, PestRiskEffect, Sector, DroughtAlertLevel, Commodity
+from agro.models import PestRiskEntryDetails, Months, PestAlertLevel, PestRiskAction, PestRiskEffect, Sector, DroughtAlertLevel, Commodity, PestRiskInfo
 from system_core.models import District
 
 class SectorTable(tables.Table):
@@ -33,30 +33,7 @@ class SectorTable(tables.Table):
         url = reverse("agro:sector_delete", args=[record.id])
         return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
     
-class ZoneAreaTable(tables.Table):
-    edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "col_edit"}, "td": {"style": "","class": "col_edit"}})
-    id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
-    zone_name = tables.Column(verbose_name="District",attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
-    delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "text-center"},"td": {"style": "","class": "col_delete text-center"}})
 
-    class Meta:
-        model = District
-        template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
-        fields = ("edit","zone_name","id","delete")
-
-        # Add table HTML id and CSS classes here
-        attrs = {
-            "id": "table_pest_alert_level",           # unique table ID
-            "class": "table table-striped table-condensed table-hover tbl_wimp3" # Bootstrap-friendly styling
-        }
-
-    def render_edit(self, record):
-        url = reverse("agro:zone_area_entry", args=[record.id])
-        return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
-    
-    def render_delete(self, record):
-        url = reverse("agro:zone_area_delete", args=[record.id])
-        return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
 
 class DistrictZoneTable(tables.Table):
     edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "col_edit"}, "td": {"style": "","class": "col_edit"}})
@@ -169,27 +146,19 @@ class DroughtAlertLevelsTable(tables.Table):
         return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
     
 class ActionItemsTable(tables.Table):
-    edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={
-        "th": {"style": "width:75px;","class": "text-center"}, 
-        "td": {"style": "","class": "col_edit text-center"}})
-    
-    id = tables.Column(verbose_name="ID",attrs={
-        "th": {"style": "width:75px;","class": "text-center"}, 
-        "td": {"style": "","class": "text-center"}
-    })
-    action_description = tables.Column(verbose_name="Description")  # override column header
-    
-    duplicate = tables.Column(empty_values=(),verbose_name="Duplicate",attrs={
-        "th": {"style": "width:75px;", "class": "text-center"},
-        "td": {"class": "col_edit text-center"},
-    })  
+    edit        = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:50px;","class": "text-center"}, "td": {"style": "","class": "col_edit text-center"}})
+    id          = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:80px;","class": "text-end"}, "td": {"style": "","class": "text-end"}})
 
-    delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
+    action_description = tables.Column(verbose_name="Description")  # override column header
+    commodity   = tables.Column(verbose_name="Commodity", attrs={"th": {"style": "width:100px","class": ""}, "td": {"style": "","class": ""}})
+
+    duplicate   = tables.Column(empty_values=(),verbose_name="Duplicate",attrs={ "th": {"style": "width:50px;", "class": "text-center"}, "td": {"class": "text-center"} })  
+    delete      = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
     
     class Meta:
         model = PestRiskAction
         template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
-        fields = ("edit","action_description","duplicate","id","delete")
+        fields = ("edit","action_description","commodity","duplicate","id","delete")
 
         # Add table HTML id and CSS classes here
         attrs = {
@@ -214,15 +183,15 @@ class EffectItemsTable(tables.Table):
     id          = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:80px;","class": "text-end"}, "td": {"style": "","class": "text-end"}})
 
     effect_description = tables.Column(verbose_name="Description")  # override column header
-    sector      = tables.Column(verbose_name="Sector", attrs={"th": {"style": "width:100px","class": ""}, "td": {"style": "","class": ""}})
+    commodity   = tables.Column(verbose_name="Commodity", attrs={"th": {"style": "width:100px","class": ""}, "td": {"style": "","class": ""}})
 
     duplicate   = tables.Column(empty_values=(),verbose_name="Duplicate",attrs={ "th": {"style": "width:50px;", "class": "text-center"}, "td": {"class": "text-center"} })   
     delete      = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:50px;","class": "text-center"},"td": {"style": "","class": "col_delete text-center"}})
     
     class Meta:
-        model = PestRiskEffect
+        model = PestRiskInfo
         template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
-        fields = ("edit","effect_description","sector","duplicate","id","delete")
+        fields = ("edit","effect_description","commodity","duplicate","id","delete")
 
         # Add table HTML id and CSS classes here
         attrs = {
@@ -238,13 +207,49 @@ class EffectItemsTable(tables.Table):
             short = value[:200] + "..." if len(value) > 200 else value
             return format_html('<span title="{}">{}</span>', value, short)
     
-    
     def render_duplicate(self, record):
         url = reverse("agro:effect_items_entry_duplicate", args=[record.id])  # change "pest_edit" to your URL name
         return format_html('<a href="{}" class="btn_duplicate"><i class="fa-solid fa-copy"></i></a>', url)
 
     def render_delete(self, record):
         url = reverse("agro:effect_items_delete", args=[record.id])
+        return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
+
+class InfoItemsTable(tables.Table):
+    edit        = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:50px;","class": "text-center"}, "td": {"style": "","class": "col_edit text-center"}})
+    id          = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:80px;","class": "text-end"}, "td": {"style": "","class": "text-end"}})
+
+    info_description = tables.Column(verbose_name="Description")  # override column header
+    commodity   = tables.Column(verbose_name="Commodity", attrs={"th": {"style": "width:100px","class": ""}, "td": {"style": "","class": ""}})
+
+    duplicate   = tables.Column(empty_values=(),verbose_name="Duplicate",attrs={ "th": {"style": "width:50px;", "class": "text-center"}, "td": {"class": "text-center"} })   
+    delete      = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:50px;","class": "text-center"},"td": {"style": "","class": "col_delete text-center"}})
+    
+    class Meta:
+        model = PestRiskInfo
+        template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
+        fields = ("edit","info_description","commodity","duplicate","id","delete")
+
+        # Add table HTML id and CSS classes here
+        attrs = {
+            "id": "table_pest_risk_info",           # unique table ID
+            "class": "table table-striped table-hover tbl_wimp3" # Bootstrap-friendly styling
+        }
+
+    def render_edit(self, record):
+        url = reverse("agro:info_items_entry", args=[record.id])  # change "pest_edit" to your URL name
+        return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i><a>', url)
+
+    def render_info_description(self, value):
+            short = value[:200] + "..." if len(value) > 200 else value
+            return format_html('<span title="{}">{}</span>', value, short)
+    
+    def render_duplicate(self, record):
+        url = reverse("agro:info_items_entry_duplicate", args=[record.id])  # change "pest_edit" to your URL name
+        return format_html('<a href="{}" class="btn_duplicate"><i class="fa-solid fa-copy"></i></a>', url)
+
+    def render_delete(self, record):
+        url = reverse("agro:info_items_delete", args=[record.id])
         return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
 
 class PestRiskMainListTable(tables.Table):
