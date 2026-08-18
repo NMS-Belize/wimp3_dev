@@ -19,10 +19,10 @@ class Command(BaseCommand):
 
         for item in alert_levels:
 
-            commodity_id = item.get("sector")
+            commodity_id = item.get("commodity")
                         
             if not Commodity.objects.filter(pk=commodity_id).exists():
-                self.stdout.write(self.style.WARNING(f'Skipping pest-risk ID {item["id"]}: Sector ID {commodity_id} does not exist.'))
+                self.stdout.write(self.style.WARNING(f'Skipping pest-risk ID {item["id"]}: Commodity ID {commodity_id} does not exist.'))
                 continue
             
             PestRiskAction.objects.update_or_create(
