@@ -23,25 +23,17 @@
                 <div class="col-12 mb-2">
                     <h3 class="dashboard_title">Alert Levels</h3>
                 </div>
-                <div class="col-4">
+                <div class="col-3">
                     <label for="id_pest_alert_lvl_id" class="form-label">{{ form.pest_alert_lvl_id.label_tag }}</label>
+
                     <div class="d-flex flex-wrap">
                     {% for radio in form.pest_alert_lvl_id %}    
+                        {% if radio.data.value %}
                         <div class="p-0 me-3">
-                            {% if radio.data.value == 1 %}
-                                {{ radio.tag }}
-                                <label class="btn btn-outline-low" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
-
-                            {% elif radio.data.value == 2 %}
-                                {{ radio.tag }}
-                                <label class="btn btn-outline-medium" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
-
-                            {% elif radio.data.value == 3 %}
-                                {{ radio.tag }}
-                                <label class="btn btn-outline-high" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>   
-                                
-                            {% endif %}
+                            {{ radio.tag }}
+                            <label class="btn pest-alert-option fw-semibold" for="{{ radio.id_for_label }}" data-value="{{ radio.data.value }}">{{ radio.choice_label }}</label>
                         </div>
+                        {% endif %}
                     {% endfor %}   
                     </div>
 
@@ -52,29 +44,17 @@
                     {% endif %}
                 </div>
 
-                <div class="col-4">
+                <div class="col-6">
                     <label for="id_drought_alert_lvl_id" class="form-label">{{ form.drought_alert_lvl_id.label_tag }}</label>
+                    
                     <div class="d-flex flex-wrap">
-                    {% for radio in form.drought_alert_lvl_id %}    
+                    {% for opt in form.drought_alert_lvl_id %}    
+                        {% if opt.data.value %}
                         <div class="p-0 me-3">
-                            {% if radio.data.value == 1 %}
-                                {{ radio.tag }}
-                                <label class="btn btn-outline-low" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
-
-                            {% elif radio.data.value == 2 %}
-                                {{ radio.tag }}
-                                <label class="btn btn-outline-medium" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
-
-                            {% elif radio.data.value == 3 %}
-                                {{ radio.tag }}
-                                <label class="btn btn-outline-high" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label> 
-                            
-                            {% elif radio.data.value == 4 %}
-                                {{ radio.tag }}
-                                <label class="btn btn-outline-critical" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>   
-                                
-                            {% endif %}
+                            {{ opt.tag }}
+                            <label class="btn drought-alert-option fw-semibold" for="{{ opt.id_for_label }}" data-value="{{ opt.data.value }}">{{ opt.choice_label }}</label>
                         </div>
+                        {% endif %}
                     {% endfor %}   
                     </div>
 
@@ -132,17 +112,16 @@
                     <h3 class="dashboard_title">Info</h3>
                 </div>
                 <div class="col-6">
-                    {{ form.effect.label_tag }}
+                    <label for="id_effect" class="form-label">{{ form.effect.label_tag }}</label>
                     {{ form.effect }}
                 </div>
-                <div class="clear mb-4"></div>
                 <div class="col-6">
-                    {{ form.info.label_tag }}
+                    <label for="id_info" class="form-label">{{ form.info.label_tag }}</label>
                     {{ form.info }}
                 </div>
                 <div class="clear mb-4"></div>
                 <div class="col-6">
-                    {{ form.actions.label_tag }}
+                    <label for="id_actions" class="form-label">{{ form.actions.label_tag }}</label>
                     {{ form.actions }}
                 </div>
             </div>
@@ -153,11 +132,87 @@
 </div>
 {% endblock %}
 {% block extra_js %}
-<script>
+{{ pest_colors|json_script:"pest-colors" }}
+{{ drought_colors|json_script:"drought-colors" }}
+<script type="text/javascript">
 $(document).ready(function () {
+    
+    const pestColors = JSON.parse(document.getElementById("pest-colors").textContent);
+
+    const droughtColors = JSON.parse(
+        document.getElementById("drought-colors").textContent
+    );
+
+    // Pest Alert Levels
+    function updatePestColors() {
+
+        document.querySelectorAll(".pest-alert-option").forEach(function(label) {
+
+            const value = label.dataset.value;
+            const color = pestColors[value];
+
+            // Find radio associated with this label
+            const radio = document.getElementById(
+                label.getAttribute("for")
+            );
+
+            if (color) {
+                //label.style.borderColor = color;
+
+                if (radio && radio.checked) {
+                    label.style.backgroundColor = color;
+                    label.style.color = "#fff";
+                }
+                else {
+                    label.style.borderColor = "transparent";
+                    label.style.backgroundColor = `color-mix(in srgb, ${color} 10%, transparent)`;
+                    label.style.color = color;
+                }
+            }
+        });
+    }
+
+    // Drought Alert Levels
+    function updateDroughtColors() {
+
+        document.querySelectorAll(".drought-alert-option").forEach(function(label) {
+
+            const value = label.dataset.value;
+            const color = droughtColors[value];
+            const radio = document.getElementById(label.getAttribute("for"));
+
+            if (color) {
+                //label.style.color = "#212925";
+
+                if (radio && radio.checked) {
+                    label.style.backgroundColor = color;
+                    label.style.color = "#fff";
+                }
+                else {
+                    label.style.borderColor = "transparent";
+                    label.style.backgroundColor = `color-mix(in srgb, ${color} 10%, transparent)`;
+                    label.style.color = color;
+                }
+            }
+        });
+    }
+
+    // Listen for changes
+    document.querySelectorAll('input[name="pest_alert_lvl_id"]').forEach(function(radio) {
+        radio.addEventListener("change", updatePestColors);
+    });
+
+    document.querySelectorAll('input[name="drought_alert_lvl_id"]').forEach(function(radio) {
+        radio.addEventListener("change", updateDroughtColors);
+    });
+
+    // Apply colors when page initially loads
+    updatePestColors();
+    updateDroughtColors();
+
     $('.select2').select2({
         width: '100%',
-        placeholder: 'Select an option',
+        placeholder: 'Select one or more option',
         allowClear: true
     });
 });

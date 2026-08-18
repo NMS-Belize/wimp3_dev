@@ -3,7 +3,7 @@ import json
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from agro.models import PestRiskInfo, Sector
+from agro.models import PestRiskInfo, Commodity
 
 class Command(BaseCommand):
     
@@ -19,17 +19,17 @@ class Command(BaseCommand):
 
         for item in alert_levels:
 
-            sector_id = item.get("sector")
+            commodity_id = item.get("commodity")
                         
-            if not Sector.objects.filter(pk=sector_id).exists():
-                self.stdout.write(self.style.WARNING(f'Skipping pest-risk ID {item["id"]}: Sector ID {sector_id} does not exist.'))
+            if not Commodity.objects.filter(pk=commodity_id).exists():
+                self.stdout.write(self.style.WARNING(f'Skipping pest-risk ID {item["id"]}: Sector ID {commodity_id} does not exist.'))
                 continue
             
             PestRiskInfo.objects.update_or_create(
                 id = item["id"],
                 defaults={
                     "info_description": item["info_description"],
-                    "sector_id": sector_id,
+                    "commodity_id": commodity_id,
                 }
             )
 

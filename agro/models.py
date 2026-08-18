@@ -73,6 +73,13 @@ class PestRiskEffect(models.Model):
         verbose_name = "Pest Risk Effect"
         verbose_name_plural = "Pest Risk Effects"
 
+        constraints = [
+            models.UniqueConstraint(
+                fields=['commodity', 'effect_description'],
+                name='unique_commodity_effect_description'
+            )
+        ]
+
     def __str__(self): return self.effect_description
 
 class PestRiskAction(models.Model):
@@ -92,7 +99,6 @@ class PestRiskAction(models.Model):
 class PestRiskInfo(models.Model):
     id                  = models.BigAutoField(primary_key=True)
     info_description    = models.TextField(blank=False,null=False)
-    #sector              = models.ForeignKey(Sector, on_delete=models.CASCADE, related_name='pest_risk_info_category', blank=True, null=True)
     commodity           = models.ForeignKey(Commodity, on_delete=models.CASCADE,related_name='pest_risk_info_commodity',null=True)
     published_date      = models.DateTimeField(auto_now=True,null=True)
     updated_datetime    = models.DateTimeField(auto_now_add=True,null=True)
@@ -100,6 +106,13 @@ class PestRiskInfo(models.Model):
     class Meta:
         verbose_name = "Pest Risk Info"
         verbose_name_plural = "Pest Risk Info"
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=['commodity', 'info_description'],
+                name='unique_commodity_info_description'
+            )
+        ]
 
     def __str__(self): return self.info_description
 
@@ -151,9 +164,9 @@ class PestRiskEntryDetails(models.Model):
     temp_max                = models.DecimalField(default=0.00,max_digits=5,decimal_places=2, blank=True, null=True)
     precip_min              = models.DecimalField(default=0.0,max_digits=20,decimal_places=1, blank=True, null=True)
     precip_max              = models.DecimalField(default=0.0,max_digits=20,decimal_places=1, blank=True, null=True)
-    effect                  = models.ForeignKey(PestRiskEffect, on_delete=models.CASCADE,blank=True, null=True)
-    info                    = models.ForeignKey(PestRiskInfo, on_delete=models.CASCADE,blank=True, null=True)
-    actions                 = models.ForeignKey(PestRiskAction, on_delete=models.CASCADE,blank=True, null=True)
+    effect                  = models.ManyToManyField(PestRiskEffect, blank=True)
+    info                    = models.ManyToManyField(PestRiskInfo, blank=True)
+    actions                 = models.ManyToManyField(PestRiskAction, blank=True)
     is_published            = models.BooleanField(default=False)
     updated_by              = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="pest_risk_item_updated")
     updated_datetime        = models.DateTimeField(auto_now_add=True,null=True)

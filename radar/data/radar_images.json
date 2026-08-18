@@ -2,43 +2,49 @@
     {
         "id": 1,
         "image_url": "http://200.32.229.83/Radar_50km_loop/Recent_50km_loop.gif",
-        "web_directory": "/images/radar/",
+        "web_directory": "/media/radar/",
         "image_title": "50 Km Loop"
     },
     {
         "id": 2,
         "image_url": "http://200.32.229.83/Radar_50km_static/Recent_50km_pic.gif",
-        "web_directory": "/images/radar/",
+        "web_directory": "/media/radar/",
         "image_title": "50 Km Static"
     },
     {
         "id": 3,
         "image_url": "http://200.32.229.83/Radar_250km_static/Recent_250km_pic.gif",
-        "web_directory": "/images/radar/",
+        "web_directory": "/media/radar/",
         "image_title": "250 Km Static"
     },
     {   
         "id": 4,
         "image_url": "http://200.32.229.83/Radar_250km_loop/Animation/Recent_250km_loop.gif",
-        "web_directory": "/images/radar/",
+        "web_directory": "/media/radar/",
         "image_title": "250 Km Loop"
     },
     {
         "id": 5,
         "image_url": "http://200.32.229.83/Radar_400km_ppi_static/Recent_400km_pic.gif",
-        "web_directory": "/images/radar/",
+        "web_directory": "/media/radar/",
         "image_title": "400 Km Static"
     },
     {
         "id": 6,
         "image_url": "http://200.32.229.83/Radar_400km_ppi_loop/Recent_400km_loop.gif",
-        "web_directory": "/images/radar/",
+        "web_directory": "/media/radar/",
         "image_title": "400 Km Loop"
     },
     {
         "id": 7,
         "image_url": "http://200.32.229.83/Radar_175km_sri/Recent_175km_sri_pic.gif",
-        "web_directory": "/images/radar/",
+        "web_directory": "/media/radar/",
         "image_title": "175 Km SRI Static"
+    },
+    {
+        "id": 8,
+        "image_url": "http://200.32.229.83/Radar_250km_9am_daily_pac/Recent_250km_9am_daily_pac_pic.gif",
+        "web_directory": "/media/radar/",
+        "image_title": "250 Km Cumulative"
     }
 ]

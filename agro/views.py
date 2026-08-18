@@ -24,7 +24,7 @@ from agro.filters import InfoItemFilter, EffectItemFilter, ActionItemFilter
 from agro.tables import PestRiskMainListTable, PestRiskDetailsTable, PestAlertLevelsTable, SectorTable, ActionItemsTable, CommodityTable, DroughtAlertLevelsTable, EffectItemsTable, InfoItemsTable
 from agro.serializers import CommodityCategorySerializer, SectorSerializer, PestRiskEntryDetailsSerializer, PestRiskSerializer, ActionItemsSerializer, EffectItemsSerializer, DroughtAlertLevelSerializer
 
-from system_core.models import Zone, District
+from system_core.models import Zone, District, AlertLevel
 from system_core.serializers import ZoneSerializer, DistrictSerializer
 
 #from .serializers import CommodityTypeSerializer, CommodityCategorySerializer
@@ -126,30 +126,6 @@ def pest_risk_entry(request, id=None):
         'entry': entry
     })
 
-'''def pest_risk_delete(request, id):
-    
-    entry = get_object_or_404(PestRiskEntryMainListing, id=id)
-
-    qs = PestRiskEntryDetails.objects.all().order_by('id')
-    # Filter details by parent listing
-    qs = qs.filter(pest_risk_listing_id=id)
-    qs = qs.order_by('id')
-    
-    page_name = "Pest Risk Entry"
-    month_names = [calendar.month_name[int(m)] for m in entry.months]
-
-    if request.method == "POST":
-        entry.delete()
-        
-        return redirect('agro:pest_risk_list')  # redirect anywhere you prefer
-
-    return render(request, "delete_pest_risk.html", {
-        "entry": entry,
-        'page_name': page_name,
-        'month_names': month_names,
-        'details': qs
-    })'''
-
 def pest_risk_details_list(request,c_id=None):
 
     page_name   = "Pest Risk Details"
@@ -185,47 +161,20 @@ def pest_risk_details_list(request,c_id=None):
     }
     return render(request,'table_list_pest_risk_details_template.html',context)
 
-'''def pest_risk_details_create(request, fk, id=None):
-
-    # Parent object (FK) is REQUIRED
-    parent_entry = get_object_or_404(PestRiskEntryMainListing, id=fk)
-
-    page_name = f"Pest Risk Entry Details: {parent_entry}"
-
-   # Child object (details)
-    entry = None
-    if id:
-        entry = get_object_or_404(PestRiskEntryDetails,id=id,pest_risk_listing=parent_entry)
-
-    if request.method == 'POST':
-        form = PestRiskEntryDetailsForm(request.POST, instance=entry)
-        form.instance.pest_risk_listing_id = PestRiskEntryMainListing.objects.get(id=fk)
-
-        if form.is_valid():
-            saved_entry = form.save(commit=False)
-            saved_entry.pest_risk_listing  = parent_entry   # set FK
-            saved_entry.save()
-
-            return redirect('agro:pest_risk_details_list', parent_entry.id)
-    else:
-        form = PestRiskEntryDetailsForm(instance=entry)
-
-    return render(request, 'entry_form_pest_risk.html', {
-        'page_name': page_name,
-        'new_url':      reverse('agro:pest_risk_entry'),
-        'details_url':  reverse('agro:pest_risk_details_create', args=[parent_entry.id]),
-        'back_url':     reverse('agro:pest_risk_list'),
-        'api_url': "/api/pest-risk-entries/",
-        'form': form,
-        'entry': entry,
-        'parent_entry': parent_entry,
-        'parent_id': parent_entry.id,
-        'fk': fk
-    })'''
-
 def pest_risk_details_entry(request, id=None):
 
     entry = get_object_or_404(PestRiskEntryDetails,id=id)
+
+    pest_colors = {
+        str(level.id): level.color
+        for level in AlertLevel.objects.all()
+    }
+
+    drought_colors = {
+        str(level.id): level.color_hex
+        for level in DroughtAlertLevel.objects.all()
+    }
+
     c_id = entry.commodity_id_id 
 
     page_name = f"Pest Risk Details: {entry.commodity_id}"
@@ -242,14 +191,17 @@ def pest_risk_details_entry(request, id=None):
     else:
         form = PestRiskEntryDetailsForm(instance=entry)
 
-    return render(request, 'pest-risk/entry_form_details.html', {
+    context = {
         'page_name': page_name,
-        #'details_url':  reverse('agro:pest_risk_details_create', args=[parent_entry.id]),
         'back_url':     reverse('agro:pest_risk_list'),
         'api_url': "/api/pest-risk-entries/",
-        'form': form,
-        'entry': entry
-    })
+        'form' : form,
+        'entry' : entry,
+        "pest_colors": pest_colors,
+        "drought_colors": drought_colors,
+    }
+
+    return render(request, 'pest-risk/entry_form_details.html', context)
 
 def pest_risk_details_delete(request, id=None, fk=None):
     entry = get_object_or_404(PestRiskEntryDetails, id=id)
@@ -679,11 +631,14 @@ def action_items_entry(request, id=None):
 
         if form.is_valid():
             saved_entry = form.save()    # Creates or updates
+            messages.success(request,(f"Item created/updated"))
             return redirect('agro:action_items_list', saved_entry.id)
+        else:
+            messages.error(request,f"Unable to update/create")
     else:
         form = ActionItemsForm(instance=entry)
 
-    return render(request, 'entry_form.html', {
+    return render(request, 'pest-risk/parameters_entry_form.html', {
         'page_name':    page_name,
         'prev_page':    "Action Items List",
         'new_url':      reverse('agro:action_items_entry'),
@@ -761,6 +716,7 @@ def effect_items_list(request, id=None):
         'table': table,
         'filter':   filterset,
         'new_url': reverse('agro:effect_items_entry'),
+        'list_url': reverse('agro:effect_items_list'),
         'back_url': reverse('agro:index'),
         'api_url':  reverse('effectitems-list'),
     }
@@ -781,8 +737,10 @@ def effect_items_entry(request, id=None):
 
         if form.is_valid():
             saved_entry = form.save()    # Creates or updates
+            messages.success(request,(f"Item created: saved_entry.effect_description"))
             return redirect('agro:effect_items_list', saved_entry.id)
     else:
+        messages.error(request,f"Unable to update/create")
         form = EffectItemsForm(instance=entry)
 
     return render(request, 'pest-risk/parameters_entry_form.html', {
@@ -816,16 +774,20 @@ def duplicate_object_pest_risk_effect(obj):
     data['effect_description'] = f"{obj.effect_description}"
     return obj.__class__.objects.create(**data)
 
+def effect_items_duplicate_object(obj):
+    new_obj = PestRiskEffect.objects.create(effect_description=obj.effect_description)
+    return new_obj
+
 def effect_items_entry_duplicate(request, id):
-    obj = get_object_or_404(PestRiskEffect, pk=id)
-    duplicate_object_pest_risk_effect(obj)
-    return redirect('agro:effect_items_list')
+    obj     = get_object_or_404(PestRiskEffect, pk=id)
+    new_obj = effect_items_duplicate_object(obj)
+    return redirect('agro:effect_items_entry', new_obj.id)
 
 #################### PEST RISK Additional Info ITEMS - TABLE ####################
 def info_items_list(request, id=None):
 
     page_name = "Additional Info Items"
-    qs = PestRiskInfo.objects.all().order_by('commodity','info_description')
+    qs = PestRiskInfo.objects.all().order_by('commodity__description','info_description')
 
     filterset = InfoItemFilter(request.GET, queryset=qs)
 
@@ -849,6 +811,7 @@ def info_items_list(request, id=None):
         'filter':   filterset,
         'new_url':  reverse('agro:info_items_entry'),
         'back_url': reverse('agro:index'),
+        'list_url': reverse('agro:effect_items_list'),
         #'api_url':  reverse('actionitems-list'),
     }
     return render(request, 'pest-risk/parameters_table_list.html', context)
@@ -897,18 +860,14 @@ def info_items_delete(request, id):
         'page_name': page_name,
     })
 
-def info_items_entry_duplicate(request, id):
-    obj = get_object_or_404(PestRiskInfo, pk=id)
-    info_items_duplicate_object(obj)
-    return redirect('agro:info_items_entry', obj.id)
-
 def info_items_duplicate_object(obj):
-    data = model_to_dict(obj)
-    data.pop('id', None)
-    data['info_description'] = f"{obj.info_description}"
-    data['sector'] = obj.sector
+    new_obj = PestRiskInfo.objects.create(info_description=obj.info_description)
+    return new_obj
 
-    return obj.__class__.objects.create(**data)
+def info_items_entry_duplicate(request, id):
+    obj     = get_object_or_404(PestRiskInfo, pk=id)
+    new_obj = info_items_duplicate_object(obj)
+    return redirect('agro:info_items_entry', new_obj.id)
 
 def duplicate_object_pest_risk_action(obj):
     data = model_to_dict(obj)

@@ -1,197 +1,277 @@
 [
     {
         "id": 1,
-        "effect_description": "The conditions during this period will not favour an increase in froghopper populations.",
-        "sector": 1
+        "commodity": 1,
+        "effect_description": "The conditions during this period may favour an increase in froghopper populations."
     },
     {
         "id": 2,
-        "effect_description": "The conditions during this period may favour an increase in froghopper populations.",
-        "sector": 1
+        "commodity": 1,
+        "effect_description": "The conditions during this period will favour a stem borer population outbreak."
     },
     {
         "id": 3,
-        "effect_description": "Below-normal rainfall is not expected to favour psyllid population growth but may increase mite populations, including vectors of Citrus Leprosis Virus. Conditions are also not expected to favour an increase in Drunken Bayman populations.",
-        "sector": 1
+        "commodity": 1,
+        "effect_description": "The conditions during this period will not favour an increase in froghopper populations."
     },
     {
         "id": 4,
-        "effect_description": "Conditions may favour psyllid population growth. Rainfall is not expected to favour increased mite populations but may favour an increase in Drunken Bayman populations.",
-        "sector": 1
+        "commodity": 2,
+        "effect_description": "Below-normal rainfall is not expected to favour psyllid population growth but may increase mite populations, including vectors of Citrus Leprosis Virus. Conditions are also not expected to favour an increase in Drunken Bayman populations."
     },
     {
         "id": 5,
-        "effect_description": "Conditions will favour outbreaks of Sigatoka and may increase nematode infestations.",
-        "sector": 1
+        "commodity": 2,
+        "effect_description": "Below-normal rainfall may reduce flushing and stress trees. Dry, dusty conditions can increase mite pressure and may also favour scale insects and mealybugs on stressed trees. Asian citrus psyllid (ACP) pressure may be localized but can increase quickly wherever new flushing occurs."
     },
     {
         "id": 6,
-        "effect_description": "Conditions will favour whiteflies, Asian thrips, and mites.",
-        "sector": 1
+        "commodity": 2,
+        "effect_description": "Conditions may favour psyllid population growth. Rainfall is not expected to favour increased mite populations but may favour an increase in Drunken Bayman populations."
     },
     {
         "id": 7,
-        "effect_description": "Monitor for Asian thrips and mites in the area.",
-        "sector": 1
+        "commodity": 2,
+        "effect_description": "Rainfall during this period will benefit established orchards. Continue monitoring for pest and disease problems and implement appropriate control measures."
     },
     {
         "id": 8,
-        "effect_description": "Conditions may favour fungal and bacterial diseases.",
-        "sector": 1
+        "commodity": 3,
+        "effect_description": "Conditions will favour outbreaks of Sigatoka and may increase nematode infestations."
     },
     {
         "id": 9,
-        "effect_description": "Conditions will favour fungal and bacterial diseases.",
-        "sector": 1
+        "commodity": 4,
+        "effect_description": "Conditions may favour fungal and bacterial diseases."
     },
     {
         "id": 10,
-        "effect_description": "These conditions may trigger higher incidences of whiteflies, thrips, and mites while causing water stress to plants.",
-        "sector": 1
+        "commodity": 4,
+        "effect_description": "Conditions will favour fungal and bacterial diseases."
     },
     {
         "id": 11,
-        "effect_description": "Above-normal rainfall will favour higher incidences of fungal and bacterial diseases.",
-        "sector": 1
+        "commodity": 4,
+        "effect_description": "Conditions will favour whiteflies, Asian thrips, and mites."
     },
     {
         "id": 12,
-        "effect_description": "Low rainfall and high temperatures may stress plants. Monitor for pest problems and implement appropriate control measures.",
-        "sector": 1
+        "commodity": 4,
+        "effect_description": "Monitor for Asian thrips and mites in the area."
     },
     {
         "id": 13,
-        "effect_description": "Coconut: Conditions may favour coconut weevils, mites, red spider mites, Phytophthora, and Red Ring disease.",
-        "sector": 1
+        "commodity": 5,
+        "effect_description": "Above normal rainfall will favour higher incidences of fungal and bacterial diseases."
     },
     {
         "id": 14,
-        "effect_description": "Avocado: Conditions may favour thrips, scales, red spider mites, mealybugs, and other pests. Drought stress may increase susceptibility to bacterial canker, stem blight, and leaf blight.",
-        "sector": 1
+        "commodity": 5,
+        "effect_description": "These conditions may trigger higher incidences of whiteflies, thrips, and mites while causing water stress to plants."
     },
     {
         "id": 15,
-        "effect_description": "Soursop: Conditions may favour fruit, stem, and trunk borers, mealybugs, aphids, mites, thrips, scales, lacewings, defoliating caterpillars, and Anthracnose resulting from secondary insect damage.",
-        "sector": 1
+        "commodity": 6,
+        "effect_description": "Avocado: Conditions may favour thrips, scales, red spider mites, mealybugs, and other pests. Drought stress may increase susceptibility to bacterial canker, stem blight, and leaf blight."
     },
     {
         "id": 16,
-        "effect_description": "Cacao: High humidity may favour disease development.",
-        "sector": 1
+        "commodity": 6,
+        "effect_description": "Avocado: Continue monitoring for thrips, scales, red spider mites, mealybugs, bacterial canker, stem blight, and leaf blight."
     },
     {
         "id": 17,
-        "effect_description": "Pineapple: Conditions may favour sunscald of fruits, mealybugs, and stink bugs.",
-        "sector": 1
+        "commodity": 6,
+        "effect_description": "Avocado: Monitor for thrips, red spider mites, scales, and mealybugs. Fruit scarring, leaf bronzing, and fruit drop may increase in stressed trees."
     },
     {
         "id": 18,
-        "effect_description": "Other pest damage may include birds, rodents, and squirrels.",
-        "sector": 1
+        "commodity": 6,
+        "effect_description": "Avocado: Monitor for thrips, scales, red spider mites, and mealybugs. Fruit scarring and leaf bronzing are more likely during hot, dry periods."
     },
     {
         "id": 19,
-        "effect_description": "Rainfall during this period will benefit established orchards. Continue monitoring for pest and disease problems and implement appropriate control measures.",
-        "sector": 1
+        "commodity": 6,
+        "effect_description": "Below normal rainfall will reduce soil moisture and increase heat stress. These conditions may reduce flushing and flowering, increase fruit drop, reduce fruit size, and trigger outbreaks of mites, thrips, mealybugs, and scales."
     },
     {
         "id": 20,
-        "effect_description": "Coconut: Continue monitoring for coconut weevils, mites, red spider mites, Phytophthora, and Red Ring disease.",
-        "sector": 1
+        "commodity": 6,
+        "effect_description": "Cacao: Drought stress may reduce flowering and pod development. If rainfall occurs in bursts, black pod disease may still develop where sanitation is poor."
     },
     {
         "id": 21,
-        "effect_description": "Avocado: Continue monitoring for thrips, scales, red spider mites, mealybugs, bacterial canker, stem blight, and leaf blight.",
-        "sector": 1
+        "commodity": 6,
+        "effect_description": "Cacao: High humidity may continue to favour disease development."
     },
     {
         "id": 22,
-        "effect_description": "Soursop: Continue monitoring for fruit, stem, and trunk borers, mealybugs, aphids, mites, thrips, scales, lacewings, defoliating caterpillars, and Anthracnose.",
-        "sector": 1
+        "commodity": 6,
+        "effect_description": "Cacao: High humidity may favour disease development."
     },
     {
         "id": 23,
-        "effect_description": "Cacao: High humidity may continue to favour disease development.",
-        "sector": 1
+        "commodity": 6,
+        "effect_description": "Cacao: Periods of rainfall and high humidity may favour black pod disease (Phytophthora) and other fungal diseases. Dry and hot conditions may cause stress and reduced flowering in young cacao plants."
     },
     {
         "id": 24,
-        "effect_description": "Pineapple: Continue monitoring for sunscald and other pest-related damage.",
-        "sector": 1
+        "commodity": 6,
+        "effect_description": "Coconut: Conditions may favour coconut weevils, mites, red spider mites, Phytophthora, and Red Ring disease."
     },
     {
         "id": 25,
-        "effect_description": "The conditions during this period will favour a stem borer population outbreak.",
-        "sector": 1
+        "commodity": 6,
+        "effect_description": "Coconut: Continue monitoring for coconut weevils, mites, red spider mites, Phytophthora, and Red Ring disease."
     },
     {
         "id": 26,
-        "effect_description": "Below-normal rainfall may reduce flushing and stress trees. Dry, dusty conditions can increase mite pressure and may also favour scale insects and mealybugs on stressed trees. Asian citrus psyllid (ACP) pressure may be localized but can increase quickly wherever new flushing occurs.",
-        "sector": 1
+        "commodity": 6,
+        "effect_description": "Coconut: Monitor for coconut weevils, rhinoceros beetles where present, red palm mites, spider mites, scales, and mealybugs."
     },
     {
         "id": 27,
-        "effect_description": "Rainfall is expected to be adequate for production, but periods of low rainfall and high temperatures can still cause heat and moisture stress, especially on sandy or shallow soils and young trees. Stress can trigger outbreaks of mites, thrips, mealybugs, scales, and borers and increase the risk of sunscald in coconut, pineapple, and avocado. Tree stress can also predispose plants to cankers and dieback.\n\nCoconut: Monitor for coconut weevils, rhinoceros beetles where present, red palm mites, spider mites, scales, and mealybugs.\n\nAvocado: Monitor for thrips, scales, red spider mites, and mealybugs. Fruit scarring and leaf bronzing are more likely during hot, dry periods.\n\nSoursop: Monitor for fruit, stem, and trunk borers, mealybugs, aphids, mites, thrips, scales, and secondary Anthracnose on damaged fruit.\n\nCacao: Periods of rainfall and high humidity may favour black pod disease (Phytophthora) and other fungal diseases. Dry and hot conditions may cause stress and reduced flowering in young cacao plants.\n\nPineapple: Monitor for sunscald, mealybugs, mealybug wilt, and stink bugs. Heat stress may reduce fruit quality.\n\nOther damage: Birds, rodents, and other mammals, including squirrels, may cause increased fruit damage during dry periods.",
-        "sector": 1
+        "commodity": 6,
+        "effect_description": "Coconut: Monitor for red spider mites, red palm mites, scales, and mealybugs. Palms may weaken under prolonged moisture stress."
     },
     {
         "id": 28,
-        "effect_description": "Below-normal rainfall will reduce soil moisture and increase heat stress. These conditions may reduce flushing and flowering, increase fruit drop, reduce fruit size, and trigger outbreaks of mites, thrips, mealybugs, and scales.\n\nCoconut: Monitor for red spider mites, red palm mites, scales, and mealybugs. Palms may weaken under prolonged moisture stress.\n\nAvocado: Monitor for thrips, red spider mites, scales, and mealybugs. Fruit scarring, leaf bronzing, and fruit drop may increase in stressed trees.\n\nSoursop: Monitor for fruit, stem, and trunk borers, mealybugs, aphids, mites, thrips, and scales. Insect-damaged fruit may have an increased risk of Anthracnose.\n\nCacao: Drought stress may reduce flowering and pod development. If rainfall occurs in bursts, black pod disease may still develop where sanitation is poor.\n\nPineapple: Monitor for sunscald, mealybugs, mealybug wilt, and stink bug damage. Fruit quality may decline under prolonged heat and moisture stress.",
-        "sector": 1
+        "commodity": 6,
+        "effect_description": "Coconut: coconut weevil/rhinoceros beetle (where present), red palm mite / spider mites, scale/mealybugs"
     },
     {
         "id": 29,
-        "effect_description": "Evaporation of pond water.",
-        "sector": 2
+        "commodity": 6,
+        "effect_description": "Low rainfall and high temperatures may stress plants. Monitor for pest problems and implement appropriate control measures."
     },
     {
         "id": 30,
-        "effect_description": "Increase in oxygen consumption.",
-        "sector": 2
+        "commodity": 6,
+        "effect_description": "Other damage: Birds, rodents, and other mammals, including squirrels, may cause increased fruit damage during dry periods."
     },
     {
         "id": 31,
-        "effect_description": "Increased demand for feed.",
-        "sector": 2
+        "commodity": 6,
+        "effect_description": "Other pest damage may include birds, rodents, and squirrels."
     },
     {
         "id": 32,
-        "effect_description": "An increase in bacterial diseases.",
-        "sector": 2
+        "commodity": 6,
+        "effect_description": "Pineapple: Conditions may favour sunscald of fruits, mealybugs, and stink bugs."
     },
     {
         "id": 33,
-        "effect_description": "Heat Stress",
-        "sector": 3
+        "commodity": 6,
+        "effect_description": "Pineapple: Continue monitoring for sunscald and other pest-related damage."
     },
     {
         "id": 34,
-        "effect_description": "External and Internal Parasites",
-        "sector": 3
+        "commodity": 6,
+        "effect_description": "Pineapple: Monitor for sunscald, mealybugs, mealybug wilt, and stink bug damage. Fruit quality may decline under prolonged heat and moisture stress."
     },
     {
         "id": 35,
-        "effect_description": "Rabies and Blackleg",
-        "sector": 3
+        "commodity": 6,
+        "effect_description": "Pineapple: Monitor for sunscald, mealybugs, mealybug wilt, and stink bugs. Heat stress may reduce fruit quality."
     },
     {
         "id": 36,
-        "effect_description": "Varroa Mites",
-        "sector": 3
+        "commodity": 6,
+        "effect_description": "Rainfall is expected to be adequate for production, but periods of low rainfall and high temperatures can still cause heat and moisture stress, especially on sandy or shallow soils and young trees. Stress can trigger outbreaks of mites, thrips, mealybugs, scales, and borers and increase the risk of sunscald in coconut, pineapple, and avocado. Tree stress can also predispose plants to cankers and dieback."
     },
     {
         "id": 37,
-        "effect_description": "Chalkbrood",
-        "sector": 3
+        "commodity": 6,
+        "effect_description": "Soursop: Conditions may favour fruit, stem, and trunk borers, mealybugs, aphids, mites, thrips, scales, lacewings, defoliating caterpillars, and Anthracnose resulting from secondary insect damage."
     },
     {
         "id": 38,
-        "effect_description": "Small Hive Beetle",
-        "sector": 3
+        "commodity": 6,
+        "effect_description": "Soursop: Continue monitoring for fruit, stem, and trunk borers, mealybugs, aphids, mites, thrips, scales, lacewings, defoliating caterpillars, and Anthracnose."
     },
     {
         "id": 39,
-        "effect_description": "Army Ants",
-        "sector": 3
+        "commodity": 6,
+        "effect_description": "Soursop: Monitor for fruit, stem, and trunk borers, mealybugs, aphids, mites, thrips, and scales. Insect-damaged fruit may have an increased risk of Anthracnose."
+    },
+    {
+        "id": 40,
+        "commodity": 6,
+        "effect_description": "Soursop: Monitor for fruit, stem, and trunk borers, mealybugs, aphids, mites, thrips, scales, and secondary Anthracnose on damaged fruit."
+    },
+    {
+        "id": 41,
+        "commodity": 7,
+        "effect_description": "An increase in bacterial diseases."
+    },
+    {
+        "id": 42,
+        "commodity": 7,
+        "effect_description": "Evaporation of pond water."
+    },
+    {
+        "id": 43,
+        "commodity": 7,
+        "effect_description": "Increase in oxygen consumption."
+    },
+    {
+        "id": 44,
+        "commodity": 7,
+        "effect_description": "Increased demand for feed."
+    },
+    {
+        "id": 45,
+        "commodity": 9,
+        "effect_description": "Heat Stress"
+    },
+    {
+        "id": 46,
+        "commodity": 10,
+        "effect_description": "External and Internal Parasites"
+    },
+    {
+        "id": 47,
+        "commodity": 10,
+        "effect_description": "Heat Stress"
+    },
+    {
+        "id": 48,
+        "commodity": 10,
+        "effect_description": "Rabies and Blackleg"
+    },
+    {
+        "id": 49,
+        "commodity": 12,
+        "effect_description": "External and Internal Parasites"
+    },
+    {
+        "id": 50,
+        "commodity": 12,
+        "effect_description": "Heat Stress"
+    },
+    {
+        "id": 51,
+        "commodity": 12,
+        "effect_description": "Rabies and Blackleg"
+    },
+    {
+        "id": 52,
+        "commodity": 13,
+        "effect_description": "Army Ants"
+    },
+    {
+        "id": 53,
+        "commodity": 13,
+        "effect_description": "Chalkbrood"
+    },
+    {
+        "id": 54,
+        "commodity": 13,
+        "effect_description": "Small Hive Beetle"
+    },
+    {
+        "id": 55,
+        "commodity": 13,
+        "effect_description": "Varroa Mites"
     }
 ]

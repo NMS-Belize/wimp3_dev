@@ -1,572 +1,192 @@
 [
     {
         "id": 1,
-        "sector": 3,
-        "info_description": "Improve managemant practices"
+        "commodity": 1,
+        "info_description": "Be on the look out for other pest like frog hopper."
     },
     {
         "id": 2,
-        "sector": 3,
-        "info_description": "Improve managemant practices"
+        "commodity": 1,
+        "info_description": "Be on the look out for other pest like fusarium."
     },
     {
         "id": 3,
-        "sector": 3,
-        "info_description": "Improve managemant practices"
+        "commodity": 1,
+        "info_description": "Be on the look out for other pest like locust."
     },
     {
         "id": 4,
-        "sector": 3,
-        "info_description": "Improve managemant practices"
+        "commodity": 1,
+        "info_description": "Irrigate where possible."
     },
     {
         "id": 5,
-        "sector": 3,
-        "info_description": "Improve managemant practices"
+        "commodity": 2,
+        "info_description": "Flushing of trees will occur since this normally occurs due to the rains."
     },
     {
         "id": 6,
-        "sector": 3,
-        "info_description": "Monitor herd for internal and external parasites"
+        "commodity": 2,
+        "info_description": "If rains last for two or more days, fungal and bacteria can become an issue."
     },
     {
         "id": 7,
-        "sector": 3,
-        "info_description": "Improve managemant practices"
+        "commodity": 2,
+        "info_description": "Pests concentrate heavily on the few flushing trees. Mites build fast in hot/dry weather; Drunken Baymen may still be attracted to new flush/soft growth."
     },
     {
         "id": 8,
-        "sector": 3,
-        "info_description": "Monitor increase of vampire bats activities"
+        "commodity": 2,
+        "info_description": "Psyllids reproduce on new leaf flushes."
     },
     {
         "id": 9,
-        "sector": 3,
-        "info_description": "Monitor herd for internal and external parasites"
+        "commodity": 3,
+        "info_description": "Rains favor the proliferation of fungi and spread of nematodes"
     },
     {
         "id": 10,
-        "sector": 3,
-        "info_description": "Improve managemant practices"
+        "commodity": 4,
+        "info_description": "Could be critical if plants are affected in the Reproductive Stage."
     },
     {
         "id": 11,
-        "sector": 3,
-        "info_description": "Monitor increase of vampire bats activities"
+        "commodity": 4,
+        "info_description": "Crop can be planted earlier than normal."
     },
     {
         "id": 12,
-        "sector": 3,
-        "info_description": "Monitor herd for internal and external parasites"
+        "commodity": 4,
+        "info_description": "Low plant density is recommended and have adecuate drainge."
     },
     {
         "id": 13,
-        "sector": 3,
-        "info_description": "Improve managemant practices"
+        "commodity": 6,
+        "info_description": "Borer symptoms (soursop): frass (sawdust), holes, gumming, wilting branches, sudden dieback."
     },
     {
         "id": 14,
-        "sector": 3,
-        "info_description": "Monitor increase of vampire bats activities"
+        "commodity": 6,
+        "info_description": "Cacao disease risk rises when canopy stays wet and airflow is poor—black pod spreads faster when sanitation is weak and pods remain on the ground/tree."
     },
     {
         "id": 15,
-        "sector": 3,
-        "info_description": "Monitor herd for internal and external parasites"
+        "commodity": 6,
+        "info_description": "Dust + heat favours mites/thrips; flush growth after showers favours aphids/mealybugs/scale."
     },
     {
         "id": 16,
-        "sector": 3,
-        "info_description": "Improve managemant practices"
+        "commodity": 6,
+        "info_description": "Even under “No concern,” 80–160 mm can be uneven (short dry spells between showers). Most problems appear in edge rows, shallow soils, young plantings, and unmulched blocks."
     },
     {
         "id": 17,
-        "sector": 3,
-        "info_description": "Monitor increase of vampire bats activities"
+        "commodity": 6,
+        "info_description": "Mealybugs/scales are flagged by ants, honeydew and sooty mold—ants protect them and make control harder."
     },
     {
         "id": 18,
-        "sector": 3,
-        "info_description": "Monitor herd for internal and external parasites"
+        "commodity": 6,
+        "info_description": "Mites build rapidly in hot/dry weather: look for stippling/bronzing, leaf curl and fine webbing (where present)."
     },
     {
         "id": 19,
-        "sector": 3,
-        "info_description": "Improve managemant practices"
+        "commodity": 6,
+        "info_description": "Thrips damage shows as bronze/scabby scars on young avocado fruit and distorted tender leaves."
     },
     {
         "id": 20,
-        "sector": 3,
-        "info_description": "Monitor increase of vampire bats activities"
+        "commodity": 6,
+        "info_description": "Under drought watch, pests concentrate on the few trees/areas that still flush (near irrigation lines, moist spots). When showers come, flush bursts happen and sucking pests rebound fast."
     },
     {
         "id": 21,
-        "sector": 3,
-        "info_description": "Improve managemant practices"
+        "commodity": 6,
+        "info_description": "Watch early drought symptoms: midday wilting, leaf scorch, premature fruit drop, smaller fruit, sunburn patches."
     },
     {
         "id": 22,
-        "sector": 3,
-        "info_description": "Improve managemant practices"
+        "commodity": 6,
+        "info_description": "Watch early warning signs: leaf bronzing/stippling, curled young leaves, sticky honeydew/sooty mold (scale/mealybugs), borer frass at trunks/branches, premature fruit drop, fruit scarring, and sunburn patches."
     },
     {
         "id": 23,
-        "sector": 3,
-        "info_description": "Improve managemant practices"
+        "commodity": 7,
+        "info_description": "An increase in temperature accelerates evaporation, lowering pond water levels and reducing the flow of the New River, which may become stagnant and lead to a deterioration in water quality."
     },
     {
         "id": 24,
-        "sector": 3,
-        "info_description": "Improve managemant practices"
+        "commodity": 7,
+        "info_description": "An increase in temperature elevates physiological and metabolic activity, leading to greater overall activity and higher oxygen consumption, which reduces dissolved oxygen (DO) concentrations in the water."
     },
     {
         "id": 25,
-        "sector": 3,
-        "info_description": "Improve managemant practices"
+        "commodity": 7,
+        "info_description": "Elevated temperatures may promote a shift from beneficial bacterial communities to pathogen-dominated conditions, thereby increasing susceptibility to disease."
     },
     {
         "id": 26,
-        "sector": 3,
-        "info_description": "Monitor herd for internal and external parasites"
+        "commodity": 7,
+        "info_description": "Increase in temperature cause evaporation affecting pond water levels and increasing salinity"
     },
     {
         "id": 27,
-        "sector": 3,
-        "info_description": "Improve managemant practices"
+        "commodity": 7,
+        "info_description": "Rising temperatures lead to higher shrimp feed intake, which may degrade water quality as uneaten feed accumulates and decomposes."
     },
     {
         "id": 28,
-        "sector": 3,
-        "info_description": "Monitor increase of vampire bats activities"
+        "commodity": 9,
+        "info_description": "Improve management practices"
     },
     {
         "id": 29,
-        "sector": 3,
+        "commodity": 10,
         "info_description": "Monitor herd for internal and external parasites"
     },
     {
         "id": 30,
-        "sector": 3,
-        "info_description": "Improve managemant practices"
-    },
-    {
-        "id": 31,
-        "sector": 3,
+        "commodity": 10,
         "info_description": "Monitor increase of vampire bats activities"
     },
     {
+        "id": 31,
+        "commodity": 11,
+        "info_description": "Improve management practices"
+    },
+    {
         "id": 32,
-        "sector": 3,
-        "info_description": "Monitor herd for internal and external parasites"
+        "commodity": 12,
+        "info_description": "Improve management practices"
     },
     {
         "id": 33,
-        "sector": 3,
-        "info_description": "Improve managemant practices"
+        "commodity": 12,
+        "info_description": "Monitor herd for internal and external parasites"
     },
     {
         "id": 34,
-        "sector": 3,
+        "commodity": 12,
         "info_description": "Monitor increase of vampire bats activities"
     },
     {
         "id": 35,
-        "sector": 3,
-        "info_description": "Monitor herd for internal and external parasites"
+        "commodity": 13,
+        "info_description": "Maintain strong colonies and monitor for moisture and avoid fungus"
     },
     {
         "id": 36,
-        "sector": 3,
-        "info_description": "Improve managemant practices"
+        "commodity": 13,
+        "info_description": "Monitor SHB and report any possible case of these diseases."
     },
     {
         "id": 37,
-        "sector": 3,
-        "info_description": "Monitor increase of vampire bats activities"
+        "commodity": 13,
+        "info_description": "Monitor Varroa and report any possible case of these diseases."
     },
     {
         "id": 38,
-        "sector": 3,
-        "info_description": "Monitor herd for internal and external parasites"
-    },
-    {
-        "id": 39,
-        "sector": 3,
-        "info_description": "Improve managemant practices"
-    },
-    {
-        "id": 40,
-        "sector": 3,
-        "info_description": "Monitor increase of vampire bats activities"
-    },
-    {
-        "id": 41,
-        "sector": 3,
-        "info_description": "Monitor Varroa and report any possible case of these diseases."
-    },
-    {
-        "id": 42,
-        "sector": 3,
-        "info_description": "Maintain strong colonies and monitor for moisture and avoid fungus"
-    },
-    {
-        "id": 43,
-        "sector": 3,
-        "info_description": "Monitor SHB and report any possible case of these diseases."
-    },
-    {
-        "id": 44,
-        "sector": 3,
-        "info_description": "Monitor for Army Ants and report any possible invasion"
-    },
-    {
-        "id": 45,
-        "sector": 3,
-        "info_description": "Monitor Varroa and report any possible case of these diseases."
-    },
-    {
-        "id": 46,
-        "sector": 3,
-        "info_description": "Maintain strong colonies and monitor for moisture and avoid fungus"
-    },
-    {
-        "id": 47,
-        "sector": 3,
-        "info_description": "Monitor SHB and report any possible case of these diseases."
-    },
-    {
-        "id": 48,
-        "sector": 3,
-        "info_description": "Monitor for Army Ants and report any possible invasion"
-    },
-    {
-        "id": 49,
-        "sector": 3,
-        "info_description": "Monitor Varroa and report any possible case of these diseases."
-    },
-    {
-        "id": 50,
-        "sector": 3,
-        "info_description": "Maintain strong colonies and monitor for moisture and avoid fungus"
-    },
-    {
-        "id": 51,
-        "sector": 3,
-        "info_description": "Monitor SHB and report any possible case of these diseases."
-    },
-    {
-        "id": 52,
-        "sector": 3,
-        "info_description": "Monitor for Army Ants and report any possible invasion"
-    },
-    {
-        "id": 53,
-        "sector": 3,
-        "info_description": "Monitor Varroa and report any possible case of these diseases."
-    },
-    {
-        "id": 54,
-        "sector": 3,
-        "info_description": "Maintain strong colonies and monitor for moisture and avoid fungus"
-    },
-    {
-        "id": 55,
-        "sector": 3,
-        "info_description": "Monitor SHB and report any possible case of these diseases."
-    },
-    {
-        "id": 56,
-        "sector": 3,
-        "info_description": "Monitor for Army Ants and report any possible invasion"
-    },
-    {
-        "id": 57,
-        "sector": 3,
-        "info_description": "Monitor Varroa and report any possible case of these diseases."
-    },
-    {
-        "id": 58,
-        "sector": 3,
-        "info_description": "Maintain strong colonies and monitor for moisture and avoid fungus"
-    },
-    {
-        "id": 59,
-        "sector": 3,
-        "info_description": "Monitor SHB and report any possible case of these diseases."
-    },
-    {
-        "id": 60,
-        "sector": 3,
-        "info_description": "Monitor for Army Ants and report any possible invasion"
-    },
-    {
-        "id": 61,
-        "sector": 1,
-        "info_description": "Be on the look out for other pest like fusarium."
-    },
-    {
-        "id": 62,
-        "sector": 1,
-        "info_description": "Be on the look out for other pest like fusarium."
-    },
-    {
-        "id": 63,
-        "sector": 1,
-        "info_description": "Be on the look out for other pest like fusarium and locust. Irrigate where possible."
-    },
-    {
-        "id": 64,
-        "sector": 1,
-        "info_description": "Be on the look out for other pest like fusarium and locust."
-    },
-    {
-        "id": 65,
-        "sector": 1,
-        "info_description": "Be on the look out for other pest like frog hopper."
-    },
-    {
-        "id": 66,
-        "sector": 1,
-        "info_description": "Be on the look out for other pest like frog hopper."
-    },
-    {
-        "id": 67,
-        "sector": 1,
-        "info_description": "Pests concentrate heavily on the few flushing trees. Mites build fast in hot/dry weather; Drunken Baymen may still be attracted to new flush/soft growth."
-    },
-    {
-        "id": 68,
-        "sector": 1,
-        "info_description": "Flushing of trees will occur since this normally occurs due to the rains. Psyllids reproduce on new leaf flushes."
-    },
-    {
-        "id": 69,
-        "sector": 1,
-        "info_description": "Flushing of trees will occur since this normally occurs due to the rains. Psyllids reproduce on new leaf flushes."
-    },
-    {
-        "id": 70,
-        "sector": 1,
-        "info_description": "Rains favor the proliferation of fungi and spread of nematodes"
-    },
-    {
-        "id": 71,
-        "sector": 1,
-        "info_description": "Rains favor the proliferation of fungi and spread of nematodes"
-    },
-    {
-        "id": 72,
-        "sector": 1,
-        "info_description": "Crop can be planted earlier than normal."
-    },
-    {
-        "id": 73,
-        "sector": 1,
-        "info_description": "If rains last for two or more days, fungal and bacteria can become an issue."
-    },
-    {
-        "id": 74,
-        "sector": 1,
-        "info_description": "Could be critical if plants are affected in the Reproductive Stage."
-    },
-    {
-        "id": 75,
-        "sector": 1,
-        "info_description": "Low plant density is recommended and have adecuate drainge."
-    },
-    {
-        "id": 76,
-        "sector": 1,
-        "info_description": "Low plant density is recommended and have adecuate drainge."
-    },
-    {
-        "id": 77,
-        "sector": 1,
-        "info_description": "Even under “No concern,” 80–160 mm can be uneven (short dry spells between showers). Most problems appear in edge rows, shallow soils, young plantings, and unmulched blocks."
-    },
-    {
-        "id": 78,
-        "sector": 1,
-        "info_description": "Dust + heat favours mites/thrips; flush growth after showers favours aphids/mealybugs/scale."
-    },
-    {
-        "id": 79,
-        "sector": 1,
-        "info_description": "Watch early warning signs: leaf bronzing/stippling, curled young leaves, sticky honeydew/sooty mold (scale/mealybugs), borer frass at trunks/branches, premature fruit drop, fruit scarring, and sunburn patches."
-    },
-    {
-        "id": 80,
-        "sector": 1,
-        "info_description": "Cacao disease risk rises when canopy stays wet and airflow is poor—black pod spreads faster when sanitation is weak and pods remain on the ground/tree."
-    },
-    {
-        "id": 81,
-        "sector": 1,
-        "info_description": "Under drought watch, pests concentrate on the few trees/areas that still flush (near irrigation lines, moist spots). When showers come, flush bursts happen and sucking pests rebound fast."
-    },
-    {
-        "id": 82,
-        "sector": 1,
-        "info_description": "Mites build rapidly in hot/dry weather: look for stippling/bronzing, leaf curl and fine webbing (where present)."
-    },
-    {
-        "id": 83,
-        "sector": 1,
-        "info_description": "Thrips damage shows as bronze/scabby scars on young avocado fruit and distorted tender leaves."
-    },
-    {
-        "id": 84,
-        "sector": 1,
-        "info_description": "Mealybugs/scales are flagged by ants, honeydew and sooty mold—ants protect them and make control harder."
-    },
-    {
-        "id": 85,
-        "sector": 1,
-        "info_description": "Borer symptoms (soursop): frass (sawdust), holes, gumming, wilting branches, sudden dieback."
-    },
-    {
-        "id": 86,
-        "sector": 1,
-        "info_description": "Watch early drought symptoms: midday wilting, leaf scorch, premature fruit drop, smaller fruit, sunburn patches."
-    },
-    {
-        "id": 87,
-        "sector": 1,
-        "info_description": "Even under “No concern,” 80–160 mm can be uneven (short dry spells between showers). Most problems appear in edge rows, shallow soils, young plantings, and unmulched blocks."
-    },
-    {
-        "id": 88,
-        "sector": 1,
-        "info_description": "Dust + heat favours mites/thrips; flush growth after showers favours aphids/mealybugs/scale."
-    },
-    {
-        "id": 89,
-        "sector": 1,
-        "info_description": "Watch early warning signs: leaf bronzing/stippling, curled young leaves, sticky honeydew/sooty mold (scale/mealybugs), borer frass at trunks/branches, premature fruit drop, fruit scarring, and sunburn patches."
-    },
-    {
-        "id": 90,
-        "sector": 1,
-        "info_description": "Cacao disease risk rises when canopy stays wet and airflow is poor—black pod spreads faster when sanitation is weak and pods remain on the ground/tree."
-    },
-    {
-        "id": 91,
-        "sector": 1,
-        "info_description": "Even under “No concern,” 80–160 mm can be uneven (short dry spells between showers). Most problems appear in edge rows, shallow soils, young plantings, and unmulched blocks."
-    },
-    {
-        "id": 92,
-        "sector": 1,
-        "info_description": "Dust + heat favours mites/thrips; flush growth after showers favours aphids/mealybugs/scale."
-    },
-    {
-        "id": 93,
-        "sector": 1,
-        "info_description": "Watch early warning signs: leaf bronzing/stippling, curled young leaves, sticky honeydew/sooty mold (scale/mealybugs), borer frass at trunks/branches, premature fruit drop, fruit scarring, and sunburn patches."
-    },
-    {
-        "id": 94,
-        "sector": 1,
-        "info_description": "Cacao disease risk rises when canopy stays wet and airflow is poor—black pod spreads faster when sanitation is weak and pods remain on the ground/tree."
-    },
-    {
-        "id": 95,
-        "sector": 1,
-        "info_description": "Even under “No concern,” 80–160 mm can be uneven (short dry spells between showers). Most problems appear in edge rows, shallow soils, young plantings, and unmulched blocks."
-    },
-    {
-        "id": 96,
-        "sector": 1,
-        "info_description": "Dust + heat favours mites/thrips; flush growth after showers favours aphids/mealybugs/scale."
-    },
-    {
-        "id": 97,
-        "sector": 1,
-        "info_description": "Watch early warning signs: leaf bronzing/stippling, curled young leaves, sticky honeydew/sooty mold (scale/mealybugs), borer frass at trunks/branches, premature fruit drop, fruit scarring, and sunburn patches."
-    },
-    {
-        "id": 98,
-        "sector": 1,
-        "info_description": "Cacao disease risk rises when canopy stays wet and airflow is poor—black pod spreads faster when sanitation is weak and pods remain on the ground/tree."
-    },
-    {
-        "id": 99,
-        "sector": 2,
-        "info_description": "An increase in temperature accelerates evaporation, lowering pond water levels and reducing the flow of the New River, which may become stagnant and lead to a deterioration in water quality."
-    },
-    {
-        "id": 100,
-        "sector": 2,
-        "info_description": "An increase in temperature elevates physiological and metabolic activity, leading to greater overall activity and higher oxygen consumption, which reduces dissolved oxygen (DO) concentrations in the water."
-    },
-    {
-        "id": 101,
-        "sector": 2,
-        "info_description": "Rising temperatures lead to higher shrimp feed intake, which may degrade water quality as uneaten feed accumulates and decomposes."
-    },
-    {
-        "id": 102,
-        "sector": 2,
-        "info_description": "Elevated temperatures may promote a shift from beneficial bacterial communities to pathogen-dominated conditions, thereby increasing susceptibility to disease."
-    },
-    {
-        "id": 103,
-        "sector": 2,
-        "info_description": "Increase in temperature cause evaporation affecting pond water levels and increasing salinity"
-    },
-    {
-        "id": 104,
-        "sector": 2,
-        "info_description": "An increase in temperature elevates physiological and metabolic activity, leading to greater overall activity and higher oxygen consumption, which reduces dissolved oxygen (DO) concentrations in the water."
-    },
-    {
-        "id": 105,
-        "sector": 2,
-        "info_description": "Rising temperatures lead to higher shrimp feed intake, which may degrade water quality as uneaten feed accumulates and decomposes."
-    },
-    {
-        "id": 106,
-        "sector": 2,
-        "info_description": "Elevated temperatures may promote a shift from beneficial bacterial communities to pathogen-dominated conditions, thereby increasing susceptibility to disease."
-    },
-    {
-        "id": 107,
-        "sector": 2,
-        "info_description": "Increase in temperature cause evaporation affecting pond water levels and increasing salinity"
-    },
-    {
-        "id": 108,
-        "sector": 2,
-        "info_description": "An increase in temperature elevates physiological and metabolic activity, leading to greater overall activity and higher oxygen consumption, which reduces dissolved oxygen (DO) concentrations in the water."
-    },
-    {
-        "id": 109,
-        "sector": 2,
-        "info_description": "Rising temperatures lead to higher shrimp feed intake, which may degrade water quality as uneaten feed accumulates and decomposes."
-    },
-    {
-        "id": 110,
-        "sector": 2,
-        "info_description": "Elevated temperatures may promote a shift from beneficial bacterial communities to pathogen-dominated conditions, thereby increasing susceptibility to disease."
-    },
-    {
-        "id": 111,
-        "sector": 2,
-        "info_description": "Increase in temperature cause evaporation affecting pond water levels and increasing salinity"
-    },
-    {
-        "id": 112,
-        "sector": 2,
-        "info_description": "An increase in temperature elevates physiological and metabolic activity, leading to greater overall activity and higher oxygen consumption, which reduces dissolved oxygen (DO) concentrations in the water."
-    },
-    {
-        "id": 113,
-        "sector": 2,
-        "info_description": "Rising temperatures lead to higher shrimp feed intake, which may degrade water quality as uneaten feed accumulates and decomposes."
-    },
-    {
-        "id": 114,
-        "sector": 2,
-        "info_description": "Elevated temperatures may promote a shift from beneficial bacterial communities to pathogen-dominated conditions, thereby increasing susceptibility to disease."
+        "commodity": 13,
+        "info_description": "Monitor for army ants and report any possible invasion"
     }
 ]

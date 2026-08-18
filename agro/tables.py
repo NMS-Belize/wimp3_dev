@@ -33,8 +33,6 @@ class SectorTable(tables.Table):
         url = reverse("agro:sector_delete", args=[record.id])
         return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
     
-
-
 class DistrictZoneTable(tables.Table):
     edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "col_edit"}, "td": {"style": "","class": "col_edit"}})
     id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
@@ -150,7 +148,7 @@ class ActionItemsTable(tables.Table):
     id          = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:80px;","class": "text-end"}, "td": {"style": "","class": "text-end"}})
 
     action_description = tables.Column(verbose_name="Description")  # override column header
-    commodity   = tables.Column(verbose_name="Commodity", attrs={"th": {"style": "width:100px","class": ""}, "td": {"style": "","class": ""}})
+    commodity   = tables.Column(verbose_name="Commodity", attrs={"th": {"style": "width:200px","class": ""}, "td": {"style": "","class": ""}})
 
     duplicate   = tables.Column(empty_values=(),verbose_name="Duplicate",attrs={ "th": {"style": "width:50px;", "class": "text-center"}, "td": {"class": "text-center"} })  
     delete      = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
@@ -170,9 +168,19 @@ class ActionItemsTable(tables.Table):
         url = reverse("agro:action_items_entry", args=[record.id])  # change "pest_edit" to your URL name
         return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
 
+    def render_action_description(self, value, record):
+        url = reverse("agro:action_items_entry", args=[record.id])
+        short = value[:200] + "..." if len(value) > 200 else value
+        return format_html('<a href="{}" title="{}" class="btn_link">{}</a>', url, value, short)
+    
     def render_duplicate(self, record):
         url = reverse("agro:action_items_entry_duplicate", args=[record.id])  # change "pest_edit" to your URL name
         return format_html('<a href="{}" class="btn_duplicate"><i class="fa-solid fa-copy"></i></a>', url)
+
+    def render_commodity(self, value):
+            text = str(value)
+            short = text[:20] + "..." if len(text) > 20 else text
+            return format_html('<span title="{}">{}</span>', text, short)
     
     def render_delete(self, record):
         url = reverse("agro:action_items_delete", args=[record.id])
@@ -183,13 +191,13 @@ class EffectItemsTable(tables.Table):
     id          = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:80px;","class": "text-end"}, "td": {"style": "","class": "text-end"}})
 
     effect_description = tables.Column(verbose_name="Description")  # override column header
-    commodity   = tables.Column(verbose_name="Commodity", attrs={"th": {"style": "width:100px","class": ""}, "td": {"style": "","class": ""}})
+    commodity   = tables.Column(verbose_name="Commodity", attrs={"th": {"style": "width:200px","class": ""}, "td": {"style": "","class": ""}})
 
     duplicate   = tables.Column(empty_values=(),verbose_name="Duplicate",attrs={ "th": {"style": "width:50px;", "class": "text-center"}, "td": {"class": "text-center"} })   
     delete      = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:50px;","class": "text-center"},"td": {"style": "","class": "col_delete text-center"}})
     
     class Meta:
-        model = PestRiskInfo
+        model = PestRiskEffect
         template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
         fields = ("edit","effect_description","commodity","duplicate","id","delete")
 
@@ -203,9 +211,15 @@ class EffectItemsTable(tables.Table):
         url = reverse("agro:effect_items_entry", args=[record.id])  # change "pest_edit" to your URL name
         return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i><a>', url)
 
-    def render_effect_description(self, value):
-            short = value[:200] + "..." if len(value) > 200 else value
-            return format_html('<span title="{}">{}</span>', value, short)
+    def render_effect_description(self, value, record):
+        url = reverse("agro:effect_items_entry", args=[record.id])
+        short = value[:200] + "..." if len(value) > 200 else value
+        return format_html('<a href="{}" title="{}" class="btn_link">{}</a>', url, value, short)
+
+    def render_commodity(self, value):
+        text = str(value)
+        short = text[:20] + "..." if len(text) > 20 else text
+        return format_html('<span title="{}">{}</span>', text, short)
     
     def render_duplicate(self, record):
         url = reverse("agro:effect_items_entry_duplicate", args=[record.id])  # change "pest_edit" to your URL name
@@ -220,7 +234,7 @@ class InfoItemsTable(tables.Table):
     id          = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:80px;","class": "text-end"}, "td": {"style": "","class": "text-end"}})
 
     info_description = tables.Column(verbose_name="Description")  # override column header
-    commodity   = tables.Column(verbose_name="Commodity", attrs={"th": {"style": "width:100px","class": ""}, "td": {"style": "","class": ""}})
+    commodity   = tables.Column(verbose_name="Commodity", attrs={"th": {"style": "width:200px","class": ""}, "td": {"style": "","class": ""}})
 
     duplicate   = tables.Column(empty_values=(),verbose_name="Duplicate",attrs={ "th": {"style": "width:50px;", "class": "text-center"}, "td": {"class": "text-center"} })   
     delete      = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:50px;","class": "text-center"},"td": {"style": "","class": "col_delete text-center"}})
@@ -240,9 +254,15 @@ class InfoItemsTable(tables.Table):
         url = reverse("agro:info_items_entry", args=[record.id])  # change "pest_edit" to your URL name
         return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i><a>', url)
 
-    def render_info_description(self, value):
-            short = value[:200] + "..." if len(value) > 200 else value
-            return format_html('<span title="{}">{}</span>', value, short)
+    def render_info_description(self, value, record):
+        url = reverse("agro:info_items_entry", args=[record.id])
+        short = value[:200] + "..." if len(value) > 200 else value
+        return format_html('<a href="{}" title="{}" class="btn_link">{}</a>', url, value, short)
+
+    def render_commodity(self, value):
+        text = str(value)
+        short = text[:20] + "..." if len(text) > 20 else text
+        return format_html('<span title="{}">{}</span>', text, short)
     
     def render_duplicate(self, record):
         url = reverse("agro:info_items_entry_duplicate", args=[record.id])  # change "pest_edit" to your URL name

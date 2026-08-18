@@ -105,15 +105,15 @@ class PestRiskEntryDetailsForm(forms.ModelForm):
             'temp_max':         forms.TextInput(attrs={'class': 'form-control'}),
             'precip_min':       forms.TextInput(attrs={'class': 'form-control'}),
             'precip_max':       forms.TextInput(attrs={'class': 'form-control'}),
-            'effect':           forms.Select(attrs={'class': 'form-control form-select select2'}),
-            'info':             forms.Select(attrs={'class': 'form-select select2'}),
-            'actions':          forms.Select(attrs={'class': 'form-control select2'}),
+            'effect':           forms.SelectMultiple(attrs={'class': 'form-select select2'}),
+            'info':             forms.SelectMultiple(attrs={'class': 'form-select select2'}),
+            'actions':          forms.SelectMultiple(attrs={'class': 'form-select select2'}),
         }
 
     def __init__(self, *args, **kwargs):
 
-        commodity = kwargs.pop("commodity", None)
-        district = kwargs.pop("district", None)
+        commodity   = kwargs.pop("commodity", None)
+        district    = kwargs.pop("district", None)
 
         #pest_risk_listing_id = kwargs.pop('pest_risk_listing_id',None)
         super().__init__(*args,**kwargs)
@@ -150,7 +150,16 @@ class PestRiskEntryDetailsForm(forms.ModelForm):
         self.fields['actions'].empty_label = "Select Actions"  
 
         self.fields['info'].queryset = PestRiskInfo.objects.all().order_by("id")
-        self.fields['info'].empty_label = "Select Actions"    
+        self.fields['info'].empty_label = "Select Actions"
+
+        self.fields['effect'].queryset = PestRiskEffect.objects.none()
+        self.fields['info'].queryset = PestRiskInfo.objects.none()
+        self.fields['actions'].queryset = PestRiskAction.objects.none()
+
+        if commodity:
+            self.fields['effect'].queryset = (PestRiskEffect.objects.filter(commodity=commodity).order_by('effect_description'))
+            self.fields['info'].queryset = (PestRiskInfo.objects.filter(commodity=commodity).order_by('info_description'))
+            self.fields['actions'].queryset = (PestRiskAction.objects.filter(commodity=commodity).order_by('action_description'))
 
 class SectorForm(forms.ModelForm):
     class Meta:

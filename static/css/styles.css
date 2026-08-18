@@ -138,6 +138,7 @@ h1{ font-weight: 300; font-size: 50px; }
   justify-content: center;
   margin: 0 auto 10px auto;
 }
+.select2, .select2-search__field, .select2-container{ font-family: "Source Sans 3", sans-serif !important; }
 
 #id_months{ display: inline-block ; width: 800px; height: 72px; border: 0; overflow: hidden; margin-top: 0; }
 #id_months label{ width:auto; }
