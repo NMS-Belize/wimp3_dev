@@ -115,10 +115,12 @@ class PestRiskEntryDetailsForm(forms.ModelForm):
         commodity   = kwargs.pop("commodity", None)
         district    = kwargs.pop("district", None)
 
-        #pest_risk_listing_id = kwargs.pop('pest_risk_listing_id',None)
         super().__init__(*args,**kwargs)
 
-        # Creating a new record
+        self.fields["commodity_id"].required = False
+        self.fields["district_id"].required = False
+
+        # Set display fields
         if commodity is not None:
             self.fields["commodity_id"].initial = commodity
             self.fields["commodity_name"].initial = str(commodity)
@@ -130,33 +132,25 @@ class PestRiskEntryDetailsForm(forms.ModelForm):
         # Updating an existing record
         if self.instance and self.instance.pk:
             if self.instance.commodity_id:
+                commodity = self.instance.commodity_id
                 self.fields["commodity_name"].initial = str(self.instance.commodity_id)
 
             if self.instance.district_id:
+                district = self.instance.district_id
                 self.fields["district_name"].initial = str(self.instance.district_id)
-        
+
         self.fields['pest_alert_lvl_id'].queryset = AlertLevel.objects.all().order_by("id")
-        #self.fields['pest_alert_lvl_id'].empty_label = "Select Pest Alert Level"
         self.fields['pest_alert_lvl_id'].label_from_instance = lambda obj: obj.description
 
         self.fields['drought_alert_lvl_id'].queryset = DroughtAlertLevel.objects.all().order_by("id")
-        #self.fields['drought_alert_lvl_id'].empty_label = "Select Drought Alert Level"
         self.fields['drought_alert_lvl_id'].label_from_instance = lambda obj: obj.description
 
-        self.fields['effect'].queryset = PestRiskEffect.objects.all().order_by("id")
-        self.fields['effect'].empty_label = "Possible Effects"
-
-        self.fields['actions'].queryset = PestRiskAction.objects.all().order_by("id")
-        self.fields['actions'].empty_label = "Select Actions"  
-
-        self.fields['info'].queryset = PestRiskInfo.objects.all().order_by("id")
-        self.fields['info'].empty_label = "Select Actions"
-
+        # Default empty
         self.fields['effect'].queryset = PestRiskEffect.objects.none()
         self.fields['info'].queryset = PestRiskInfo.objects.none()
         self.fields['actions'].queryset = PestRiskAction.objects.none()
 
-        if commodity:
+        if commodity is not None:
             self.fields['effect'].queryset = (PestRiskEffect.objects.filter(commodity=commodity).order_by('effect_description'))
             self.fields['info'].queryset = (PestRiskInfo.objects.filter(commodity=commodity).order_by('info_description'))
             self.fields['actions'].queryset = (PestRiskAction.objects.filter(commodity=commodity).order_by('action_description'))

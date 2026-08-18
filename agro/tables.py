@@ -5,7 +5,7 @@ import calendar
 from django.urls import reverse
 from django.utils.html import format_html
 
-from agro.models import PestRiskEntryDetails, Months, PestAlertLevel, PestRiskAction, PestRiskEffect, Sector, DroughtAlertLevel, Commodity, PestRiskInfo
+from agro.models import PestRiskEntryDetails, PestAlertLevel, PestRiskAction, PestRiskEffect, Sector, DroughtAlertLevel, Commodity, PestRiskInfo
 from system_core.models import District
 
 class SectorTable(tables.Table):
@@ -291,80 +291,36 @@ class PestRiskMainListTable(tables.Table):
 
     def render_view_details(self, record):
         url = reverse("agro:pest_risk_details_list", args=[record.id])  # change "pest_edit" to your URL name
-        return format_html('<a href="{}" class="btn_view"><i class="fa-solid fa-list"></i></a>', url)
+        return format_html('<a href="{}" class="btn_link"><i class="fa-solid fa-list"></i></a>', url)
 
     def render_description(self, record):
         url = reverse("agro:pest_risk_details_list", args=[record.id]) 
-        return format_html('<a href="{}" class="btn btn_edit_link p-0">{}</a>', url, record.description)
+        return format_html('<a href="{}" class="btn_link p-0">{}</a>', url, record.description)
     
 class PestRiskDetailsTable(tables.Table):
 
-    edit            = tables.Column(empty_values=(), verbose_name="Edit",attrs={
-                        "th": {"style": "width:50px;","class": "col_edit text-center"},
-                        "td": {"style": "","class": "col_edit text-center"}
-                        })
+    edit            = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:50px;","class": "col_edit text-center"},"td": {"style": "","class": "col_edit text-center"}})
+    id              = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:60px; text-align:right;","class": "col_id"},"td": {"style": "text-align:right;","class": "col_id"}})
+    district_id     = tables.Column(verbose_name="District",attrs={"th": {"style": "width:120px;","class": ""},"td": {"style": "","class": ""}})
+    commodity_id            = tables.Column(verbose_name="Commodity",attrs={"th": {"style": "width:120px;","class": ""},"td": {"style": "","class": ""}})
+    pest_alert_lvl_id       = tables.Column(verbose_name="Pest Alert",attrs={"th": {"style": "width:60px;","class": "text-center"},"td": {"style": "","class": "text-center"}})
+    drought_alert_lvl_id    = tables.Column(verbose_name="Drought Alert", attrs={"th": {"style": "width:60px;","class": "text-center"},"td": {"style": "","class": "text-center"}})
+    temp_min        = tables.Column(verbose_name="TEMP °F (MIN)", attrs={"th": {"style": "width:80px; text-align:right;","class": ""},"td": {"style": "text-align:right;","class": ""}})
+    temp_max        = tables.Column(verbose_name="TEMP °F (MAX)", attrs={"th": {"style": "width:75px; text-align:right;","class": ""},"td": {"style": "text-align:right;","class": ""}})
+    precip_min      = tables.Column(verbose_name="PRECIP mm (MIN)", attrs={"th": {"style": "width:75px; text-align:right;","class": ""},"td": {"style": "text-align:right;","class": ""}})
+    precip_max      = tables.Column(verbose_name="PRECIP mm (MAX)", attrs={"th": {"style": "width:75px; text-align:right;","class": ""},"td": {"style": "text-align:right;","class": ""}})
+    effect          = tables.Column(verbose_name="Effects", empty_values=(), attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+    info            = tables.Column(verbose_name="Additional Info", empty_values=(),attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+    actions         = tables.Column(empty_values=(),attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
 
-    id              = tables.Column(verbose_name="ID",attrs={
-                        "th": {"style": "width:60px; text-align:right;","class": "col_id"},
-                        "td": {"style": "text-align:right;","class": "col_id"}
-                        })
-    district_id         = tables.Column(verbose_name="District",attrs={
-                        "th": {"style": "width:120px;","class": ""},
-                        "td": {"style": "","class": ""}
-                        })
-    commodity_id         = tables.Column(verbose_name="Commodity",attrs={
-                            "th": {"style": "width:120px;","class": ""},
-                            "td": {"style": "","class": ""}
-                            })
-    pest_alert_lvl_id    = tables.Column(verbose_name="Pest Alert",attrs={
-                        "th": {"style": "width:60px;","class": "text-center"},
-                        "td": {"style": "","class": "text-center"}
-                        })
-    drought_alert_lvl_id    = tables.Column(verbose_name="Drought Alert", attrs={
-                        "th": {"style": "width:60px;","class": "text-center"},
-                        "td": {"style": "","class": "text-center"}
-                        })
-    temp_min            = tables.Column(verbose_name="TEMP °F (MIN)", attrs={
-                        "th": {"style": "width:80px; text-align:right;","class": ""},
-                        "td": {"style": "text-align:right;","class": ""}
-                        })
-    temp_max            = tables.Column(verbose_name="TEMP °F (MAX)", attrs={
-                        "th": {"style": "width:75px; text-align:right;","class": ""},
-                        "td": {"style": "text-align:right;","class": ""}
-                        })
-    precip_min            = tables.Column(verbose_name="PRECIP mm (MIN)", attrs={
-                        "th": {"style": "width:75px; text-align:right;","class": ""},
-                        "td": {"style": "text-align:right;","class": ""}
-                        })
-    precip_max            = tables.Column(verbose_name="PRECIP mm (MAX)", attrs={
-                        "th": {"style": "width:75px; text-align:right;","class": ""},
-                        "td": {"style": "text-align:right;","class": ""}
-                        })
-    effect            = tables.Column(attrs={
-                        "th": {"style": "","class": ""},
-                        "td": {"style": "","class": ""}
-                        })
-    info            = tables.Column(attrs={
-                        "th": {"style": ";","class": ""},
-                        "td": {"style": "","class": ""}
-                        })
-    actions            = tables.Column(attrs={
-                        "th": {"style": "","class": ""},
-                        "td": {"style": "","class": ""}
-                        })
     is_published = tables.TemplateColumn(verbose_name="Published", template_name="tables/publish_toggle.html", orderable=False, attrs={"th": {"style": "width:75px;","class": "text-center"},"td": {"style": "","class": "text-center"}})
 
-    '''duplicate = tables.Column(empty_values=(),verbose_name="Duplicate",attrs={
-        "th": {"style": "width:75px;", "class": "text-center"},
-        "td": {"class": "text-center"},
-    }) '''
     #delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "text-center"},"td": {"style": "","class": "col_delete text-center"}})
-    
 
     class Meta:
         model = PestRiskEntryDetails
         template_name = "django_tables2/bootstrap4.html"  # or bootstrap5
-        fields = ("edit", "district_id", "commodity_id", "pest_alert_lvl_id", "drought_alert_lvl_id","temp_min","temp_max","precip_min","precip_max","effect","info","actions","is_published","id")
+        fields = ("edit", "district_id", "commodity_id","pest_alert_lvl_id", "drought_alert_lvl_id","temp_min","temp_max","precip_min","precip_max","effect","info","actions","is_published","id")
         
         # Add table ID and class here
         attrs = {
@@ -376,9 +332,9 @@ class PestRiskDetailsTable(tables.Table):
         url = reverse("agro:pest_risk_details_entry",args=[record.id])
         return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
 
-    def render_district(self, record):
+    def render_district_id(self, value, record):
         url = reverse("agro:pest_risk_details_entry", args=[record.id]) 
-        return format_html('<a href="{}" class="btn btn_edit_link p-0">{}</a>', url, record.district)
+        return format_html('<a href="{}" class="btn_link">{}</a>', url, value.district_name)
     
     def render_pest_alert_lvl_id(self, value, record):
         color = value.color if value.color else "#000"  # fallback black
@@ -387,6 +343,32 @@ class PestRiskDetailsTable(tables.Table):
     def render_drought_alert_lvl_id(self, value, record):
         color = value.color_hex if value.color_hex else "#000"  # fallback black
         return format_html('<span><i class="fa-solid fa-square" style="color: {};"></i></span>',color,value.description)
+
+    def render_effect(self, record):
+        effects = record.effect.all()
+
+        if not effects.exists():
+            return ""
+
+        return ", ".join(str(item) for item in effects)
+
+
+    def render_info(self, record):
+        info = record.info.all()
+
+        if not info.exists():
+            return ""
+
+        return ", ".join(str(item) for item in info)
+
+
+    def render_actions(self, record):
+        actions = record.actions.all()
+
+        if not actions.exists():
+            return ""
+
+        return ", ".join(str(item) for item in actions)
     
     '''def render_duplicate(self, record):
         url = reverse("agro:pest_risk_details_entry_duplicate", args=[record.pest_risk_id_id, record.id])

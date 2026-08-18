@@ -140,12 +140,6 @@ def pest_risk_details_list(request,c_id=None):
 
     #print(entry)
     qs = PestRiskEntryDetails.objects.all().order_by('id').filter(commodity_id_id=c_id)
-
-    #if c_id is not None:
-    #    qs = qs.filter(commodity_id_id=c_id)
-
-    #qs = qs.order_by('commodity_id__id','district_id__id')
-
     table = PestRiskDetailsTable(qs)
     RequestConfig(request).configure(table)
 
@@ -159,11 +153,16 @@ def pest_risk_details_list(request,c_id=None):
         'back_url': reverse('agro:pest_risk_list'),
         'api_url': reverse('pestrisk-list'),
     }
-    return render(request,'table_list_pest_risk_details_template.html',context)
+    return render(request,'pest-risk/table_list_details_template.html',context)
 
 def pest_risk_details_entry(request, id=None):
 
     entry = get_object_or_404(PestRiskEntryDetails,id=id)
+
+    # SAVE ORIGINAL VALUES BEFORE FORM VALIDATION
+    commodity = entry.commodity_id
+    district = entry.district_id
+    c_id = entry.commodity_id_id
 
     pest_colors = {
         str(level.id): level.color
@@ -180,14 +179,30 @@ def pest_risk_details_entry(request, id=None):
     page_name = f"Pest Risk Details: {entry.commodity_id}"
 
     if request.method == 'POST':
-        form = PestRiskEntryDetailsForm(request.POST, instance=entry)
+        form = PestRiskEntryDetailsForm(request.POST, instance=entry, commodity=entry.commodity_id, district=entry.district_id)
+
+        #messages.info(request, f"Effect POST: {request.POST.getlist('effect')}")
+        #messages.info(request, f"Info POST: {request.POST.getlist('info')}")
+        #messages.info(request, f"Actions POST: {request.POST.getlist('actions')}")
 
         if form.is_valid():
             saved_entry = form.save(commit=False)
-            #saved_entry.pest_risk_listing  = parent_entry   # set FK
+
+            # Restore original FK values
+            saved_entry.commodity_id = commodity
+            saved_entry.district_id = district
+
             saved_entry.save()
+            form.save_m2m()
+
+            messages.success(request, "Pest Risk Details saved successfully.")
+            #messages.info(request, f"Saved Effects: {list(saved_entry.effect.values_list('id', flat=True))}")
+            #messages.info(request, f"Saved Info: {list(saved_entry.info.values_list('id', flat=True))}")
+            #messages.info(request, f"Saved Actions: {list(saved_entry.actions.values_list('id', flat=True))}")
 
             return redirect('agro:pest_risk_details_list', c_id)
+        else:
+            messages.error(request, f"Form could not be saved: {form.errors.as_text()}")
     else:
         form = PestRiskEntryDetailsForm(instance=entry)
 
