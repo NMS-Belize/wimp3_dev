@@ -32,3 +32,28 @@
     </div>
 </div>
 {% endblock %}
+{% block extra_js %}
+<script type="text/javascript">
+$(document).ready(function () {
+
+    const checked = $('input[name="months"]:checked');
+
+    if (checked.length >= 3) {
+        $('input[name="months"]:not(:checked)').prop('disabled', true).removeClass('btn-outline-primary').addClass('btn-outline-secondary');
+    } else {
+        $('input[name="months"]').prop('disabled', false).removeClass('btn-outline-secondary').addClass('btn-outline-primary');
+    }
+
+    $(document).on('change', 'input[name="months"]', function () {
+
+        const checked = $('input[name="months"]:checked');
+
+        if (checked.length >= 3) {
+            $('input[name="months"]:not(:checked)').prop('disabled', true).removeClass('btn-outline-primary').addClass('btn-outline-secondary');
+        } else {
+            $('input[name="months"]').prop('disabled', false).removeClass('btn-outline-secondary').addClass('btn-outline-primary');
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -32,7 +32,7 @@ def radar_images_list(request, id=None):
     if not request.user.has_perm("radar.view_radarimages"):
         return render(request, 'no_permission.html', {'page_name': page_name})
     
-    qs = RadarImages.objects.all().order_by('id')
+    qs = RadarImages.objects.all().order_by('display_order')
     table = RadarImagesTable(qs)
     RequestConfig(request).configure(table)
 
@@ -46,10 +46,11 @@ def radar_images_list(request, id=None):
         'id' : id,
         'entry': entry,
         'page_name': page_name,
+        'prev_page':'Radar Dashboard',
         'table': table,
         'new_url':  reverse('radar:radar_image_entry'),
-        'back_url': reverse('site_home'),
-        'api_url':  reverse('radarimages-list'),
+        'back_url': reverse('radar:index'),
+        'api_url':  reverse('radarimages-list')
     }
     return render(request, 'radar_table_list.html', context)
 
@@ -75,9 +76,9 @@ def radar_image_entry(request, id=None):
 
     return render(request, 'radar_entry_form.html', {
         'page_name': page_name,
+        'prev_page':'Radar Dashboard',
         'new_url':  reverse('radar:radar_image_entry'),
         'back_url': reverse('radar:radar_images_list'),
-        'api_url':  reverse('radarimages-list'),
         'form': form,
         'entry': entry
     })
@@ -127,6 +128,6 @@ def radar_image_toggle_is_published(request, id):
     return redirect("radar:radar_images_list",id)
 
 class RadarImagesViewSet(viewsets.ReadOnlyModelViewSet):
-   queryset = RadarImages.objects.filter(is_published=True).order_by('id')
+   queryset = RadarImages.objects.filter(is_published=True).order_by('display_order')
    serializer_class = RadarImagesSerializer
    http_method_names = ['get', 'head','options']

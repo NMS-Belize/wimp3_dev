@@ -311,7 +311,17 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 
 .entry_label{ display: inline-block; width: 150px; }
 
+#id_pest_alert_lvl_id,
+#id_drought_alert_lvl_id {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
 
+#id_pest_alert_lvl_id > div,
+#id_drought_alert_lvl_id > div {
+    display: inline-block;
+}
 
 
 .sidebar {

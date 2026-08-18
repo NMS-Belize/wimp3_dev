@@ -1,20 +1,20 @@
 {% extends "base.html" %}
-{% block title %}{{ page_name }} | Agro-Climat Services | WIMP3 | National Meteorological Service of Belize{% endblock %}
+{% block title %}{{ page_name }} | Agriculture Services | WIMP3{% endblock %}
 {% block content %}
 <div class="row mt-3">
     <div class="col-12">
-        <form method="post" class="wimp3_form">
+        <form method="post" class="">
             {% csrf_token %}
             <div class="row mb-4">
                 <div class="col-12 mb-2">
                     <h3 class="dashboard_title">Pest Risk Entry Information</h3>
                 </div>
                 <div class="col-4">
-                    {{ form.commodity_name.label_tag }}
+                    <label for="id_commodity_name" class="form-label">{{ form.commodity_name.label_tag }}</label>
                     {{ form.commodity_name }}
                 </div>
                 <div class="col-4">
-                    {{ form.district_name.label_tag }}
+                    <label for="id_district_name" class="form-label">{{ form.district_name.label_tag }}</label>
                     {{ form.district_name }}
                 </div>
             </div>
@@ -24,43 +24,109 @@
                     <h3 class="dashboard_title">Alert Levels</h3>
                 </div>
                 <div class="col-4">
-                    {{ form.pest_alert_lvl_id.label_tag }}
-                    {{ form.pest_alert_lvl_id }}
+                    <label for="id_pest_alert_lvl_id" class="form-label">{{ form.pest_alert_lvl_id.label_tag }}</label>
+                    <div class="d-flex flex-wrap">
+                    {% for radio in form.pest_alert_lvl_id %}    
+                        <div class="p-0 me-3">
+                            {% if radio.data.value == 1 %}
+                                {{ radio.tag }}
+                                <label class="btn btn-outline-low" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+
+                            {% elif radio.data.value == 2 %}
+                                {{ radio.tag }}
+                                <label class="btn btn-outline-medium" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+
+                            {% elif radio.data.value == 3 %}
+                                {{ radio.tag }}
+                                <label class="btn btn-outline-high" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>   
+                                
+                            {% endif %}
+                        </div>
+                    {% endfor %}   
+                    </div>
+
+                    {% if form.pest_alert_lvl_id.errors %}
+                        <div class="text-danger">
+                            {{ form.pest_alert_lvl_id.errors }}
+                        </div>
+                    {% endif %}
                 </div>
+
                 <div class="col-4">
-                    {{ form.drought_alert_lvl_id.label_tag }}
-                    {{ form.drought_alert_lvl_id }}
+                    <label for="id_drought_alert_lvl_id" class="form-label">{{ form.drought_alert_lvl_id.label_tag }}</label>
+                    <div class="d-flex flex-wrap">
+                    {% for radio in form.drought_alert_lvl_id %}    
+                        <div class="p-0 me-3">
+                            {% if radio.data.value == 1 %}
+                                {{ radio.tag }}
+                                <label class="btn btn-outline-low" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+
+                            {% elif radio.data.value == 2 %}
+                                {{ radio.tag }}
+                                <label class="btn btn-outline-medium" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+
+                            {% elif radio.data.value == 3 %}
+                                {{ radio.tag }}
+                                <label class="btn btn-outline-high" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label> 
+                            
+                            {% elif radio.data.value == 4 %}
+                                {{ radio.tag }}
+                                <label class="btn btn-outline-critical" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>   
+                                
+                            {% endif %}
+                        </div>
+                    {% endfor %}   
+                    </div>
+
+                    {% if form.drought_alert_lvl_id.errors %}
+                        <div class="text-danger">
+                            {{ form.drought_alert_lvl_id.errors }}
+                        </div>
+                    {% endif %}
                 </div>
             </div>
 
             <div class="row mb-4">
-                <div class="col-12 mb-2">
-                    <h3 class="dashboard_title">Temperature</h3>
+                <div class="col-6">
+                    <h3 class="dashboard_title">Temperatures</h3>
+                    <div class="row">
+                        <div class="col-3">
+                            <label for="id_temp_max" class="form-label">{{ form.temp_max.label_tag }}</label>
+                            <div class="input-group mb-3">
+                                {{ form.temp_max }}
+                                <span class="input-group-text">&deg;F</span>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <label for="id_temp_max" class="form-label">{{ form.temp_min.label_tag }}</label>
+                            <div class="input-group mb-3">
+                                {{ form.temp_min }}
+                                <span class="input-group-text">&deg;F</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-4">
-                    {{ form.temp_max.label_tag }}
-                    {{ form.temp_max }}
-                </div>
-                <div class="col-4">
-                    {{ form.temp_min.label_tag }}
-                    {{ form.temp_min }}
-                </div>
-            </div>
-
-            <div class="row mb-4">
-                <div class="col-12 mb-2">
+                <div class="col-6 mb-2">
                     <h3 class="dashboard_title">Precipitation</h3>
-                </div>
-                <div class="col-4">
-                    {{ form.precip_min.label_tag }}
-                    {{ form.precip_min }}
-                </div>
-                <div class="col-4">
-                    {{ form.precip_max.label_tag }}
-                    {{ form.precip_max }}
+                    <div class="row">
+                        <div class="col-3">
+                            <label for="id_temp_max" class="form-label">{{ form.precip_min.label_tag }}</label>
+                            <div class="input-group mb-3">
+                                {{ form.precip_min }}
+                                <span class="input-group-text">mm</span>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <label for="id_temp_max" class="form-label">{{ form.precip_max.label_tag }}</label>
+                            <div class="input-group mb-3">
+                                {{ form.precip_max }}
+                                <span class="input-group-text">mm</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
+             
             <div class="row mb-4">
                 <div class="col-12 mb-2">
                     <h3 class="dashboard_title">Info</h3>

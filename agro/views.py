@@ -19,7 +19,7 @@ from rest_framework import permissions, viewsets
 from wimp.serializers import GroupSerializer, UserSerializer
 
 from agro.models import PestRisk, PestRiskEntryDetails, PestRiskAction, PestRiskEffect, Sector, Commodity, DroughtAlertLevel, PestRiskInfo
-from agro.forms import PestRiskForm, PestRiskEntryDetailsForm, PestAlertLevelForm, PestRiskMainListingForm, SectorForm, CommodityTypeForm, DroughtAlertLevelForm, ActionItemsForm, EffectItemsForm, InfoItemsForm
+from agro.forms import PestRiskForm, PestRiskEntryDetailsForm, PestAlertLevelForm, SectorForm, CommodityTypeForm, DroughtAlertLevelForm, ActionItemsForm, EffectItemsForm, InfoItemsForm
 from agro.filters import InfoItemFilter, EffectItemFilter, ActionItemFilter
 from agro.tables import PestRiskMainListTable, PestRiskDetailsTable, PestAlertLevelsTable, SectorTable, ActionItemsTable, CommodityTable, DroughtAlertLevelsTable, EffectItemsTable, InfoItemsTable
 from agro.serializers import CommodityCategorySerializer, SectorSerializer, PestRiskEntryDetailsSerializer, PestRiskSerializer, ActionItemsSerializer, EffectItemsSerializer, DroughtAlertLevelSerializer
@@ -82,9 +82,9 @@ def pest_risk_list(request, id=None):
         'table': table,
         'form': form,
         'back_url': reverse('agro:index'),
-        'api_url': "/api/pest-risk/",
+        'api_url': reverse('pestrisk-list')
     }
-    return render(request, 'table_list_main.html', context)
+    return render(request, 'pest-risk/table_list_main.html', context)
 
 def pest_risk_entry(request, id=None):
 
