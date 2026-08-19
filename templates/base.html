@@ -12,34 +12,34 @@
 </head>
 <body>
     <div class="d-flex">
-    {% include "sidebar.html" %}
-    <main class="main-content">
-        <div class="container-fluid p-0">
-            {% block header %}
-            <div id="header" class="header pt-4 ps-3 pe-3 pb-0 mb-3">
-                <div class="row">
-                    <div class="col-6">
-                        <h1 class="mb-0">{{ page_name }}</h1>
-                    </div>
-                    <div class="col-6 d-flex justify-content-end align-items-center">
-                        <!--<a class="me-4" href="{% url 'site_home' %}" id="logo"><img id="main_logo" src="{% static 'images/wimp3_logo_v2.png' %}" alt="WIMP3 Logo" style="width: 150px; margin-top:-6px;" /></a-->
-                        {% include "top_buttons.html" %}
+        {% include "sidebar.html" %}
+        <main class="main-content">
+            <div class="container-fluid p-0">
+                {% block header %}
+                <div id="header" class="header pt-4 ps-3 pe-3 pb-0 mb-3">
+                    <div class="row">
+                        <div class="col-6">
+                            <h1 class="mb-0">{{ page_name }}</h1>
+                        </div>
+                        <div class="col-6 d-flex justify-content-end align-items-center">
+                            <!--<a class="me-4" href="{% url 'site_home' %}" id="logo"><img id="main_logo" src="{% static 'images/wimp3_logo_v2.png' %}" alt="WIMP3 Logo" style="width: 150px; margin-top:-6px;" /></a-->
+                            {% include "top_buttons.html" %}
+                        </div>
                     </div>
                 </div>
+                {% endblock %}
+                <div id="block_content" class="pt-0 ps-4 pe-3 pb-4">
+                    {% include "messages.html" %} 
+                    {% block content %}{% endblock %}
+                </div>
+                {% block footer %}
+                <footer id="footer" class="footer p-4 text-center">
+                    <span>Copyright &copy; 2025 | All Rights Reserved. National Meteorological Service of Belize</span>
+                </footer>
+                {% endblock %}
             </div>
-            {% endblock %}
-            <div id="block_content" class="pt-0 ps-4 pe-3 pb-4">
-                {% include "messages.html" %} 
-                {% block content %}{% endblock %}
-            </div>
-            {% block footer %}
-            <footer id="footer" class="footer p-4 text-center">
-                <span>Copyright &copy; 2025 | All Rights Reserved. National Meteorological Service of Belize</span>
-            </footer>
-            {% endblock %}
-        </div>
-    </main>
-</div>
+        </main>
+    </div>
 </body>
 <script type="text/javascript" src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/bootstrap.bundle.min.js' %}"></script>

@@ -11,8 +11,15 @@ app_name = 'agro'
 
 urlpatterns = [
     path("", views.index, name="index"),
+    #path("import-data/", views.import_agro_data, name="import_agro_data"),
 
-    path("import-data/", views.import_agro_data, name="import_agro_data"),
+    ## LOAD DATA FROM JSON FILES
+    path("load-data/sectors/", views.import_agro_data, name="import_agro_data"),
+    path("load-data/commodities/", views.load_data_commodities, name="load_data_commodities"),
+    path("load-data/drought-alerts/", views.load_data_drought_alerts, name="load_data_drought_alerts"),
+    path("load-data/action-items", views.load_data_action_items, name="load_data_action_items"),
+    path("load-data/effects", views.load_data_effects, name="load_data_effects"),
+    path("load-data/additional-info", views.load_data_addtional_info, name="load_data_addtional_info"),
 
     ## PEST RISK ENTRY
     path('pest-risk/list/', views.pest_risk_list, name="pest_risk_list"),

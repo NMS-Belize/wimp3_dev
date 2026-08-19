@@ -59,14 +59,51 @@
     </div>
     <div class="col-12">
         <h3 class="dashboard_title">Get Data</h3>
+        <div class="alert alert-info">The options below load default data from a JSON file. <strong>Please note that any existing entries will be overwritten.</strong></div>
     </div>
     <div class="row">
         <div class="col-12 d-flex flex-row mb-3 item_dashboard">
-            <form method="post" action="{% url 'agro:import_agro_data' %}" onsubmit="return confirm('Import Agro data now? Existing records may be updated.');">
+            <form method="post" action="{% url 'agro:load_data_commodities' %}" onsubmit="return confirm('Load Data [Commodities] now? Existing records may be updated.');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link">
+                    <img src="{% static 'button_icons/file-import.png' %}" alt="Load Data [Commodities]" />
+                    <span class="task_desc">Load Data [Commodities]</span>
+                </button>
+            </form>
+        </div>
+        <div class="col-12 d-flex flex-row mb-3 item_dashboard">
+            <form method="post" action="{% url 'agro:load_data_drought_alerts' %}" onsubmit="return confirm('Load Data [Drought Alert Levels] now? Existing records may be updated.');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link">
+                    <img src="{% static 'button_icons/file-import.png' %}" alt="Load Data [Drought Alert Levels]" />
+                    <span class="task_desc">Load Data [Drought Alert Levels]</span>
+                </button>
+            </form>
+        </div>
+        <div class="col-12 d-flex flex-row mb-3 item_dashboard">
+            <form method="post" action="{% url 'agro:load_data_commodities' %}" onsubmit="return confirm('Load Data [Actions] now? Existing records may be updated.');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link">
+                    <img src="{% static 'button_icons/file-import.png' %}" alt="Load Data [Actions]" />
+                    <span class="task_desc">Load Data [Actions]</span>
+                </button>
+            </form>
+        </div>
+        <div class="col-12 d-flex flex-row mb-3 item_dashboard">
+            <form method="post" action="{% url 'agro:load_data_effects' %}" onsubmit="return confirm('Load Data [Effects] now? Existing records may be updated.');">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-link">
                     <img src="{% static 'button_icons/file-import.png' %}" alt="Effects" />
-                    <span class="task_desc">Import Agro Data</span>
+                    <span class="task_desc">Load Data [Effects]</span>
+                </button>
+            </form>
+        </div>
+        <div class="col-12 d-flex flex-row mb-3 item_dashboard">
+            <form method="post" action="{% url 'agro:load_data_addtional_info' %}" onsubmit="return confirm('Load Data [Addional Info] now? Existing records may be updated.');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link">
+                    <img src="{% static 'button_icons/file-import.png' %}" alt="Effects" />
+                    <span class="task_desc">Load Data [Addional Info]</span>
                 </button>
             </form>
         </div>

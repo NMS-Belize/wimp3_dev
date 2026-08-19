@@ -164,21 +164,7 @@ class SectorForm(forms.ModelForm):
             'description': 'Description:',
         }
         widgets = {            
-            'description': forms.TextInput(attrs={'class': 'form-control'}),
-        }
-
-class PestAlertLevelForm(forms.ModelForm):
-    class Meta:
-        model = PestAlertLevel
-        fields = ['description', 'color_hex']
-        labels = {   
-            # <-- add human-friendly labels here
-            'description': 'Description:',
-            'color_hex': 'Color HEX',
-        }
-        widgets = {            
-            'description': forms.TextInput(attrs={'class': 'form-control'}),
-            'color_hex': forms.TextInput(attrs={'class': 'form-control'})
+            'description': forms.TextInput(attrs={'class': 'form-control select2'}),
         }
 
 class DroughtAlertLevelForm(forms.ModelForm):
@@ -192,9 +178,9 @@ class DroughtAlertLevelForm(forms.ModelForm):
             'color_hex': 'Color HEX',
         }
         widgets = {            
-            'description': forms.TextInput(attrs={'class': 'form-control'}),
+            'description':  forms.TextInput(attrs={'class': 'form-control'}),
             'action_level': forms.TextInput(attrs={'class': 'form-control'}),
-            'color_hex': forms.TextInput(attrs={'class': 'form-control'})
+            'color_hex':    forms.ColorInput(attrs={'class': 'form-control form-control-color'})
         }
 
 class CommodityTypeForm(forms.ModelForm):
@@ -208,7 +194,7 @@ class CommodityTypeForm(forms.ModelForm):
         }
         widgets = {            
             'description': forms.TextInput(attrs={'class': 'form-control'}),
-            'sector': forms.Select(attrs={'class': 'form-control'})
+            'sector': forms.Select(attrs={'class': 'form-select'})
         }
 
 class ActionItemsForm(forms.ModelForm):

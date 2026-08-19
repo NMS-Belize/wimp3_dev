@@ -28,6 +28,11 @@ class SectorTable(tables.Table):
     def render_edit(self, record):
         url = reverse("agro:sector_entry", args=[record.id])
         return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
+
+    def render_description(self, record):
+        link_html = '<a href="{}" class="btn_link p-0 text-decoration-none">{}</a>'
+        url = reverse("agro:sector_entry", args=[record.id])
+        return format_html(link_html, url, record.description)
     
     def render_delete(self, record):
         url = reverse("agro:sector_delete", args=[record.id])
@@ -80,38 +85,14 @@ class CommodityTable(tables.Table):
     def render_edit(self, record):
         url = reverse("agro:commodity_entry", args=[record.id])
         return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
+
+    def render_description(self, record):
+        link_html = '<a href="{}" class="btn_link p-0 text-decoration-none">{}</a>'
+        url = reverse("agro:commodity_entry", args=[record.id])
+        return format_html(link_html, url, record.description)
     
     def render_delete(self, record):
         url = reverse("agro:commodity_type_delete", args=[record.id])
-        return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
-    
-class PestAlertLevelsTable(tables.Table):
-    edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "text-center"}, "td": {"style": "","class": "col_edit text-center"}})
-    id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
-    description = tables.Column(verbose_name="Pest Risk Alert", attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "","class": ""}})
-    color_hex = tables.Column(verbose_name="Color")
-    delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
-
-    class Meta:
-        model = PestAlertLevel
-        template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
-        fields = ("edit","description", "color_hex","id","delete")
-
-        # Add table HTML id and CSS classes here
-        attrs = {
-            "id": "table_pest_alert_level",           # unique table ID
-            "class": "table table-striped table-condensed table-hover tbl_wimp3" # Bootstrap-friendly styling
-        }
-
-    def render_color_hex(self, record):
-        return format_html('<span><i class="fa-solid fa-square" style="color: {};"></i></span>',record.color_hex)
-    
-    def render_edit(self, record):
-        url = reverse("agro:pest_alert_level_entry", args=[record.id])
-        return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
-    
-    def render_delete(self, record):
-        url = reverse("agro:pest_alert_level_delete", args=[record.id])
         return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
     
 class DroughtAlertLevelsTable(tables.Table):
@@ -131,6 +112,11 @@ class DroughtAlertLevelsTable(tables.Table):
             "id": "table_pest_alert_level",           # unique table ID
             "class": "table table-condensed table-striped table-hover tbl_wimp3" # Bootstrap-friendly styling
         }
+
+    def render_description(self, record):
+        link_html = '<a href="{}" class="btn_link p-0 text-decoration-none">{}</a>'
+        url = reverse("agro:drought_alert_level_entry", args=[record.id])
+        return format_html(link_html, url, record.description)
     
     def render_color_hex(self, record):
         return format_html('<span><i class="fa-solid fa-square" style="color: {};"></i></span>',record.color_hex)
@@ -302,7 +288,7 @@ class PestRiskDetailsTable(tables.Table):
     edit            = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:50px;","class": "col_edit text-center"},"td": {"style": "","class": "col_edit text-center"}})
     id              = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:60px; text-align:right;","class": "col_id"},"td": {"style": "text-align:right;","class": "col_id"}})
     district_id     = tables.Column(verbose_name="District",attrs={"th": {"style": "width:120px;","class": ""},"td": {"style": "","class": ""}})
-    commodity_id            = tables.Column(verbose_name="Commodity",attrs={"th": {"style": "width:120px;","class": ""},"td": {"style": "","class": ""}})
+    #commodity_id            = tables.Column(verbose_name="Commodity",attrs={"th": {"style": "width:120px;","class": ""},"td": {"style": "","class": ""}})
     pest_alert_lvl_id       = tables.Column(verbose_name="Pest Alert",attrs={"th": {"style": "width:60px;","class": "text-center"},"td": {"style": "","class": "text-center"}})
     drought_alert_lvl_id    = tables.Column(verbose_name="Drought Alert", attrs={"th": {"style": "width:60px;","class": "text-center"},"td": {"style": "","class": "text-center"}})
     temp_min        = tables.Column(verbose_name="TEMP °F (MIN)", attrs={"th": {"style": "width:80px; text-align:right;","class": ""},"td": {"style": "text-align:right;","class": ""}})
@@ -320,7 +306,7 @@ class PestRiskDetailsTable(tables.Table):
     class Meta:
         model = PestRiskEntryDetails
         template_name = "django_tables2/bootstrap4.html"  # or bootstrap5
-        fields = ("edit", "district_id", "commodity_id","pest_alert_lvl_id", "drought_alert_lvl_id","temp_min","temp_max","precip_min","precip_max","effect","info","actions","is_published","id")
+        fields = ("edit", "district_id", "pest_alert_lvl_id", "drought_alert_lvl_id","temp_min","temp_max","precip_min","precip_max","effect","info","actions","is_published","id")
         
         # Add table ID and class here
         attrs = {

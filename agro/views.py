@@ -19,9 +19,9 @@ from rest_framework import permissions, viewsets
 from wimp.serializers import GroupSerializer, UserSerializer
 
 from agro.models import PestRisk, PestRiskEntryDetails, PestRiskAction, PestRiskEffect, Sector, Commodity, DroughtAlertLevel, PestRiskInfo
-from agro.forms import PestRiskForm, PestRiskEntryDetailsForm, PestAlertLevelForm, SectorForm, CommodityTypeForm, DroughtAlertLevelForm, ActionItemsForm, EffectItemsForm, InfoItemsForm
+from agro.forms import PestRiskForm, PestRiskEntryDetailsForm, SectorForm, CommodityTypeForm, DroughtAlertLevelForm, ActionItemsForm, EffectItemsForm, InfoItemsForm
 from agro.filters import InfoItemFilter, EffectItemFilter, ActionItemFilter
-from agro.tables import PestRiskMainListTable, PestRiskDetailsTable, PestAlertLevelsTable, SectorTable, ActionItemsTable, CommodityTable, DroughtAlertLevelsTable, EffectItemsTable, InfoItemsTable
+from agro.tables import PestRiskMainListTable, PestRiskDetailsTable, SectorTable, ActionItemsTable, CommodityTable, DroughtAlertLevelsTable, EffectItemsTable, InfoItemsTable
 from agro.serializers import CommodityCategorySerializer, SectorSerializer, PestRiskEntryDetailsSerializer, PestRiskSerializer, ActionItemsSerializer, EffectItemsSerializer, DroughtAlertLevelSerializer
 
 from system_core.models import Zone, District, AlertLevel
@@ -302,7 +302,7 @@ def sector_entry(request, id=None):
     else:
         form = SectorForm(instance=entry)
 
-    return render(request, 'entry_form.html', {
+    return render(request, 'pest-risk/parameters_entry_form.html', {
         'page_name': page_name,
         'prev_page': "Sector List",
         'new_url':  reverse('agro:sector_entry'),
@@ -423,7 +423,7 @@ def commodity_list(request, id=None):
 
 def commodity_entry(request, id=None):
 
-    page_name = "Commodity Type Entry"
+    page_name = "Commodity Entry"
 
     # If id exists => update, else => create new
     if id:
@@ -440,7 +440,7 @@ def commodity_entry(request, id=None):
     else:
         form = CommodityTypeForm(instance=entry)
 
-    return render(request, 'entry_form.html', {
+    return render(request, 'pest-risk/parameters_entry_form.html', {
         'page_name': page_name,
         'prev_page': "Commodity List",
         'new_url':  reverse('agro:commodity_entry'),
@@ -465,60 +465,6 @@ def commodity_type_delete(request, id):
         'page_name': page_name,
     })
 
-############# PEST RISK VARIABlE - Pest Alert Levels
-def pest_alert_level_list(request, id=None):
-
-    page_name = "Pest Alert Levels"
-    qs = PestAlertLevel.objects.all().order_by('id')
-    table = PestAlertLevelsTable(qs)
-    RequestConfig(request).configure(table)
-
-    # Load entry ONLY if id is provided
-    entry = None
-    if id is not None:
-        entry = get_object_or_404(PestAlertLevel, id=id)
-
-    context = {
-        'id' : id,
-        'entry': entry,  
-        'page_name': page_name,
-        'prev_page': "Agriculture Services",
-        'table': table,
-        'new_url': reverse('agro:pest_alert_level_entry'),
-        'back_url': reverse('agro:index'),
-        'api_url': reverse('pestalertlevels-list'),
-    }
-    return render(request, 'table_list_template.html', context)
-
-def pest_alert_level_entry(request, id=None):
-
-    page_name = "Pest Alert Level Entry"
-
-    # If id exists => update, else => create new
-    if id:
-        entry = get_object_or_404(PestAlertLevel, id=id)
-    else:
-        entry = None
-
-    if request.method == 'POST':
-        form = PestAlertLevelForm(request.POST, instance=entry)
-
-        if form.is_valid():
-            saved_entry = form.save()    # Creates or updates
-            return redirect('agro:pest_alert_level_list', saved_entry.id)
-    else:
-        form = PestAlertLevelForm(instance=entry)
-
-    return render(request, 'entry_form.html', {
-        'page_name':    page_name,
-        'new_url':      reverse('agro:pest_alert_level_entry'),
-        'back_url':     reverse('agro:pest_alert_level_list'),
-        'api_url':      reverse('pestalertlevels-list'),
-        'form':         form,
-        'entry':        entry
-    })
-
-def pest_alert_level_delete(request, id):
     
     entry = get_object_or_404(PestAlertLevel, id=id)
     
@@ -577,7 +523,7 @@ def drought_alert_level_entry(request, id=None):
     else:
         form = DroughtAlertLevelForm(instance=entry)
 
-    return render(request, 'entry_form.html', {
+    return render(request, 'pest-risk/parameters_entry_form.html', {
         'page_name':    page_name,
         'prev_page':    "Drought Alert Level List",
         'new_url':      reverse('agro:drought_alert_level_entry'),
@@ -702,6 +648,71 @@ def import_agro_data(request):
 
     except Exception as error:
         messages.error(request,f"Agro data import failed: {error}")
+
+    return redirect("agro:index")
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def load_data_commodities(request):
+    try:
+        call_command("load_commodities")
+        messages.success(request,"Commodities loaded form JSON successfully.")
+
+    except Exception as error:
+        messages.error(request,f"Commodities load failed: {error}")
+
+    return redirect("agro:index")
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def load_data_action_items(request):
+    try:
+        call_command("load_action_items")
+        messages.success(request,"Action Items loaded form JSON successfully.")
+
+    except Exception as error:
+        messages.error(request,f"Action Items load failed: {error}")
+
+    return redirect("agro:index")
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def load_data_drought_alerts(request):
+    try:
+        call_command("load_drought_alerts")
+        messages.success(request,"Drought Alert Levels loaded form JSON successfully.")
+
+    except Exception as error:
+        messages.error(request,f"Drought Alert Levels load failed: {error}")
+
+    return redirect("agro:index")
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def load_data_effects(request):
+    try:
+        call_command("load_effects")
+        messages.success(request,"Effects loaded form JSON successfully.")
+
+    except Exception as error:
+        messages.error(request,f"Effects load failed: {error}")
+
+    return redirect("agro:index")
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def load_data_addtional_info(request):
+    try:
+        call_command("load_additional_info")
+        messages.success(request,"Additional Information loaded form JSON successfully.")
+
+    except Exception as error:
+        messages.error(request,f"Additional Information load failed: {error}")
 
     return redirect("agro:index")
 

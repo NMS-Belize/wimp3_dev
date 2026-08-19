@@ -85,7 +85,7 @@ class AlertLevelTable(tables.Table):
         return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
     
     def render_description(self, record):
-        link_html = '<a href="{}" class="btn btn-link p-0 text-decoration-none">{}</a>'
+        link_html = '<a href="{}" class="btn_link p-0 text-decoration-none">{}</a>'
         url = reverse("system_core:alert_level_entry", args=[record.id])
         return format_html(link_html, url, record.description)
 
@@ -113,6 +113,11 @@ class RiskLevelTable(tables.Table):
 
     def render_color(self, record):
         return format_html('<span><i class="fa-solid fa-square" style="color: {};"></i></span>',record.color)
+
+    def render_description(self, record):
+        link_html = '<a href="{}" class="btn_link p-0 text-decoration-none">{}</a>'
+        url = reverse("system_core:risk_level_entry", args=[record.id])
+        return format_html(link_html, url, record.description)
     
     def render_edit(self, record):
         url = reverse("system_core:risk_level_entry", args=[record.id])
