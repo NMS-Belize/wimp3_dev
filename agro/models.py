@@ -31,7 +31,7 @@ class Commodity(models.Model):
         verbose_name = "Commodity Type"
         verbose_name_plural = "Commodity Types"
 
-    def __str__(self): return self.description
+    def __str__(self): return f"{self.description} {self.id}"
 
 class PestAlertLevel(models.Model):
     id                  = models.BigAutoField(primary_key=True)
