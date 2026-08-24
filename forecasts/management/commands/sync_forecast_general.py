@@ -3,9 +3,19 @@ from django.core.management.base import BaseCommand
 from django.db import connections, transaction
 from django.contrib.auth import get_user_model
 
-from forecasts.models import ForecastGeneral
+from forecasts.models import ForecastGeneral, SeaState, WindCondition, WindDirection
 
 User = get_user_model()
+
+def split_values(value):
+    if value is None:
+        return []
+
+    return [
+        item.strip()
+        for item in str(value).split(",")
+        if item.strip()
+    ]
 
 def parse_boolean(value):
     if value is None:
@@ -146,14 +156,10 @@ class Command(BaseCommand):
             if options["replace"]:
                 deleted_count, _ = ForecastGeneral.objects.all().delete()
 
-                self.stdout.write(
-                    self.style.WARNING(f"Deleted {deleted_count} existing record(s).")
-                )
+                self.stdout.write(self.style.WARNING(f"Deleted {deleted_count} existing record(s)."))
 
             # Get IDs that already exist in WIMP3
-            existing_ids = set(
-                ForecastGeneral.objects.filter(id__in=[record.id for record in records]).values_list("id", flat=True)
-            )
+            existing_ids = set(ForecastGeneral.objects.filter(id__in=[record.id for record in records]).values_list("id", flat=True))
 
             # CREATE NEW RECORDS
             new_records = [
@@ -163,12 +169,14 @@ class Command(BaseCommand):
             ]
 
             if new_records:
-                ForecastGeneral.objects.bulk_create(new_records, batch_size = batch_size)
+                ForecastGeneral.objects.bulk_create(new_records, batch_size=batch_size)
 
             # UPDATE EXISTING RECORDS ONLY IF SOURCE CHANGED
             existing_objects = {
                 obj.id: obj
-                for obj in ForecastGeneral.objects.filter(id__in=existing_ids)
+                for obj in ForecastGeneral.objects.filter(
+                    id__in=existing_ids
+                )
             }
 
             existing_records = []
@@ -195,6 +203,87 @@ class Command(BaseCommand):
                 ForecastGeneral.objects.bulk_update(existing_records, field_names, batch_size=batch_size,)
 
                 updated_count = len(existing_records)
+
+
+            m2m_ids = {
+                record.id
+                for record in new_records
+            }
+
+            m2m_ids.update(
+                record.id
+                for record in existing_records
+            )
+
+            # SYNC MANY-TO-MANY FIELDS
+            forecast_objects = {
+                obj.id: obj
+                for obj in ForecastGeneral.objects.filter(id__in=m2m_ids)
+            }
+
+            for data in rows:
+
+                if data["id"] not in m2m_ids:
+                    continue
+
+                forecast = forecast_objects.get(data["id"])
+
+                if not forecast:
+                    continue
+
+                # WIND DIRECTION
+                values = split_values(data["wind_direction"])
+
+                if values:
+                    items = WindDirection.objects.filter(description__in=values)
+                    forecast.wind_direction_m2m.set(items)
+                else:
+                    forecast.wind_direction_m2m.clear()
+
+                # WIND CONDITION
+                values = split_values(data["wind_condition"])
+
+                if values:
+                    items = WindCondition.objects.filter(description__in=values)
+                    forecast.wind_condition_m2m.set(items)
+                else:
+                    forecast.wind_condition_m2m.clear()
+
+                # WIND SHIFT DIRECTION
+                values = split_values(data["wind_shift_direction"])
+
+                if values:
+                    items = WindDirection.objects.filter(description__in=values)
+                    forecast.wind_shift_direction_m2m.set(items)
+                else:
+                    forecast.wind_shift_direction_m2m.clear()
+
+                # WIND SHIFT CONDITION
+                values = split_values(data["wind_shift_condition"])
+
+                if values:
+                    items = WindCondition.objects.filter(description__in=values)
+                    forecast.wind_shift_condition_m2m.set(items)
+                else:
+                    forecast.wind_shift_condition_m2m.clear()
+
+                # SEA STATE
+                values = split_values(data["sea_state"])
+
+                if values:
+                    items = SeaState.objects.filter(description__in=values)
+                    forecast.sea_state_m2m.set(items)
+                else:
+                    forecast.sea_state_m2m.clear()
+
+                # SEA STATE SHIFT
+                values = split_values(data["sea_state_shift"])
+
+                if values:
+                    items = SeaState.objects.filter(description__in=values)
+                    forecast.sea_state_shift_m2m.set(items)
+                else:
+                    forecast.sea_state_shift_m2m.clear()
 
         self.stdout.write(
             self.style.SUCCESS(

@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     'observations.apps.ObservationsConfig',
     'forecasts.apps.ForecastsConfig',
     'system_core.apps.SystemCoreConfig',
+    'nmswebsite',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

@@ -32,7 +32,7 @@ def index(request):
 def cap_alerts_list(request, id=None):
 
     page_name   = "CAP Alerts List"
-    qs          = CAPAlerts.objects.all().order_by('guid')
+    qs          = CAPAlerts.objects.all().order_by('pubdate')
     table       = CAPAlertsTable(qs)
     RequestConfig(request).configure(table)
 
@@ -67,15 +67,19 @@ def cap_alerts_import(request, id=None):
 
 def cap_alerts_details(request, id=None):
 
+    main_entry = None
+    entry_details = None
+
     if id is not None:
         main_entry   = get_object_or_404(CAPAlerts, id=id)
         guid = main_entry.guid
 
-        entry_details = get_object_or_404(CAPAlertDetails, identifier=guid)
+        entry_details = CAPAlertDetails.objects.filter(identifier=main_entry.guid).first()
 
     context = {
         'page_name': "CAP Alerts Details",
         'prev_page': 'CAP Alerts List',
+        'main_entry': main_entry,
         'entry_details': entry_details,
         'back_url': reverse('alerts:cap_alerts_list'),
     }

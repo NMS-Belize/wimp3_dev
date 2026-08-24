@@ -961,7 +961,7 @@ class PestRiskEntryDetailsViewSet(viewsets.ModelViewSet):
    serializer_class = PestRiskEntryDetailsSerializer
    http_method_names = ['get', 'head','options']
 
-class PestRiskMainListingViewSet(viewsets.ModelViewSet):
+class PestRiskViewSet(viewsets.ModelViewSet):
    queryset = PestRisk.objects.filter(id=1).prefetch_related(Prefetch(
                         "pest_risk_entries",
                         queryset=PestRiskEntryDetails.objects.filter(
@@ -971,11 +971,14 @@ class PestRiskMainListingViewSet(viewsets.ModelViewSet):
                             "district_id",
                             "pest_alert_lvl_id",
                             "drought_alert_lvl_id",
-                            "effect",
-                            "actions",
-                        ).order_by("id"),
-                    )
-                )
+                            'updated_by',
+                        ).prefetch_related(
+                        'effect',
+                        'info',
+                        'actions',
+                    ).order_by("id"),
+                                    )
+                                )
    serializer_class = PestRiskSerializer
    pagination_class = None
    http_method_names = ['get', 'head','options']

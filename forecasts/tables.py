@@ -194,7 +194,11 @@ class ForecastGeneralTable(tables.Table):
         model = ForecastGeneral
         fields = ("edit","forecast_date","forecast_time","forecast_category","general_situation","created_by","created_datetime","updated_by","updated_datetime","audio_file","pdf_file","image_file","is_published","id","delete")
         sequence = fields
-        attrs = {"class": "table table-striped table-hover align-middle tbl_wimp3"}
+        # Add table HTML id and CSS classes here
+        attrs = {
+            "id": "table_general_forecast",           # unique table ID
+            "class": "table table-striped table-condensed table-hover tbl_wimp3" # Bootstrap-friendly styling
+        }
         order_by = "-id"
 
     def render_edit(self, record):

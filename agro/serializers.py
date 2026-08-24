@@ -31,7 +31,7 @@ class EffectItemsSerializer(serializers.ModelSerializer):
 
 class PestRiskEntryDetailsSerializer(serializers.ModelSerializer):
     #pest_risk_listing_id = PestRiskEntryMainListingSerializer(read_only=True)
-    commodity = serializers.SerializerMethodField()
+    #commodity = serializers.SerializerMethodField()
     zone = serializers.SerializerMethodField()
     pest_alert = serializers.SerializerMethodField()
     pest_alert_color_hex = serializers.SerializerMethodField()
@@ -43,14 +43,15 @@ class PestRiskEntryDetailsSerializer(serializers.ModelSerializer):
     precip_max = serializers.SerializerMethodField()
     effect = serializers.SerializerMethodField()
     actions = serializers.SerializerMethodField()
+    info = serializers.SerializerMethodField()
     is_published = serializers.SerializerMethodField()
 
     class Meta:
         model = PestRiskEntryDetails
-        fields = ['commodity', 'zone', 'pest_alert','pest_alert_color_hex', 'drought_alert', 'drought_alert_color_hex', 'temp_min','temp_max','precip_min','precip_max','effect','info','actions', 'is_published']
+        fields = ['zone', 'pest_alert','pest_alert_color_hex', 'drought_alert', 'drought_alert_color_hex', 'temp_min','temp_max','precip_min','precip_max','effect','info','actions', 'is_published']
 
-    def get_commodity(self, obj): 
-            return f"{obj.commodity_id.description}" if obj.commodity_id is not None else "N/A"
+    '''def get_commodity(self, obj): 
+            return f"{obj.commodity_id.description}" if obj.commodity_id is not None else "N/A"'''
     
     def get_zone(self, obj): 
         return f"{obj.district_id.district_name}" if obj.district_id is not None else "N/A"
@@ -80,10 +81,36 @@ class PestRiskEntryDetailsSerializer(serializers.ModelSerializer):
         return f"{obj.precip_max:.1f} mm" if obj.precip_max is not None else "N/A"
     
     def get_effect(self, obj): 
-        return f"{obj.effect.effect_description}" if obj.effect is not None else "N/A"
-    
-    def get_actions(self, obj): 
-        return f"{obj.actions.action_description}" if obj.actions is not None else "N/A"
+        effects = obj.effect.all()
+        if not effects:
+            return []
+
+        return [
+            effect.effect_description
+            for effect in effects
+        ]
+
+    def get_actions(self, obj):
+        actions = obj.actions.all()
+
+        if not actions:
+            return []
+
+        return [
+            action.action_description
+            for action in actions
+        ]
+
+    def get_info(self, obj):
+        info_items = obj.info.all()
+
+        if not info_items:
+            return []
+
+        return [
+            item.info_description
+            for item in info_items
+        ]
 
     def get_is_published(self, obj): 
             return f"{obj.is_published}" if obj.is_published is not None else "N/A"
@@ -91,15 +118,16 @@ class PestRiskEntryDetailsSerializer(serializers.ModelSerializer):
 class PestRiskSerializer(serializers.ModelSerializer):
 
     months = serializers.SerializerMethodField()
-    pest_risk_details = PestRiskEntryDetailsSerializer(
+    sector = serializers.SerializerMethodField()
+    '''pest_risk_details = PestRiskEntryDetailsSerializer(
         many=True,
         read_only=True,
         source='pest_risk_entries'
-    )
+    )'''
 
     class Meta:
         model = PestRisk
-        fields = ['id', 'months', 'year', 'pest_risk_details' ]
+        fields = ['id', 'months', 'year', 'sector' ]
 
     #def get_commodity(self, obj): 
     #    return f"{obj.commodity.description}" if obj.commodity is not None else "N/A"
@@ -112,4 +140,58 @@ class PestRiskSerializer(serializers.ModelSerializer):
         }
         if obj.months:
             return ", ".join([month_map.get(str(m), f"Unknown({m})") for m in obj.months])
-        return "N/A"
+        return ""
+
+    def get_sector(self, obj):
+
+        grouped = {}
+
+        entries = obj.pest_risk_entries.all()
+
+        for entry in entries:
+
+            if not entry.commodity_id:
+                continue
+
+            commodity = entry.commodity_id
+            sector = commodity.sector
+
+            sector_name = sector.description
+            commodity_name = commodity.description
+
+            # Create sector
+            if sector_name not in grouped:
+                grouped[sector_name] = {}
+
+            # Create commodity inside sector
+            if commodity_name not in grouped[sector_name]:
+                grouped[sector_name][commodity_name] = []
+
+            # Add pest risk entry
+            grouped[sector_name][commodity_name].append(entry)
+
+        # Convert dictionary to API structure
+        result = []
+
+        for sector_name, commodities in grouped.items():
+
+            commodity_list = []
+
+            for commodity_name, entries in commodities.items():
+
+                commodity_list.append({
+                    'commodity_name': commodity_name,
+                    'details':
+                        PestRiskEntryDetailsSerializer(
+                            entries,
+                            many=True,
+                            context=self.context
+                        ).data
+                })
+
+            result.append({
+                'sector_name': sector_name,
+                'commodities': commodity_list
+            })
+
+        return result

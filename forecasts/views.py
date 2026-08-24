@@ -1,4 +1,4 @@
-import os
+import os, json
 from click import style
 
 from django.conf import settings as jsettings
@@ -18,7 +18,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 
 from reportlab.lib import colors
-from reportlab.lib.enums import TA_CENTER, TA_LEFT
+from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_JUSTIFY, TA_RIGHT
 from reportlab.lib.pagesizes import letter, landscape
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
@@ -29,7 +29,7 @@ from reportlab.platypus import Image, SimpleDocTemplate, Table, TableStyle, Para
 from forecasts.forms import DistrictForecastDetailsForm, DistrictForecastForm, DistrictForecastInstructionsCategoryForm, DistrictForecastInstructionsForm, DistrictForecastPublishForm, SeverityForm, ProbabilityForm, GeneralForecastCategoryForm, ForecastGeneralForm
 from forecasts.tables import DistrictForecastDetailsTable, DistrictForecastTable, InstructionsCategoryTable, SeverityTable, ProbabilityTable, InstructionsTable, ForecastGeneralTable, ForecastGeneralCategoryTable
 from forecasts.models import (
-    ForecastGeneral, ForescastGeneralCategory,
+    ForecastGeneral, ForescastGeneralCategory, WindDirection, WindCondition, SeaState,
     DistrictForecast, DistrictForecastInstructions, DistrictForecastDetails, DistrictForecastInstructionsCategory, 
     Severity, Probability
 )
@@ -52,18 +52,16 @@ def index(request):
     }
     return render(request, 'forecasts_home.html', context)
 
-############# DISTRICT FORECASTS: Main Entries #############
+############# GENERAL WEATHER FORECASTS: Main Entries #############
 def general_forecast_list(request, id=None):
     page_name = "General Weather Forecasts"
-    qs = ForecastGeneral.objects.all().order_by('-id')
-    table = ForecastGeneralTable(qs)
+    qs = ForecastGeneral.objects.all().order_by('forecast_date', 'forecast_time')
+
+    filterset = ForecastGeneralFilter(request.GET, queryset=qs)
+        
+    table = ForecastGeneralTable(filterset.qs)    
     table.empty_text = "No records available"
     RequestConfig(request).configure(table)
-
-    filterset = ForecastGeneralFilter(
-            request.GET,
-            queryset=qs
-        )
 
     # Load entry ONLY if id is provided
     entry = None
@@ -93,6 +91,20 @@ def general_forecast_entry(request, id=None):
     else:
         entry = None
 
+    previous_entry = (
+        ForecastGeneral.objects
+        .filter(id__lt=entry.id)
+        .order_by('-id')
+        .first()
+    )
+
+    next_entry = (
+        ForecastGeneral.objects
+        .filter(id__gt=entry.id)
+        .order_by('id')
+        .first()
+    )
+
     if request.method == 'POST':
         form = ForecastGeneralForm(request.POST, request.FILES, instance=entry)
 
@@ -109,7 +121,9 @@ def general_forecast_entry(request, id=None):
         'new_url':      reverse('forecasts:general_forecast_list'),
         'back_url':     reverse('forecasts:general_forecast_list'),
         'form': form,
-        'entry': entry
+        'entry': entry,
+        'previous_entry': previous_entry,
+        'next_entry': next_entry,
     })
 
 ############# GENERAL FORECASTS: Category #############
@@ -190,25 +204,29 @@ def general_forecast_category_delete(request, id):
 def general_forecast_generate_pdf(request, id=None):
 
     forecast = get_object_or_404(ForecastGeneral, id=id)
+    print(forecast.wind_direction_m2m)
 
     # Folder where PDF will be saved
-    folder_path = os.path.join(jsettings.MEDIA_ROOT, "forecast", "general","doc","test")
+    folder_path = os.path.join(jsettings.MEDIA_ROOT, "forecast", "general", "doc", "test")
     os.makedirs(folder_path, exist_ok=True)
 
     # Full PDF file path
     filename = f"General_Waether_Forecast_{forecast.forecast_date}_{forecast.forecast_time}_NMS_BZ.pdf"
     file_path = os.path.join(folder_path, filename)
 
-    doc = SimpleDocTemplate(file_path, pagesize=letter, leftMargin=0.5 * inch, rightMargin=0.5 * inch, topMargin=2 * inch, bottomMargin=0.5 * inch)
+    doc = SimpleDocTemplate(file_path, pagesize=letter, leftMargin=0.5 * inch, rightMargin=0.5 * inch, topMargin=1.8 * inch, bottomMargin=0.5 * inch)
 
     styles = getSampleStyleSheet()
     elements = []
 
-    main_title  = ParagraphStyle("MainTitle",   parent = styles["Title"],   fontName = "OpenSans-SemiBold", fontSize = 22, leading = 26, alignment = TA_LEFT, textColor = "#00537A", spaceAfter = 10)
+    main_title  = ParagraphStyle("MainTitle",   parent = styles["Title"],   fontName = "OpenSans-SemiBold", fontSize = 16, leading = 20, alignment = TA_LEFT, textColor = "#00537A", spaceAfter = 4)
+    date_title   = ParagraphStyle("SubTitle",    parent = styles["Title"],   fontName = "OpenSans-Bold",     fontSize = 10, leading = 10, alignment = TA_RIGHT, textColor = "#235558", spaceAfter = 0)
+
     sub_title   = ParagraphStyle("SubTitle",    parent = styles["Title"],   fontName = "OpenSans-Bold",     fontSize = 10, leading = 14, alignment = TA_LEFT, textColor = "#000000", spaceAfter = 2)
-    main_text   = ParagraphStyle("MainText",    parent = styles["Normal"],  fontName = "OpenSans-Regular",  fontSize = 10, leading = 18, alignment = TA_LEFT, textColor = "#000000", spaceAfter = 6)
+    main_text   = ParagraphStyle("MainText",    parent = styles["Normal"],  fontName = "OpenSans-Regular",  fontSize = 10, leading = 14, alignment = TA_LEFT, textColor = "#000000", spaceAfter = 5)
+
     foot_text   = ParagraphStyle("FootText",    parent = styles["Normal"],  fontName = "OpenSans-Regular",  fontSize = 8, leading = 12, alignment = TA_LEFT, textColor = "#000000", spaceAfter = 2)
-    table_head  = ParagraphStyle("TableHeader", parent = styles["Normal"],  fontName = "OpenSans-Bold",     fontSize = 9, leading = 9, spaceAfter = 10 )
+    table_head  = ParagraphStyle("TableHeader", parent = styles["Normal"],  fontName = "OpenSans-Bold",     fontSize = 9, leading = 9, spaceAfter = 0 )
     table_first = ParagraphStyle("TableCol1",   parent = styles["Normal"],  fontName="OpenSans-Bold",       fontSize = 10 )
     table_body  = ParagraphStyle("TableBody",   parent = styles["Normal"],  fontName = "OpenSans-Regular",  fontSize = 10, leading = 12, spaceAfter = 0 )
     risk_text   = ParagraphStyle("RiskText",    parent = styles["Normal"],  fontName = "OpenSans-Bold",     fontSize = 10, spaceAfter = 40 )
@@ -221,14 +239,90 @@ def general_forecast_generate_pdf(request, id=None):
 
     wind = ""
 
+    # New M2M data: WIND DIRECTION
+    if forecast.wind_direction_m2m.exists():
+        wind += "-".join(forecast.wind_direction_m2m.values_list("description",flat=True))
+    # Legacy JSON/string data
+    elif forecast.wind_direction:
+        try:
+            direction_ids = json.loads(forecast.wind_direction)
+            wind += "-".join(WindDirection.objects.filter(id__in=direction_ids).values_list("description",flat=True))
+        except (json.JSONDecodeError, TypeError):
+            wind += str(forecast.wind_direction)
+
+    # WIND SPEED
     if forecast.wind_speed is not None:
-        wind = f"{forecast.wind_speed} kts"
+        wind += ", "
+        wind += f"{forecast.wind_speed} kts"
 
-    if forecast.wind_condition is not None:
-        if wind:
-            wind += ", "
-        wind += f", {forecast.wind_condition} "
+    # New M2M data: WIND CONDITION
+    if forecast.wind_condition_m2m.exists():
+        wind += " | "
+        wind += "-".join(forecast.wind_condition_m2m.values_list("description",flat=True))
+    # Legacy JSON/string data
+    elif forecast.wind_condition:
+        try:
+            condition_ids = json.loads(forecast.wind_condition)
+            wind += " | "
+            wind += "-".join(WindCondition.objects.filter(id__in=condition_ids).values_list("description",flat=True))
+        except (json.JSONDecodeError, TypeError):
+            wind += str(forecast.wind_condition)
 
+    # New M2M data: WIND SHIFT DIRECTION
+    if forecast.wind_shift_direction_m2m.exists():
+        wind += " BECOMING "
+        wind += "-".join(forecast.wind_shift_direction_m2m.values_list("description",flat=True))
+    # Legacy JSON/string data
+    elif forecast.wind_shift_direction:
+        try:
+            sdirection_ids = json.loads(forecast.wind_shift_direction)
+            wind += " BECOMING "
+            wind += "-".join(WindDirection.objects.filter(id__in=sdirection_ids).values_list("description",flat=True))
+        except (json.JSONDecodeError, TypeError):
+            wind += str(forecast.wind_shift_direction)
+
+    wind_shift = ""
+
+    # WIND SHIFT SPEED
+    if forecast.wind_shift_speed is not None and forecast.wind_shift_speed.strip():
+        wind_shift += ", "
+        wind_shift += f"{forecast.wind_shift_speed} kts"
+
+    # New M2M data
+    if forecast.wind_shift_condition_m2m.exists():
+        wind_shift += "-".join(forecast.wind_direction_shift_m2m.values_list("description",flat=True))
+    # Legacy JSON/string data
+    elif forecast.wind_shift_condition:
+        try:
+            shdirection_ids = json.loads(forecast.wind_shift_condition)
+            wind_shift += "-".join(WindCondition.objects.filter(id__in=shdirection_ids).values_list("description",flat=True))
+        except (json.JSONDecodeError, TypeError):
+            wind_shift += str(forecast.wind_shift_condition)
+
+    sea = ""
+
+    # New M2M data: SEA STATE
+    if forecast.sea_state_m2m.exists():
+        sea += "-".join(forecast.sea_state_m2m.values_list("description",flat=True))
+    # Legacy JSON/string data
+    elif forecast.sea_state:
+        try:
+            sea_state_ids = json.loads(forecast.sea_state)
+            sea += "-".join(SeaState.objects.filter(id__in=sea_state_ids).values_list("description",flat=True))
+        except (json.JSONDecodeError, TypeError):
+            sea += str(forecast.sea_state)
+
+    waves = ""
+    
+    # WAVES
+    if forecast.wave is not None and forecast.wave.strip():
+        waves += f"{forecast.wave} kts"
+
+    # WAVES SHIFT
+    if forecast.wave_shift is not None and forecast.wave_shift.strip():
+        waves += " BECOMING "
+        waves += f"{forecast.wave_shift} kts"
+        
     '''
     weather_prob    = item.prob_weather_conditions.description.upper() if item.prob_weather_conditions else ""
     temp_min_prob   = item.prob_temp_min.description.upper() if item.prob_temp_min else ""
@@ -264,10 +358,13 @@ def general_forecast_generate_pdf(request, id=None):
         Paragraph(wind_prob_text, risk_text),
     ])'''
 
+    if wind_shift:
+        wind += wind_shift
+
     data.append([
         Paragraph(wind, table_body),
-        Paragraph("", table_body),
-        Paragraph("", table_body)
+        Paragraph(sea, table_body),
+        Paragraph(waves, table_body)
     ])
 
     available_width = doc.width
@@ -306,8 +403,8 @@ def general_forecast_generate_pdf(request, id=None):
         forecaster = forecast.created_by.get_full_name() or forecast.created_by.username
 
     elements.append(Paragraph("General Weather Forecast", main_title))
-    elements.append(Paragraph(f"Forecast Date: {forecast.forecast_date.strftime('%B %d, %Y')}, {forecast.forecast_time.strftime('%I:%M %p')}", sub_title))
-    elements.append(Spacer(1, 12))
+    elements.append(Paragraph(f"{forecast.forecast_date.strftime('%B %d, %Y')}, {forecast.forecast_time.strftime('%I:%M %p')}", date_title))
+    elements.append(Spacer(1, 6))
 
     elements.append(Paragraph(f"General Situation:", sub_title))
     elements.append(Paragraph(f"{forecast.general_situation}", main_text))
@@ -320,6 +417,10 @@ def general_forecast_generate_pdf(request, id=None):
     elements.append(Paragraph(f"Marine Conditions:", sub_title))
     elements.append(table)
     elements.append(Spacer(1, 12))
+
+    elements.append(Paragraph(f"Alerts & Advisories:", sub_title))
+    elements.append(Paragraph(f"", main_text))
+    elements.append(Spacer(1, 6))
 
     elements.append(Paragraph(f"Outlook:", sub_title))
     elements.append(Paragraph(f"{forecast.outlook}", main_text))

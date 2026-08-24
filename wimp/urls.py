@@ -39,7 +39,7 @@ router.register('commodity',    agro_views.CommodityTypeViewSet, basename='commo
 router.register('drought-alert-levels', agro_views.DroughtAlertLevelViewSet, basename='droughtalertlevels')
 router.register('action-items', agro_views.ActionItemsViewSet, basename='actionitems')
 router.register('effect-items', agro_views.EffectItemsViewSet, basename='effectitems')
-router.register('pest-risk',    agro_views.PestRiskMainListingViewSet, basename='pestrisk')
+router.register('pest-risk',    agro_views.PestRiskViewSet, basename='pestrisk')
 
 #router.register('alert-levels', agro_views.AlertLevelViewSet, basename='pestalertlevels')
 

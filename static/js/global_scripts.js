@@ -1,15 +1,14 @@
 $(function() {
 
     let sidebarCollapsed = true;
+    const sidebar = document.querySelector('.sidebar-hover');
         
     // Auto dismiss alerts
-    document.querySelectorAll(".alert").forEach(function(alert) {
+    document.querySelectorAll(".auto-dismiss").forEach(function(alert) {
         setTimeout(function() {
             bootstrap.Alert.getOrCreateInstance(alert).close();
         }, 5000);
     });
-
-    const sidebar = document.querySelector('.sidebar');
 
     if (!sidebar) return;
 

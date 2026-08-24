@@ -238,15 +238,24 @@ class DistrictForecastDetailsForm(forms.ModelForm):
 
 class ForecastGeneralForm(forms.ModelForm):
 
+    '''wind_direction = forms.ModelMultipleChoiceField(
+                queryset    = WindDirection.objects.all(),
+                required    = False,
+                widget      = forms.SelectMultiple(attrs={"class": "form-select select2-multiple"})
+            )'''
+    
+    wind_direction = forms.CharField(label = "Wind Direction", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
+    wind_condition = forms.CharField(label = "Wind Condition", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
+    sea_state = forms.CharField(label = "Sea State", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
+    wind_shift_direction = forms.CharField(label = "Wind Direction Shift", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
+    wind_shift_condition = forms.CharField(label = "Wind Condition Shift", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
+    sea_state_shift = forms.CharField(label = "Sea State", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
+    
     class Meta:
         model = ForecastGeneral
         exclude = ("created_by", "created_time", "updated_by", "updated_time", "auto_update")
 
-        wind_direction = forms.ModelMultipleChoiceField(
-            queryset    = WindDirection.objects.all(),
-            required    = False,
-            widget      = forms.SelectMultiple(attrs={"class": "form-select select2-multiple"})
-        )
+        
 
         def clean_forecast_file(self):
             uploaded_file = self.cleaned_data.get("forecast_file")
@@ -265,66 +274,60 @@ class ForecastGeneralForm(forms.ModelForm):
                 raise forms.ValidationError("The uploaded file cannot be larger than 10 MB.")
     
             return uploaded_file
-        fields = [ "wind_direction", 
-                  "forecast_date", "forecast_time", "forecast_category","general_situation","audio_file","twenty_four_hour_forecast","sea_state","sea_state_shift",
+        
+        fields = [ 
+                "forecast_date", "forecast_time", "forecast_category",
+                "general_situation","audio_file","twenty_four_hour_forecast",
                 
-                            "advisory",
-                            "outlook",
-                
-                            "wind_speed",    
-                            #"wind_direction":   forms.ManyToManyField(queryset=WindDirection.objects.all(), required=False, attrs={"class": "form-control"}),
-                            "wind_condition", 
-                
-                            "wind_shift_speed",
-                            "wind_shift_direction", 
-                            "wind_shift_condition",
-                
-                            "wave",
-                            "wave_shift",
-                
-                            "coast_high_f",
-                            "coast_high_c",
-                
-                            "coast_low_f",
-                            "coast_low_c",
-                
-                            "inland_high_f",
-                            "inland_high_c",
-                
-                            "inland_low_f",
-                            "inland_low_c",
-                
-                            "hills_high_f",
-                            "hills_high_c",
-                
-                            "hills_low_f",
-                            "hills_low_c",
-                
-                
-                            "light_variable",
+                "advisory", "outlook",
+                "cap_alerts","tropical_alerts",
+
+                "wind_speed",    
+                "wind_direction", "wind_direction_m2m", 
+                "wind_condition", "wind_condition_m2m", 
+            
+                "wind_shift_speed",
+                "wind_shift_direction", "wind_shift_direction_m2m", 
+                "wind_shift_condition", "wind_shift_condition_m2m",
+
+                "sea_state","sea_state_m2m",
+                "sea_state_shift","sea_state_shift_m2m",
+            
+                "wave","wave_shift",
+            
+                "coast_high_f","coast_high_c","coast_low_f","coast_low_c",
+                "inland_high_f","inland_high_c","inland_low_f","inland_low_c",
+                "hills_high_f","hills_high_c","hills_low_f","hills_low_c",
+                "light_variable"
             ]
     
         widgets = {
             "forecast_date":    forms.DateInput(attrs={"type": "date", "class": "form-control"}),
-            "forecast_time":    forms.TimeInput(attrs={"type": "time", "class": "form-control"}),
-            "forecast_type":    forms.Select(attrs={"class": "form-select"}),
+            "forecast_time":    forms.TimeInput(format="%H:%M", attrs={"type": "time", "class": "form-control", "step": "60",}),
+            "forecast_category":    forms.Select(attrs={"class": "form-select"}),
+
             "general_situation": forms.Textarea(attrs={"rows": 5, "class": "form-control"}),
             "audio_file":       forms.ClearableFileInput(attrs={"class": "form-control mb-2","accept": ".mp3"}),
             "twenty_four_hour_forecast": forms.Textarea(attrs={"rows": 5, "class": "form-control"}),
 
             "sea_state":        forms.TextInput(attrs={"rows": 2, "class": "form-control"}),
+            "sea_state_m2m":    forms.SelectMultiple(attrs={'class': 'form-select select2'}),
+
             "sea_state_shift":  forms.TextInput(attrs={"rows": 2, "class": "form-control"}),
+            "sea_state_shift_m2m":    forms.SelectMultiple(attrs={'class': 'form-select select2'}),
 
             "advisory":         forms.Textarea(attrs={"rows": 3, "class": "form-control"}),
             "outlook":          forms.Textarea(attrs={"rows": 5, "class": "form-control"}),
+            "cap_alerts":       forms.SelectMultiple(attrs={'class': 'form-select select2'}),
+            "tropical_alerts":  forms.SelectMultiple(attrs={'class': 'form-select select2'}),
 
-            "wind_speed":       forms.TextInput(attrs={"class": "form-control"}),
-            #"wind_direction":   forms.ManyToManyField(queryset=WindDirection.objects.all(), required=False, attrs={"class": "form-control"}),
-            "wind_condition":   forms.TextInput(attrs={"class": "form-control"}),
+            "wind_speed":           forms.TextInput(attrs={"class": "form-control"}),
+            "wind_direction_m2m":   forms.SelectMultiple(attrs={'class': 'form-select select2'}),
+            "wind_condition_m2m":   forms.SelectMultiple(attrs={'class': 'form-select select2'}),
 
-            "wind_shift_speed": forms.TextInput(attrs={"class": "form-control"}),
-            "wind_shift_direction": forms.TextInput(attrs={"class": "form-control"}),
-            "wind_shift_condition": forms.TextInput(attrs={"class": "form-control"}),
+            "wind_shift_speed":         forms.TextInput(attrs={"class": "form-control"}),
+            "wind_shift_direction_m2m": forms.SelectMultiple(attrs={'class': 'form-select select2'}),
+            "wind_shift_condition_m2m": forms.SelectMultiple(attrs={'class': 'form-select select2'}),
 
             "wave": forms.TextInput(attrs={"class": "form-control"}),
             "wave_shift": forms.TextInput(attrs={"class": "form-control"}),

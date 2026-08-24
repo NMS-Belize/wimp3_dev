@@ -4,6 +4,7 @@ from django.db import models
 from django.conf import settings
 
 from system_core.models import District, AlertLevel, RiskLevel
+from alerts.models import CAPAlertDetails, TropicalWeatherAlerts
 
 # Create your models here.
      
@@ -106,6 +107,17 @@ class DistrictForecastDetails(models.Model):
     def __str__(self):
         return f"{self.district} - {self.forecast.forecast_date}"
 
+class SeaState(models.Model):
+    description         = models.CharField(max_length=20)
+    
+    created_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="sea_state_created")
+    updated_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="sea_state_updated")
+    created_datetime    = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_datetime    = models.DateTimeField(auto_now=True,null=True)
+    
+    def __str__(self):
+        return self.description
+    
 class WindDirection(models.Model):
     description         = models.CharField(max_length=20)
     long_description    = models.CharField(max_length=100)
@@ -160,27 +172,40 @@ class ForecastGeneral(models.Model):
     light_variable = models.IntegerField(null=True, blank=True)
 
     wind_speed = models.CharField(max_length=10,null=True, blank=True)
-    wind_direction = models.ManyToManyField(WindDirection, blank=True, related_name="forecasts")
-    wind_condition = models.CharField(max_length=50, null=True, blank=True)
 
-    wind_shift_speed = models.CharField(max_length=10, null=True, blank=True)
-    wind_shift_direction = models.CharField(max_length=50, null=True, blank=True)
-    wind_shift_condition = models.CharField(max_length=50, null=True, blank=True)
+    wind_direction      = models.CharField(max_length=50, null=True, blank=True)
+    wind_direction_m2m  = models.ManyToManyField(WindDirection, blank=True,related_name="general_forecasts_wind_direction")
 
-    sea_state = models.CharField(max_length=255,null=True, blank=True)
-    wave = models.CharField(max_length=10, null=True, blank=True)
+    wind_condition      = models.CharField(max_length=50, null=True, blank=True)
+    wind_condition_m2m  = models.ManyToManyField(WindCondition, blank=True,related_name="general_forecasts_wind_condition")
 
-    sea_state_shift = models.CharField(max_length=255, null=True, blank=True)
-    wave_shift = models.CharField(max_length=10, null=True, blank=True)
+    wind_shift_speed    = models.CharField(max_length=10, null=True, blank=True)
 
-    advisory = models.CharField(max_length=1000,null=True, blank=True)
-    outlook = models.CharField(max_length=1000,null=True, blank=True)
+    wind_shift_direction        = models.CharField(max_length=50, null=True, blank=True)
+    wind_shift_direction_m2m    = models.ManyToManyField(WindDirection, blank=True,related_name="general_forecasts_wind_direction_shift")
+    
+    wind_shift_condition        = models.CharField(max_length=50, null=True, blank=True)
+    wind_shift_condition_m2m    = models.ManyToManyField(WindCondition, blank=True,related_name="general_forecasts_wind_condition_shift")
 
-    coast_high_f = models.IntegerField(null=True, blank=True)
-    coast_high_c = models.IntegerField(null=True, blank=True)
+    sea_state       = models.CharField(max_length=255,null=True, blank=True)
+    sea_state_m2m   = models.ManyToManyField(SeaState, blank=True,related_name="general_forecasts")
 
-    coast_low_f = models.IntegerField(null=True, blank=True)
-    coast_low_c = models.IntegerField(null=True, blank=True)
+    sea_state_shift     = models.CharField(max_length=255, null=True, blank=True)
+    sea_state_shift_m2m = models.ManyToManyField(SeaState, blank=True,related_name="general_forecasts_shift")
+
+    wave            = models.CharField(max_length=10, null=True, blank=True)
+    wave_shift      = models.CharField(max_length=10, null=True, blank=True)
+
+    advisory        = models.CharField(max_length=1000,null=True, blank=True)
+    outlook         = models.CharField(max_length=1000,null=True, blank=True)
+    cap_alerts      = models.ManyToManyField("alerts.CAPAlertDetails", blank=True,related_name="general_forecasts_cap")
+    tropical_alerts  = models.ManyToManyField("alerts.TropicalWeatherAlerts", blank=True,related_name="general_forecasts_cap")
+
+    coast_high_f    = models.IntegerField(null=True, blank=True)
+    coast_high_c    = models.IntegerField(null=True, blank=True)
+
+    coast_low_f     = models.IntegerField(null=True, blank=True)
+    coast_low_c     = models.IntegerField(null=True, blank=True)
 
     inland_high_f = models.IntegerField(null=True, blank=True)
     inland_high_c = models.IntegerField(null=True, blank=True)

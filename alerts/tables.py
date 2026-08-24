@@ -166,9 +166,15 @@ class CAPAlertsTable(tables.Table):
         return format_html('<i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-bs-placement="top" title="{}" style="cursor: pointer;"></i>', value)
 
     def render_title(self, record):
-        link_html   = '<a href="{}" class="btn_link">{}</a>'
+        #link_html   = '<a href="{}" class="btn_link">{}</a>'
+        url = ""
+        return format_html('<a href="{}" class="btn_view_details">{}</a>', url, record.title)
+
+    '''if CAPAlertDetails.objects.filter(identifier=record.guid).exists():
         url = reverse("alerts:cap_alerts_details", args=[record.id])
         return format_html('<a href="{}" class="btn_view_details">{}</a>', url, record.title)
+
+        return format_html('<span class="text-muted">?</span>')'''
 
 
     def render_pubdate(self, record):
@@ -184,8 +190,8 @@ class CAPAlertsTable(tables.Table):
         return format_html('<a href="{}" target="_blank" class="btn_edit"><i class="fa-solid fa-globe"></i></a>', url)
 
     def render_description(self, value):
-            short = value[:50] + "..." if len(value) > 50 else value
-            return format_html('<span title="{}">{}</span>', value, short)
+        short = value[:100] + "..." if len(value) > 100 else value
+        return format_html('<span title="{}">{}</span>', value, short)
 
     def render_author(self,record):
 
@@ -198,29 +204,40 @@ class CAPAlertsTable(tables.Table):
             if user.first_name or user.last_name:
                 return f"{user.last_name}"
 
-            return user.username
+        if username == 'chief':
+            return "Gordon"
+
+        if username == 'deputy':
+            return "Augustine"
+
+            #return user.username
 
         return username
     
     def render_expires(self, record):
 
-        entry_details = get_object_or_404(CAPAlertDetails, identifier=record.guid)
-        exp_date = entry_details.expires
-
         try:
-            # Convert ISO string to datetime
-            edate = datetime.fromisoformat(exp_date)
+            entry_details = CAPAlertDetails.objects.filter(identifier=record).first()
+            
+            if entry_details is None:
+                return None
+            else:
+                exp_date = entry_details.expires
+                
+                # Convert ISO string to datetime
+                edate = datetime.fromisoformat(exp_date)
+    
+                # Current date/time
+                now = timezone.now()
+    
+                exp_date = edate.strftime("%d %b %Y, %I:%M %p")
 
-            # Current date/time
-            now = timezone.now()
-
-            formatted_date = edate.strftime("%d %b %Y, %I:%M %p")
-
-            # Red if the alert has NOT expired
-            if edate > now:
-                return format_html('<span class="fw-medium text-danger">{}</span>', formatted_date)
-
-            return formatted_date
-
+                # Red if the alert has NOT expired
+                if edate > now:
+                    return format_html('<span class="fw-medium text-danger fw-bold">{}</span>', exp_date)
+                
         except (ValueError, TypeError):
-            return exp_date
+            print(ValueError)
+            print(TypeError)
+
+        return exp_date

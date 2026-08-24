@@ -1,0 +1,71 @@
+<div class="row mb-4">
+        <div class="col-12">
+            <h3 class="dashboard_title">Marine Conditions</h3>
+        
+            <div class="col-12 mb-3">
+                <div class="fs-5 text-uppercase fw-bold mb-0 fst-italic">Winds</div>
+            </div>
+            <div class="col-12">
+                <label class="form-label">Wind Speed:</label>
+                <div class="d-flex flex-row">
+                    <div class="input-group mb-3">
+                        {{ form.wind_speed }}
+                        <span class="input-group-text">kts</span>
+                    </div>
+                    <span class="ms-3 me-3 pt-2">BECOMING</span>
+                    <div class="input-group mb-3">
+                        {{ form.wind_shift_speed }}
+                        <span class="input-group-text">kts</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <label class="form-label">Wind Direction:</label>
+                <div class="d-flex flex-row mb-2">
+                    {{ form.wind_direction_m2m }}<span class="ms-3 me-3 pt-2">BECOMING</span>{{ form.wind_shift_direction_m2m }}
+                </div>
+                <div class="d-flex flex-row">
+                    {{ form.wind_direction }}<span class="ms-3 me-3 pt-2">BECOMING</span>{{ form.wind_shift_direction }}
+                </div>
+            </div>
+            <div class="col-12">
+                <label class="form-label">Wind Conditions:</label>
+                <div class="d-flex flex-row mb-2">
+                    {{ form.wind_condition_m2m }}<span class="ms-3 me-3 pt-2">BECOMING</span>{{ form.wind_shift_condition_m2m }}
+                </div>
+                <div class="d-flex flex-row">
+                    {{ form.wind_condition }}<span class="ms-3 me-3 pt-2">BECOMING</span>{{ form.wind_shift_condition }}
+                </div>
+            </div>
+
+            <div class="clear mb-4"></div>
+
+            <div class="col-12 mb-3">
+                <div class="fs-5 text-uppercase fw-bold mb-0 fst-italic">Sea Conditions</div>
+            </div>
+
+            <div class="col-4">
+                <label class="form-label">Sea State:</label>
+                <div class="d-flex flex-row mb-2">
+                    {{ form.sea_state_m2m }}<span class="ms-3 me-3 pt-2">BECOMING</span>{{ form.sea_state_shift_m2m }}
+                </div>
+                <div class="d-flex flex-row">
+                    {{ form.sea_state }}<span class="ms-3 me-3 pt-2">BECOMING</span>{{ form.sea_state_shift }}
+                </div>
+            </div>
+            <div class="col-4">
+                <label class="form-label">Waves:</label>
+                <div class="d-flex flex-row">
+                    <div class="input-group mb-3">
+                        {{ form.wave }}
+                        <span class="input-group-text">ft</span>
+                    </div>
+                    <span class="ms-3 me-3 pt-2">BECOMING</span>
+                    <div class="input-group mb-3">
+                        {{ form.wave_shift }}
+                        <span class="input-group-text">ft</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

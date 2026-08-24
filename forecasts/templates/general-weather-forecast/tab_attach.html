@@ -1,0 +1,15 @@
+<div class="row mb-4">
+        <div class="col-12">
+            <h3 class="dashboard_title">Uploads</h3>
+        </div>
+        <div class="col-6">
+            <label class="form-label">Audio Recording:</label>
+            {{ form.audio_file }}
+
+            {% if forecast.audio_file %}
+                <a href="{{ forecast.forecast_file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">View Uploaded File</a>
+            {% else %}
+                <p><span class="text-muted mt-2 mb-0 clear">No file uploaded</span></p>
+            {% endif %}
+        </div>
+    </div>
