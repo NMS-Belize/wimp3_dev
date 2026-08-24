@@ -28,8 +28,8 @@ class Commodity(models.Model):
     updated_datetime    = models.DateTimeField(auto_now_add=True,null=True)
 
     class Meta:
-        verbose_name = "Commodity Type"
-        verbose_name_plural = "Commodity Types"
+        verbose_name = "Commodity"
+        verbose_name_plural = "Commodities"
 
     def __str__(self): return f"{self.description} {self.id}"
 
