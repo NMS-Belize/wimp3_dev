@@ -28,8 +28,13 @@
 
                     <div class="d-flex flex-wrap">
                     {% for radio in form.pest_alert_lvl_id %}    
-                        {% if radio.data.value %}
+                        {% if radio.data.value == "" %}
                         <div class="p-0 me-3">
+                            {{ radio.tag }}
+                            <label class="btn pest-alert-option fw-semibold bg-light border-light" for="{{ radio.id_for_label }}" data-value="{{ radio.data.value }}">None</label>
+                        </div>
+                        {% else %}
+                            <div class="p-0 me-3">
                             {{ radio.tag }}
                             <label class="btn pest-alert-option fw-semibold" for="{{ radio.id_for_label }}" data-value="{{ radio.data.value }}">{{ radio.choice_label }}</label>
                         </div>
