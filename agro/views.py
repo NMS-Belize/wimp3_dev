@@ -176,7 +176,7 @@ def pest_risk_details_entry(request, id=None):
 
     c_id = entry.commodity_id_id 
 
-    page_name = f"Pest Risk Details: {entry.commodity_id}"
+    page_name = "Pest Risk Details Entry"
 
     if request.method == 'POST':
         form = PestRiskEntryDetailsForm(request.POST, instance=entry, commodity=entry.commodity_id, district=entry.district_id)
