@@ -5,6 +5,7 @@ from click import option
 from django import forms
 from pytz import timezone
 from .models import DistrictForecast, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, Probability, Severity, ForecastGeneral, ForescastGeneralCategory, WindCondition, WindDirection
+from alerts.models import CAPAlertDetails, CAPAlerts
 
 from django_toggle_switch_widget.widgets import DjangoToggleSwitchWidget
 from django.core.exceptions import ValidationError
@@ -236,6 +237,31 @@ class DistrictForecastDetailsForm(forms.ModelForm):
             ).order_by(Lower('description'))
         )
 
+class CAPAlertSelectMultiple(forms.SelectMultiple):
+
+    def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):
+
+        option = super().create_option(name, value, label, selected, index, subindex=subindex, attrs=attrs)
+
+        if value and hasattr(value, "instance"):
+
+            alert_details = value.instance
+            cap_alert = alert_details.identifier
+
+            if cap_alert:
+                option["attrs"]["data-title"]   = cap_alert.title or ""
+                option["attrs"]["data-author"]  = cap_alert.author or ""
+                option["attrs"]["data-date"]    = cap_alert.pubdate or ""
+
+            '''if alert.pubdate:
+                option["attrs"]["data-date"] = alert.pubdate.strftime(
+                    "%b %d, %Y"
+                )
+            else:
+                option["attrs"]["data-date"] = ""'''
+
+        return option
+    
 class ForecastGeneralForm(forms.ModelForm):
 
     '''wind_direction = forms.ModelMultipleChoiceField(
@@ -244,18 +270,19 @@ class ForecastGeneralForm(forms.ModelForm):
                 widget      = forms.SelectMultiple(attrs={"class": "form-select select2-multiple"})
             )'''
     
-    wind_direction = forms.CharField(label = "Wind Direction", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
-    wind_condition = forms.CharField(label = "Wind Condition", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
-    sea_state = forms.CharField(label = "Sea State", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
-    wind_shift_direction = forms.CharField(label = "Wind Direction Shift", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
-    wind_shift_condition = forms.CharField(label = "Wind Condition Shift", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
-    sea_state_shift = forms.CharField(label = "Sea State", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
+    wind_direction          = forms.CharField(label = "Wind Direction", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
+    wind_condition          = forms.CharField(label = "Wind Condition", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
+    sea_state               = forms.CharField(label = "Sea State", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
+    wind_shift_direction    = forms.CharField(label = "Wind Direction Shift", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
+    wind_shift_condition    = forms.CharField(label = "Wind Condition Shift", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
+    sea_state_shift         = forms.CharField(label = "Sea State", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
+    light_variable          = forms.CharField(label = "Light + Variable", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
+
+    cap_alerts              = forms.ModelMultipleChoiceField(queryset=CAPAlertDetails.objects.all().order_by("-published_date"), required=False, widget=CAPAlertSelectMultiple(attrs={ "class": "form-select select2"}))
     
     class Meta:
         model = ForecastGeneral
         exclude = ("created_by", "created_time", "updated_by", "updated_time", "auto_update")
-
-        
 
         def clean_forecast_file(self):
             uploaded_file = self.cleaned_data.get("forecast_file")
@@ -318,7 +345,10 @@ class ForecastGeneralForm(forms.ModelForm):
 
             "advisory":         forms.Textarea(attrs={"rows": 3, "class": "form-control"}),
             "outlook":          forms.Textarea(attrs={"rows": 5, "class": "form-control"}),
-            "cap_alerts":       forms.SelectMultiple(attrs={'class': 'form-select select2'}),
+
+            #"cap_alerts":       forms.SelectMultiple(attrs={'class': 'form-select select2'}),
+            #"cap_alerts":       CAPAlertSelectMultiple(attrs={"class": "form-select select2"}),
+
             "tropical_alerts":  forms.SelectMultiple(attrs={'class': 'form-select select2'}),
 
             "wind_speed":           forms.TextInput(attrs={"class": "form-control"}),
@@ -352,9 +382,7 @@ class ForecastGeneralForm(forms.ModelForm):
 
             #"publish_to_web": forms.CheckboxInput(attrs={"class": "form-check-input"}),
 
-            "light_variable": forms.CheckboxInput(attrs={"class": "form-check-input"}),
-
-            "forecaster_id": forms.NumberInput(attrs={"class": "form-control"}),
+            "forecaster_id": forms.TextInput(attrs={"class": "form-control"}),
         }
 
     def __init__(self, *args, **kwargs):

@@ -342,7 +342,7 @@ class DistrictForecastTable(tables.Table):
         return format_html(link_html, url, record.forecast_date.strftime("%B %d, %Y"))
 
     def render_forecast_date(self, record):
-        link_html   = '<a href="{}" class="btn btn_edit_link p-0" disabled>{}</a>'
+        link_html   = '<a href="{}" class="btn_link" disabled>{}</a>'
         url         = reverse("forecasts:district_forecast_details_entry",args=[record.id])
         return format_html(link_html, url, record.forecast_date.strftime("%B %d, %Y"))
     
@@ -428,7 +428,7 @@ class DistrictForecastDetailsTable(tables.Table):
         return format_html(link_html, url, record.district)
     
     def render_district(self, record):
-        link_html   = '<a href="{}" class="btn btn_edit_link p-0 text-decoration-none fw-bold">{}</a>'
+        link_html   = '<a href="{}" class="btn_link p-0 text-decoration-none fw-bold">{}</a>'
         url         = reverse("forecasts:district_forecast_details_entry_item", args=[record.forecast_id, record.id,])
         return format_html(link_html, url, record.district)
     

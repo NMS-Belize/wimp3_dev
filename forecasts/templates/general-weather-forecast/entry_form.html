@@ -1,5 +1,4 @@
 {% extends "base_form.html" %}
-{% block title %}{{ page_name }} | WIMP3 | NMS Belize{% endblock %}
 {% load static %}
 {% block content %}
 <div class="mb-3 text-end">
@@ -15,12 +14,6 @@
 <form method="post">
     {% csrf_token %}
     {% include "general-weather-forecast/tab_nav.html" %}
-    
-    
-
-    
-    
-    
     <input id="btn_submit" type="submit" value="Save" class="btn ms-2" />
     <a href="{{ back_url }}" class="btn btn-danger">Cancel</a>
 </form>
@@ -29,18 +22,46 @@
 <script type="text/javascript">
 $(document).ready(function () {
 
-    $('.select2').select2({
+    $('#id_cap_alerts').select2({
         width: '100%',
-        placeholder: 'Select one or more option',
-        allowClear: true
+        placeholder: 'Select CAP Alerts',
+        allowClear: true,
+        templateResult: function(data) {
+            if (!data.id) {
+                return data.text;
+            }
+            const option = $(data.element);
+            const title  = option.data('title') || '';
+            const author = option.data('author') || '';
+            const date   = option.data('date') || '';
+
+            return $(`
+                <div>
+                    <div class="fw-bold">${title}</div>
+                    <div class="small text-muted">${author} &bull; ${date}</div>
+                </div>
+            `);
+        },
+        templateSelection: function(data) {
+            if (!data.id) {
+                return data.text;
+            }
+            return $(data.element).data('title') || data.text;
+        }
     });
 
-    $('.select2-multiple').select2({
-        placeholder: 'Select wind direction',
+    $('#id_tropical_alerts').select2({
+        placeholder: 'Select Tropical Alerts',
         width: '100%',
-        closeOnSelect: false
+        closeOnSelect: false,
     });
 
+    $('#id_wind_direction_m2m').select2({ placeholder: 'Select Wind Direction', width: '100%', closeOnSelect: false });
+    $('#id_wind_shift_direction_m2m').select2({ placeholder: 'Select Wind Shift Direction', width: '100%', closeOnSelect: false });
+    $('#id_wind_condition_m2m').select2({ placeholder: 'Select Wind Condition(s)', width: '100%', closeOnSelect: false });
+    $('#id_wind_shift_condition_m2m').select2({ placeholder: 'Select Wind Condition(s)', width: '100%', closeOnSelect: false });
+    $('#id_sea_state_m2m').select2({ placeholder: 'Select Sea State', width: '100%', closeOnSelect: false });
+    $('#id_sea_state_shift_m2m').select2({ placeholder: 'Select Sea State', width: '100%', closeOnSelect: false });
 });
 </script>
 {% endblock %}

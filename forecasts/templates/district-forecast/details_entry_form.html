@@ -1,15 +1,8 @@
 {% extends "base_blank.html" %}
-{% block title %}{{ page_name }} | WIMP3 | National Meteorological Service of Belize{% endblock %}
-
 {% block content %}
-<div class="row mb-3">
-    <div class="col-12">
-        <div class="alert alert-light">Forecast ID: <strong>{{ forecast_id }}</strong>, Forecast Date: <strong>{{ main_entry.forecast_date }}</strong></div>
-    </div>
-</div>
 <div class="row">
     <div class="col-12">
-        <h2 class="mb-4">{{ item_entry.district.district_name }}</h2>
+        <h2 class="mb-4">{{ item_entry.district.district_name }} &mdash; <strong>{{ main_entry.forecast_date }}</strong></h2>
     </div>
     <div class="col-12">
         <form method="post">

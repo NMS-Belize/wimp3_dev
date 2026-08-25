@@ -12,23 +12,23 @@
         <button class="nav-link" id="tab_alerts" data-bs-toggle="tab" data-bs-target="#tab_alerts_pane" type="button" role="tab" aria-controls="tab_alerts_pane" aria-selected="false">Alerts & Advisories</button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="tab_attachments" data-bs-toggle="tab" data-bs-target="#tab_attachments_pane" type="button" role="tab" aria-controls="tab_attachments_pane" aria-selected="false">Attachements</button>
+        <button class="nav-link" id="tab_attachments" data-bs-toggle="tab" data-bs-target="#tab_attachments_pane" type="button" role="tab" aria-controls="tab_attachments_pane" aria-selected="false">Attachments</button>
     </li>
 </ul>
 <div class="tab-content" id="myTabContent">
-    <div class="tab-pane fade show active" id="tab_general_pane" role="tabpanel" aria-labelledby="tab_general" tabindex="1">
+    <div class="tab-pane fade pt-3 show active" id="tab_general_pane" role="tabpanel" aria-labelledby="tab_general" tabindex="1">
         {% include "general-weather-forecast/tab_general_info.html" %}
     </div>
-    <div class="tab-pane fade" id="tab_marine_pane" role="tabpanel" aria-labelledby="tab_marine" tabindex="2">
+    <div class="tab-pane pt-3 fade" id="tab_marine_pane" role="tabpanel" aria-labelledby="tab_marine" tabindex="2">
         {% include "general-weather-forecast/tab_marine.html" %}
     </div>
-    <div class="tab-pane fade" id="tab_temps_pane" role="tabpanel" aria-labelledby="tab_marine" tabindex="3">
+    <div class="tab-pane pt-3 fade" id="tab_temps_pane" role="tabpanel" aria-labelledby="tab_marine" tabindex="3">
         {% include "general-weather-forecast/tab_temps.html" %}
     </div>
-    <div class="tab-pane fade" id="tab_alerts_pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="4">
+    <div class="tab-pane pt-3 fade" id="tab_alerts_pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="4">
         {% include "general-weather-forecast/tab_alerts.html" %}
     </div>
-    <div class="tab-pane fade" id="tab_attachments_pane" role="tabpanel" aria-labelledby="disabled-tab" tabindex="5">
+    <div class="tab-pane pt-3 fade" id="tab_attachments_pane" role="tabpanel" aria-labelledby="disabled-tab" tabindex="5">
         {% include "general-weather-forecast/tab_attach.html" %}
     </div>
 </div>

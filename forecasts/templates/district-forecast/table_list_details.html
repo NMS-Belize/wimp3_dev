@@ -1,6 +1,5 @@
-{% extends "base_blank.html" %}
+{% extends "base_table.html" %}
 {% load static %}
-{% block title %}{{ page_name }} | WIMP3 | NMS Belize{% endblock %}
 {% block content %}
 
 <div class="row mb-3">
@@ -8,16 +7,6 @@
         <a class="btn btn-primary" href="{{ back_url }}"><i class="fa-solid fa-arrow-left"></i>&nbsp;Back to {{ prev_page }}</a>
     </div>
 </div>
-{% if id %}
-<div class="row mb-3">
-    <div class="col-12">
-        <div class="alert alert-success" role="alert">
-            {% if entry.id %}
-            <strong>{{ entry.description }}</strong> has been successfully added!
-            {% endif %}
-        </div>
-    </div>
-{% endif %}
 <div class="row">
     <div class="col-12">
         <div class="alert alert-light">

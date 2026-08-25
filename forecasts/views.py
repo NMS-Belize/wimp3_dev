@@ -1,7 +1,7 @@
 import os, json
 from click import style
 
-from django.conf import settings as jsettings
+from django.conf import settings
 from django.contrib import messages
 from django.core.management import call_command
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -12,7 +12,7 @@ from django.views.decorators.http import require_POST
 
 from django_tables2 import RequestConfig
 from reportlab.lib import styles
-from rest_framework import settings, status, viewsets
+from rest_framework import status, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
@@ -91,27 +91,42 @@ def general_forecast_entry(request, id=None):
     else:
         entry = None
 
-    previous_entry = (
-        ForecastGeneral.objects
-        .filter(id__lt=entry.id)
-        .order_by('-id')
-        .first()
-    )
+    previous_entry  = (ForecastGeneral.objects.filter(id__lt=entry.id).order_by('-id').first())
+    next_entry      = (ForecastGeneral.objects.filter(id__gt=entry.id).order_by('id').first())
 
-    next_entry = (
-        ForecastGeneral.objects
-        .filter(id__gt=entry.id)
-        .order_by('id')
-        .first()
-    )
+    audio_url = None
+
+    # 1. Current FileField upload
+    if entry.audio_file:
+        try:
+            if os.path.exists(entry.audio_file.path):
+                audio_url = entry.audio_file.url
+        except (ValueError, OSError):
+            pass
+
+    # 2. Check legacy/pre-stored audio file
+    if not audio_url and entry.forecast_date and entry.forecast_time:
+
+        legacy_filename = (f"{entry.forecast_date}_{entry.forecast_time.strftime('%H%M_%p')}_NMS_BZ.mp3")
+
+        legacy_path = os.path.join(settings.MEDIA_ROOT, "forecast", "general", "audio", legacy_filename)
+
+        if os.path.exists(legacy_path):
+            audio_url = (f"{settings.MEDIA_URL}forecast/general/audio/{legacy_filename}")
 
     if request.method == 'POST':
         form = ForecastGeneralForm(request.POST, request.FILES, instance=entry)
 
         if form.is_valid():
-            saved_entry = form.save()    # Creates or updates
-            return redirect('forecasts:general_forecast_list', saved_entry.id)
+            saved_entry = form.save(commit=False)
+            saved_entry.save()
+            form.save_m2m()
+            messages.success(request, "Forecast Deatils saved successfully.")
         
+            return redirect('forecasts:general_forecast_list', saved_entry.id)
+        else:
+            messages.error(request, f"Form could not be saved: {form.errors.as_text()}")
+
     else:
         form = ForecastGeneralForm(instance=entry)
 
@@ -122,6 +137,7 @@ def general_forecast_entry(request, id=None):
         'back_url':     reverse('forecasts:general_forecast_list'),
         'form': form,
         'entry': entry,
+        "audio_url": audio_url,
         'previous_entry': previous_entry,
         'next_entry': next_entry,
     })
@@ -176,7 +192,6 @@ def general_forecast_category_entry(request, id=None):
         'new_url':      reverse('forecasts:general_forecast_category_entry'),
         'details_url':  "",
         'back_url':     reverse('forecasts:general_forecast_category_list'),
-        'api_url':      "/api/pest-risk/",
         'form': form,
         'entry': entry
     })
@@ -219,23 +234,26 @@ def general_forecast_generate_pdf(request, id=None):
     styles = getSampleStyleSheet()
     elements = []
 
-    main_title  = ParagraphStyle("MainTitle",   parent = styles["Title"],   fontName = "OpenSans-SemiBold", fontSize = 16, leading = 20, alignment = TA_LEFT, textColor = "#00537A", spaceAfter = 4)
+    main_title  = ParagraphStyle("MainTitle",   parent = styles["Title"],   fontName = "OpenSans-SemiBold", fontSize = 14, leading = 20, alignment = TA_LEFT, textColor = "#00537A", spaceAfter = 4)
     date_title   = ParagraphStyle("SubTitle",    parent = styles["Title"],   fontName = "OpenSans-Bold",     fontSize = 10, leading = 10, alignment = TA_RIGHT, textColor = "#235558", spaceAfter = 0)
 
     sub_title   = ParagraphStyle("SubTitle",    parent = styles["Title"],   fontName = "OpenSans-Bold",     fontSize = 10, leading = 14, alignment = TA_LEFT, textColor = "#000000", spaceAfter = 2)
-    main_text   = ParagraphStyle("MainText",    parent = styles["Normal"],  fontName = "OpenSans-Regular",  fontSize = 10, leading = 14, alignment = TA_LEFT, textColor = "#000000", spaceAfter = 5)
+
+    # ALERT TITLES
+    alert_title     = ParagraphStyle("SubTitle",    parent = styles["Title"],   fontName = "OpenSans-Bold",     fontSize = 10, leading = 16, alignment = TA_LEFT, backColor=colors.HexColor("#f8e5e5"), textColor = "#82312f", spaceAfter = 2)
+    talert_title    = ParagraphStyle("SubTitle",    parent = styles["Title"],   fontName = "OpenSans-Bold",     fontSize = 10, leading = 16, alignment = TA_LEFT, backColor=colors.HexColor("#ddf2f3"), textColor = "#2c676c", spaceAfter = 2)
+
+    # ALERT SUBTITLES
+    cat_title   = ParagraphStyle("SubTitle",    parent = styles["Title"],   fontName = "OpenSans-Bold",     fontSize = 9, leading = 12, alignment = TA_LEFT, textColor = "#82312f", spaceAfter = 2)
+    tcat_title  = ParagraphStyle("SubTitle",    parent = styles["Title"],   fontName = "OpenSans-Bold",     fontSize = 9, leading = 12, alignment = TA_LEFT, textColor = "#235558", spaceAfter = 2)
+
+    main_text   = ParagraphStyle("MainText",    parent = styles["Normal"],  fontName = "OpenSans-Regular",  fontSize = 9, leading = 14, alignment = TA_LEFT, textColor = "#000000", spaceAfter = 5)
 
     foot_text   = ParagraphStyle("FootText",    parent = styles["Normal"],  fontName = "OpenSans-Regular",  fontSize = 8, leading = 12, alignment = TA_LEFT, textColor = "#000000", spaceAfter = 2)
-    table_head  = ParagraphStyle("TableHeader", parent = styles["Normal"],  fontName = "OpenSans-Bold",     fontSize = 9, leading = 9, spaceAfter = 0 )
-    table_first = ParagraphStyle("TableCol1",   parent = styles["Normal"],  fontName="OpenSans-Bold",       fontSize = 10 )
+    table_head  = ParagraphStyle("TableHeader", parent = styles["Normal"],  fontName = "OpenSans-Bold",     fontSize = 9, leading = 9, spaceAfter = 0, textColor = "#000000", )
+    table_first = ParagraphStyle("TableCol1",   parent = styles["Normal"],  fontName ="OpenSans-Bold",       fontSize = 10 )
     table_body  = ParagraphStyle("TableBody",   parent = styles["Normal"],  fontName = "OpenSans-Regular",  fontSize = 10, leading = 12, spaceAfter = 0 )
     risk_text   = ParagraphStyle("RiskText",    parent = styles["Normal"],  fontName = "OpenSans-Bold",     fontSize = 10, spaceAfter = 40 )
-
-    data = [[
-        Paragraph("WINDS", table_head),
-        Paragraph("SEA CONDITIONS", table_head),
-        Paragraph("WAVES<br/><font size='8'>(MIN)</font>", table_head)
-    ]]
 
     wind = ""
 
@@ -322,66 +340,27 @@ def general_forecast_generate_pdf(request, id=None):
     if forecast.wave_shift is not None and forecast.wave_shift.strip():
         waves += " BECOMING "
         waves += f"{forecast.wave_shift} kts"
-        
-    '''
-    weather_prob    = item.prob_weather_conditions.description.upper() if item.prob_weather_conditions else ""
-    temp_min_prob   = item.prob_temp_min.description.upper() if item.prob_temp_min else ""
-    temp_max_prob   = item.prob_temp_max.description.upper() if item.prob_temp_max else ""
-    precip_prob     = item.prob_precip_max.description.upper() if item.prob_precip_max else ""
-    wind_prob       = item.prob_winds.description.upper() if item.prob_winds else ""
-
-    weather_color   = get_risk_color(item.prob_weather_conditions_id)
-    temp_min_color  = get_risk_color(item.prob_temp_min_id)
-    temp_max_color  = get_risk_color(item.prob_temp_max_id)
-    precip_color    = get_risk_color(item.prob_precip_max_id)
-    wind_color      = get_risk_color(item.prob_winds_id)
-
-    weather_text    = item.weather_conditions or ""
-    temp_min_text   = f"{item.temp_min}°F" if item.temp_min is not None else ""
-    temp_max_text   = f"{item.temp_max}°F" if item.temp_max is not None else ""
-    precip_text     = f"{item.precip_max:.1f} in" if item.precip_max is not None else ""
-    wind_text       = wind
-    
-    weather_prob_text   = (f"<font size='8' color='{weather_color}'>{weather_prob}</font>") if weather_prob else ""
-    temp_min_prob_text  = (f"<font size='8' color='{temp_min_color}'>{temp_min_prob}</font>") if temp_min_prob else ""
-    temp_max_prob_text  = (f"<font size='8' color='{temp_max_color}'>{temp_max_prob}</font>") if temp_max_prob else ""
-    precip_prob_text    = (f"<font size='8' color='{precip_color}'>{precip_prob}</font>") if precip_prob else ""
-    wind_prob_text      = (f"<font size='8' color='{wind_color}'>{wind_prob}</font>") if wind_prob else ""
-
-    
-    data.append([
-        Paragraph("<font color='#000000' size='8'>Risk Level: </font>", table_body),
-        Paragraph(weather_prob_text, risk_text),
-        Paragraph(temp_min_prob_text, risk_text),
-        Paragraph(temp_max_prob_text, risk_text),
-        Paragraph(precip_prob_text, risk_text),
-        Paragraph(wind_prob_text, risk_text),
-    ])'''
 
     if wind_shift:
         wind += wind_shift
 
-    data.append([
-        Paragraph(wind, table_body),
-        Paragraph(sea, table_body),
-        Paragraph(waves, table_body)
-    ])
-
     available_width = doc.width
 
-    table = Table(
-        data,
-        colWidths=[ available_width * 0.32, available_width * 0.35, available_width * 0.32 ],
-        repeatRows = 1
-    )
+    data_head = [[ Paragraph("General Weather Forecast", main_title), Paragraph(f"{forecast.forecast_date.strftime('%B %d, %Y')}, "f"{forecast.forecast_time.strftime('%I:%M %p')}", date_title) ]]
+
+    header_table = Table(data_head, colWidths=[ available_width * 0.5, available_width * 0.5 ])
+
+    data = [[Paragraph("WINDS", table_head), Paragraph("SEA CONDITIONS", table_head), Paragraph("WAVES <font size='8'>(MIN)</font>", table_head) ]]
+    data.append([ Paragraph(wind, table_body), Paragraph(sea, table_body), Paragraph(waves, table_body) ])
+
+    table = Table(data, colWidths=[ available_width * 0.32, available_width * 0.35, available_width * 0.32 ], repeatRows = 1)
 
     style = TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#b2d9d0")),
+        #("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#ffffff")),
         ("TEXTCOLOR", (0, 0), (-1, 0), colors.black),
         ("ALIGN", (1, 1), (4, -1), "CENTER"),
         #("VALIGN", (0, 0), (-1, -1), "CENTER"),
         ("VALIGN", (0, 0), (-1, 0), "MIDDLE"),
-
         ("ALIGN", (0, 1), (-1, -1), "LEFT"),
         
         # Data rows
@@ -396,42 +375,65 @@ def general_forecast_generate_pdf(request, id=None):
     for row in range(2, len(data), 2):
         style.add("LINEBELOW",(0, row),(-1, row),0.5, colors.HexColor("#b2d9d0"))
     
-    table.setStyle(style)
-
     forecaster = ""
     if forecast.created_by:
         forecaster = forecast.created_by.get_full_name() or forecast.created_by.username
 
-    elements.append(Paragraph("General Weather Forecast", main_title))
-    elements.append(Paragraph(f"{forecast.forecast_date.strftime('%B %d, %Y')}, {forecast.forecast_time.strftime('%I:%M %p')}", date_title))
+    header_table.setStyle(style)
+    elements.append(header_table)
     elements.append(Spacer(1, 6))
 
-    elements.append(Paragraph(f"General Situation:", sub_title))
+    elements.append(Paragraph(f"General Situation", sub_title))
     elements.append(Paragraph(f"{forecast.general_situation}", main_text))
     elements.append(Spacer(1, 6))
 
-    elements.append(Paragraph(f"24-Hour Forecast:", sub_title))
+    elements.append(Paragraph(f"24-Hour Forecast", sub_title))
     elements.append(Paragraph(f"{forecast.twenty_four_hour_forecast}", main_text))
     elements.append(Spacer(1, 6))
 
-    elements.append(Paragraph(f"Marine Conditions:", sub_title))
+    table.setStyle(style)
+    elements.append(Paragraph(f"Marine Conditions", sub_title))
     elements.append(table)
     elements.append(Spacer(1, 12))
+            
+    # New M2M data: Tropical Weather Outlook
+    if forecast.cap_alerts.exists():
 
-    elements.append(Paragraph(f"Alerts & Advisories:", sub_title))
-    elements.append(Paragraph(f"", main_text))
-    elements.append(Spacer(1, 6))
+        elements.append(Paragraph(f"&nbsp;&nbsp;*** Alerts & Advisories ***", alert_title))
 
-    elements.append(Paragraph(f"Outlook:", sub_title))
+        for alert in forecast.cap_alerts.all():
+            elements.append(Paragraph(f"{alert.headline}", cat_title))
+
+            if alert.description:
+                elements.append(Paragraph(f"{alert.description}", main_text))
+
+            elements.append(Spacer(1, 6))
+
+    elements.append(Paragraph(f"Outlook", sub_title))
     elements.append(Paragraph(f"{forecast.outlook}", main_text))
     elements.append(Spacer(1, 6))
 
-    elements.append(Paragraph(f"Tropical Weather Outlook:", sub_title))
-    elements.append(Paragraph(f"{forecast.outlook}", main_text))
-    elements.append(Spacer(1, 6))
-    
-    elements.append(Paragraph(f"Forecaster: {forecaster}", foot_text))
-    elements.append(Paragraph(f"Date Created: {forecast.created_datetime.strftime('%B %d, %Y | %I:%M %p')}; Last Updated: {forecast.updated_datetime.strftime('%B %d, %Y | %I:%M %p')}", foot_text))
+    tropical_weather_outlook = ""
+        
+    # New M2M data: Tropical Weather Outlook
+    if forecast.tropical_alerts.exists():
+
+        elements.append(Paragraph("&nbsp;&nbsp;*** Tropical Weather Outlook ***", talert_title))
+
+        for storm in forecast.tropical_alerts.all():
+
+            # Storm name
+            if storm.storm_name or storm.storm_category:
+                elements.append(Paragraph(f"<b>{storm.storm_category}, {storm.storm_name}</b>", tcat_title))
+
+            # Description
+            if storm.description:
+                elements.append(Paragraph(f"{storm.description}", main_text))
+
+            # Space between storms
+            elements.append(Spacer(1, 6))
+        
+    elements.append(Paragraph(f"Forecaster: {forecaster} | Date Created: {forecast.created_datetime.strftime('%B %d, %Y, %I:%M %p')} | Last Updated: {forecast.updated_datetime.strftime('%B %d, %Y, %I:%M %p')}", foot_text))
 
     doc.build(elements,
         onFirstPage=add_background_wafs_full,
@@ -777,7 +779,7 @@ def district_forecast_list(request, id=None):
     if id is not None:
         entry = get_object_or_404(DistrictForecast, id=id)
 
-    return render(request, 'district-forecast/district_forecast_table_list_main.html', {
+    return render(request, 'district-forecast/table_list_main.html', {
         'id' : id,
         'entry': entry,  
         'page_name': page_name,
@@ -839,6 +841,7 @@ def district_forecast_entry(request, id=None):
 
     return render(request, 'district-forecast/entry_form.html', {
         'page_name': page_name,
+        'prev_page': "District Forecast",
         'new_url':  reverse('forecasts:district_forecast_entry'),
         'back_url':  reverse('forecasts:district_forecast_list'),
         'form': form,
@@ -1052,8 +1055,6 @@ def district_forecast_details_list(request, id=None, fk=None):
     #print(fk);
     page_name = "District Forecast Entry"
 
-    #qs = DistrictForecastDetails.objects.all().order_by('id')
-
     # Parent forecast
     parent_entry = get_object_or_404(DistrictForecast, id=id)
 
@@ -1066,22 +1067,8 @@ def district_forecast_details_list(request, id=None, fk=None):
     print("Details count:", qs.count())
     print(qs.query)
 
-    '''if id is not None:
-        entry = get_object_or_404(DistrictForecast, id=id)
-
-        # Filter details by parent listing
-        qs = qs.filter(forecast_id=fk)
-        qs = qs.order_by('-id')'''
-
-    #Child object (details)
-    #entry = None
-    
-    #if id:
-    #    entry = get_object_or_404(DistrictForecastDetails,id=id)
-
-    return render(request, 'district-forecast/district_forecast_table_list_details.html', {
+    return render(request, 'district-forecast/table_list_details.html', {
         'id' : id,
-        #'fk': fk,
         'page_name': page_name,
         'table': table,
         #'entry': entry,
@@ -1128,7 +1115,7 @@ def district_forecast_details_entry(request, id):
     else:
         form = DistrictForecastPublishForm(instance=entry)
 
-    return render(request, 'district-forecast/district_forecast_details_entry_table_form.html', {
+    return render(request, 'district-forecast/table_list_details_entry_form.html', {
         'page_name': page_name,
         'forecast_id': id,
         'new_url':  reverse('forecasts:district_forecast_entry'),
@@ -1162,6 +1149,7 @@ def district_forecast_details_entry_item(request, id=None, fk=None):
 
         if form.is_valid():
             saved_entry = form.save()    # Creates or updates
+            messages.success(request, "Record saved successfully.")
 
             # Save & Close button
             if 'btn_submit_close' in request.POST:
@@ -1169,11 +1157,14 @@ def district_forecast_details_entry_item(request, id=None, fk=None):
 
             # Regular Save button
             return redirect('forecasts:district_forecast_details_entry_item',fk,saved_entry.id)
+        else:
+            messages.error(request, "Please correct the errors below.")
     else:
         form = DistrictForecastDetailsForm(instance=item_entry)
 
-    return render(request, 'district-forecast/district_forecast_details_entry_form.html', {
+    return render(request, 'district-forecast/details_entry_form.html', {
         'page_name': page_name,
+        'prev_page': 'District Forecasts',
         'id': id,
         'forecast_id': fk,
         'main_entry': main_entry,

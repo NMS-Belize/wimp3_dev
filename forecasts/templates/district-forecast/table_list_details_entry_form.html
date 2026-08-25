@@ -1,33 +1,11 @@
 {% extends "base_blank.html" %}
 {% load static %}
-{% block title %}{{ page_name }} | WIMP3 | National Meteorological Service of Belize{% endblock %}
 {% block content %}
-
     <div class="row mt-2">
         <div class="col-6">
-            <h4>Forecast ID: <strong>{{ forecast_id }}</strong>, Forecast Date: <strong>{{ entry.forecast_date }}</strong></h4>
-        </div>
-        <div class="col-6 d-flex flex-row justify-content-end">
-            <div class="table_item_dashboard">
-                <a class="btn-link" href="{{ back_url }}">
-                    <img src="{% static 'button_icons/previous.png' %}" alt="Inventory List" />&nbsp;<span class="task_desc">Back to {{ prev_page }}</span>
-                </a>
-            </div>
-            {% if weburl %}
-            <div class="table_item_dashboard">
-                <a class="btn-link" href="{{ back_url }}">
-                    <img src="{% static 'button_icons/webpage.png' %}" alt="Inventory List" />&nbsp;<span class="task_desc">Go to Live Page</span>
-                </a>
-            </div>
-            {% endif %}
+            <h4>Forecast Date: <strong>{{ entry.forecast_date }}</strong></h4>
         </div>
         <div class="col-6 d-flex flex-row-reverse">
-            <!--<form method="post" class="wimp3_form ms-3 pt-2">
-                <small id="publishStatus" class="text-muted"></small>   
-                {% csrf_token %}
-                <div class="form-check form-switch">{{ form.is_published }}<label class="form-check-label" for="id_is_published">Published Status</label></div>
-            </form>-->
-            
         </div>
     </div>
     <div class="row mt-3">

@@ -23,7 +23,7 @@ urlpatterns = [
     path('district-forecast/entry/<int:fk>/item/<int:id>/', views.district_forecast_details_entry_item, name='district_forecast_details_entry_item'),
 
     ## DISTRICT FORECASTS: Details
-    path('district-forecast/entry/<int:id>/details/',views.district_forecast_details_entry,name='district_forecast_details_entry'),
+    path('district-forecast/entry/details/<int:id>/',views.district_forecast_details_entry,name='district_forecast_details_entry'),
     path('district-forecast/entry/details-list/',           views.district_forecast_details_list, name="district_forecast_details_list"),
     path('district-forecast/entry/details-list/<int:id>/',  views.district_forecast_details_list, name="district_forecast_details_list_id"),
     
