@@ -222,7 +222,7 @@ def general_forecast_generate_pdf(request, id=None):
     print(forecast.wind_direction_m2m)
 
     # Folder where PDF will be saved
-    folder_path = os.path.join(jsettings.MEDIA_ROOT, "forecast", "general", "doc", "test")
+    folder_path = os.path.join(settings.MEDIA_ROOT, "forecast", "general", "doc", "test")
     os.makedirs(folder_path, exist_ok=True)
 
     # Full PDF file path
@@ -913,7 +913,7 @@ def district_forecast_generate_pdf(request, id=None):
     #buffer = io.BytesIO()
 
     # Folder where PDF will be saved
-    folder_path = os.path.join(jsettings.MEDIA_ROOT, "forecast", "district","doc")
+    folder_path = os.path.join(settings.MEDIA_ROOT, "forecast", "district","doc")
     os.makedirs(folder_path, exist_ok=True)
 
     # Full PDF file path
@@ -1236,11 +1236,11 @@ class WIMP2FilesAPIView(APIView):
     http_method_names = ['get', 'head','options']
 
     def get(self, request):
-        audio_dir   = os.path.join(jsettings.MEDIA_ROOT, "forecast", "general", "audio")
-        gen_pdf_dir = os.path.join(jsettings.MEDIA_ROOT, "forecast", "general", "doc")
-        mar_pdf_dir = os.path.join(jsettings.MEDIA_ROOT, "forecast", "marine", "doc")
-        avi_pdf_dir = os.path.join(jsettings.MEDIA_ROOT, "forecast", "aviation", "doc")
-        day_pdf_dir = os.path.join(jsettings.MEDIA_ROOT, "forecast", "daily", "doc")
+        audio_dir   = os.path.join(settings.MEDIA_ROOT, "forecast", "general", "audio")
+        gen_pdf_dir = os.path.join(settings.MEDIA_ROOT, "forecast", "general", "doc")
+        mar_pdf_dir = os.path.join(settings.MEDIA_ROOT, "forecast", "marine", "doc")
+        avi_pdf_dir = os.path.join(settings.MEDIA_ROOT, "forecast", "aviation", "doc")
+        day_pdf_dir = os.path.join(settings.MEDIA_ROOT, "forecast", "daily", "doc")
 
         audio_url = None
         gen_pdf_url = None
@@ -1257,7 +1257,7 @@ class WIMP2FilesAPIView(APIView):
 
             if audio_files:
                 newest_audio = max(audio_files, key=lambda f: os.path.getmtime(os.path.join(audio_dir, f)))
-                audio_url = request.build_absolute_uri(jsettings.MEDIA_URL + "forecast/general/audio/" + newest_audio)
+                audio_url = request.build_absolute_uri(settings.MEDIA_URL + "forecast/general/audio/" + newest_audio)
 
         # Find newest General / PDF file
         if os.path.exists(gen_pdf_dir):
@@ -1268,7 +1268,7 @@ class WIMP2FilesAPIView(APIView):
 
             if gen_pdf_url:
                 newest_pdf_gen  = max(gen_pdf_url, key=lambda f: os.path.getmtime(os.path.join(gen_pdf_dir, f)))
-                gen_pdf_url     = request.build_absolute_uri(jsettings.MEDIA_URL + "forecast/general/doc/" + newest_pdf_gen)
+                gen_pdf_url     = request.build_absolute_uri(settings.MEDIA_URL + "forecast/general/doc/" + newest_pdf_gen)
 
         # Find newest Marine / PDF file
         if os.path.exists(mar_pdf_dir):
@@ -1279,7 +1279,7 @@ class WIMP2FilesAPIView(APIView):
 
             if mar_pdf_url:
                 newest_pdf_mar  = max(mar_pdf_url, key=lambda f: os.path.getmtime(os.path.join(mar_pdf_dir, f)))
-                mar_pdf_url     = request.build_absolute_uri(jsettings.MEDIA_URL + "forecast/marine/doc/" + newest_pdf_mar)
+                mar_pdf_url     = request.build_absolute_uri(settings.MEDIA_URL + "forecast/marine/doc/" + newest_pdf_mar)
 
         # Find newest Aviation / PDF file
         if os.path.exists(avi_pdf_dir):
@@ -1290,7 +1290,7 @@ class WIMP2FilesAPIView(APIView):
 
             if avi_pdf_url:
                 newest_pdf_avi  = max(avi_pdf_url, key=lambda f: os.path.getmtime(os.path.join(avi_pdf_dir, f)))
-                avi_pdf_url     = request.build_absolute_uri(jsettings.MEDIA_URL + "forecast/aviation/doc/" + newest_pdf_avi)
+                avi_pdf_url     = request.build_absolute_uri(settings.MEDIA_URL + "forecast/aviation/doc/" + newest_pdf_avi)
 
 
         # Find newest Daily (4-Day) / PDF file
@@ -1302,7 +1302,7 @@ class WIMP2FilesAPIView(APIView):
 
             if day_pdf_url:
                 newest_pdf_day  = max(day_pdf_url, key=lambda f: os.path.getmtime(os.path.join(day_pdf_dir, f)))
-                day_pdf_url     = request.build_absolute_uri(jsettings.MEDIA_URL + "forecast/daily/doc/" + newest_pdf_day)
+                day_pdf_url     = request.build_absolute_uri(settings.MEDIA_URL + "forecast/daily/doc/" + newest_pdf_day)
 
         return Response({
             "audio":        audio_url,
