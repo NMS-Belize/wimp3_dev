@@ -1,34 +1,38 @@
 [
     {
         "id": 1,
-        "description": "Tropical Depression"
+        "category_name": "Tropical Depression"
     },
     {
         "id": 2,
-        "description": "Tropical Wave"
+        "category_name": "Tropical Wave"
     },
     {
         "id": 3,
-        "description": "Tropical Storm"
+        "category_name": "Tropical Storm"
     },
     {
         "id": 4,
-        "description": "Hurricane: Category 1"
+        "category_name": "Hurricane: Category 1"
     },
     {
         "id": 5,
-        "description": "Hurricane: Category 2"
+        "category_name": "Hurricane: Category 2"
     },
     {
         "id": 6,
-        "description": "Hurricane: Category 3"
+        "category_name": "Hurricane: Category 3"
     },
     {
         "id": 7,
-        "description": "Hurricane: Category 4"
+        "category_name": "Hurricane: Category 4"
     },
     {
         "id": 8,
-        "description": "Hurricane: Category 5"
-    }    
+        "category_name": "Hurricane: Category 5"
+    },
+    {
+        "id": 9,
+        "category_name": "Tropical Weather Outlook"
+    }
 ]

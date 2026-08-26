@@ -23,7 +23,7 @@ class Command(BaseCommand):
             TropicalWeatherAlertsCategory.objects.update_or_create(
                 id = item["id"],
                 defaults={
-                    "description": item["description"],
+                    "category_name": item["category_name"],
                 },
             )
 
