@@ -34,13 +34,50 @@ $(document).ready(function () {
             const title  = option.data('title') || '';
             const author = option.data('author') || '';
             const date   = option.data('date') || '';
+            const expdate   = option.data('expdate') || '';
+            const isExpired = expdate && new Date(expdate) < new Date();
 
-            return $(`
-                <div>
-                    <div class="fw-bold">${title}</div>
-                    <div class="small text-muted">${author} &bull; ${date}</div>
-                </div>
-            `);
+            let formattedDate = '';
+
+            if (date) {
+                formattedDate = new Date(date).toLocaleString('en-US', {
+                    month: 'short',
+                    day: '2-digit',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                });
+            }
+
+            if (expdate) {
+                formattedExpDate = new Date(date).toLocaleString('en-US', {
+                    month: 'short',
+                    day: '2-digit',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                });
+            }
+
+            if(isExpired){
+                return $(`
+                    <div>
+                        <div class="fw-bold">${title}</div>
+                        <div class="small text-muted">${author} &bull; PubDate: ${formattedDate} | ExpDate: ${formattedExpDate}</div>
+                    </div>
+                `);
+            
+            }
+            else{
+                return $(`
+                    <div>
+                        <div class="fw-bold">${title}</div>
+                        <div class="small text-muted">${author} &bull; PubDate: ${formattedDate} | ExpDate: <span class="text-success fw-bold">${formattedExpDate}</span></div>
+                    </div>
+                `);
+            } 
         },
         templateSelection: function(data) {
             if (!data.id) {

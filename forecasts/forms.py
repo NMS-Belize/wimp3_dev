@@ -252,6 +252,7 @@ class CAPAlertSelectMultiple(forms.SelectMultiple):
                 option["attrs"]["data-title"]   = cap_alert.title or ""
                 option["attrs"]["data-author"]  = cap_alert.author or ""
                 option["attrs"]["data-date"]    = cap_alert.pubdate or ""
+                option["attrs"]["data-expdate"]    = alert_details.expires or ""
 
             '''if alert.pubdate:
                 option["attrs"]["data-date"] = alert.pubdate.strftime(
@@ -278,7 +279,7 @@ class ForecastGeneralForm(forms.ModelForm):
     sea_state_shift         = forms.CharField(label = "Sea State", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
     light_variable          = forms.CharField(label = "Light + Variable", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
 
-    cap_alerts              = forms.ModelMultipleChoiceField(queryset=CAPAlertDetails.objects.all().order_by("-published_date"), required=False, widget=CAPAlertSelectMultiple(attrs={ "class": "form-select select2"}))
+    cap_alerts              = forms.ModelMultipleChoiceField(queryset=CAPAlertDetails.objects.select_related("identifier").order_by("-identifier__pubdate"), required=False, widget=CAPAlertSelectMultiple(attrs={ "class": "form-select select2"}))
     
     class Meta:
         model = ForecastGeneral
