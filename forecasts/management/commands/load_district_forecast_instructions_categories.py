@@ -3,7 +3,7 @@ import json
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from agro.models import PestRiskAction
+from forecasts.models import DistrictForecastInstructionsCategory
 
 class Command(BaseCommand):
     
@@ -14,16 +14,17 @@ class Command(BaseCommand):
         results = []
 
         # Load Actions from JSON file and create/update Actions objects
-        with open(settings.BASE_DIR / "agro" / "data" / "actions.json", encoding="utf-8") as f:
-            alert_levels = json.load(f)
+        with open(settings.BASE_DIR / "forecasts" / "data" / "forecast_district_instructions_categories.json", encoding="utf-8") as f:
 
-        for item in alert_levels:
-            PestRiskAction.objects.update_or_create(
+            categories = json.load(f)
+
+        for item in categories:
+            DistrictForecastInstructionsCategory.objects.update_or_create(
                 id = item["id"],
                 defaults={
-                    "action_description": item["action_description"]
+                    "category_name": item["category_name"]
                 },
             )
 
-        results.append("Agro Data [Pest Risk Actions] imported successfully.")
-        self.stdout.write(self.style.SUCCESS("Agro Data [Pest Risk Actions] imported successfully."))
+        results.append("District Forecast [Instructions Categories] imported successfully.")
+        self.stdout.write(self.style.SUCCESS("District Forecast [Instructions Categories] imported successfully."))

@@ -1,0 +1,8 @@
+[
+    { "id": 1, "category_name": "Weather Conditions" },
+    { "id": 2, "category_name": "Temperature, MIN" },
+    { "id": 3, "category_name": "Winds" },
+    { "id": 4, "category_name": "Precipitation" },
+    { "id": 5, "category_name": "All Categories" },
+    { "id": 6, "category_name": "Temperature, MAX" }
+]
