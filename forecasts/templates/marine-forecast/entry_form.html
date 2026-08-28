@@ -1,0 +1,104 @@
+{% extends "base_form.html" %}
+{% load static %}
+{% block content %}
+<div class="mb-3 text-end">
+    {% if previous_entry %}
+        <a href="{% url 'forecasts:marine_forecast_entry' previous_entry.id %}" class="btn btn-sm btn-primary"><i class="fa-solid fa-chevron-left me-2"></i>Previous</a>
+        <!--<button class="btn btn-outline-secondary" disabled><i class="fa-solid fa-chevron-left me-2"></i>Previous</button>-->
+    {% endif %}
+    {% if next_entry %}
+        <a href="{% url 'forecasts:marine_forecast_entry' next_entry.id %}" class="btn btn-sm btn-primary"> Next <i class="fa-solid fa-chevron-right ms-2"></i></a>
+        <!--<button class="btn btn-outline-secondary" disabled>Next<i class="fa-solid fa-chevron-right ms-2"></i></button>-->
+    {% endif %}
+</div>
+<form method="post">
+    {% csrf_token %}
+    {% include "marine-forecast/tab_nav.html" %}
+    <input id="btn_submit" type="submit" value="Save" class="btn ms-2" />
+    <a href="{{ back_url }}" class="btn btn-danger">Cancel</a>
+</form>
+{% endblock %}
+{% block extra_js %}
+<script type="text/javascript">
+$(document).ready(function () {
+
+    $('#id_cap_alerts').select2({
+        width: '100%',
+        placeholder: 'Select CAP Alerts',
+        allowClear: true,
+        templateResult: function(data) {
+            if (!data.id) {
+                return data.text;
+            }
+            const option = $(data.element);
+            const title  = option.data('title') || '';
+            const author = option.data('author') || '';
+            const date   = option.data('date') || '';
+            const expdate   = option.data('expdate') || '';
+            const isExpired = expdate && new Date(expdate) < new Date();
+
+            let formattedDate = '';
+
+            if (date) {
+                formattedDate = new Date(date).toLocaleString('en-US', {
+                    month: 'short',
+                    day: '2-digit',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                });
+            }
+
+            if (expdate) {
+                formattedExpDate = new Date(date).toLocaleString('en-US', {
+                    month: 'short',
+                    day: '2-digit',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                });
+            }
+
+            if(isExpired){
+                return $(`
+                    <div>
+                        <div class="fw-bold">${title}</div>
+                        <div class="small text-muted">${author} &bull; PubDate: ${formattedDate} | ExpDate: ${formattedExpDate}</div>
+                    </div>
+                `);
+            
+            }
+            else{
+                return $(`
+                    <div>
+                        <div class="fw-bold">${title}</div>
+                        <div class="small text-muted">${author} &bull; PubDate: ${formattedDate} | ExpDate: <span class="text-success fw-bold">${formattedExpDate}</span></div>
+                    </div>
+                `);
+            } 
+        },
+        templateSelection: function(data) {
+            if (!data.id) {
+                return data.text;
+            }
+            return $(data.element).data('title') || data.text;
+        }
+    });
+
+    $('#id_tropical_alerts').select2({
+        placeholder: 'Select Tropical Alerts',
+        width: '100%',
+        closeOnSelect: false,
+    });
+
+    $('#id_wind_direction_m2m').select2({ placeholder: 'Select Wind Direction', width: '100%', closeOnSelect: false });
+    $('#id_wind_shift_direction_m2m').select2({ placeholder: 'Select Wind Shift Direction', width: '100%', closeOnSelect: false });
+    $('#id_wind_condition_m2m').select2({ placeholder: 'Select Wind Condition(s)', width: '100%', closeOnSelect: false });
+    $('#id_wind_shift_condition_m2m').select2({ placeholder: 'Select Wind Condition(s)', width: '100%', closeOnSelect: false });
+    $('#id_sea_state_m2m').select2({ placeholder: 'Select Sea State', width: '100%', closeOnSelect: false });
+    $('#id_sea_state_shift_m2m').select2({ placeholder: 'Select Sea State', width: '100%', closeOnSelect: false });
+});
+</script>
+{% endblock %}

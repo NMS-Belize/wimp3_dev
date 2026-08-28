@@ -7,7 +7,6 @@
     <div class="col-12">
         <form method="post">
             {% csrf_token %}
-            
             <div class="row mb-3 pb-2 border-bottom">
                 <div class="col-2">&nbsp;</div>
                 <div class="col-2"><span class="h5">Forecast Value</span></div>
@@ -50,7 +49,13 @@
             </div>
             <div class="row mb-3">
                 <div class="col-2"><span class="h6">Winds (kts)</span></div>
-                <div class="col-2 d-flex">{{ form.winds_min }}<span class="mx-2">to</span>{{ form.winds_max }}</div>
+                <div class="col-2">
+                    <div class="row g-2">
+                        <div class="col">{{ form.winds_min }}</div>
+                        <div class="col-2"><span class="pt-2 text-center">to</span></div>
+                        <div class="col">{{ form.winds_max }}</div>
+                    </div>
+                </div>
                 <div class="col-2">{{ form.prob_winds }}</div>
                 <div class="col-2">{{ form.sev_winds }}</div>
                 <div class="col-1"><span id="risk_level_winds" class="form-control risk-alert">&nbsp;</span>{{ form.risk_winds }}&nbsp;</div>
@@ -84,9 +89,11 @@
                         <select type="text" id="new_instruction_category" name="new_instruction_category" class="form-control" value="Weather Conditions">
                             <option value="" disabled>-- Select Category --</option>
                             <option value="1">Weather Conditions</option>
-                            <option value="2">Temperature</option>
+                            <option value="6">Temperature, MAX</option>
+                            <option value="2">Temperature, MIN</option>
                             <option value="3">Winds</option>
                             <option value="4">Precipitation</option>
+                            <option value="5">All Categories</option>
                         </select>
                     </div>
                 </div>
@@ -100,6 +107,12 @@
 {% endblock %} 
 {% block extra_js %}
 <script type="text/javascript">
+
+    $('.select2').select2({
+        width: '100%',
+        placeholder: 'Select one or more option',
+        allowClear: true
+    });
 
     document.addEventListener("DOMContentLoaded", function () {
 
@@ -210,8 +223,6 @@
             const category = document.getElementById("new_instruction_category").value;
             const errorBox = document.getElementById("instructionError");
 
-            
-
             fetch("{% url 'forecasts:district_forecast_instructions_ajax_add' %}", {
                 method: "POST",
                 headers: {
@@ -229,40 +240,21 @@
                 if (data.success) {
 
                     const selectMap = {
-                        "1": "id_ins_precip_max",
-                        "2": "id_ins_temp_max",
-                        "3": "id_ins_temp_min",
-                        "4": "id_ins_winds",
-                        "5": "id_ins_weather_conditions"
+                        "1": ["id_ins_weather_conditions"],
+                        "2": ["id_ins_temp_min"],
+                        "3": ["id_ins_winds"],
+                        "4": ["id_ins_precip_max"],
+                        "6": ["id_ins_temp_max"],
+                        // Category 5 → add to ALL selects
+                        //"5": ["id_ins_weather_conditions","id_ins_precip_max","id_ins_temp_max","id_ins_temp_min","id_ins_winds"]
                     };
-
+                    //console.log(selectMap);
                     const selectIds = [
                         selectMap[category]
                     ];
-
-                    /*selectIds.forEach(function(selectId) {
-                        const select = document.getElementById(selectId);
-                        //console.log(selectId, select);
-
-                        
-
-                        if (select) {
-
-                            Array.from(select.options).forEach(option => {
-                                option.selected = false;
-                            });
-
-                            const option = new Option(data.description, data.id, true, true);
-
-                            
-                            select.add(option);
-                            select.value = data.id;
-
-                            select.dispatchEvent(new Event("change", { bubbles: true }));
-                        }
-                    });*/
-
+                    
                     selectIds.forEach(function(selectId) {
+
                         const select = document.getElementById(selectId);
 
                         if (select) {
@@ -273,6 +265,7 @@
 
                             // Add new option if it doesn't already exist
                             let option = select.querySelector(`option[value="${data.id}"]`);
+
                             if (!option) {
                                 option = new Option(data.description, data.id, true, true);
                                 select.add(option);

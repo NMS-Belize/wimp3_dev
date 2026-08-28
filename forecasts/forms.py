@@ -4,7 +4,11 @@ from unicodedata import category
 from click import option
 from django import forms
 from pytz import timezone
-from .models import DistrictForecast, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, Probability, Severity, ForecastGeneral, ForescastGeneralCategory, WindCondition, WindDirection
+from .models import (DistrictForecast, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, 
+                     Probability, Severity, ForecastGeneral, ForescastGeneralCategory, 
+                     WindCondition, WindDirection,
+                     ForecastMarine, ForescastMarineCategory
+)
 from alerts.models import CAPAlertDetails, CAPAlerts
 
 from django_toggle_switch_widget.widgets import DjangoToggleSwitchWidget
@@ -167,75 +171,55 @@ class DistrictForecastDetailsForm(forms.ModelForm):
             'weather_conditions', 'prob_weather_conditions', 'sev_weather_conditions', 'risk_weather_conditions', 'ins_weather_conditions'
         ]
         widgets = { 
-            'weather_conditions': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'cols': 20, 'style': 'width: 100%'}),
-            'prob_weather_conditions': forms.Select(attrs={'class': 'form-select color-select', 'width': '100%'}),
-            'sev_weather_conditions': forms.Select(attrs={'class': 'form-select color-select', 'width': '100%'}),
+            'weather_conditions':       forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'cols': 20, 'style': 'width: 100%'}),
+            'prob_weather_conditions':  forms.Select(attrs={'class': 'form-select color-select', 'width': '100%'}),
+            'sev_weather_conditions':   forms.Select(attrs={'class': 'form-select color-select', 'width': '100%'}),
             #'risk_weather_conditions': forms.Select(attrs={'class': 'form-control','style': 'display:none','placeholder': ''}),
-            'risk_weather_conditions': forms.HiddenInput(),
-            'ins_weather_conditions': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
+            'risk_weather_conditions':  forms.HiddenInput(),
+            'ins_weather_conditions':   forms.SelectMultiple(attrs={'class': 'form-select select2'}),
 
-            'temp_max': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.5', 'width': '100%'}),
-            'prob_temp_max': forms.Select(attrs={'class': 'form-select color-select','width': '100%'}),
-            'sev_temp_max': forms.Select(attrs={'class': 'form-select color-select', 'width': '100%'}),
-            'risk_temp_max': forms.HiddenInput(),
-            'ins_temp_max': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
+            'temp_max':         forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.5', 'width': '100%'}),
+            'prob_temp_max':    forms.Select(attrs={'class': 'form-select color-select','width': '100%'}),
+            'sev_temp_max':     forms.Select(attrs={'class': 'form-select color-select', 'width': '100%'}),
+            'risk_temp_max':    forms.HiddenInput(),
+            'ins_temp_max':     forms.SelectMultiple(attrs={'class': 'form-select select2'}),
 
-            'temp_min': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.5', 'width': '100%'}),
-            'prob_temp_min': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
-            'sev_temp_min': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
-            'risk_temp_min': forms.HiddenInput(),
-            'ins_temp_min': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
+            'temp_min':         forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.5', 'width': '100%'}),
+            'prob_temp_min':    forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
+            'sev_temp_min':     forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
+            'risk_temp_min':    forms.HiddenInput(),
+            'ins_temp_min':     forms.SelectMultiple(attrs={'class': 'form-select select2'}),
 
-            'winds_min': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.5', 'width': '45%'}),
-            'winds_max': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.5', 'width': '45%'}),
-            'prob_winds': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
-            'sev_winds': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
-            'risk_winds': forms.HiddenInput(),
-            'ins_winds': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
+            'winds_min':        forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.5', 'width': '45%'}),
+            'winds_max':        forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.5', 'width': '45%'}),
+            'prob_winds':       forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
+            'sev_winds':        forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
+            'risk_winds':       forms.HiddenInput(),
+            'ins_winds':        forms.SelectMultiple(attrs={'class': 'form-select select2'}),
 
-            'precip_max': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.25', 'width': '100%'}),
-            'prob_precip_max': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
-            'sev_precip_max': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
-            'risk_precip_max': forms.HiddenInput(),
-            'ins_precip_max': forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
+            'precip_max':       forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.25', 'width': '100%'}),
+            'prob_precip_max':  forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
+            'sev_precip_max':   forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
+            'risk_precip_max':  forms.HiddenInput(),
+            #'ins_precip_max':  forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
+            'ins_precip_max':   forms.SelectMultiple(attrs={'class': 'form-select select2'}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['ins_weather_conditions'].queryset = (
-            DistrictForecastInstructions.objects.filter(
-                Q(category__category_name="Weather Conditions") |
-                Q(category__category_name="Uncategorized")
-            ).order_by(Lower('description'))
-        )
 
-        self.fields['ins_temp_max'].queryset = (
-            DistrictForecastInstructions.objects.filter(
-                Q(category__category_name="Temperature") |
-                Q(category__category_name="Uncategorized")
-            ).order_by(Lower('description'))
-        )
-
-        self.fields['ins_temp_min'].queryset = (
-            DistrictForecastInstructions.objects.filter(
-                Q(category__category_name="Temperature") |
-                Q(category__category_name="Uncategorized")
-            ).order_by(Lower('description'))
-        )        
-
-        self.fields['ins_winds'].queryset = (
-            DistrictForecastInstructions.objects.filter(
-                Q(category__category_name="Winds") |
-                Q(category__category_name="Uncategorized")
-            ).order_by(Lower('description'))
-        )
-
-        self.fields['ins_precip_max'].queryset = (
-            DistrictForecastInstructions.objects.filter(
-                Q(category__category_name="Precipitation") |
-                Q(category__category_name="Uncategorized")
-            ).order_by(Lower('description'))
-        )
+        # Default empty
+        self.fields['ins_weather_conditions'].queryset = DistrictForecastInstructions.objects.none()
+        self.fields['ins_temp_max'].queryset = DistrictForecastInstructions.objects.none()
+        self.fields['ins_temp_min'].queryset = DistrictForecastInstructions.objects.none()
+        self.fields['ins_winds'].queryset = DistrictForecastInstructions.objects.none()
+        self.fields['ins_precip_max'].queryset = DistrictForecastInstructions.objects.none()
+        
+        self.fields['ins_weather_conditions'].queryset = (DistrictForecastInstructions.objects.filter(category_id__in=[1, 5]).order_by(Lower('description')))
+        self.fields['ins_temp_max'].queryset = (DistrictForecastInstructions.objects.filter(category_id__in=[6, 5]).order_by(Lower('description')))
+        self.fields['ins_temp_min'].queryset = (DistrictForecastInstructions.objects.filter(category_id__in=[2, 5]).order_by(Lower('description')))        
+        self.fields['ins_winds'].queryset = (DistrictForecastInstructions.objects.filter(category_id__in=[3, 5]).order_by(Lower('description')))
+        self.fields['ins_precip_max'].queryset = (DistrictForecastInstructions.objects.filter(category_id__in=[4, 5]).order_by(Lower('description')))
 
 class CAPAlertSelectMultiple(forms.SelectMultiple):
 
@@ -393,4 +377,45 @@ class ForecastGeneralForm(forms.ModelForm):
             if not isinstance(field.widget, forms.CheckboxInput):
                 field.widget.attrs.setdefault("class", "form-control")
 
+class ForecastMarineForm(forms.ModelForm):
+
+    cap_alerts      = forms.ModelMultipleChoiceField(queryset=CAPAlertDetails.objects.select_related("identifier").order_by("-identifier__pubdate"), required=False, widget=CAPAlertSelectMultiple(attrs={ "class": "form-select select2"}))
+    #forecast_time   = forms.TimeField(input_formats=["%I:%M %p"], widget=forms.TimeInput(format="%I:%M %p", attrs={"type": "text", "class": "form-control", "placeholder": "hh:mm AM/PM" }))
     
+    class Meta:
+        model = ForecastMarine
+        exclude = ("created_by", "created_time", "updated_by", "updated_time", "auto_update")
+        
+        fields = [ 
+                "forecast_date", "forecast_time", "forecast_category",
+                "synopsis", 
+                "advisory", 
+                "cap_alerts","tropical_alerts",
+                "sea_surface_temperature", "min_temperature", "max_temperature"
+            ]
+    
+        widgets = {
+            "forecast_date":    forms.DateInput(attrs={"type": "date", "class": "form-control"}),
+            "forecast_time":    forms.TimeInput(format="%H:%M p", attrs={"type": "time", "class": "form-control", "step": "60", "placeholder": "hh:mm AM/PM" }),
+            "forecast_category":    forms.Select(attrs={"class": "form-select"}),
+
+            "synopsis": forms.Textarea(attrs={"rows": 5, "class": "form-control"}),
+            
+            "advisory":         forms.Textarea(attrs={"rows": 3, "class": "form-control"}),
+            "sea_surface_temperature": forms.NumberInput(attrs={"class": "form-control"}),
+            "min_temperature": forms.NumberInput(attrs={"class": "form-control"}),
+            "max_temperature": forms.NumberInput(attrs={"class": "form-control"}),
+
+            #"publish_to_web": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+
+            "forecaster_id": forms.TextInput(attrs={"class": "form-control"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field in self.fields.values():
+            if not isinstance(field.widget, forms.CheckboxInput):
+                field.widget.attrs.setdefault("class", "form-control")
+
+        

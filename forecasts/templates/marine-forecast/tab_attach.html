@@ -1,0 +1,15 @@
+<div class="row mb-4">
+    <div class="col-12">
+        <h3 class="dashboard_title">Uploads</h3>
+    </div>
+    <div class="col-6">
+        <label class="form-label">PDF File:</label>
+        {% if pdf_url %}
+        <div class="alert alert-light p-2">
+            <a href="{{ pdf_url }}" target="_blank" class="btn btn-link text-decoration-none"><i class="fa-solid fa-file"></i> View PDF File</a>
+        </div>
+        {% else %}
+        <p class="alert alert-warning"><span class="text-muted mt-2 mb-0 clear">No file available</span></p>
+        {% endif %}
+    </div>
+</div>

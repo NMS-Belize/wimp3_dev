@@ -4,7 +4,7 @@ import django_filters
 from django import forms
 
 from django.contrib.auth.models import User
-from .models import ForecastGeneral, ForescastGeneralCategory
+from .models import ForecastGeneral, ForescastGeneralCategory, ForecastMarine, ForescastMarineCategory
 
 class UserChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, user):
@@ -27,6 +27,30 @@ class ForecastGeneralFilter(django_filters.FilterSet):
     class Meta:
         model = ForecastGeneral
         fields = ["forecast_date","forecast_time", "forecast_category", "general_situation", "created_by", "updated_by"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field in self.form.fields.values():
+            if isinstance(field.widget, forms.Select):
+                field.widget.attrs.update({"class": "form-select" })
+            else:
+                field.widget.attrs.update({ "class": "form-control", "placeholder":"" })
+
+
+class ForecastMarineFilter(django_filters.FilterSet):
+
+    forecast_date   = django_filters.DateFilter(lookup_expr="icontains", label="Forecast Date")
+    forecast_time   = django_filters.CharFilter(lookup_expr="icontains", label="Forecast Time")
+    forecast_category = django_filters.ModelChoiceFilter(queryset=ForescastMarineCategory.objects.all(), label="Forecast Category", empty_label="All Categories")
+    synopsis        = django_filters.CharFilter(lookup_expr="icontains", label="Synopsis")
+
+    created_by      = UserModelChoiceFilter(queryset=User.objects.filter(is_active=True).order_by("first_name","last_name","username"), label="Forecaster", empty_label="All Forecasters")
+    updated_by      = UserModelChoiceFilter(queryset=User.objects.filter(is_active=True).order_by("first_name","last_name","username"), label="Forecaster", empty_label="All Forecasters")
+
+    class Meta:
+        model = ForecastMarine
+        fields = ["forecast_date","forecast_time", "forecast_category", "synopsis", "created_by", "updated_by"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

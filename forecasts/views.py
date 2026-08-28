@@ -26,15 +26,20 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import Image, SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 
-from forecasts.forms import DistrictForecastDetailsForm, DistrictForecastForm, DistrictForecastInstructionsCategoryForm, DistrictForecastInstructionsForm, DistrictForecastPublishForm, SeverityForm, ProbabilityForm, GeneralForecastCategoryForm, ForecastGeneralForm
-from forecasts.tables import DistrictForecastDetailsTable, DistrictForecastTable, InstructionsCategoryTable, SeverityTable, ProbabilityTable, InstructionsTable, ForecastGeneralTable, ForecastGeneralCategoryTable
+from forecasts.forms import (DistrictForecastDetailsForm, DistrictForecastForm, DistrictForecastInstructionsCategoryForm, DistrictForecastInstructionsForm, DistrictForecastPublishForm, 
+                             SeverityForm, ProbabilityForm, 
+                             GeneralForecastCategoryForm, ForecastGeneralForm,
+                             ForecastMarineForm
+)
+from forecasts.tables import DistrictForecastDetailsTable, DistrictForecastTable, InstructionsCategoryTable, SeverityTable, ProbabilityTable, InstructionsTable, ForecastGeneralTable, ForecastGeneralCategoryTable, ForecastMarineTable, ForecastMarineCategoryTable
 from forecasts.models import (
     ForecastGeneral, ForescastGeneralCategory, WindDirection, WindCondition, SeaState,
+    ForecastMarine, ForescastMarineCategory, 
     DistrictForecast, DistrictForecastInstructions, DistrictForecastDetails, DistrictForecastInstructionsCategory, 
     Severity, Probability
 )
 
-from forecasts.filters import ForecastGeneralFilter
+from forecasts.filters import ForecastGeneralFilter, ForecastMarineFilter
 from system_core.models import District
 
 from forecasts.serializers import DistrictForecastSerializer, DistrictForecastDetailsSerializer, GeneralForecastSerializer
@@ -460,6 +465,153 @@ def import_general_weather_forecast_categories(request):
 
     return redirect("forecasts:index")
 
+############# MARINE FORECASTS: Main Entries #############
+def marine_forecast_list(request, id=None):
+
+    page_name = "Marine Forecasts"
+    qs = ForecastMarine.objects.all().order_by("-forecast_date","-forecast_category",)
+
+    filterset = ForecastMarineFilter(request.GET, queryset=qs)
+    
+    table = ForecastMarineTable(filterset.qs)
+    table.empty_text = "No records available"
+    table.order_by = ("-forecast_date", "-forecast_category")
+
+    RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+    if id is not None:
+        entry = get_object_or_404(ForecastMarine, id=id)
+
+    return render(request, 'marine-forecast/table_list_main.html', {
+        'id' : id,
+        'entry': entry, 
+        'page_name': page_name,
+        'prev_page': 'Weather Forecasts',
+        'table': table,
+        "filter": filterset,
+        'new_url':  reverse('forecasts:marine_forecast_entry'),
+        'back_url': reverse('forecasts:index'),
+        'api_url':  reverse('general-weather-forecast-list'),
+    })
+
+def marine_forecast_entry(request, id=None):
+
+    page_name = "Marine Forecast Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(ForecastMarine, id=id)
+    else:
+        entry = None
+
+    previous_entry  = (ForecastMarine.objects.filter(id__lt=entry.id).order_by('-id').first())
+    next_entry      = (ForecastMarine.objects.filter(id__gt=entry.id).order_by('id').first())
+
+    pdf_url = None
+
+    '''# 1. Current FileField upload
+    if entry.audio_file:
+        try:
+            if os.path.exists(entry.audio_file.path):
+                audio_url = entry.audio_file.url
+        except (ValueError, OSError):
+            pass'''
+
+    # 2. Check legacy/pre-stored audio file
+    if entry.forecast_date and entry.forecast_time:
+
+        legacy_filename = (f"Marine_Forecast_{entry.forecast_date}_{entry.forecast_time.strftime('%I%M_%p')}_NMS_BZ.mp3")
+        print(legacy_filename)
+
+        legacy_path = os.path.join(settings.MEDIA_ROOT, "forecast", "marine", "doc", legacy_filename)
+
+        if os.path.exists(legacy_path):
+            pdf_url = (f"{settings.MEDIA_URL}forecast/marine/doc/{legacy_filename}")
+
+    if request.method == 'POST':
+        form = ForecastMarineForm(request.POST, request.FILES, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save(commit=False)
+            saved_entry.save()
+            form.save_m2m()
+            messages.success(request, "Forecast Deatils saved successfully.")
+        
+            return redirect('forecasts:general_forecast_list', saved_entry.id)
+        else:
+            messages.error(request, f"Form could not be saved: {form.errors.as_text()}")
+
+    else:
+        form = ForecastMarineForm(instance=entry)
+
+    return render(request, 'marine-forecast/entry_form.html', {
+        'page_name':    page_name,
+        'prev_page':    'General Weather Forecast',
+        'new_url':      reverse('forecasts:general_forecast_list'),
+        'back_url':     reverse('forecasts:marine_forecast_list'),
+        'form': form,
+        'entry': entry,
+        "pdf_url": pdf_url,
+        'previous_entry': previous_entry,
+        'next_entry': next_entry,
+    })
+
+
+def marine_forecast_category_list(request, id=None):
+    page_name = "Marine Forecast Categories"
+    qs = ForescastMarineCategory.objects.all().order_by('id')
+
+    table = ForecastMarineCategoryTable(qs)
+    table.empty_text = "No records available"
+    RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+
+    context = {
+        #'id' : id,
+        'entry': entry,  
+        'page_name': page_name,
+        'prev_page': 'Weather Forecasts',
+        'table': table,
+        'new_url':  reverse('forecasts:general_forecast_category_entry'),
+        'back_url': reverse('forecasts:index'),
+        #'api_url': "/api/pest-risk/",
+    }
+    return render(request, 'district-forecast/parameters_table_list.html', context)
+
+def marine_forecast_category_entry(request, id=None):
+
+    page_name = "Marine Forecast Category Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(ForescastGeneralCategory, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = GeneralForecastCategoryForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('forecasts:general_forecast_category_list', saved_entry.id)
+        
+    else:
+        form = GeneralForecastCategoryForm(instance=entry)
+
+    return render(request, 'district-forecast/parameters_entry_form.html', {
+        'page_name':    page_name,
+        'prev_page':    'General Weather Forecast Categories',
+        'new_url':      reverse('forecasts:general_forecast_category_entry'),
+        'details_url':  "",
+        'back_url':     reverse('forecasts:general_forecast_category_list'),
+        'form': form,
+        'entry': entry
+    })
+
 ############# DISTRICT FORECATSTS: Risk Level Entry #############
 def instructions_list(request, id=None):
     page_name = "Instructions Entries"
@@ -541,6 +693,7 @@ def instructions_delete(request, id):
 
 @require_POST
 def district_forecast_instructions_ajax_add(request):
+    
     description = request.POST.get("description", "").strip()
     category = request.POST.get("category", "").strip()
 
@@ -562,15 +715,19 @@ def district_forecast_instructions_ajax_add(request):
         "success": True,
         "id": item.id,
         "description": str(item),
-        "category": item.category.category_name if item.category else None
+        "category": item.category.category_name if item.category else None,
+        "category_id": item.category_id if item.category else None
     })
 
 ############# DISTRICT FORECASTS: Instructions Category #############
 def instructions_category_list(request, id=None):
+    
     page_name = "Instructions Category Entries"
-    qs = DistrictForecastInstructionsCategory.objects.all().order_by('-id')
+    qs = DistrictForecastInstructionsCategory.objects.all()
     table = InstructionsCategoryTable(qs)
     table.empty_text = "No records available"
+    table.order_by = "category_name"
+
     RequestConfig(request).configure(table)
 
     # Load entry ONLY if id is provided
@@ -612,9 +769,10 @@ def instructions_category_entry(request, id=None):
 
     return render(request, 'district-forecast/parameters_entry_form.html', {
         'page_name':    page_name,
-        'new_url':      reverse('forecasts:instructions_list'),
+        'prev_page':    'Instructions Category List',
+        'new_url':      reverse('forecasts:instructions_category_list'),
         'details_url':  "",
-        'back_url':     reverse('forecasts:instructions_list'),
+        'back_url':     reverse('forecasts:instructions_category_list'),
         'api_url':      "/api/pest-risk/",
         'form': form,
         'entry': entry
@@ -1162,7 +1320,7 @@ def district_forecast_details_entry_item(request, id=None, fk=None):
     else:
         form = DistrictForecastDetailsForm(instance=item_entry)
 
-    return render(request, 'district-forecast/details_entry_form.html', {
+    return render(request, 'district-forecast/entry_form_details.html', {
         'page_name': page_name,
         'prev_page': 'District Forecasts',
         'id': id,

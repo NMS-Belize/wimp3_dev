@@ -9,14 +9,14 @@ from django.core.management.base import BaseCommand
 
 class Command(BaseCommand):
 
-    help = "Import all General Forecast PDFs from WIMP2 into WIMP3."
+    help = "Import all Marine Forecast PDFs from WIMP2 into WIMP3."
 
     # Change this to the actual WIMP2 directory URL
-    WIMP2_PDF_URL = "https://wimp.nms.gov.bz/forecast/general/files/"
+    WIMP2_PDF_URL = "https://wimp.nms.gov.bz/forecast/marine/files/"
 
     def handle(self, *args, **options):
 
-        destination_dir = os.path.join(settings.MEDIA_ROOT,"forecast","general","doc")
+        destination_dir = os.path.join(settings.MEDIA_ROOT,"forecast","marine","doc")
         os.makedirs(destination_dir, exist_ok=True)
         self.stdout.write(f"Reading PDF list from {self.WIMP2_PDF_URL}")
 

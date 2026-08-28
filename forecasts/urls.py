@@ -37,10 +37,10 @@ urlpatterns = [
     path("district-forecast/instructions/ajax/add/", views.district_forecast_instructions_ajax_add,name="district_forecast_instructions_ajax_add"),
 
     ## DISTRICT FORECASTS: Instructions Category
-    path('district-forecast/instructions-category/list/', views.instructions_category_list, name="instructions_category_list"),
-    path('district-forecast/instructions-category/list/<int:id>/', views.instructions_category_list, name='instructions_category_list'),
-    path('district-forecast/instructions-category/entry/', views.instructions_category_entry, name="instructions_category_entry"),
-    path('district-forecast/instructions-category/entry/<int:id>/', views.instructions_category_entry, name='instructions_category_entry'),
+    path('district-forecast/instructions/category/list/', views.instructions_category_list, name="instructions_category_list"),
+    path('district-forecast/instructions/category/list/<int:id>/', views.instructions_category_list, name='instructions_category_list'),
+    path('district-forecast/instructions/category/entry/', views.instructions_category_entry, name="instructions_category_entry"),
+    path('district-forecast/instructions/category/entry/<int:id>/', views.instructions_category_entry, name='instructions_category_entry'),
     #path('district-forecast/instructions-category/entry/<int:id>/delete/', views.instructions_category_delete, name='instructions_category_delete'),
 
     ## DISTRICT FORECASTS: Severity
@@ -57,7 +57,7 @@ urlpatterns = [
     path('district-forecast/probability-entry/<int:id>/', views.probability_entry,name='probability_entry'),
     path('district-forecast/probability-entry/<int:id>/delete/', views.probability_delete,name='probability_delete'),
 
-    ## GENERAL WEATHER FORECASTS: District
+    ## GENERAL WEATHER FORECAST
     path('general-weather-forecast/list/', views.general_forecast_list, name="general_forecast_list"),
     path('general-weather-forecast/list/<int:id>/', views.general_forecast_list, name='general_forecast_list'),
     path('general-weather-forecast/entry/', views.general_forecast_entry, name="general_forecast_entry"),
@@ -70,9 +70,23 @@ urlpatterns = [
     path('general-weather-forecast/category/entry/', views.general_forecast_category_entry, name="general_forecast_category_entry"),
     path('general-weather-forecast/category/entry/<int:id>/', views.general_forecast_category_entry, name="general_forecast_category_entry"),
     path('general-weather-forecast/category/entry/<int:id>/delete/', views.general_forecast_category_delete, name='general_forecast_category_delete'),
-    path("general-weather-forecast/import-data/", views.import_general_weather_forecast_categories, name="import_general_weather_forecast_categories"),
+    path('general-weather-forecast/import-data/', views.import_general_weather_forecast_categories, name="import_general_weather_forecast_categories"),
 
+    ## MARINE FORECAST
+    path('marine-forecast/list/', views.marine_forecast_list, name="marine_forecast_list"),
+    #path('marine-forecast/category/list/<int:id>/', views.marine_forecast_category_list, name='marine_forecast_category_list'),
+    path('marine-forecast/entry/', views.marine_forecast_entry, name="marine_forecast_entry"),
+    path('marine-forecast/entry/<int:id>/', views.marine_forecast_entry, name="marine_forecast_entry"),
+    #path('marine-forecast/category/entry/<int:id>/delete/', views.marine_forecast_category_delete, name='marine_forecast_category_delete'),
+    #path("marine-forecast/import-data/", views.import_marine_forecast_categories, name="import_marine_forecast_categories"),'''
     
+    
+    path('marine-forecast/category/list/', views.marine_forecast_category_list, name='marine_forecast_category_list'),
+    #path('marine-forecast/category/entry/', views.marine_forecast_category_entry, name="marine_forecast_category_entry"),
+    #path('marine-forecast/category/entry/<int:id>/', views.marine_forecast_category_entry, name="marine_forecast_category_entry"),
+    #path('marine-forecast/category/entry/<int:id>/delete/', views.general_forecast_category_delete, name='general_forecast_category_delete'),
+    #path('marine-forecast/import-data/', views.import_general_weather_forecast_categories, name="import_general_weather_forecast_categories"),
+
     
 
     #path('district-forecast/forecast-entry/<int:fk>/details/entry/',views.district_forecast_details_entry,name='district_forecast_details_entry'),

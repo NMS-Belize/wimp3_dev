@@ -12,7 +12,7 @@ from django.conf import settings
 
 from forecasts.models import (
     DistrictForecast, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, 
-    ForecastGeneral, ForescastGeneralCategory,
+    ForecastGeneral, ForescastGeneralCategory, ForecastMarine, ForescastMarineCategory, 
     Severity, Probability
 )
 
@@ -69,12 +69,12 @@ class InstructionsCategoryTable(tables.Table):
         }
     
     def render_edit(self, record):
-        url = reverse("forecasts:instructions_entry", args=[record.id])
+        url = reverse("forecasts:instructions_category_entry", args=[record.id])
         return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
     
     def render_category_name(self, record):
-        link_html = '<a href="{}" class="btn btn_edit_link p-0 text-decoration-none">{}</a>'
-        url = reverse("forecasts:instructions_entry", args=[record.id])
+        link_html = '<a href="{}" class="btn_link p-0 text-decoration-none">{}</a>'
+        url = reverse("forecasts:instructions_category_entry", args=[record.id])
         return format_html(link_html, url, record.category_name)
 
     def render_delete(self, record):
@@ -298,6 +298,151 @@ class ForecastGeneralTable(tables.Table):
                 pdf_class = "btn_mp3_new"
     
             link_html   = '<a href="{}" class="{}" target="_blank"><i class="fa-regular fa-image"></i></a>'
+            
+            return format_html(link_html, url, pdf_class)
+    
+    def render_delete(self, record):
+        link_html   = '<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>'
+        url         = reverse("forecasts:district_forecast_delete", args=[record.id])
+        return format_html(link_html, url)
+
+class ForecastMarineCategoryTable(tables.Table):
+    edit    = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "text-center"}, "td": {"style": "","class": "col_edit"}})
+    id      = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": "col_id"}, "td": {"style": "","class": "col_id"}})
+    description = tables.Column(verbose_name="Description", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+    delete  = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
+
+    class Meta:
+        model = ForescastMarineCategory
+        template_name = "django_tables2/bootstrap5.html"
+        fields = ("edit","description","id","delete")
+
+        attrs = {
+            "id": "table_pest_alert_level", 
+            "class": "table table-striped table-condensed table-hover tbl_wimp3" 
+        }
+    
+    def render_edit(self, record):
+        url = reverse("forecasts:general_forecast_category_entry", args=[record.id])
+        return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
+    
+    def render_description(self, record):
+        link_html = '<a href="{}" class="btn btn_edit_link p-0 text-decoration-none">{}</a>'
+        url = reverse("forecasts:general_forecast_category_entry", args=[record.id])
+        return format_html(link_html, url, record.description)
+
+    def render_delete(self, record):
+        url = reverse("forecasts:general_forecast_category_delete", args=[record.id])
+        return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
+
+class ForecastMarineTable(tables.Table):
+    edit            = tables.Column(empty_values=(),verbose_name="Edit",orderable=False,attrs={"th": {"style": "width:60px;","class": "text-center",},"td": {"class": "col_edit text-center",},},)
+
+    forecast_date       = tables.Column(verbose_name="Forecast Date", attrs={"th": {"class": "", "style": "width:120px;","class": "col_link"},"td": {"class": "text-start", },},)
+    forecast_time       = tables.TimeColumn(verbose_name="Time", format="h:i A", attrs={"th": {"style": "width:80px;","class": ""}, "td": {"class": "",},},)
+    forecast_category   = tables.Column(verbose_name="Forecast Type",attrs={"th": {"style": "width:150px;",},"td": {},},)
+    synopsis   = tables.Column(verbose_name="Synopsis",attrs={"th": {},"td": {"class": "text-start",},},)
+
+    created_by          = tables.Column(verbose_name="Created By",attrs={"th": {"style": "width:120px;",},"td": {},},    )
+    created_datetime    = tables.DateTimeColumn(verbose_name="Created Date",format="M d, Y h:i A",attrs={"th": {"style": "width:160px;",},"td": {"class": "fst-italic"},},)
+
+    updated_by          = tables.Column(verbose_name="Updated By",attrs={"th": {"style": "width:120px;",},"td": {},},)
+    updated_datetime    = tables.DateTimeColumn(verbose_name="Updated Date", format="M d, Y h:i A", attrs={ "th": { "style": "width:160px;", }, "td": {"class": "fst-italic",} })
+
+    image_file      = tables.Column(empty_values=(),verbose_name="IMG",orderable=False, attrs={"th": {"style": "width:40px; text-align:center;","class": ""},"td": {"style": "text-align:center;","class": "col_pdf"}})
+    pdf_file        = tables.Column(empty_values=(),verbose_name="PDF",orderable=False, attrs={"th": {"style": "width:40px; text-align:center;","class": ""},"td": {"style": "text-align:center;","class": "col_pdf"}})
+
+    is_published    = tables.TemplateColumn(template_name="general-weather-forecast/general_forecast_publish_toggle.html",verbose_name="Status", orderable=False, attrs={ "th": { "style": "width:60px;", "class": "text-center",},"td": { "class": "text-center", },},)
+    id              = tables.Column(verbose_name="ID", attrs={"th": {"style": "width:80px;","class": "text-end",},"td": {"class": "text-end",},},)
+    delete          = tables.Column(empty_values=(),verbose_name="Delete",orderable=False,attrs={"th": {"style": "width:65px;","class": "text-center col_edit",},"td": {"class": "text-center col_delete",},},)
+
+    class Meta:
+        model = ForecastMarine
+        fields = ("edit","forecast_date","forecast_time","forecast_category","synopsis","created_by","created_datetime","updated_by","updated_datetime","pdf_file","image_file","is_published","id","delete")
+        sequence = fields
+        # Add table HTML id and CSS classes here
+        attrs = {
+            "id": "table_marine_forecast",           # unique table ID
+            "class": "table table-striped table-condensed table-hover tbl_wimp3" # Bootstrap-friendly styling
+        }
+        #order_by = "id"
+
+    def render_edit(self, record):
+        link_html   = '<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>'
+        url         = reverse("forecasts:marine_forecast_entry", args=[record.id])
+        return format_html(link_html, url, record.forecast_date.strftime("%B %d, %Y"))
+
+    def render_forecast_date(self, record):
+        forecast_date   = record.forecast_date.strftime("%b %d, %Y").upper()
+        link_html   = '<a href="{}" class="btn_link">{}</a>'
+        url         = reverse("forecasts:marine_forecast_entry", args=[record.id])
+        return format_html(link_html, url, forecast_date)
+
+    def render_synopsis(self, value):
+        short = value[:20] + "..." if len(value) > 20 else value
+        return format_html('<span title="{}">{}</span>', value, short)
+
+    def render_created_by(self, record):
+        if not record:
+            return ""
+        
+        first_name  = f"{record.created_by.first_name[:1]}"
+        last_name   = f"{record.created_by.last_name}"
+
+        if first_name and last_name:
+            return f"{last_name}"
+
+        return record.created_by
+
+    def render_updated_by(self, record):
+        if not record:
+            return ""
+        
+        first_name  = f"{record.updated_by.first_name[:1]}"
+        last_name   = f"{record.updated_by.last_name}"
+
+        if first_name and last_name:
+            return f"{last_name}"
+
+        return record.updated_by
+    
+    def render_pdf_file(self, record):
+
+        forecast_time   = record.forecast_time.strftime("%I%M_%p")
+        filename        = (f"Marine_Forecast_{record.forecast_date}_{forecast_time}_NMS_BZ.pdf")
+
+        # Actual filesystem path
+        pdf_path = os.path.join(settings.MEDIA_ROOT,"forecast","marine","doc",filename)
+
+        if os.path.exists(pdf_path):
+            url = (f"{settings.MEDIA_URL}forecast/marine/doc/{filename}")
+            pdf_class = "btn_pdf"
+        else:
+            url = reverse("forecasts:general_forecast_generate_pdf", args=[record.id])
+            pdf_class = "btn_pdf_new"
+
+        link_html   = '<a href="{}" class="{}" target="_blank"><i class="fa-solid fa-file-pdf"></i></a>'
+        
+        return format_html(link_html, url, pdf_class)
+
+    def render_image_file(self, record):
+        
+            forecast_date   = record.forecast_date.strftime("%Y-%m-%d")
+            forecast_time   = record.forecast_time.strftime("%I%M_%p")
+    
+            filename        = (f"{forecast_date}_{forecast_time}_NMS_BZ.jpg")
+    
+            # Actual filesystem path
+            pdf_path = os.path.join(settings.MEDIA_ROOT,"forecast","general","image",filename)
+    
+            if os.path.exists(pdf_path):
+                url = (f"{settings.MEDIA_URL}forecast/general/image/{filename}")
+                pdf_class = "btn_mp3"
+            else:
+                url = reverse("forecasts:general_forecast_entry", args=[record.id])
+                pdf_class = "btn_mp3_new"
+    
+            link_html   = '<a href="{}" class="{} text-muted" disabled target="_blank"><i class="fa-regular fa-image"></i></a>'
             
             return format_html(link_html, url, pdf_class)
     

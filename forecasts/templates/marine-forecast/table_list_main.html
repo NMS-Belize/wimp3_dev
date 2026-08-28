@@ -1,0 +1,66 @@
+{% extends "base_table.html" %}
+{% block title %}{{ page_name }} | WIMP3 | National Meteorological Service of Belize{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        {% load render_table from django_tables2 %}
+        <form id="table_filter" method="get" class="bg-light-subtle">
+            <h2 class="title_filter">Filter Entries</h2>
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <td style="width:60px">&nbsp;</td>
+                        <td style="width:120px">{{ filter.form.forecast_date }}</td>
+                        <td style="width:80px"></td>
+                        <td style="width:150px">{{ filter.form.forecast_category }}</td>
+                        <td >{{ filter.form.general_situation }}</td>
+                        <td style="width:120px">{{ filter.form.created_by }}</td>
+                        <td style="width:120px">{{ filter.form.updated_by }}</td>
+                        <td style="width:40px"><a href="{{ back_url }}" class="btn btn-secondary">Clear</a></td>
+                        <td style="width:40px">&nbsp;</td>
+                        <td style="width:40px">&nbsp;</td>
+                        <td style="width:40px">&nbsp;</td>
+                        <td style="width:60px">&nbsp;</td>
+                        <td style="width:80px">&nbsp;</td>
+                        <td style="width:65px">&nbsp;</td>
+                    </tr>
+                </thead>
+            </table>
+        </form>
+        {% render_table table %}
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script type="text/javascript">
+$(document).ready(function () {
+
+    let filterTimer;
+
+    function filterTable() {
+
+        const form = $("#table_filter");
+
+        $.ajax({
+            url: window.location.pathname,
+            type: "GET",
+            data: form.serialize(),
+            success: function (response) {
+                const newTable = $(response).find("#table_general_forecast").html();
+                $("#table_general_forecast").html(newTable);
+            },
+            error: function (xhr) {
+                console.error("Filter error:", xhr.responseText);
+            }
+        });
+    }
+
+    // Search as user types
+    $("#id_forecast_time").on("keyup", function () { clearTimeout(filterTimer);  filterTimer = setTimeout(function () { filterTable(); }, 300); });
+
+    $("#id_forecast_date").on("change", function () { filterTable(); });
+    $("#id_created_by").on("change", function () { filterTable(); });
+    $("#id_forecast_category").on("change", function () { filterTable(); });
+});
+</script>
+{% endblock %}

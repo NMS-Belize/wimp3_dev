@@ -1,0 +1,29 @@
+<div class="row mb-4">
+    <div class="col-12">
+        <h3 class="dashboard_title">Temperatures</h3>
+        <div class="row">
+            <div class="col-4">
+                <div class="fs-5 text-uppercase fw-bold mb-3 fst-italic">Coast</div>
+                <div class="row">
+                    <div class="col-6">
+                        <label class="form-label">Sea Surface Temperature</label>
+                        <div class="input-group mb-3">
+                            {{ form.sea_surface_temperature }}
+                            <span class="input-group-text">&deg;F</span>
+                        </div>
+                        <label class="form-label">Minimum Temperature</label>
+                        <div class="input-group mb-3">
+                            {{ form.min_temperature }}
+                            <span class="input-group-text">&deg;F</span>
+                        </div>
+                        <label class="form-label">Maximum Temperature</label>
+                        <div class="input-group mb-3">
+                            {{ form.max_temperature }}
+                            <span class="input-group-text">&deg;F</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
