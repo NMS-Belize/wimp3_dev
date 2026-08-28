@@ -1306,7 +1306,12 @@ def district_forecast_details_entry_item(request, id=None, fk=None):
         form = DistrictForecastDetailsForm(request.POST, instance=item_entry)
 
         if form.is_valid():
-            saved_entry = form.save()    # Creates or updates
+            saved_entry = form.save(commit=False)
+            #saved_entry = form.save()    # Creates or updates
+
+            saved_entry.save()
+            form.save_m2m()
+            
             messages.success(request, "Record saved successfully.")
 
             # Save & Close button
