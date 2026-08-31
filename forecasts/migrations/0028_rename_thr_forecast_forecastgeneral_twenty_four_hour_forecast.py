@@ -10,9 +10,4 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RenameField(
-            model_name='forecastgeneral',
-            old_name='thr_forecast',
-            new_name='twenty_four_hour_forecast',
-        ),
     ]
