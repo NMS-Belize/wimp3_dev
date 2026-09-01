@@ -71,7 +71,8 @@ class DistrictForecastDetailsSerializer(serializers.ModelSerializer):
             return { "value": risk.description, "color": risk.color if risk.color else "" }
         return { "value": "", "color": "" }
     
-    def get_ins_precip_max(self, obj): return obj.ins_precip_max.description if obj.ins_precip_max else ""
+    def get_ins_precip_max(self, obj): 
+        return [item.description for item in obj.ins_precip_max.all()]
 
     # Temperature Min
     def get_temp_min(self, obj): return f"{obj.temp_min:.1f} °F" if obj.temp_min is not None else ""
@@ -94,10 +95,12 @@ class DistrictForecastDetailsSerializer(serializers.ModelSerializer):
             return { "value": risk.description, "color": risk.color if risk.color else "" }
         return { "value": "", "color": "" }
     
-    def get_ins_temp_min(self, obj): return obj.ins_temp_min.description if obj.ins_temp_min else ""
+    def get_ins_temp_min(self, obj): 
+        return [item.description for item in obj.ins_temp_min.all()]
 
     # Temperature Max 
-    def get_temp_max(self, obj): return f"{obj.temp_max:.1f} °F" if obj.temp_max is not None else ""
+    def get_temp_max(self, obj): 
+        return [item.description for item in obj.ins_temp_max.all()]
 
     def get_prob_temp_max(self, obj):
             prob = obj.prob_temp_max
@@ -117,7 +120,8 @@ class DistrictForecastDetailsSerializer(serializers.ModelSerializer):
             return { "value": risk.description, "color": risk.color if risk.color else "" }
         return { "value": "", "color": "" }
     
-    def get_ins_temp_max(self, obj): return obj.ins_temp_max.description if obj.ins_temp_max else ""
+    def get_ins_temp_max(self, obj): 
+        return [item.description for item in obj.ins_temp_min.all()]
 
     # Winds
     def get_winds_min(self, obj): return f"{obj.winds_min}" if obj.winds_min is not None else ""
@@ -141,7 +145,8 @@ class DistrictForecastDetailsSerializer(serializers.ModelSerializer):
             return { "value": risk.description, "color": risk.color if risk.color else "" }
         return { "value": "", "color": "" }
 
-    def get_ins_winds(self, obj): return obj.ins_winds.description if obj.ins_winds else ""
+    def get_ins_winds(self, obj): 
+        return [item.description for item in obj.ins_winds.all()]
 
     # Weather Conditions
     def get_weather_conditions(self, obj): return obj.weather_conditions if obj.weather_conditions else ""
@@ -162,7 +167,8 @@ class DistrictForecastDetailsSerializer(serializers.ModelSerializer):
         if risk:
             return { "value": risk.description, "color": risk.color if risk.color else "" }
         return { "value": "", "color": "" }
-    def get_ins_weather_conditions(self, obj): return obj.ins_weather_conditions.description if obj.ins_weather_conditions else ""
+    def get_ins_weather_conditions(self, obj): 
+        return [item.description for item in obj.ins_weather_conditions.all()]
    
 class DistrictForecastSerializer(serializers.ModelSerializer):
 
