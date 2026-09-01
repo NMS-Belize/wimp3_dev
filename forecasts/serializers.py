@@ -75,7 +75,7 @@ class DistrictForecastDetailsSerializer(serializers.ModelSerializer):
         return [item.description for item in obj.ins_precip_max.all()]
 
     # Temperature Min
-    def get_temp_min(self, obj): return f"{obj.temp_min:.1f} °F" if obj.temp_min is not None else ""
+    def get_temp_min(self, obj): return f"{obj.temp_min:.0f} °F" if obj.temp_min is not None else ""
 
     def get_prob_temp_min(self, obj):
             prob = obj.prob_temp_min
@@ -99,8 +99,7 @@ class DistrictForecastDetailsSerializer(serializers.ModelSerializer):
         return [item.description for item in obj.ins_temp_min.all()]
 
     # Temperature Max 
-    def get_temp_max(self, obj): 
-        return [item.description for item in obj.ins_temp_max.all()]
+    def get_temp_max(self, obj): return f"{obj.temp_max:.0f} °F" if obj.temp_max is not None else ""
 
     def get_prob_temp_max(self, obj):
             prob = obj.prob_temp_max
