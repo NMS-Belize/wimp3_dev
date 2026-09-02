@@ -14,7 +14,12 @@ def migrate_sea_state(apps, schema_editor):
         "SeaState"
     )
 
-    for forecast in ForecastGeneral.objects.all():
+    # Only retrieve fields that actually exist and are needed.
+    # This avoids Django trying to SELECT the old thr_forecast column.
+    for forecast in ForecastGeneral.objects.only(
+        "id",
+        "sea_state"
+    ).iterator():
 
         old_value = forecast.sea_state
 
@@ -42,7 +47,10 @@ def reverse_migration(apps, schema_editor):
         "ForecastGeneral"
     )
 
-    for forecast in ForecastGeneral.objects.all():
+    for forecast in ForecastGeneral.objects.only(
+        "id",
+        "sea_state"
+    ).iterator():
 
         ids = list(
             forecast.sea_state_m2m.values_list(
@@ -52,6 +60,7 @@ def reverse_migration(apps, schema_editor):
         )
 
         forecast.sea_state = str(ids)
+
         forecast.save(
             update_fields=["sea_state"]
         )
