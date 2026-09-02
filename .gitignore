@@ -17,9 +17,10 @@ __pycache__/
 db.sqlite3
 media/
 
-# Migrations (optional)
-**/migrations/
-!**/migrations/__init__.py
+# Django migrations
+# Migration files must be committed to Git
+**/migrations/__pycache__/
+**/migrations/*.pyc
 
 # Environment variables
 .env
