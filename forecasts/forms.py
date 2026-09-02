@@ -197,7 +197,7 @@ class DistrictForecastDetailsForm(forms.ModelForm):
             'risk_winds':       forms.HiddenInput(),
             'ins_winds':        forms.SelectMultiple(attrs={'class': 'form-select select2'}),
 
-            'precip_max':       forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.25', 'width': '100%'}),
+            'precip_max':       forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.01', 'width': '100%'}),
             'prob_precip_max':  forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
             'sev_precip_max':   forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
             'risk_precip_max':  forms.HiddenInput(),

@@ -8,11 +8,9 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-    (
-        'forecasts',
-        '0023_alter_districtforecastdetails_sev_temp_min_and_more'
-    ),
-]
+        ('forecasts', '0023_alter_districtforecastdetails_sev_winds_and_more'),
+    ]
+
 
     operations = [
         migrations.AlterField(

@@ -44,6 +44,12 @@
             <span class="hide-on-collapse">Inventory</span>
         </a>
         {% endif %}
+        {% if user.is_superuser %}
+        <a href="{% url 'file_manager:file_manager_list' %}" class="sidebar-link">
+            <i class="fa-solid fa-box me-3"></i>
+            <span class="hide-on-collapse">File Manager</span>
+        </a>
+        {% endif %}
         {% if perms.users.view_users or user.is_superuser %}
         <a href="{% url 'users:index' %}" class="sidebar-link">
             <i class="fa-solid fa-users me-3"></i>

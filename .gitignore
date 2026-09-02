@@ -35,6 +35,9 @@ logs/
 # Project-specific directories
 sensors/
 removed/
+file_manager/
+wimp/
+templates/
 
 # VS Code
 .vscode/

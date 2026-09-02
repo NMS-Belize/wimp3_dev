@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     'forecasts.apps.ForecastsConfig',
     'system_core.apps.SystemCoreConfig',
     'nmswebsite',
+    "file_manager",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -169,6 +170,18 @@ DATABASES = {
         "PASSWORD": os.getenv("LEGACY_DB_PASSWORD"),
         "HOST": os.getenv("LEGACY_DB_HOST"),
         "PORT": os.getenv("LEGACY_DB_PORT", "3306"),
+        "OPTIONS": {
+            "charset": "utf8mb4",
+        },
+        "CONN_MAX_AGE": 0,
+    },
+    "wimp_bco": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": os.getenv("WIMPBCO_DB_NAME"),
+        "USER": os.getenv("WIMPBCO_DB_USER"),
+        "PASSWORD": os.getenv("WIMPBCO_DB_PASSWORD"),
+        "HOST": os.getenv("WIMPBCO_DB_HOST"),
+        "PORT": os.getenv("WIMPBCO_DB_PORT", "3306"),
         "OPTIONS": {
             "charset": "utf8mb4",
         },

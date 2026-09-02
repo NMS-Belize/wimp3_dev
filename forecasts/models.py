@@ -84,7 +84,7 @@ class DistrictForecastDetails(models.Model):
     #ins_winds       = models.ForeignKey(DistrictForecastInstructions,on_delete=models.SET_NULL,null=True,blank=True,)
     ins_winds       = models.ManyToManyField(DistrictForecastInstructions, blank=True, related_name="instructions_winds")
 
-    precip_max      = models.DecimalField(default=0.00,max_digits=5,decimal_places=1)
+    precip_max      = models.DecimalField(default=0.00,max_digits=5,decimal_places=2)
     prob_precip_max = models.ForeignKey(AlertLevel,on_delete=models.SET_NULL,null=True,blank=True,related_name="probability_precip_max")
     sev_precip_max  = models.ForeignKey(AlertLevel,on_delete=models.SET_NULL,null=True,blank=True,related_name="severity_precip_max")
     risk_precip_max = models.ForeignKey(RiskLevel,on_delete=models.SET_NULL,null=True,blank=True,related_name="risk_precip_max")

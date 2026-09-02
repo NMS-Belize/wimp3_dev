@@ -72,6 +72,7 @@ urlpatterns = [
     path('observations/',   include('observations.urls')),
     path('agro/',           include('agro.urls')),
     path('alerts/',         include('alerts.urls')),
+    path("file-manager/",   include("file_manager.urls")),
     path('radar/',          include('radar.urls')),
     path('users/',          include('users.urls')),
     path('inventory/',      include('inventory.urls')),
