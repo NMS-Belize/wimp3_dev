@@ -38,7 +38,11 @@ def migrate_wind_fields(apps, schema_editor):
         "WindCondition"
     )
 
-    for forecast in ForecastGeneral.objects.all():
+    for forecast in ForecastGeneral.objects.only(
+        "id",
+        "wind_direction",
+        "wind_condition",
+    ).iterator():
 
         # Wind Direction
         direction_ids = parse_ids(
