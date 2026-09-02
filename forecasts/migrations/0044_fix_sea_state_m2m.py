@@ -14,7 +14,10 @@ def migrate_sea_state(apps, schema_editor):
         "SeaState"
     )
 
-    for forecast in ForecastGeneral.objects.all():
+    for forecast in ForecastGeneral.objects.only(
+            "id",
+            "sea_state"
+        ).iterator():
 
         old_value = forecast.sea_state
 
