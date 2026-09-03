@@ -120,7 +120,7 @@ class DistrictForecastDetailsSerializer(serializers.ModelSerializer):
         return { "value": "", "color": "" }
     
     def get_ins_temp_max(self, obj): 
-        return [item.description for item in obj.ins_temp_min.all()]
+        return [item.description for item in obj.ins_temp_max.all()]
 
     # Winds
     def get_winds_min(self, obj): return f"{obj.winds_min}" if obj.winds_min is not None else ""
