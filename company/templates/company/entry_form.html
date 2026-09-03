@@ -1,0 +1,74 @@
+{% extends "base_form.html" %}
+{% load static %}
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <form method="post" id="frm_entry_form" name="frm_entry_form" class="wimp3_form" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-12">
+                    <h3 class="dashboard_title">Company Details</h3>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-4">
+                    {{ form.company_name.label_tag }}
+                    {{ form.company_name }}
+                </div>
+                <div class="col-4">
+                    {{ form.short_name.label_tag }}
+                    {{ form.short_name }}
+                </div>
+                <div class="col-4">
+                    {{ form.established_date.label_tag }}
+                    {{ form.established_date }}
+                </div>
+                <div class="col-4">
+                    {{ form.logo.label_tag }}
+                    {{ form.logo }}
+                </div>
+            </div>
+            <div class="col-12">
+                <h3 class="dashboard_title">Address & Location</h3>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    {{ form.address_line1.label_tag }}
+                    {{ form.address_line1 }}
+                </div>
+                <div class="col-4">
+                    {{ form.address_line2.label_tag }}
+                    {{ form.address_line2 }}
+                </div>
+                <div class="col-4">
+                    {{ form.city.label_tag }}
+                    {{ form.city }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    {{ form.district.label_tag }}
+                    {{ form.district }}
+                </div>
+                <div class="col-4">
+                    {{ form.phone.label_tag }}
+                    {{ form.phone }}
+                </div>
+                <div class="col-4">
+                    {{ form.email.label_tag }}
+                    {{ form.email }}
+                </div>
+            </div>
+            <div class="col-12 mt-3">
+                <h3 class="dashboard_title">Contact Details</h3>
+            </div>
+        </div>
+            {{ form.id }}
+            <input id="btn_submit" type="submit" value="Submit" class="btn ms-2" />
+            
+                <label for="btn_submit">&nbsp;</label>
+            
+        </form>
+    </div>
+</div>
+{% endblock %}
