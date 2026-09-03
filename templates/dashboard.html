@@ -63,7 +63,7 @@
                 {% endif %}
                 {% if perms.alerts.view_tropicalweatheralerts %}
                 <div class="item_dashboard position-relative">
-                    <a class="position-absolute top-50 start-50 translate-middle" href="#">
+                    <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'alerts:index' %}">
                         <img src="{% static 'button_icons/alert.png' %}" alt="Weather Alerts" />
                         <span class="task_desc">Weather Alerts</span>
                     </a>

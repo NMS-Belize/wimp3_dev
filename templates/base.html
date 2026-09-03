@@ -3,20 +3,28 @@
 <html lang="en">
 <head>
     <meta name="robots" content="noindex">
+    
+    <link rel="icon" type="image/png" href="{% static 'images/WIMP3/favicon-96x96.png' %}" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="{% static 'images/WIMP3/favicon.svg' %}" />
+    <link rel="shortcut icon" href="{% static 'images/WIMP3/favicon.ico' %}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/WIMP3/apple-touch-icon.png' %}" />
+    <link rel="manifest" href="{% static 'images/WIMP3/site.webmanifest' %}" />
+
     <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
     <link rel="stylesheet" href="{% static 'css/fa/all.css' %}" />
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
     <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
-    <title>{{ page_name }} | {{ prev_page }} | WIMP3 | NMS Belize</title>
+
+    <title>{{ page_name }} | {% if prev_page %}{{ prev_page }} | {% endif %}WIMP3 | NMS Belize</title>
 </head>
 <body>
     <div class="d-flex">
         {% include "sidebar.html" %}
         <main class="main-content">
-            <div class="container-fluid pt-3 pb-0 ps-5 pe-5">
+            <div class="container-fluid pt-3 pb-0 ps-3 pe-3">
                 {% block header %}
-                <div id="header" class="header pt-4 ps-3 pb-0 m-0">
+                <div id="header" class="header pt-4 ps-3 pb-0 mb-3">
                     <div class="row">
                         <div class="col-6">
                             <h1 class="mb-0">{{ page_name }}</h1>

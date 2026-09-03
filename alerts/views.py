@@ -32,8 +32,12 @@ def index(request):
 def cap_alerts_list(request, id=None):
 
     page_name   = "CAP Alerts List"
-    qs          = CAPAlerts.objects.all().order_by('pubdate')
+    qs          = CAPAlerts.objects.all().order_by(
+                        "-details__expires",
+                        "-pubdate"
+                    )
     table       = CAPAlertsTable(qs)
+
     RequestConfig(request).configure(table)
 
     # Load entry ONLY if id is provided

@@ -10,6 +10,7 @@ from rest_framework import routers
 from rest_framework.authtoken import views
 from rest_framework.routers import DefaultRouter
 
+from company import views as company_views
 from agro import views as agro_views
 from forecasts import views as forecasts_views
 from alerts import views as alert_views
@@ -68,6 +69,7 @@ urlpatterns = [
     path('api-auth/',       include('rest_framework.urls', namespace='rest_framework')),
 
     ### Include URLS for Apps
+    path('company/',        include('company.urls')),
     path('forecasts/',      include('forecasts.urls')),
     path('observations/',   include('observations.urls')),
     path('agro/',           include('agro.urls')),

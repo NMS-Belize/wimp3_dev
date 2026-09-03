@@ -145,7 +145,7 @@ class CAPAlertsTable(tables.Table):
     is_published = tables.TemplateColumn(verbose_name="Status", empty_values=(), template_name="cap/publish_toggle.html",
                         attrs={ "th": {"style": "width:40px;","class": "text-center"}, "td": {"style": "","class": "text-center"}, }, orderable=False)
 
-    expires     = tables.Column(verbose_name="Expires", empty_values=(), attrs={ "th": {"style": "width:160px","class": ""}, "td": {"style": "","class": ""} }, orderable=False)
+    expires     = tables.Column(verbose_name="Expires", empty_values=(), attrs={ "th": {"style": "width:200px","class": ""}, "td": {"style": "","class": ""} }, orderable=False)
     
     link        = tables.Column(verbose_name="URL",     attrs={"th": {"style": "width:40px;","class": "text-center"}, "td": {"style": "","class": "text-center"}}, orderable=False)
     id          = tables.Column(verbose_name="ID",      attrs={"th": {"style": "width:80px;","class": "text-end",},"td": {"class": "text-end",}})
@@ -177,13 +177,13 @@ class CAPAlertsTable(tables.Table):
         return format_html('<span class="text-muted">?</span>')'''
 
 
-    def render_pubdate(self, record):
+    '''def render_pubdate(self, record):
         try:
             dt = datetime.strptime(record.pubdate,"%a, %d %b %Y %H:%M:%S %z")
             return dt.strftime("%d %b %Y %I:%M %p")
 
         except (ValueError, TypeError):
-            return record.pubdate
+            return record.pubdate'''
     
     def render_link(self, record):
         url = record.link

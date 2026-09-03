@@ -29,6 +29,29 @@
 
   --sidebar-width: 280px;
   --sidebar-width-collapsed: 80px;
+
+  /* WIMP3 Brand */
+  --wimp-navy:       #073B8C;
+  --wimp-dark-navy:  #05265F;
+  --wimp-blue:       #0868D7;
+  --wimp-sky-blue:   #08A9EE;
+  --wimp-teal:       #08A7A5;
+  --wimp-green:      #079B36;
+  --wimp-lime:       #4BCB0B;
+
+  /* Interface */
+  --wimp-dark:       #29333D;
+  --wimp-gray:       #6C7782;
+  --wimp-light:      #F3F6F8;
+  --wimp-border:     #DDE4EA;
+  --wimp-white:      #FFFFFF;
+
+  /* Semantic */
+  --wimp-success:    #079B36;
+  --wimp-info:       #0868D7;
+  --wimp-warning:    #F5A623;
+  --wimp-danger:     #D9363E;
+
 }
 body{ 
    font-family: "Source Sans 3", sans-serif;
@@ -77,7 +100,7 @@ h1{ font-weight: 300; font-size: 50px; }
   font-weight: 400;
   padding-top: 20px;
 }
-.user-info{ font-weight: 600; color: var(--aqua-2)}
+.user-info{ font-weight: 600; color: var(--wimp-blue)}
 #main-menu{ color:#fff; }
 #main-menu a{ color:#fff; font-weight: 400; }
 
@@ -98,7 +121,7 @@ h1{ font-weight: 300; font-size: 50px; }
 }
 #close{
   color: #fff !important;
-  background-color: var(--teal-1);
+  background-color: var(--wimp-teal);
   border: 0 none;
 }
 #offcanvas_btn{
@@ -108,7 +131,7 @@ h1{ font-weight: 300; font-size: 50px; }
 }
 #menu_sidebar{
   font-family: "Encode Sans", sans-serif;
-  background: var(--teal-1);
+  background: var(--wimp-teal);
   color: #fff;
 }
 #menu_items li, #menu_items .list-group-item a{
@@ -121,7 +144,7 @@ h1{ font-weight: 300; font-size: 50px; }
 }
 #menu_items .list-group-item{
   background: transparent !important;
-  border-color: var(--navy);
+  border-color: var(--wimp-navy);
 }
 #logo{ font-size: 30px; font-weight: 600; color: #fff; }
 
@@ -129,7 +152,7 @@ h1{ font-weight: 300; font-size: 50px; }
   border-radius: 50%;
   height: 60px;
   width: 60px;
-  background: var(--aqua-1);
+  background: var(--wimp-sky-blue);
   color: #fff;
   font-size: 28px;
   font-weight: 700;
@@ -173,7 +196,7 @@ h1{ font-weight: 300; font-size: 50px; }
 .page-name{ font-weight: 600; color:var(--teal-2); }
 
 
-.api_link{ color: var(--teal-1); text-decoration: none; font-weight: 600; font-size: 16px; }
+.api_link{ color: var(--wimp-teal); text-decoration: none; font-weight: 600; font-size: 16px; }
 
 /*********** BUTTONS & ICONS ************/
 #btn_back_main{ color: var(--teal-2); text-decoration: none; font-weight: 700; font-size: 18px; padding: 0; }
@@ -181,7 +204,7 @@ h1{ font-weight: 300; font-size: 50px; }
 .btn_add_details{ color:var(--orange-1) }
 
 #btn_submit, .btn_submit{ width: auto; color: #fff; background-color: var(--teal-green); width: auto !important; font-weight: 600; text-transform: uppercase; }
-#btn_submit_close, .btn_submit_close{ width: auto; color: #fff; background-color: var(--teal-1); width: auto !important; font-weight: 600; text-transform: uppercase; }
+#btn_submit_close, .btn_submit_close{ width: auto; color: #fff; background-color: var(--wimp-TEAL); width: auto !important; font-weight: 600; text-transform: uppercase; }
 #btn_close, .btn_close{ width: auto; color: #fff; background-color: var(--red); width: auto !important; font-weight: 600; text-transform: uppercase; }
 
 .btn_new { background-color: var(--yellow-2) !important; }
@@ -190,15 +213,15 @@ h1{ font-weight: 300; font-size: 50px; }
 .btn_api { background-color: var(--tan) !important; }
 .btn_api:hover { background-color:var(--tan-2) !important; }
 
-.btn-primary{ background-color: var(--teal-1) !important; border: 1px solid var(--teal-2);}
+.btn-primary{ background-color: var(--wimp-TEAL) !important; border: 1px solid var(--teal-2);}
 
 a.btn_duplicate {
-  color:var(--aqua-1) !important;
+  color:var(--wimp-sky-blue) !important;
   padding-top: 0;
   padding-bottom: 0;
 }
 .btn_edit {
-  color:var(--emerald) !important;
+  color:var(--wimp-blue) !important;
   padding-top: 0;
   padding-bottom: 0;
 }
@@ -218,8 +241,8 @@ a.btn_delete {
 }
 a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding: 20px; }
 .btn_task i, .btn_task_main i{ display: block; clear: both; font-size: 50px; margin: 0 auto; }
-.btn_task i{ color: var(--aqua-1); }
-.btn_task_main i{ color: var(--emerald); }
+.btn_task i{ color: var(--wimp-sky-blue); }
+.btn_task_main i{ color: var(--wimp-green); }
 
 .task_desc{ display: block; clear: both; color: #343a40; padding-top: 10px; font-weight: 700;  }
 .col_task{ border: 1px solid var(--grey-2); border-radius: 20px; }
@@ -227,8 +250,8 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 .item_task_main{ float: left; width: 120px; height: 120px; margin: 0 5px 15px 0; }
 .item_task{ float: left; width: 120px; height: 120px; margin: 0 5px 15px 0; }
 
-.item_task_main .task_desc{ color: var(--emerald); }
-.item_task .task_desc{ color: var(--aqua-1); }
+.item_task_main .task_desc{ color: var(--wimp-green); }
+.item_task .task_desc{ color: var(--wimp-sky-blue); }
 
 .text-delete{ color: var(--red); }
 
@@ -237,8 +260,8 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 #top_buttons a{ text-decoration: none; font-weight: 600; }
 
 /*********** DASHBOARD ICONS ************/
-#dashboard .dashboard_title{ font-size: 18px; font-weight: 600; text-transform: uppercase; background: var(--aqua-2); color: #fff; padding: 5px 10px; margin-bottom: 15px; }
-.dashboard_title{ font-size: 18px; font-weight: 600; text-transform: uppercase; background: var(--aqua-2); color: #fff; padding: 5px 10px; margin-bottom: 15px; }
+#dashboard .dashboard_title{ font-size: 18px; font-weight: 600; text-transform: uppercase; background: var(--wimp-teal); color: #fff; padding: 5px 10px; margin-bottom: 15px; }
+.dashboard_title{ font-size: 18px; font-weight: 600; text-transform: uppercase; background: var(--wimp-teal); color: #fff; padding: 5px 10px; margin-bottom: 15px; }
 
 .item_dashboard{ text-align: center;}
 #dashboard .item_dashboard .task_desc{ font-size: 18px; }
@@ -269,7 +292,7 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 
 /*********** TABLE STYLES ************/
 .tbl_wimp3 th{
-  background-color: var(--teal-green);
+  background-color: var(--wimp-navy);
   color: #fff;
   padding: 8px 5px;
   font-weight: 500;
@@ -278,12 +301,12 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 .tbl_wimp3 td{ padding: 8px 5px; }
 
 .tbl_wimp3 th a{ color:#fff !important; text-decoration: none !important; }
-.tbl_wimp3 td a{ color: var(--teal-1); font-weight: 600; text-decoration: none !important; }
+.tbl_wimp3 td a{ color: var(--wimp-blue); font-weight: 600; text-decoration: none !important; }
 
 .col_id, .col_id a{ color:#b7b7b7; text-align: right; }
 .col_view, .col_view a{ color:var(--teal-2); }
 
-.btn_edit_link { font-weight: 600 !important; color: var(--teal-1); text-decoration: none; line-height: 1; }
+.btn_edit_link { font-weight: 600 !important; color: var(--wimp-teal); text-decoration: none; line-height: 1; }
 
 .col_edit, .col_delete{ text-align: center; }
 
@@ -330,11 +353,18 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
     display: inline-block;
 }
 
-
+.wimp-gradient {
+    background: linear-gradient(
+        90deg,
+        #073B8C 0%,
+        #0868D7 35%,
+        #08A7A5 100%,
+    );
+}
 .sidebar {
     width: var(--sidebar-width);
     height: 100vh;
-    background: linear-gradient(135deg, var(--teal-2) 0%, var(--teal-1) 100%);
+    background: linear-gradient(10deg, var(--wimp-teal) 0%, var(--wimp-dark-navy) 90%);
     transition: all 0.3s ease;
 }
 
@@ -345,10 +375,10 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 .sidebar-link {
     color: #a0a3bd;
     transition: all 0.2s ease;
-    border-radius: 8px;
     margin: 4px 16px;
     white-space: nowrap;
     overflow: hidden;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .sidebar-link:hover {
@@ -431,7 +461,7 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
     color:#fff;
 }
 #sidebar_logo{
-  width: 90%;
+  width: 60%;
   margin: 0 auto;
 }
 #sidebar_nav a{
@@ -449,15 +479,15 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
   font-size: 18px;
   font-weight: 600;
   text-transform: uppercase;
-  background: var(--aqua-2);
+  background: var(--wimp-blue);
   padding: 5px 10px;
   margin-bottom: 15px;
 }
 #inventory_form .row div{ margin-bottom: 15px; }
 
 .btn_pdf{ color: var(--rose) !important; }
-.btn_mp3{ color: var(--emerald) !important; }
-.btn_details{ color: var(--emerald) !important; }
+.btn_mp3{ color: var(--wimp-green) !important; }
+.btn_details{ color: var(--wimp-green) !important; }
 
 .btn_pdf_new, .btn_mp3_new, .btn_details{
   color:var(--dark) !important;
@@ -470,15 +500,15 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 #frm_entry_form label{ width: 120px !important; }
 
 .nav-tabs .nav-link{
-  color:var(--teal-1);
+  color:var(--wimp-teal);
   font-weight: 600;
 }
 .nav-tabs .nav-link.active{
-  color:var(--aqua-1);
+  color:var(--wimp-sky-blue);
   font-weight: 600;
 }
 
 .pagination { justify-content: right !important; margin-top: 20px; }
-.pagination a{ color: var(--emerald); font-weight: 800; text-decoration: none;}
-.pagination .active .page-link{ background-color: var(--teal-green); border-color: var(--emerald); }
+.pagination a{ color: var(--wimp-green); font-weight: 800; text-decoration: none;}
+.pagination .active .page-link{ background-color: var(--teal-green); border-color: var(--wimp-green); }
 .pagination .next, .pagination .previous{ text-transform: uppercase; }

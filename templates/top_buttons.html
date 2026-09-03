@@ -1,14 +1,19 @@
 {% load static %}
-<div id="top_buttons">
+<div class="d-flex align-items-center">
     <a class="me-4" href="{% url 'site_home' %}">
-        <img class="me-1" src="{% static 'button_icons/main-menu.png' %}" alt="Dashboard" />&nbsp; Dashboard
+        <img class="me-1" width="150" src="{% static 'images/WIMP3/logo-horizontal.png' %}" alt="Dashboard" />
     </a>
-    {% if user.is_superuser %}
-    <a class="me-4" href="{% url 'api-root' %}" target="_blank">
-        <img class="me-1" src="{% static 'button_icons/api.png' %}" alt="API Root" />&nbsp; Go to API Root
-    </a>
-    <a class="me-4" href="{% url 'admin:index' %}" target="_blank">
-        <img class="me-1" src="{% static 'button_icons/django-svgrepo-com.png' %}" alt="DJango Admin" />&nbsp; Admin
-    </a>
-    {% endif %}
+    <div id="top_buttons">
+        <a class="me-4" href="{% url 'site_home' %}">
+            <img class="me-1" src="{% static 'button_icons/main-menu.png' %}" alt="Dashboard" />&nbsp; Dashboard
+        </a>
+        {% if user.is_superuser %}
+        <a class="me-4" href="{% url 'api-root' %}" target="_blank">
+            <img class="me-1" src="{% static 'button_icons/api.png' %}" alt="API Root" />&nbsp; Go to API Root
+        </a>
+        <a class="me-4" href="{% url 'admin:index' %}" target="_blank">
+            <img class="me-1" src="{% static 'button_icons/django-svgrepo-com.png' %}" alt="DJango Admin" />&nbsp; Admin
+        </a>
+        {% endif %}
+    </div>
 </div>

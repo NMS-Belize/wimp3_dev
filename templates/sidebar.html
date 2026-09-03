@@ -2,13 +2,13 @@
 {% load group_tags %}
 <nav class="sidebar d-flex flex-column flex-shrink-0 position-fixed">
     <button class="toggle-btn" onclick="toggleSidebar()"><i class="fas fa-chevron-left"></i></button>
-    <img id="sidebar_logo" class="hide-on-collapse flex-shrink-0 me-3 mt-5 mb-5" src="{% static 'images/wimp3_logo_v2.png' %}" alt="WIMP3 Logo" />
+    <img id="sidebar_logo" class="hide-on-collapse flex-shrink-0 mt-5 mb-5" src="{% static 'images/WIMP3/wimp3-logo.png' %}" alt="WIMP3 Logo" />
     <div id="sidebar_nav" class="nav flex-column pb-5">
         <a href="{% url 'site_home' %}" class="sidebar-link">
             <i class="fa-solid fa-house me-3"></i>
             <span class="hide-on-collapse">Dashboard</span>
         </a>
-        {% if perms.forecasts.view_districtforecast or user.is_superuser %}a
+        {% if perms.forecasts.view_districtforecast or user.is_superuser %}
         <a href="{% url 'forecasts:index' %}" class="sidebar-link">
             <i class="fa-solid fa-sun me-3"></i>
             <span class="hide-on-collapse">Weather Forecasts</span>
