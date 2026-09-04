@@ -16,4 +16,8 @@
         </a>
         {% endif %}
     </div>
+    <form class="logout me-4" action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button class="btn btn-primary" type="submit">Logout <i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+    </form>
 </div>
