@@ -90,10 +90,9 @@ h1,h2,h3,h4,h5,h6{
 h1{ font-weight: 300; font-size: 50px; }
 .text-white{ color: #fff !important; }
 #header{
-  color: var(--teal-1);
   height: 90px;
 }
-#header a{ color: var(--teal-1); }
+#header a{ color: var(--wimp-dark-navy); }
 #main_logo{ height: 100%; }
 #login-info{
   font-size: 20px;
@@ -193,27 +192,25 @@ h1{ font-weight: 300; font-size: 50px; }
   display: inline-block;
   width: 800px;
 }
-.page-name{ font-weight: 600; color:var(--teal-2); }
+.page-name{ font-weight: 600; color:var(--wimp-navy); }
 
+.text-published{ color: var(--wimp-green); }
 
 .api_link{ color: var(--wimp-teal); text-decoration: none; font-weight: 600; font-size: 16px; }
 
 /*********** BUTTONS & ICONS ************/
-#btn_back_main{ color: var(--teal-2); text-decoration: none; font-weight: 700; font-size: 18px; padding: 0; }
+#btn_back_main{ color: var(--wimp-green); text-decoration: none; font-weight: 700; font-size: 18px; padding: 0; }
 
-.btn_add_details{ color:var(--orange-1) }
+.btn_add_details{ color:var(--wimp-lime) }
 
-#btn_submit, .btn_submit{ width: auto; color: #fff; background-color: var(--teal-green); width: auto !important; font-weight: 600; text-transform: uppercase; }
-#btn_submit_close, .btn_submit_close{ width: auto; color: #fff; background-color: var(--wimp-TEAL); width: auto !important; font-weight: 600; text-transform: uppercase; }
-#btn_close, .btn_close{ width: auto; color: #fff; background-color: var(--red); width: auto !important; font-weight: 600; text-transform: uppercase; }
+#btn_submit, .btn_submit{ width: auto; color: #fff; background-color: var(--wimp-sky-blue); width: auto !important; font-weight: 600; text-transform: uppercase; }
+#btn_submit_close, .btn_submit_close{ width: auto; color: #fff; background-color: var(--wimp-teal); width: auto !important; font-weight: 600; text-transform: uppercase; }
+#btn_close, .btn_close{ width: auto; color: #fff; background-color: var(--wimp-danger); width: auto !important; font-weight: 600; text-transform: uppercase; }
 
-.btn_new { background-color: var(--yellow-2) !important; }
-.btn_new:hover { background-color:var(--yellow-1) !important; }
+.btn_new { background-color: var(--wimp-sky-blue) !important; }
+.btn_new:hover { background-color:var(--wimp-teal) !important; }
 
-.btn_api { background-color: var(--tan) !important; }
-.btn_api:hover { background-color:var(--tan-2) !important; }
-
-.btn-primary{ background-color: var(--wimp-TEAL) !important; border: 1px solid var(--teal-2);}
+.btn-primary{ background-color: var(--wimp-teal) !important; border: 1px solid var(--wimp-teal);}
 
 a.btn_duplicate {
   color:var(--wimp-sky-blue) !important;
@@ -231,7 +228,7 @@ a.btn_delete {
   padding-bottom: 0;
 }
 #btn_confirm_delete{
-  background: var(--red);
+  background: var(--wimp-danger);
   color: #fff;
   font-weight: 600;
   text-transform: uppercase;
@@ -253,7 +250,7 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 .item_task_main .task_desc{ color: var(--wimp-green); }
 .item_task .task_desc{ color: var(--wimp-sky-blue); }
 
-.text-delete{ color: var(--red); }
+.text-delete{ color: var(--wimp-danger); }
 
 /*********** TOP ICONS ************/
 #top_buttons img{ width: 30px; height: 30px; }
@@ -310,9 +307,8 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 
 .col_edit, .col_delete{ text-align: center; }
 
-.col_pdf a{ color:var(--rose); }
-.col_delete a{ color: var(--red) !important; }
-
+.col_pdf a{ color:var(--wimp-sky-blue); }
+.col_delete a{ color: var(--wimp-danger) !important; }
 
 .errorlist li{ list-style-type: none; margin: 0; }
 .errorlist {
@@ -485,7 +481,7 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 }
 #inventory_form .row div{ margin-bottom: 15px; }
 
-.btn_pdf{ color: var(--rose) !important; }
+.btn_pdf{ color: var(--wimp-blue) !important; }
 .btn_mp3{ color: var(--wimp-green) !important; }
 .btn_details{ color: var(--wimp-green) !important; }
 
@@ -510,5 +506,5 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 
 .pagination { justify-content: right !important; margin-top: 20px; }
 .pagination a{ color: var(--wimp-green); font-weight: 800; text-decoration: none;}
-.pagination .active .page-link{ background-color: var(--teal-green); border-color: var(--wimp-green); }
+.pagination .active .page-link{ background-color: var(--wimp-green); border-color: var(--wimp-green); }
 .pagination .next, .pagination .previous{ text-transform: uppercase; }
