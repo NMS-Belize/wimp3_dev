@@ -99,7 +99,7 @@ h1{ font-weight: 300; font-size: 50px; }
   font-weight: 400;
   padding-top: 20px;
 }
-.user-info{ font-weight: 600; color: var(--wimp-blue)}
+.user-info{ font-weight: 600; color: var(--wimp-white)}
 #main-menu{ color:#fff; }
 #main-menu a{ color:#fff; font-weight: 400; }
 
@@ -210,7 +210,9 @@ h1{ font-weight: 300; font-size: 50px; }
 .btn_new { background-color: var(--wimp-sky-blue) !important; }
 .btn_new:hover { background-color:var(--wimp-teal) !important; }
 
-.btn-primary{ background-color: var(--wimp-teal) !important; border: 1px solid var(--wimp-teal);}
+.btn-primary{ background-color: var(--wimp-blue) !important; border: 1px solid var(--wimp-blue);}
+.btn-success{ background-color: var(--wimp-green) !important; border: 1px solid var(--wimp-green);}
+.btn-danger{ background-color: var(--wimp-danger) !important; border: 1px solid var(--wimp-danger);}
 
 a.btn_duplicate {
   color:var(--wimp-sky-blue) !important;
@@ -369,12 +371,14 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 }
 
 .sidebar-link {
-    color: #a0a3bd;
+    color: #fff;
+    font-weight: 500;
     transition: all 0.2s ease;
-    margin: 4px 16px;
+    margin: 0 16px;
     white-space: nowrap;
     overflow: hidden;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-transform: uppercase ;
 }
 
 .sidebar-link:hover {
@@ -448,7 +452,7 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 }
 .collapsed .sidebar-link {
     padding: 1rem !important;
-    margin: 4px 8px;
+    margin: 0 8px 0 15px;
 }
 .collapsed .sidebar-link i { margin: 0 !important; }
 
