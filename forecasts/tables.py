@@ -220,11 +220,11 @@ class ForecastGeneralTable(tables.Table):
         if not record:
             return ""
         
-        first_name  = f"{record.created_by.first_name[:1]}"
+        #first_name  = f"{record.created_by.first_name[:1]}"
         last_name   = f"{record.created_by.last_name}"
 
-        if first_name and last_name:
-            return f"{first_name[0].upper()}. {last_name}"
+        if last_name:
+            return f"{last_name}"
 
         return record.created_by
 
@@ -232,11 +232,11 @@ class ForecastGeneralTable(tables.Table):
         if not record:
             return ""
         
-        first_name  = f"{record.updated_by.first_name[:1]}"
+        #first_name  = f"{record.updated_by.first_name[:1]}"
         last_name   = f"{record.updated_by.last_name}"
 
-        if first_name and last_name:
-            return f"{first_name[0].upper()}. {last_name}"
+        if last_name:
+            return f"{last_name}"
 
         return record.updated_by
 
@@ -269,12 +269,12 @@ class ForecastGeneralTable(tables.Table):
         # Actual filesystem path
         pdf_path = os.path.join(settings.MEDIA_ROOT,"forecast","general","doc",filename)
 
-        #if os.path.exists(pdf_path):
-        #    url = (f"{settings.MEDIA_URL}forecast/general/doc/{filename}")
-        #    pdf_class = "btn_pdf"
-        #else:
-        url = reverse("forecasts:general_forecast_generate_pdf", args=[record.id])
-        pdf_class = "btn_pdf_new"
+        if os.path.exists(pdf_path):
+            url = (f"{settings.MEDIA_URL}forecast/general/doc/{filename}")
+            pdf_class = "btn_pdf"
+        else:
+            url = reverse("forecasts:general_forecast_generate_pdf", args=[record.id])
+            pdf_class = "text-muted"
 
         link_html   = '<a href="{}" class="{}" target="_blank"><i class="fa-solid fa-file-pdf"></i></a>'
         
@@ -295,7 +295,7 @@ class ForecastGeneralTable(tables.Table):
                 pdf_class = "btn_mp3"
             else:
                 url = reverse("forecasts:general_forecast_entry", args=[record.id])
-                pdf_class = "btn_mp3_new"
+                pdf_class = "text-muted"
     
             link_html   = '<a href="{}" class="{}" target="_blank"><i class="fa-regular fa-image"></i></a>'
             
