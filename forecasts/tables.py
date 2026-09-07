@@ -510,7 +510,7 @@ class DistrictForecastTable(tables.Table):
     def render_forecast_date(self, record):
         link_html   = '<a href="{}" class="btn_link" disabled>{}</a>'
         url         = reverse("forecasts:district_forecast_details_entry",args=[record.id])
-        return format_html(link_html, url, record.forecast_date.strftime("%B %d, %Y"))
+        return format_html(link_html, url, record.forecast_date.strftime("%b %d, %Y"))
     
     def render_created_by(self, record):
         return record.created_by.get_full_name() if record.created_by else ""
@@ -523,7 +523,7 @@ class DistrictForecastTable(tables.Table):
 
         if value:
             value = timezone.localtime(value)
-            return value.strftime("%B %d, %Y %I:%M %p")
+            return value.strftime("%b %d, %Y %I:%M %p")
 
         return ""
     
