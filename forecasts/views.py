@@ -1011,18 +1011,19 @@ def district_forecast_delete(request, id):
     entry = get_object_or_404(DistrictForecast, id=id)
 
     qs = DistrictForecast.objects.all().order_by('id')
-    #qs = qs.order_by('id')
+    qs = qs.order_by('id')
     
     page_name = "DELETE District Forecast Entry"
 
     if request.method == "POST":
         entry.delete()
+        messages.success(request, f"Record {id} deleted successfully.")
         return redirect('forecasts:district_forecast_list')  # redirect anywhere you prefer
-
+        
     return render(request, "district-forecast/district_forecast_delete.html", {
         "entry": entry,
         'page_name': page_name,
-        #'details': qs
+        'details': qs
     })
 
 def district_forecast_toggle_is_published(request, id):

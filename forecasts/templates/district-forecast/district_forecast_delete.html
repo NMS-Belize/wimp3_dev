@@ -15,10 +15,11 @@
             <p class="m-0">ID: <strong>{{ entry.id }}</strong>, Forecast Date: <strong>{{ entry.forecast_date }}</strong></p>
         </div>
     </div>
+    <div class="col-12 text-center">
         <form method="post">
             {% csrf_token %}
             <button id="btn_confirm_delete" type="submit" class="btn btn_confirm_delete">Confirm Delete</button>
-            <a id="btn_cancel" href="{% url 'forecasts:district_list' %}" class="btn btn-secondary">Cancel</a>
+            <a id="btn_cancel" href="{% url 'forecasts:district_forecast_list' %}" class="btn btn-secondary">Cancel</a>
         </form>
     </div>
 </div>

@@ -109,7 +109,9 @@ h1{ font-weight: 300; font-size: 50px; }
   color: var(--light) !important;
 }
 
-#btn_logout { font-size: 18px; font-weight: 500; color: #fff; text-transform: uppercase; padding: 0; }
+#btn_logout { font-weight: 600; text-transform: uppercase; margin-top: 10px; }
+.collapsed #btn_logout{ font-size: 13px; margin-top: 0; }
+
 #offcanvas_logo{
   margin: 0 auto;
   display: block;
@@ -449,7 +451,10 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 }
 .collapsed .profile-info {
     opacity: 0;
+    display: none;
 }
+.collapsed .user-info{ display: none; }
+
 .collapsed .sidebar-link {
     padding: 1rem !important;
     margin: 0 8px 0 15px;
