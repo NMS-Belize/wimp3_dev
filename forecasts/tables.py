@@ -514,6 +514,15 @@ class DistrictForecastTable(tables.Table):
     
     def render_created_by(self, record):
         return record.created_by.get_full_name() if record.created_by else ""
+
+    def render_created_datetime(self, record):
+        value = record.created_datetime
+
+        if value:
+            value = timezone.localtime(value)
+            return value.strftime("%b %d, %Y %I:%M %p")
+
+        return ""
     
     def render_updated_by(self, record):
         return record.updated_by.get_full_name() if record.updated_by else ""
