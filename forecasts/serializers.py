@@ -175,9 +175,11 @@ class DistrictForecastSerializer(serializers.ModelSerializer):
     created_by  = serializers.SerializerMethodField()
     updated_by  = serializers.SerializerMethodField()
 
+    latest_updated_datetime = serializers.DateTimeField(read_only=True)
+
     class Meta:
         model   = DistrictForecast
-        fields  = ['id', 'forecast_date', 'created_by', 'created_datetime', 'updated_by', 'updated_datetime', 'district']
+        fields  = ['id', 'forecast_date', 'created_by', 'created_datetime', 'latest_updated_datetime', 'updated_by', 'updated_datetime', 'district']
 
     def get_created_by(self, obj):
         if obj.created_by:

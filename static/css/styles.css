@@ -370,7 +370,7 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
         var(--wimp-dark-navy) 90%
     );
     transition: width 0.3s ease;
-    overflow: visible;
+    overflow: hidden;
     z-index: 1000;
 }
 
@@ -433,17 +433,17 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 .toggle-btn {
   font-size: 40px;
     /*position: absolute;
-    left: 10px;             /* CHANGE from -15px */
-    /*top: 20px;*/
+    right: -15px;             /* CHANGE from -15px */
+    /*top: 20px;
 
-    /*background: white;
+    background: white;
     border-radius: 50%;*/
     color: var(--white);
     /*width: 30px;
     height: 30px;
-    border: none;*/
+    border: none;
 
-    /*box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
     z-index: 100;
     cursor: pointer;*/
 }
