@@ -83,11 +83,10 @@
                         {% endif %}
                     </small>
                 </div>
-                <button class="btn btn-warning mt-4" type="submit">Logout <i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+                <button id="btn_logout" class="btn btn-warning" type="submit"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
             </form>
-            
             {% else %}
-                <a class="btn btn-warning" href="{% url 'login' %}">Login <i class="fa-solid fa-user"></i></a>
+                <a id="btn_login" class="btn btn-warning" href="{% url 'login' %}"><i class="fa-solid fa-user"></i> Login</a>
             {% endif %}
             {% if request.user.is_superuser %}
             <div class="pt-4 pb-2">
