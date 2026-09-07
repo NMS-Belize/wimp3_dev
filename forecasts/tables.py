@@ -7,6 +7,8 @@ import calendar
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.text import Truncator
+from django.db.models import Max
+from django.db.models.functions import Greatest, Coalesce
 
 from django.conf import settings
 
@@ -14,6 +16,24 @@ from forecasts.models import (
     DistrictForecast, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, 
     ForecastGeneral, ForescastGeneralCategory, ForecastMarine, ForescastMarineCategory, 
     Severity, Probability
+)
+
+district_forecasts = (
+    DistrictForecast.objects
+    .annotate(
+        detail_updated_datetime=Max(
+            "district_forecast_details__updated_datetime"
+        )
+    )
+    .annotate(
+        latest_updated_datetime=Greatest(
+            "updated_datetime",
+            Coalesce(
+                "detail_updated_datetime",
+                "updated_datetime"
+            )
+        )
+    )
 )
 
 class InstructionsTable(tables.Table):
@@ -458,8 +478,8 @@ class DistrictForecastTable(tables.Table):
     created_by          = tables.Column(verbose_name="Created By", attrs={"th": {"style": "width:150px;","class": ""}, "td": {"style": "","class": ""}})
     created_datetime    = tables.Column(verbose_name="Created Date", attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "","class": "fst-italic" }})
     updated_by          = tables.Column(verbose_name="Updated By", attrs={"th": {"style": "width:150px;","class": ""}, "td": {"style": "","class": ""}})
-    updated_datetime    = tables.Column(verbose_name="Updated Date", attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "","class": "fst-italic" }})
-    
+    #updated_datetime    = tables.Column(verbose_name="Updated Date", attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "","class": "fst-italic" }})
+    latest_updated_datetime = tables.Column(verbose_name="Latest Updated Date", attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "","class": "fst-italic" }})
     pdf_file            = tables.Column(empty_values=(),verbose_name="PDF",orderable=False, attrs={"th": {"style": "width:65px; text-align:center;","class": ""},"td": {"style": "text-align:center;","class": "col_pdf"}})
     is_published        = tables.TemplateColumn(template_name="district-forecast/district_forecast_publish_toggle.html", verbose_name="Status", orderable=False, 
                             attrs={"th": {"style": "width:75px;", "class": "text-center "},
@@ -472,12 +492,11 @@ class DistrictForecastTable(tables.Table):
     class Meta:
         model = DistrictForecast
         template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
-        fields = ("edit","forecast_date","created_by","created_datetime","updated_by","updated_datetime","pdf_file","is_published","id","delete")
-        sequence = ("edit","forecast_date","created_by","created_datetime","updated_by","updated_datetime","pdf_file","is_published","id","delete")
+        fields = ("edit","forecast_date","created_by","created_datetime","updated_by","latest_updated_datetime","pdf_file","is_published","id","delete")
+        sequence = ("edit","forecast_date","created_by","created_datetime","updated_by","latest_updated_datetime","pdf_file","is_published","id","delete")
 
         # Add table HTML id and CSS classes here
         attrs = {
-            "id": "table_pest_alert_level",           # unique table ID
             "class": "table table-striped table-condensed table-hover tbl_wimp3" # Bootstrap-friendly styling
         }
 
@@ -496,6 +515,11 @@ class DistrictForecastTable(tables.Table):
     
     def render_updated_by(self, record):
         return record.updated_by.get_full_name() if record.updated_by else ""
+
+    def render_latest_updated_datetime(self, value):
+        if value:
+            return value.strftime("%B %d, %Y %I:%M %p")
+        return ""
     
     def render_pdf_file(self, record):
         filename    = f"District_Forecast_{record.forecast_date}_NMS_BZ.pdf"

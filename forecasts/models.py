@@ -51,6 +51,18 @@ class DistrictForecast(models.Model):
     created_datetime    = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_datetime    = models.DateTimeField(auto_now=True,null=True)
 
+    @property
+    def latest_updated_datetime(self):
+        latest_detail = self.district_forecast_details.order_by("-updated_datetime").values_list("updated_datetime",flat=True).first()
+
+        if latest_detail and self.updated_datetime:
+            return max(self.updated_datetime, latest_detail)
+
+        if latest_detail:
+            return latest_detail
+        
+        return self.updated_datetime
+
     class Meta:
         verbose_name = "District Level Forecast"
         verbose_name_plural = "District Level Forecasts"
@@ -97,6 +109,11 @@ class DistrictForecastDetails(models.Model):
     risk_weather_conditions    = models.ForeignKey(RiskLevel,on_delete=models.SET_NULL,null=True,blank=True,related_name="risk_weather_conditions")
     #ins_weather_conditions     = models.ForeignKey(DistrictForecastInstructions,on_delete=models.SET_NULL,null=True,blank=True,)
     ins_weather_conditions  = models.ManyToManyField(DistrictForecastInstructions, blank=True, related_name="instructions_weather_conditions")
+
+    created_by              = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="district_forecast_details_created")
+    updated_by              = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="district_forecast_details_updated")
+    created_datetime        = models.DateTimeField(auto_now_add=True,null=True)
+    updated_datetime        = models.DateTimeField(auto_now=True,null=True)
 
     class Meta:
         constraints = [

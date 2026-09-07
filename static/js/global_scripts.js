@@ -47,15 +47,21 @@ $(function () {
     });
 
 
-    // Expand temporarily when hovering
-    sidebar.addEventListener('mouseenter', function () {
+    sidebar.addEventListener('mouseenter', function (event) {
 
-        if (sidebarCollapsed) {
-            sidebar.classList.remove('collapsed');
+        if (!sidebarCollapsed) {
+            return;
         }
 
-    });
+        const collapsedWidth = parseInt(
+            getComputedStyle(document.documentElement)
+                .getPropertyValue('--sidebar-width-collapsed')
+        );
 
+        if (event.clientX <= collapsedWidth) {
+            sidebar.classList.remove('collapsed');
+        }
+    });
 
     // Collapse again when mouse leaves
     sidebar.addEventListener('mouseleave', function () {
