@@ -5,6 +5,7 @@ import django_tables2 as tables
 import calendar
 
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.text import Truncator
 from django.db.models import Max
@@ -478,8 +479,9 @@ class DistrictForecastTable(tables.Table):
     created_by          = tables.Column(verbose_name="Created By", attrs={"th": {"style": "width:150px;","class": ""}, "td": {"style": "","class": ""}})
     created_datetime    = tables.Column(verbose_name="Created Date", attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "","class": "fst-italic" }})
     updated_by          = tables.Column(verbose_name="Updated By", attrs={"th": {"style": "width:150px;","class": ""}, "td": {"style": "","class": ""}})
-    #updated_datetime    = tables.Column(verbose_name="Updated Date", attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "","class": "fst-italic" }})
-    latest_updated_datetime = tables.Column(verbose_name="Latest Updated Date", attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "","class": "fst-italic" }})
+
+    latest_updated_datetime = tables.Column(empty_values=(), verbose_name="Latest Updated Date", orderable=False, attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "","class": "fst-italic" }})
+
     pdf_file            = tables.Column(empty_values=(),verbose_name="PDF",orderable=False, attrs={"th": {"style": "width:65px; text-align:center;","class": ""},"td": {"style": "text-align:center;","class": "col_pdf"}})
     is_published        = tables.TemplateColumn(template_name="district-forecast/district_forecast_publish_toggle.html", verbose_name="Status", orderable=False, 
                             attrs={"th": {"style": "width:75px;", "class": "text-center "},
@@ -516,9 +518,13 @@ class DistrictForecastTable(tables.Table):
     def render_updated_by(self, record):
         return record.updated_by.get_full_name() if record.updated_by else ""
 
-    def render_latest_updated_datetime(self, value):
+    def render_latest_updated_datetime(self, record):
+        value = record.latest_updated_datetime
+
         if value:
+            value = timezone.localtime(value)
             return value.strftime("%B %d, %Y %I:%M %p")
+
         return ""
     
     def render_pdf_file(self, record):

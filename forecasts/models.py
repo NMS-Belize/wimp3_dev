@@ -2,6 +2,7 @@ from time import timezone
 
 from django.db import models
 from django.conf import settings
+from django.db.models import Max
 
 from system_core.models import District, AlertLevel, RiskLevel
 from alerts.models import CAPAlertDetails, TropicalWeatherAlerts
@@ -53,15 +54,19 @@ class DistrictForecast(models.Model):
 
     @property
     def latest_updated_datetime(self):
-        latest_detail = self.district_forecast_details.order_by("-updated_datetime").values_list("updated_datetime",flat=True).first()
+        latest_detail = self.district_forecast_details.aggregate(
+            latest=Max("updated_datetime")
+        )["latest"]
 
-        if latest_detail and self.updated_datetime:
-            return max(self.updated_datetime, latest_detail)
+        dates = [
+            dt for dt in (
+                self.updated_datetime,
+                latest_detail,
+            )
+            if dt is not None
+        ]
 
-        if latest_detail:
-            return latest_detail
-        
-        return self.updated_datetime
+        return max(dates) if dates else None
 
     class Meta:
         verbose_name = "District Level Forecast"

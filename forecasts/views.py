@@ -1308,7 +1308,14 @@ def district_forecast_details_entry_item(request, id=None, fk=None):
 
         if form.is_valid():
             saved_entry = form.save(commit=False)
-            #saved_entry = form.save()    # Creates or updates
+
+            if not saved_entry.pk:
+                saved_entry.created_by = request.user
+
+            saved_entry.updated_by = request.user
+
+            # Make sure the detail belongs to this forecast
+            saved_entry.forecast = main_entry
 
             saved_entry.save()
             form.save_m2m()
@@ -1337,35 +1344,6 @@ def district_forecast_details_entry_item(request, id=None, fk=None):
         'forecast_id': fk,
         'back_url': reverse('forecasts:district_forecast_details_entry', kwargs={'id': fk}),
     })
-
-'''def district_forecast_details_instructions_ajax_add(request):
-    if request.method == "POST":
-        description = request.POST.get("description")
-        category_id = request.POST.get("category")
-
-        if not description:
-            return JsonResponse({
-                "success": False,
-                "error": "Instruction description is required."
-            })
-
-        if not category_id:
-            return JsonResponse({
-                "success": False,
-                "error": "Instruction category is required."
-            })
-
-        instruction = DistrictForecastInstructions.objects.create(
-            description=description,
-            category_id=category_id
-        )
-
-        return JsonResponse({
-            "success": True,
-            "id": instruction.id,
-            "description": instruction.description,
-            "category": instruction.category_id,
-        })'''
 
 def add_background_wafs_full(canvas, doc):
     canvas.saveState()
