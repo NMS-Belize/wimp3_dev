@@ -382,17 +382,16 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
     color: #fff;
     font-weight: 500;
     transition: all 0.2s ease;
-    margin: 0 16px;
     white-space: nowrap;
     overflow: hidden;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    text-transform: uppercase ;
+    text-transform: uppercase;
 }
 
 .sidebar-link:hover {
     color: #ffffff;
     background: rgba(255, 255, 255, 0.1);
-    transform: translateX(5px);
+    /*transform: translateX(5px);*/
 }
 
 .sidebar-link.active {
@@ -465,8 +464,8 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 .collapsed .user-info{ display: none; }
 
 .collapsed .sidebar-link {
-    padding: 1rem !important;
-    margin: 0 8px 0 15px;
+    /*padding: 1rem !important;*/
+    margin: 0 !important;
 }
 .collapsed .sidebar-link i { margin: 0 !important; }
 
@@ -480,7 +479,7 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 }
 #sidebar_nav a{
   color: #fff;
-  padding: 12px 15px;
+  padding: 12px 10px 12px 30px;
   text-decoration: none;
 }
 
