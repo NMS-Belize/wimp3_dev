@@ -7,6 +7,7 @@ class DistrictForecastDetailsSerializer(serializers.ModelSerializer):
     
     district = serializers.SerializerMethodField()
     
+    precip_min = serializers.SerializerMethodField()
     precip_max = serializers.SerializerMethodField()
     prob_precip_max = serializers.SerializerMethodField()
     sev_precip_max = serializers.SerializerMethodField()
@@ -43,13 +44,16 @@ class DistrictForecastDetailsSerializer(serializers.ModelSerializer):
         fields = ['id', 'district',
                   'temp_min', 'prob_temp_min', 'sev_temp_min', 'risk_temp_min', 'ins_temp_min',
                   'temp_max', 'prob_temp_max', 'sev_temp_max', 'risk_temp_max', 'ins_temp_max',
-                  'precip_max', 'prob_precip_max', 'sev_precip_max', 'risk_precip_max', 'ins_precip_max',
+                  'precip_min','precip_max', 'prob_precip_max', 'sev_precip_max', 'risk_precip_max', 'ins_precip_max',
                   'winds_min', 'winds_max', 'prob_winds', 'sev_winds', 'risk_winds', 'ins_winds',
                   'weather_conditions', 'prob_weather_conditions', 'sev_weather_conditions', 'risk_weather_conditions', 'ins_weather_conditions'
                   ]
     
     def get_district(self, obj): return obj.district.district_name if obj.district_id else ""
     
+    # Precipitation MIn
+    def get_precip_min(self, obj): return f"{obj.precip_min:.1f} in" if obj.precip_min is not None else ""
+
     # Precipitation Max
     def get_precip_max(self, obj): return f"{obj.precip_max:.1f} in" if obj.precip_max is not None else ""
 
