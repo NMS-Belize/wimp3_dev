@@ -1289,7 +1289,7 @@ def district_forecast_details_entry(request, id):
 
 def district_forecast_details_entry_item(request, id=None, fk=None):
 
-    page_name = "District Forecast Details Item"
+    page_name = "District Forecast Details Entry"
     
     # If fk exists => update, else => create new
     if fk:

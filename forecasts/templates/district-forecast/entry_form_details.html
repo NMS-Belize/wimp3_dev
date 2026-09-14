@@ -1,4 +1,4 @@
-{% extends "base_blank.html" %}
+{% extends "base_form.html" %}
 {% block content %}
 <div class="row">
     <div class="col-12">
@@ -10,56 +10,62 @@
             <div class="row mb-3 pb-2 border-bottom">
                 <div class="col-2">&nbsp;</div>
                 <div class="col-2"><span class="h5">Forecast Value</span></div>
-                <div class="col-2"><span class="h5">Probability</span></div>
-                <div class="col-2"><span class="h5">Severity</span></div>
-                <div class="col-1"><span class="h5">Risk</span></div>
-                <div class="col-3"><span class="h5 me-3">Instruction</span> <button type="button" class="btn btn_new btn-sm" data-bs-toggle="modal" data-bs-target="#addInstructionModal"><i class="fa-solid fa-circle-plus"></i>&nbsp;Add Instruction</button></div>
+                <div class="col-1"><span class="h5">Probability</span></div>
+                <div class="col-1"><span class="h5">Severity</span></div>
+                <div class="col-2"><span class="h5">Risk</span></div>
+                <div class="col-4"><span class="h5 me-3">Instruction</span> <button type="button" class="btn btn_new btn-sm" data-bs-toggle="modal" data-bs-target="#addInstructionModal"><i class="fa-solid fa-circle-plus"></i>&nbsp;Add Instruction</button></div>
             </div>
             <div class="row mb-3">
                 <div class="col-2"><span class="h6">Weather Conditions</span></div>
                 <div class="col-2">{{ form.weather_conditions }}</div>
-                <div class="col-2">{{ form.prob_weather_conditions }}</div>
-                <div class="col-2">{{ form.sev_weather_conditions }}</div>
-                <div class="col-1"><span id="risk_level_weather_conditions" class="form-control risk-alert">&nbsp;</span>{{ form.risk_weather_conditions }}&nbsp;</div>
-                <div class="col-3">{{ form.ins_weather_conditions }}</div>
+                <div class="col-1">{{ form.prob_weather_conditions }}</div>
+                <div class="col-1">{{ form.sev_weather_conditions }}</div>
+                <div class="col-2 d-flex"><span id="risk_level_weather_conditions" class="rounded-circle risk-alert me-1">&nbsp;</span>{{ form.risk_weather_conditions }}&nbsp;</div>
+                <div class="col-4">{{ form.ins_weather_conditions }}</div>
             </div>
             <div class="row mb-3">
                 <div class="col-2"><span class="h6">TEMP MAX (°F)</span></div>
                 <div class="col-2">{{ form.temp_max }}</div>
-                <div class="col-2">{{ form.prob_temp_max }}</div>
-                <div class="col-2">{{ form.sev_temp_max }}</div>
-                <div class="col-1"><span id="risk_level_temp_max" class="form-control risk-alert">&nbsp;</span>{{ form.risk_temp_max }}&nbsp;</div>
-                <div class="col-3">{{ form.ins_temp_max }}</div>
+                <div class="col-1">{{ form.prob_temp_max }}</div>
+                <div class="col-1">{{ form.sev_temp_max }}</div>
+                <div class="col-2 d-flex"><span id="risk_level_temp_max" class="rounded-circle risk-alert me-1">&nbsp;</span>{{ form.risk_temp_max }}&nbsp;</div>
+                <div class="col-4">{{ form.ins_temp_max }}</div>
             </div>
             <div class="row mb-3">
                 <div class="col-2"><span class="h6">TEMP MIN (°F)</span></div>
                 <div class="col-2">{{ form.temp_min }}</div>
-                <div class="col-2">{{ form.prob_temp_min }}</div>
-                <div class="col-2">{{ form.sev_temp_min }}</div>
-                <div class="col-1"><span id="risk_level_temp_min" class="form-control risk-alert">&nbsp;</span>{{ form.risk_temp_min }}&nbsp;</div>
-                <div class="col-3">{{ form.ins_temp_min }}</div>
+                <div class="col-1">{{ form.prob_temp_min }}</div>
+                <div class="col-1">{{ form.sev_temp_min }}</div>
+                <div class="col-2 d-flex"><span id="risk_level_temp_min" class="rounded-circle risk-alert me-1">&nbsp;</span>{{ form.risk_temp_min }}&nbsp;</div>
+                <div class="col-4">{{ form.ins_temp_min }}</div>
             </div>
             <div class="row mb-3">
-                <div class="col-2"><span class="h6">PRECIP, MAX 24H (in)</span></div>
-                <div class="col-2">{{ form.precip_max }}</div>
-                <div class="col-2">{{ form.prob_precip_max }}</div>
-                <div class="col-2">{{ form.sev_precip_max }}</div>
-                <div class="col-1"><span id="risk_level_precip_max" class="form-control risk-alert">&nbsp;</span>{{ form.risk_precip_max }}&nbsp;</div>
-                <div class="col-3">{{ form.ins_precip_max }}</div>
+                <div class="col-2"><span class="h6">PRECIP, 24H (in)</span></div>
+                <div class="col-2">
+                    <div class="row g-2">
+                        <div class="col">{{ form.precip_min }}</div>
+                        <div class="col-2 pt-2 text-center">to</div>
+                        <div class="col">{{ form.precip_max }}</div>
+                    </div>
+                </div>
+                <div class="col-1">{{ form.prob_precip_max }}</div>
+                <div class="col-1">{{ form.sev_precip_max }}</div>
+                <div class="col-2 d-flex"><span id="risk_level_precip_max" class="rounded-circle risk-alert me-1">&nbsp;</span>{{ form.risk_precip_max }}&nbsp;</div>
+                <div class="col-4">{{ form.ins_precip_max }}</div>
             </div>
             <div class="row mb-3">
                 <div class="col-2"><span class="h6">Winds (kts)</span></div>
                 <div class="col-2">
                     <div class="row g-2">
                         <div class="col">{{ form.winds_min }}</div>
-                        <div class="col-2"><span class="pt-2 text-center">to</span></div>
+                        <div class="col-2 pt-2 text-center">to</div>
                         <div class="col">{{ form.winds_max }}</div>
                     </div>
                 </div>
-                <div class="col-2">{{ form.prob_winds }}</div>
-                <div class="col-2">{{ form.sev_winds }}</div>
-                <div class="col-1"><span id="risk_level_winds" class="form-control risk-alert">&nbsp;</span>{{ form.risk_winds }}&nbsp;</div>
-                <div class="col-3">{{ form.ins_winds }}</div>
+                <div class="col-1">{{ form.prob_winds }}</div>
+                <div class="col-1">{{ form.sev_winds }}</div>
+                <div class="col-2 d-flex"><span id="risk_level_winds" class="rounded-circle risk-alert me-1">&nbsp;</span>{{ form.risk_winds }}&nbsp;</div>
+                <div class="col-4">{{ form.ins_winds }}</div>
             </div>
             <div class="row mb-3"> 
                 <div class="col-12">
@@ -114,13 +120,22 @@
         allowClear: true
     });
 
+    $("#id_risk_weather_conditions").height(25);
+    $("#risk_level_weather_conditions").height(40);
+
     document.addEventListener("DOMContentLoaded", function () {
 
-        calculateRisk("id_prob_weather_conditions","id_sev_weather_conditions","id_risk_weather_conditions","risk_level_weather_conditions");
-        calculateRisk("id_prob_temp_max","id_sev_temp_max","id_risk_temp_max","risk_level_temp_max");
-        calculateRisk("id_prob_temp_min","id_sev_temp_min","id_risk_temp_min","risk_level_temp_min");
-        calculateRisk("id_prob_winds","id_sev_winds","id_risk_winds","risk_level_winds");
-        calculateRisk("id_prob_precip_max","id_sev_precip_max","id_risk_precip_max","risk_level_precip_max");
+        //calculateRisk("id_prob_weather_conditions","id_sev_weather_conditions","id_risk_weather_conditions","risk_level_weather_conditions");
+        //calculateRisk("id_prob_temp_max","id_sev_temp_max","id_risk_temp_max","risk_level_temp_max");
+       //calculateRisk("id_prob_temp_min","id_sev_temp_min","id_risk_temp_min","risk_level_temp_min");
+        //calculateRisk("id_prob_winds","id_sev_winds","id_risk_winds","risk_level_winds");
+        //calculateRisk("id_prob_precip_max","id_sev_precip_max","id_risk_precip_max","risk_level_precip_max");
+
+        loadRisk("id_risk_weather_conditions","risk_level_weather_conditions");
+        loadRisk("id_risk_temp_max","risk_level_temp_max");
+        loadRisk("id_risk_temp_min","risk_level_temp_min");
+        loadRisk("id_risk_winds","risk_level_winds");
+        loadRisk("id_risk_precip_max","risk_level_precip_max");
         
         // TEMP MAX
         document.getElementById("id_prob_temp_max").addEventListener("change", function () {
@@ -162,6 +177,24 @@
             calculateRisk("id_prob_precip_max","id_sev_precip_max","id_risk_precip_max","risk_level_precip_max");
         });
 
+        // Change RISK
+        document.getElementById("id_risk_weather_conditions").addEventListener("change", function () {
+            changeRisk("id_risk_weather_conditions","risk_level_weather_conditions");
+        });
+        document.getElementById("id_risk_temp_max").addEventListener("change", function () {
+            changeRisk("id_risk_temp_max","risk_level_temp_max");
+        });
+        document.getElementById("id_risk_temp_min").addEventListener("change", function () {
+            changeRisk("id_risk_temp_min","risk_level_temp_min");
+        });
+        document.getElementById("id_risk_winds").addEventListener("change", function () {
+            changeRisk("id_risk_winds","risk_level_winds");
+        });
+        document.getElementById("id_risk_precip_max").addEventListener("change", function () {
+            changeRisk("id_risk_precip_max","risk_level_precip_max");
+        });
+
+
         function calculateRisk(probFieldId, sevFieldId, riskFieldId, riskSpan) {
         
             const prob = document.getElementById(probFieldId);
@@ -184,7 +217,7 @@
 
                 if (riskData) {
                     risk.value = riskData.value;
-                    risk_alert.innerText = riskData.text;
+                    //risk_alert.innerText = riskData.text;
                     risk_alert.classList.remove("low","medium","high","critical");
                     risk_alert.classList.add(riskData.class);
                 }
@@ -215,6 +248,56 @@
             prob.addEventListener("change", updateRisk);
             sev.addEventListener("change", updateRisk);
             updateRisk(probFieldId, sevFieldId, riskFieldId, riskSpan);
+        }
+
+        function changeRisk(riskFieldId,riskSpan) {
+
+            const risk = document.getElementById(riskFieldId);
+            const risk_alert = document.getElementById(riskSpan);
+
+            const risk_val = risk.value;
+
+            var risk_class = {
+                1: "low",
+                2: "med",
+                3: "high",
+                4: "critical"
+            } 
+            
+            risk_alert.classList.remove("low","med","high","critical");
+
+            // Add class based on selected value
+            if (risk_class[risk_val]) {
+                risk_alert.classList.add(risk_class[risk_val]);
+            }
+            //console.log("Risk:", risk_val);
+            //console.log("Class:", risk_class[risk_val]);
+        }
+
+        function loadRisk(riskFieldId,riskSpan) {
+
+            const risk = document.getElementById(riskFieldId);
+            const risk_alert = document.getElementById(riskSpan);
+
+            //const risk_val = risk.value;
+
+            var risk_class = {
+                1: "low",
+                2: "med",
+                3: "high",
+                4: "critical"
+            } 
+
+            const risk_val = risk.value;
+            
+            risk_alert.classList.remove("low","med","high","critical");
+
+            // Add class based on selected value
+            if (risk_class[risk_val]) {
+                risk_alert.classList.add(risk_class[risk_val]);
+            }
+            //console.log("Risk:", risk_val);
+            //console.log("Class:", risk_class[risk_val]);
         }
 
         document.getElementById("saveInstructionBtn").addEventListener("click", function () {

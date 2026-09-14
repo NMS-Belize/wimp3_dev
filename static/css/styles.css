@@ -285,7 +285,7 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 /*********** ALERT LEVELS ************/
 .color-select{ background-color: none !important; }
 .color-select .option{ background-color: inherit;}
-.risk-alert{ font-size: 16px; font-weight:800;}
+.risk-alert{ font-size: 16px; font-weight:800; width: 50px;}
 .low{ background: #3CAEA3 !important; text-transform: uppercase; }
 .med{ background: #FCBF49 !important; text-transform: uppercase; }
 .high{ background: #fd7e14 !important; color: #fff; text-transform: uppercase;  }
@@ -430,7 +430,7 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 }
 
 .toggle-btn {
-  font-size: 40px;
+  font-size: 30px;
     /*position: absolute;
     right: -15px;             /* CHANGE from -15px */
     /*top: 20px;

@@ -1,11 +1,11 @@
 {% load static %}
 <div class="d-flex align-items-center">
     <a class="me-4" href="{% url 'site_home' %}">
-        <img class="me-1" width="150" src="{% static 'images/WIMP3/logo-horizontal.png' %}" alt="Dashboard" />
+        <img class="me-1" width="150" src="{% static 'images/WIMP3/logo-horizontal.png' %}" alt="WIMP3" />
     </a>
     <div id="top_buttons">
         <a class="me-4" href="{% url 'site_home' %}">
-            <img class="me-1" src="{% static 'button_icons/main-menu.png' %}" alt="Dashboard" />&nbsp; Dashboard
+            <img class="me-1" src="{% static 'button_icons/layout.png' %}" alt="Dashboard" />&nbsp; Dashboard
         </a>
         {% if user.is_superuser %}
         <a class="me-4" href="{% url 'api-root' %}" target="_blank">

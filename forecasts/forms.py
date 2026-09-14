@@ -167,41 +167,45 @@ class DistrictForecastDetailsForm(forms.ModelForm):
             'temp_max', 'prob_temp_max', 'sev_temp_max', 'risk_temp_max', 'ins_temp_max',
             'temp_min', 'prob_temp_min', 'sev_temp_min', 'risk_temp_min', 'ins_temp_min',
             'winds_min', 'winds_max', 'prob_winds', 'sev_winds', 'risk_winds', 'ins_winds',
-            'precip_max', 'prob_precip_max', 'sev_precip_max', 'risk_precip_max', 'ins_precip_max',
+            'precip_min','precip_max', 'prob_precip_max', 'sev_precip_max', 'risk_precip_max', 'ins_precip_max',
             'weather_conditions', 'prob_weather_conditions', 'sev_weather_conditions', 'risk_weather_conditions', 'ins_weather_conditions'
         ]
         widgets = { 
             'weather_conditions':       forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'cols': 20, 'style': 'width: 100%'}),
             'prob_weather_conditions':  forms.Select(attrs={'class': 'form-select color-select', 'width': '100%'}),
             'sev_weather_conditions':   forms.Select(attrs={'class': 'form-select color-select', 'width': '100%'}),
-            #'risk_weather_conditions': forms.Select(attrs={'class': 'form-control','style': 'display:none','placeholder': ''}),
-            'risk_weather_conditions':  forms.HiddenInput(),
+            'risk_weather_conditions': forms.Select(attrs={'class': 'form-select','placeholder': ''}),
+            #'risk_weather_conditions':  forms.HiddenInput(),
             'ins_weather_conditions':   forms.SelectMultiple(attrs={'class': 'form-select select2'}),
 
             'temp_max':         forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.5', 'width': '100%'}),
             'prob_temp_max':    forms.Select(attrs={'class': 'form-select color-select','width': '100%'}),
             'sev_temp_max':     forms.Select(attrs={'class': 'form-select color-select', 'width': '100%'}),
-            'risk_temp_max':    forms.HiddenInput(),
+            'risk_temp_max': forms.Select(attrs={'class': 'form-select','placeholder': ''}),
+            #'risk_temp_max':    forms.HiddenInput(),
             'ins_temp_max':     forms.SelectMultiple(attrs={'class': 'form-select select2'}),
 
             'temp_min':         forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.5', 'width': '100%'}),
             'prob_temp_min':    forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
             'sev_temp_min':     forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
-            'risk_temp_min':    forms.HiddenInput(),
+            'risk_temp_min': forms.Select(attrs={'class': 'form-select','placeholder': ''}),
+            #'risk_temp_min':    forms.HiddenInput(),
             'ins_temp_min':     forms.SelectMultiple(attrs={'class': 'form-select select2'}),
 
             'winds_min':        forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.5', 'width': '45%'}),
             'winds_max':        forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.5', 'width': '45%'}),
             'prob_winds':       forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
             'sev_winds':        forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
-            'risk_winds':       forms.HiddenInput(),
+            'risk_winds': forms.Select(attrs={'class': 'form-select','placeholder': ''}),
+            #'risk_winds':       forms.HiddenInput(),
             'ins_winds':        forms.SelectMultiple(attrs={'class': 'form-select select2'}),
 
+            'precip_min':       forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.01', 'width': '100%'}),
             'precip_max':       forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.01', 'width': '100%'}),
             'prob_precip_max':  forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
             'sev_precip_max':   forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
-            'risk_precip_max':  forms.HiddenInput(),
-            #'ins_precip_max':  forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
+            'risk_precip_max': forms.Select(attrs={'class': 'form-select','placeholder': ''}),
+            #'risk_precip_max':  forms.HiddenInput(),
             'ins_precip_max':   forms.SelectMultiple(attrs={'class': 'form-select select2'}),
         }
 
