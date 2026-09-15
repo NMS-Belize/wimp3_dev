@@ -588,40 +588,25 @@ class DistrictForecastDetailsTable(tables.Table):
                         "td": {"style": "","class": "col_edit text-center"}
                         })
     
-    district         = tables.Column(verbose_name="District",attrs={
-                        "th": {"style": "width:15%;","class": ""},
-                        "td": {"style": "","class": "text-start text-decoration-none"}
-                        })
+    district        = tables.Column(verbose_name="District",attrs={"th": {"style": "width:180px;","class": ""},"td": {"style": "","class": "text-start text-decoration-none"}})
     
-    precip_max         = tables.Column(verbose_name="Precip (MAX)",attrs={
-                        "th": {"style": "width:15%;","class": ""},
-                        "td": {"style": "","class": "pe-4"}
-                        })
     
-    temp_max         = tables.Column(verbose_name="TEMP °F (MAX)",attrs={
-                        "th": {"style": "width:15%;","class": ""},
-                        "td": {"style": "","class": "pe-4"}
-                        })
-    temp_min         = tables.Column(verbose_name="TEMP °F (MIN)",attrs={
-                        "th": {"style": "width:15%;","class": ""},
-                        "td": {"style": "","class": "pe-4"}
-                        })
     
-    winds         = tables.Column(verbose_name="Winds (Kts)",empty_values=(),attrs={
-                        "th": {"style": "width:15%;","class": ""},
-                        "td": {"style": "","class": "pe-4"}
-                        })
+    temp_max_low    = tables.Column(verbose_name="TEMP °F (MAX, LOW)",attrs={"th": {"style": "width:100px;","class": ""},"td": {"style": "","class": "pe-4"}})
+    temp_max_high   = tables.Column(verbose_name="TEMP °F (MAX, HIGH)",attrs={"th": {"style": "width:100px;","class": ""},"td": {"style": "","class": "pe-4"}})
+    temp_min_low    = tables.Column(verbose_name="TEMP °F (MIN, LOW)",attrs={"th": {"style": "width:100px;","class": ""},"td": {"style": "","class": "pe-4"}})
+    temp_min_high   = tables.Column(verbose_name="TEMP °F (MIN, HIGH)",attrs={"th": {"style": "width:100px;","class": ""},"td": {"style": "","class": "pe-4"}})
     
-    weather_conditions = tables.Column(verbose_name="Weather Conditions",attrs={
-                        "th": {"style": "","class": ""},
-                        "td": {"style": "","class": ""}
-                        })
+    winds           = tables.Column(verbose_name="Winds (Kts)",empty_values=(),attrs={"th": {"style": "width:350px;","class": ""},"td": {"style": "","class": "pe-4"} })
+    precip_max      = tables.Column(verbose_name="Precip (MAX)",attrs={"th": {"style": "width:350px;","class": ""},"td": {"style": "","class": "pe-4"}})
+
+    weather_conditions = tables.Column(verbose_name="Weather Conditions",attrs={"th": {"style": "","class": ""},"td": {"style": "","class": ""}})
 
     class Meta:
         model = DistrictForecastDetails
         template_name = "django_tables2/bootstrap4.html"  # or bootstrap5
-        fields      = ("edit","district","temp_max","temp_min","precip_max","weather_conditions")
-        sequence    = ("edit","district","weather_conditions","temp_max","temp_min","winds","precip_max")
+        fields      = ("edit","district","temp_max_low","temp_min_high","temp_min_low","temp_max_high","precip_max","weather_conditions")
+        sequence    = ("edit","district","weather_conditions","temp_max_low","temp_min_high","temp_min_low","temp_max_high","winds","precip_max")
         
         # Add table ID and class here
         attrs = {
@@ -680,7 +665,7 @@ class DistrictForecastDetailsTable(tables.Table):
             elif "critical" in risk_text:
                 risk_class = "critical"
 
-        link_html   = '<div class="fst-italic mb-1">{}</div><div class="row text-secondary text-opacity-25"><div class="col"><small>Probability:</small><br /><div class="badge {}">{}</div></div><div class="col"><small>Severity:</small><br /><div class="badge {}">{}</div></div><div class="col"><small>Risk:</small><br /><div class="badge {}">{}</div></div></div>'
+        link_html   = '<div class="fst-italic mb-1">{}</div><div class="row text-opacity-25"><div class="col"><small>Probability:</small><br /><div class="badge {}">{}</div></div><div class="col"><small>Severity:</small><br /><div class="badge {}">{}</div></div><div class="col"><small>Risk:</small><br /><div class="badge {}">{}</div></div></div>'
         return format_html(link_html, record.temp_max, prob_class, record.prob_temp_max, sev_class, record.sev_temp_max, risk_class, record.risk_temp_max)
     
     def render_temp_min(self, record):
@@ -724,7 +709,7 @@ class DistrictForecastDetailsTable(tables.Table):
             elif "critical" in risk_text:
                 risk_class = "critical"
 
-        link_html   = '<div class="fst-italic mb-1">{}</div><div class="row text-secondary text-opacity-25"><div class="col"><small>Probability:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Severity:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Risk:</small><br /><span class="badge {}">{}</span></div></div>'
+        link_html   = '<div class="fst-italic mb-1">{}</div><div class="row text-opacity-25"><div class="col"><small>Probability:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Severity:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Risk:</small><br /><span class="badge {}">{}</span></div></div>'
         return format_html(link_html, record.temp_min, prob_class, record.prob_temp_min, sev_class, record.sev_temp_min, risk_class, record.risk_temp_min)
     
     def render_winds(self, record):
@@ -768,7 +753,7 @@ class DistrictForecastDetailsTable(tables.Table):
             elif "critical" in risk_text:
                 risk_class = "critical"
 
-        link_html   = '<div class="fst-italic mb-1">{} - {}</div><div class="row text-secondary text-opacity-25"><div class="col"><small>Probability:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Severity:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Risk:</small><br /><span class="badge {}">{}</span></div></div>'
+        link_html   = '<div class="fst-italic mb-1">{} - {}</div><div class="row"><div class="col"><small>Probability:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Severity:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Risk:</small><br /><span class="badge {}">{}</span></div></div>'
         return format_html(link_html, record.winds_min, record.winds_max, prob_class, record.prob_winds, sev_class, record.sev_winds, risk_class, record.risk_winds)
     
     def render_weather_conditions(self, record):
@@ -813,7 +798,7 @@ class DistrictForecastDetailsTable(tables.Table):
         if prob_id and sev_id:
             risk_class = RISK_MATRIX.get(prob_id, {}).get(sev_id, "bg-dark")
 
-        link_html   = '<div class="fst-italic mb-2">{}</div><div class="row text-secondary text-opacity-25"><div class="col"><small>Probability:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Severity:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Risk:</small><br /><span class="badge {}">{}</span></div></div>'
+        link_html   = '<div class="fst-italic mb-2">{}</div><div class="row"><div class="col"><small>Probability:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Severity:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Risk:</small><br /><span class="badge {}">{}</span></div></div>'
         return format_html(link_html, record.weather_conditions, prob_class, record.prob_weather_conditions, sev_class, record.sev_weather_conditions, risk_class, record.risk_weather_conditions)
     
     def render_precip_max(self, record):
@@ -856,5 +841,5 @@ class DistrictForecastDetailsTable(tables.Table):
             elif "critical" in risk_text:
                 risk_class = "critical"
 
-        link_html   = '<div class="fst-italic mb-1">{}</div><div class="row text-secondary text-opacity-25"><div class="col"><small>Probability:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Severity:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Risk:</small><br /><div class="badge {}">{}</span></div></div>'
+        link_html   = '<div class="fst-italic mb-1">{}</div><div class="row"><div class="col"><small>Probability:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Severity:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Risk:</small><br /><div class="badge {}">{}</span></div></div>'
         return format_html(link_html, record.precip_max, prob_class, record.prob_precip_max, sev_class, record.sev_precip_max, risk_class, record.risk_precip_max)

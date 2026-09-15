@@ -25,7 +25,13 @@
             </div>
             <div class="row mb-3">
                 <div class="col-2"><span class="h6">TEMP MAX (°F)</span></div>
-                <div class="col-2">{{ form.temp_max }}</div>
+                <div class="col-2">
+                    <div class="row g-2">
+                        <div class="col">{{ form.temp_max_low }}</div>
+                        <div class="col-2 pt-2 text-center">to</div>
+                        <div class="col">{{ form.temp_max_high }}</div>
+                    </div>
+                </div>
                 <div class="col-1">{{ form.prob_temp_max }}</div>
                 <div class="col-1">{{ form.sev_temp_max }}</div>
                 <div class="col-2 d-flex"><span id="risk_level_temp_max" class="rounded-circle risk-alert me-1">&nbsp;</span>{{ form.risk_temp_max }}&nbsp;</div>
@@ -33,7 +39,13 @@
             </div>
             <div class="row mb-3">
                 <div class="col-2"><span class="h6">TEMP MIN (°F)</span></div>
-                <div class="col-2">{{ form.temp_min }}</div>
+                <div class="col-2">
+                    <div class="row g-2">
+                        <div class="col">{{ form.temp_min_low }}</div>
+                        <div class="col-2 pt-2 text-center">to</div>
+                        <div class="col">{{ form.temp_min_high }}</div>
+                    </div>
+                </div>
                 <div class="col-1">{{ form.prob_temp_min }}</div>
                 <div class="col-1">{{ form.sev_temp_min }}</div>
                 <div class="col-2 d-flex"><span id="risk_level_temp_min" class="rounded-circle risk-alert me-1">&nbsp;</span>{{ form.risk_temp_min }}&nbsp;</div>

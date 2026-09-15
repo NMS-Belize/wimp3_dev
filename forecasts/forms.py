@@ -164,8 +164,8 @@ class DistrictForecastDetailsForm(forms.ModelForm):
     class Meta:
         model = DistrictForecastDetails
         fields = [ 
-            'temp_max', 'prob_temp_max', 'sev_temp_max', 'risk_temp_max', 'ins_temp_max',
-            'temp_min', 'prob_temp_min', 'sev_temp_min', 'risk_temp_min', 'ins_temp_min',
+            'temp_max_low','temp_max_high', 'prob_temp_max', 'sev_temp_max', 'risk_temp_max', 'ins_temp_max',
+            'temp_min_low','temp_min_high', 'prob_temp_min', 'sev_temp_min', 'risk_temp_min', 'ins_temp_min',
             'winds_min', 'winds_max', 'prob_winds', 'sev_winds', 'risk_winds', 'ins_winds',
             'precip_min','precip_max', 'prob_precip_max', 'sev_precip_max', 'risk_precip_max', 'ins_precip_max',
             'weather_conditions', 'prob_weather_conditions', 'sev_weather_conditions', 'risk_weather_conditions', 'ins_weather_conditions'
@@ -178,14 +178,16 @@ class DistrictForecastDetailsForm(forms.ModelForm):
             #'risk_weather_conditions':  forms.HiddenInput(),
             'ins_weather_conditions':   forms.SelectMultiple(attrs={'class': 'form-select select2'}),
 
-            'temp_max':         forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.5', 'width': '100%'}),
+            'temp_max_low':         forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.5', 'width': '100%'}),
+            'temp_max_high':         forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.5', 'width': '100%'}),
             'prob_temp_max':    forms.Select(attrs={'class': 'form-select color-select','width': '100%'}),
             'sev_temp_max':     forms.Select(attrs={'class': 'form-select color-select', 'width': '100%'}),
             'risk_temp_max': forms.Select(attrs={'class': 'form-select','placeholder': ''}),
             #'risk_temp_max':    forms.HiddenInput(),
             'ins_temp_max':     forms.SelectMultiple(attrs={'class': 'form-select select2'}),
 
-            'temp_min':         forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.5', 'width': '100%'}),
+            'temp_min_low':         forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.5', 'width': '100%'}),
+            'temp_min_high':         forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'step': '0.5', 'width': '100%'}),
             'prob_temp_min':    forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
             'sev_temp_min':     forms.Select(attrs={'class': 'form-select', 'width': '100%'}),
             'risk_temp_min': forms.Select(attrs={'class': 'form-select','placeholder': ''}),

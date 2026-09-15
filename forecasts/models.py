@@ -79,14 +79,16 @@ class DistrictForecastDetails(models.Model):
     forecast        = models.ForeignKey(DistrictForecast,on_delete=models.CASCADE,related_name="district_forecast_details")
     district        = models.ForeignKey(District,on_delete=models.CASCADE,related_name="forecast_details")
 
-    temp_min        = models.IntegerField(default=0)
+    temp_min_low    = models.IntegerField(default=0)
+    temp_min_high   = models.IntegerField(default=0)
     prob_temp_max   = models.ForeignKey(AlertLevel,on_delete=models.SET_NULL,null=True,blank=True,related_name="probability_temp_max")
     sev_temp_max    = models.ForeignKey(AlertLevel,on_delete=models.SET_NULL,null=True,blank=True,related_name="severity_temp_max")
     risk_temp_max   = models.ForeignKey(RiskLevel,on_delete=models.SET_NULL,null=True,blank=True,related_name="risk_temp_max")
     #ins_temp_max    = models.ForeignKey(DistrictForecastInstructions,on_delete=models.SET_NULL,null=True,blank=True,)
     ins_temp_max    = models.ManyToManyField(DistrictForecastInstructions, blank=True, related_name="instructions_temp_max")
 
-    temp_max        = models.IntegerField(default=0)
+    temp_max_low   = models.IntegerField(default=0)
+    temp_max_high   = models.IntegerField(default=0)
     prob_temp_min   = models.ForeignKey(AlertLevel,on_delete=models.SET_NULL,null=True,blank=True,related_name="probability_temp_min")
     sev_temp_min    = models.ForeignKey(AlertLevel,on_delete=models.SET_NULL,null=True,blank=True,related_name="severity_temp_min")
     risk_temp_min   = models.ForeignKey(RiskLevel,on_delete=models.SET_NULL,null=True,blank=True,related_name="risk_temp_min")
