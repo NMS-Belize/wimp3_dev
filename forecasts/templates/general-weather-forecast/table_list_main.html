@@ -6,26 +6,28 @@
         {% load render_table from django_tables2 %}
         <form id="table_filter" method="get" class="bg-light-subtle">
             <h2 class="title_filter">Filter Entries</h2>
-            <table class="table table-condensed">
-                <thead>
-                    <tr>
-                        <td style="width:60px">&nbsp;</td>
-                        <td style="width:120px">{{ filter.form.forecast_date }}</td>
-                        <td style="width:80px"></td>
-                        <td style="width:150px">{{ filter.form.forecast_category }}</td>
-                        <td >{{ filter.form.general_situation }}</td>
-                        <td style="width:120px">{{ filter.form.created_by }}</td>
-                        <td style="width:120px">{{ filter.form.updated_by }}</td>
-                        <td style="width:40px"><a href="{{ back_url }}" class="btn btn-secondary">Clear</a></td>
-                        <td style="width:40px">&nbsp;</td>
-                        <td style="width:40px">&nbsp;</td>
-                        <td style="width:40px">&nbsp;</td>
-                        <td style="width:60px">&nbsp;</td>
-                        <td style="width:80px">&nbsp;</td>
-                        <td style="width:65px">&nbsp;</td>
-                    </tr>
-                </thead>
-            </table>
+            <div class="row mb-3">
+                <div class="col-2">
+                    <label class="form-label">Forecast Date:</label>
+                    {{ filter.form.forecast_date }}
+                </div>
+                <div class="col-2">
+                    <label class="form-label">Forecast Category:</label>
+                    {{ filter.form.forecast_category }}
+                </div>
+                <div class="col-2">
+                    <label class="form-label">Created By:</label>
+                    {{ filter.form.created_by }}
+                </div>
+                <div class="col-2">
+                    <label class="form-label">Updated By:</label>
+                    {{ filter.form.updated_by }}
+                </div>
+                <div class="col-3">
+                    <br />
+                    <a href="{{ back_url }}" class="btn btn-secondary mt-2">Clear</a>
+                </div>
+            </div>
         </form>
         {% render_table table %}
     </div>
