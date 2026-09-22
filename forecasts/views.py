@@ -80,7 +80,7 @@ def general_forecast_list(request, id=None):
         'prev_page': 'Weather Forecasts',
         'table': table,
         "filter": filterset,
-        'new_url':  reverse('forecasts:district_forecast_entry'),
+        'new_url':  reverse('forecasts:general_forecast_entry_new'),
         'back_url': reverse('forecasts:index'),
         'webpage_url': "forecast/general-weather-forecast/",
         'api_url':  reverse('general-weather-forecast-list'),
@@ -89,42 +89,53 @@ def general_forecast_list(request, id=None):
 def general_forecast_entry(request, id=None):
 
     page_name = "General Forecast Entry"
+    audio_url = None
 
     # If id exists => update, else => create new
     if id:
         entry = get_object_or_404(ForecastGeneral, id=id)
+        previous_entry  = (ForecastGeneral.objects.filter(id__lt=entry.id).order_by('-id').first())
+        next_entry      = (ForecastGeneral.objects.filter(id__gt=entry.id).order_by('id').first())
+
+        # 1. Current FileField upload
+        if entry.audio_file:
+            try:
+                if os.path.exists(entry.audio_file.path):
+                    audio_url = entry.audio_file.url
+            except (ValueError, OSError):
+                pass
+
+        # 2. Check legacy/pre-stored audio file
+            if not audio_url and entry.forecast_date and entry.forecast_time:
+        
+                legacy_filename = (f"{entry.forecast_date}_{entry.forecast_time.strftime('%H%M_%p')}_NMS_BZ.mp3")
+        
+                legacy_path = os.path.join(settings.MEDIA_ROOT, "forecast", "general", "audio", legacy_filename)
+        
+                if os.path.exists(legacy_path):
+                    audio_url = (f"{settings.MEDIA_URL}forecast/general/audio/{legacy_filename}")
+
     else:
         entry = None
-
-    previous_entry  = (ForecastGeneral.objects.filter(id__lt=entry.id).order_by('-id').first())
-    next_entry      = (ForecastGeneral.objects.filter(id__gt=entry.id).order_by('id').first())
-
-    audio_url = None
-
-    # 1. Current FileField upload
-    if entry.audio_file:
-        try:
-            if os.path.exists(entry.audio_file.path):
-                audio_url = entry.audio_file.url
-        except (ValueError, OSError):
-            pass
-
-    # 2. Check legacy/pre-stored audio file
-    if not audio_url and entry.forecast_date and entry.forecast_time:
-
-        legacy_filename = (f"{entry.forecast_date}_{entry.forecast_time.strftime('%H%M_%p')}_NMS_BZ.mp3")
-
-        legacy_path = os.path.join(settings.MEDIA_ROOT, "forecast", "general", "audio", legacy_filename)
-
-        if os.path.exists(legacy_path):
-            audio_url = (f"{settings.MEDIA_URL}forecast/general/audio/{legacy_filename}")
+        previous_entry  = None
+        next_entry      = None
 
     if request.method == 'POST':
         form = ForecastGeneralForm(request.POST, request.FILES, instance=entry)
 
         if form.is_valid():
             saved_entry = form.save(commit=False)
+            audio_field = ForecastGeneral._meta.get_field("audio_file")
+
+            print("UPLOAD TO:", audio_field.upload_to)
+            print("AUDIO BEFORE SAVE:", saved_entry.audio_file)
+            print("FORECAST DATE:", saved_entry.forecast_date)
+            print("FORECAST TIME:", saved_entry.forecast_time)
+
             saved_entry.save()
+
+            print("AUDIO AFTER SAVE:", saved_entry.audio_file.name)
+
             form.save_m2m()
             messages.success(request, "Forecast Deatils saved successfully.")
         
@@ -147,77 +158,23 @@ def general_forecast_entry(request, id=None):
         'next_entry': next_entry,
     })
 
-############# GENERAL FORECASTS: Category #############
-def general_forecast_category_list(request, id=None):
-    page_name = "General Forecast Categories"
-    qs = ForescastGeneralCategory.objects.all().order_by('id')
-
-    table = ForecastGeneralCategoryTable(qs)
-    table.empty_text = "No records available"
-    RequestConfig(request).configure(table)
-
-    # Load entry ONLY if id is provided
-    entry = None
-
-    context = {
-        #'id' : id,
-        'entry': entry,  
-        'page_name': page_name,
-        'prev_page': 'Weather Forecasts',
-        'table': table,
-        'new_url':  reverse('forecasts:general_forecast_category_entry'),
-        'back_url': reverse('forecasts:index'),
-        #'api_url': "/api/pest-risk/",
-    }
-    return render(request, 'district-forecast/parameters_table_list.html', context)
-
-def general_forecast_category_entry(request, id=None):
-
-    page_name = "General Forecast Category Entry"
-
-    # If id exists => update, else => create new
-    if id:
-        entry = get_object_or_404(ForescastGeneralCategory, id=id)
-    else:
-        entry = None
-
-    if request.method == 'POST':
-        form = GeneralForecastCategoryForm(request.POST, instance=entry)
-
-        if form.is_valid():
-            saved_entry = form.save()    # Creates or updates
-            return redirect('forecasts:general_forecast_category_list', saved_entry.id)
-        
-    else:
-        form = GeneralForecastCategoryForm(instance=entry)
-
-    return render(request, 'district-forecast/parameters_entry_form.html', {
-        'page_name':    page_name,
-        'prev_page':    'General Weather Forecast Categories',
-        'new_url':      reverse('forecasts:general_forecast_category_entry'),
-        'details_url':  "",
-        'back_url':     reverse('forecasts:general_forecast_category_list'),
-        'form': form,
-        'entry': entry
-    })
-
-def general_forecast_category_delete(request, id):
+def general_forecast_delete(request, id):
     
-    entry = get_object_or_404(ForescastGeneralCategory, id=id)
+    entry = get_object_or_404(ForecastGeneral, id=id)
 
-    qs = ForescastGeneralCategory.objects.all().order_by('id')
+    qs = ForecastGeneral.objects.all().order_by('id')
     qs = qs.order_by('id')
     
-    page_name = "General Forecast Categories Entry"
+    page_name = "DELETE General Weather Forecast Entry"
 
     if request.method == "POST":
         entry.delete()
-        return redirect('forecasts:general_forecast_category_list')  # redirect anywhere you prefer
-
-    return render(request, "district-forecast/parameters_delete.html", {
+        messages.success(request, f"Record {id} deleted successfully.")
+        return redirect('forecasts:general_forecast_list')  # redirect anywhere you prefer
+        
+    return render(request, "general-weather-forecast/entry_delete.html", {
         "entry": entry,
         'page_name': page_name,
-        'back_url': reverse('forecasts:general_forecast_category_list'),
         'details': qs
     })
 
@@ -227,11 +184,16 @@ def general_forecast_generate_pdf(request, id=None):
     print(forecast.wind_direction_m2m)
 
     # Folder where PDF will be saved
-    folder_path = os.path.join(settings.MEDIA_ROOT, "forecast", "general", "doc", "test")
+    folder_path = os.path.join(settings.MEDIA_ROOT, "forecast", "general", "doc")
     os.makedirs(folder_path, exist_ok=True)
 
     # Full PDF file path
-    filename = f"General_Waether_Forecast_{forecast.forecast_date}_{forecast.forecast_time}_NMS_BZ.pdf"
+    filename = (
+        f"General_Forecast_"
+        f"{forecast.forecast_date}_"
+        f"{forecast.forecast_time.strftime('%I%M_%p')}_"
+        f"NMS_BZ.pdf"
+    )
     file_path = os.path.join(folder_path, filename)
 
     doc = SimpleDocTemplate(file_path, pagesize=letter, leftMargin=0.5 * inch, rightMargin=0.5 * inch, topMargin=1.8 * inch, bottomMargin=0.5 * inch)
@@ -447,7 +409,87 @@ def general_forecast_generate_pdf(request, id=None):
     available_width = doc.width
 
     # Return saved PDF as download
-    return FileResponse(open(file_path, "rb"), as_attachment=False, filename=filename)
+    #return FileResponse(open(file_path, "rb"), as_attachment=False, filename=filename)
+
+    messages.success(request, "PDF saved successfully.")
+
+    return redirect("forecasts:general_forecast_list")
+
+############# GENERAL FORECASTS: Category #############
+def general_forecast_category_list(request, id=None):
+    page_name = "General Forecast Categories"
+    qs = ForescastGeneralCategory.objects.all().order_by('id')
+
+    table = ForecastGeneralCategoryTable(qs)
+    table.empty_text = "No records available"
+    RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+
+    context = {
+        #'id' : id,
+        'entry': entry,  
+        'page_name': page_name,
+        'prev_page': 'Weather Forecasts',
+        'table': table,
+        'new_url':  reverse('forecasts:general_forecast_category_entry'),
+        'back_url': reverse('forecasts:index'),
+        #'api_url': "/api/pest-risk/",
+    }
+    return render(request, 'district-forecast/parameters_table_list.html', context)
+
+def general_forecast_category_entry(request, id=None):
+
+    page_name = "General Forecast Category Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(ForescastGeneralCategory, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = GeneralForecastCategoryForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('forecasts:general_forecast_category_list', saved_entry.id)
+        
+    else:
+        form = GeneralForecastCategoryForm(instance=entry)
+
+    return render(request, 'district-forecast/parameters_entry_form.html', {
+        'page_name':    page_name,
+        'prev_page':    'General Weather Forecast Categories',
+        'new_url':      reverse('forecasts:general_forecast_category_entry'),
+        'details_url':  "",
+        'back_url':     reverse('forecasts:general_forecast_category_list'),
+        'form': form,
+        'entry': entry
+    })
+
+def general_forecast_category_delete(request, id):
+    
+    entry = get_object_or_404(ForescastGeneralCategory, id=id)
+
+    qs = ForescastGeneralCategory.objects.all().order_by('id')
+    qs = qs.order_by('id')
+    
+    page_name = "General Forecast Categories Entry"
+
+    if request.method == "POST":
+        entry.delete()
+        return redirect('forecasts:general_forecast_category_list')  # redirect anywhere you prefer
+
+    return render(request, "district-forecast/parameters_delete.html", {
+        "entry": entry,
+        'page_name': page_name,
+        'back_url': reverse('forecasts:general_forecast_category_list'),
+        'details': qs
+    })
+
+
 
 def is_admin(user):
     return user.is_authenticated and user.is_staff

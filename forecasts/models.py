@@ -186,6 +186,20 @@ class ForescastGeneralCategory(models.Model):
     def __str__(self):
         return str(self.description)
 
+def general_forecast_audio_path(instance, filename):
+
+    if not instance.forecast_time:
+        return f"forecast/general/audio/{filename}"
+    
+    forecast_time = instance.forecast_time.strftime("%I%M_%p")
+
+    new_filename = (
+        f"{instance.forecast_date}_"
+        f"{forecast_time}_NMS_BZ.mp3"
+    )
+    print("AUDIO PATH CALLED:", new_filename)
+    return f"forecast/general/audio/{new_filename}"
+
 class ForecastGeneral(models.Model):
 
     legacy_id = models.PositiveBigIntegerField(null=True,blank=True,unique=True,db_index=True,)
@@ -194,7 +208,7 @@ class ForecastGeneral(models.Model):
     forecast_time       = models.TimeField(null=True, blank=True)
     forecast_category   = models.ForeignKey(ForescastGeneralCategory,on_delete=models.SET_NULL,null=True,blank=True,related_name="forecast_general_category")
 
-    audio_file = models.FileField(upload_to="general_forecast/{self.forecast_date}/", null=True, blank=True)
+    audio_file = models.FileField(upload_to=general_forecast_audio_path,null=True,blank=True)
 
     general_situation = models.CharField(max_length=255,null=True, blank=True)
     twenty_four_hour_forecast = models.CharField(max_length=1000,null=True, blank=True)

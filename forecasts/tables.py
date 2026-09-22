@@ -323,8 +323,13 @@ class ForecastGeneralTable(tables.Table):
             return format_html(link_html, url, pdf_class)
     
     def render_delete(self, record):
-        link_html   = '<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>'
-        url         = reverse("forecasts:district_forecast_delete", args=[record.id])
+        if record.is_published:
+            link_html   = '<span class="text-secondary text-opacity-25 cursor-block"><i class="fa-solid fa-trash"></i></span>'
+            url         = None
+        else:
+            link_html   = '<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>'
+            url         = reverse("forecasts:general_forecast_delete", args=[record.id])
+
         return format_html(link_html, url)
 
 class ForecastMarineCategoryTable(tables.Table):

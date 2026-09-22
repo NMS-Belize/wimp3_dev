@@ -3,16 +3,29 @@
         <h3 class="dashboard_title">Uploads</h3>
     </div>
     <div class="col-6">
-        <label class="form-label">Audio Recording:</label>
-        {% if audio_url %}
+    <label class="form-label">Audio Recording:</label>
+
+    {% if audio_url %}
         <div class="alert alert-light p-2">
-            <a href="{{ audio_url }}" target="_blank" class="btn btn-link text-decoration-none"><i class="fa-solid fa-volume-high"></i> Play Audio File</a>
+            <a href="{{ audio_url }}"
+               target="_blank"
+               class="btn btn-link text-decoration-none">
+                <i class="fa-solid fa-volume-high"></i>
+                Play Audio File
+            </a>
         </div>
-        {% else %}
-        {{ form.audio_file }}
-        <p class="alert alert-warning"><span class="text-muted mt-2 mb-0 clear">No file uploaded</span></p>
-        {% endif %}
-    </div>
+    {% endif %}
+
+    {{ form.audio_file }}
+
+    {% if not audio_url %}
+        <p class="alert alert-warning">
+            <span class="text-muted mt-2 mb-0 clear">
+                No file uploaded
+            </span>
+        </p>
+    {% endif %}
+</div>
     <div class="col-6">
         <label class="form-label">Image File:</label>
         

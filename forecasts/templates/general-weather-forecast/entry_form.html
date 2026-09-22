@@ -11,7 +11,7 @@
         <!--<button class="btn btn-outline-secondary" disabled>Next<i class="fa-solid fa-chevron-right ms-2"></i></button>-->
     {% endif %}
 </div>
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {% include "general-weather-forecast/tab_nav.html" %}
     <input id="btn_submit" type="submit" value="Save" class="btn ms-2" />

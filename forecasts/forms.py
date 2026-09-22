@@ -267,7 +267,7 @@ class ForecastGeneralForm(forms.ModelForm):
     wind_shift_direction    = forms.CharField(label = "Wind Direction Shift", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
     wind_shift_condition    = forms.CharField(label = "Wind Condition Shift", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
     sea_state_shift         = forms.CharField(label = "Sea State", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
-    light_variable          = forms.CharField(label = "Light + Variable", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
+    light_variable          = forms.IntegerField(label = "Light + Variable", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
 
     cap_alerts              = forms.ModelMultipleChoiceField(queryset=CAPAlertDetails.objects.select_related("identifier").order_by("-identifier__pubdate"), required=False, widget=CAPAlertSelectMultiple(attrs={ "class": "form-select select2"}))
     
@@ -276,7 +276,7 @@ class ForecastGeneralForm(forms.ModelForm):
         exclude = ("created_by", "created_time", "updated_by", "updated_time", "auto_update")
 
         def clean_forecast_file(self):
-            uploaded_file = self.cleaned_data.get("forecast_file")
+            uploaded_file = self.cleaned_data.get("audio_file")
     
             if not uploaded_file:
                 return uploaded_file
