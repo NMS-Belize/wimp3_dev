@@ -1,4 +1,4 @@
-<ul class="nav nav-tabs" id="myTab" role="tablist">
+<ul class="nav nav-tabs position-relative" id="myTab" role="tablist">
     <li class="nav-item" role="presentation">
         <button class="nav-link active" id="tab_general" data-bs-toggle="tab" data-bs-target="#tab_general_pane" type="button" role="tab" aria-controls="tab_general_pane" aria-selected="true">General Information</button>
     </li>
@@ -14,6 +14,12 @@
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="tab_attachments" data-bs-toggle="tab" data-bs-target="#tab_attachments_pane" type="button" role="tab" aria-controls="tab_attachments_pane" aria-selected="false">Attachments</button>
     </li>
+    <div class="position-absolute end-0 pt-2">
+        <div class="form-check form-switch ">
+            {{ form.is_published }}
+            <label class="form-check-label" for="has_user_account">Is Published?</label>
+        </div>
+    </div>      
 </ul>
 <div class="tab-content" id="myTabContent">
     <div class="tab-pane fade pt-3 show active" id="tab_general_pane" role="tabpanel" aria-labelledby="tab_general" tabindex="1">

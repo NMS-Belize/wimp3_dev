@@ -1,4 +1,6 @@
+import os
 from rest_framework import serializers
+from django.conf import settings
 #from system_core.serializers import DistrictSerializer, AlertLevelSerializer
 
 from forecasts.models import DistrictForecast, DistrictForecastDetails, ForecastGeneral
@@ -222,9 +224,19 @@ class DistrictForecastSerializer(serializers.ModelSerializer):
 
 class GeneralForecastSerializer(serializers.ModelSerializer):
 
+    wind_direction_m2m = serializers.StringRelatedField(many=True)
+    wind_condition_m2m = serializers.StringRelatedField(many=True)
+    wind_shift_direction_m2m = serializers.StringRelatedField(many=True)
+    wind_shift_condition_m2m = serializers.StringRelatedField(many=True)
+
+    sea_state_m2m = serializers.StringRelatedField(many=True)
+    sea_state_shift_m2m = serializers.StringRelatedField(many=True)
+
     created_by  = serializers.SerializerMethodField()
     updated_by  = serializers.SerializerMethodField()
     forecast_category = serializers.StringRelatedField()
+    pdf_file  = serializers.SerializerMethodField()
+    audio_file  = serializers.SerializerMethodField()
 
     class Meta:
         model   = ForecastGeneral
@@ -239,3 +251,29 @@ class GeneralForecastSerializer(serializers.ModelSerializer):
         if obj.updated_by:
             return obj.updated_by.get_full_name() or obj.updated_by.username
         return ""
+
+    def get_audio_file(self, obj):
+            
+        forecast_time   = obj.forecast_time.strftime("%I%M_%p")
+        audio_filename        = (f"{obj.forecast_date}_{forecast_time}_NMS_BZ.mp3")
+
+        # Actual filesystem path
+        audio_path = os.path.join(settings.MEDIA_ROOT,"forecast","general","audio",audio_filename)
+
+        if os.path.exists(audio_path):
+            return f"{settings.MEDIA_URL}forecast/general/audio/{audio_filename}"
+        else:
+            return ""
+
+    def get_pdf_file(self, obj):
+        
+        forecast_time   = obj.forecast_time.strftime("%I%M_%p")
+        filename        = (f"General_Forecast_{obj.forecast_date}_{forecast_time}_NMS_BZ.pdf")
+
+        # Actual filesystem path
+        pdf_path = os.path.join(settings.MEDIA_ROOT,"forecast","general","doc",filename)
+
+        if os.path.exists(pdf_path):
+            return f"{settings.MEDIA_URL}forecast/general/doc/{filename}"
+        else:
+            return ""

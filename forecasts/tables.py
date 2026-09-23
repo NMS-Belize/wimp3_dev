@@ -207,7 +207,7 @@ class ForecastGeneralTable(tables.Table):
     audio_file      = tables.Column(empty_values=(),verbose_name="MP3",orderable=False, attrs={"th": {"style": "width:40px; text-align:center;","class": ""},"td": {"style": "text-align:center;","class": "col_mp3"}})
     pdf_file        = tables.Column(empty_values=(),verbose_name="PDF",orderable=False, attrs={"th": {"style": "width:40px; text-align:center;","class": ""},"td": {"style": "text-align:center;","class": "col_pdf"}})
 
-    is_published    = tables.TemplateColumn(template_name="general-weather-forecast/general_forecast_publish_toggle.html",verbose_name="Status", orderable=False, attrs={ "th": { "style": "width:60px;", "class": "text-center",},"td": { "class": "text-center", },},)
+    is_published    = tables.TemplateColumn(template_name="general-weather-forecast/publish_toggle.html",verbose_name="Status", orderable=False, attrs={ "th": { "style": "width:60px;", "class": "text-center",},"td": { "class": "text-center", },},)
     id              = tables.Column(verbose_name="ID", attrs={"th": {"style": "width:80px;","class": "text-end",},"td": {"class": "text-end",},},)
     delete          = tables.Column(empty_values=(),verbose_name="Delete",orderable=False,attrs={"th": {"style": "width:65px;","class": "text-center col_edit",},"td": {"class": "text-center col_delete",},},)
 
@@ -215,6 +215,7 @@ class ForecastGeneralTable(tables.Table):
         model = ForecastGeneral
         fields = ("edit","forecast_date","forecast_time","forecast_category","general_situation","created_by","created_datetime","updated_by","updated_datetime","audio_file","pdf_file","image_file","is_published","id","delete")
         sequence = fields
+        template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
         # Add table HTML id and CSS classes here
         attrs = {
             "id": "table_general_forecast",           # unique table ID
@@ -315,7 +316,7 @@ class ForecastGeneralTable(tables.Table):
                 url = (f"{settings.MEDIA_URL}forecast/general/image/{filename}")
                 pdf_class = "btn_mp3"
             else:
-                url = reverse("forecasts:general_forecast_entry", args=[record.id])
+                url = reverse("forecasts:general_forecast_image", args=[record.id])
                 pdf_class = "text-secondary text-opacity-25"
     
             link_html   = '<a href="{}" class="{}" target="_blank"><i class="fa-regular fa-image"></i></a>'
@@ -386,6 +387,7 @@ class ForecastMarineTable(tables.Table):
         model = ForecastMarine
         fields = ("edit","forecast_date","forecast_time","forecast_category","synopsis","created_by","created_datetime","updated_by","updated_datetime","pdf_file","image_file","is_published","id","delete")
         sequence = fields
+        template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
         # Add table HTML id and CSS classes here
         attrs = {
             "id": "table_marine_forecast",           # unique table ID
@@ -501,6 +503,8 @@ class DistrictForecastTable(tables.Table):
         template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
         fields = ("edit","forecast_date","created_by","created_datetime","updated_by","latest_updated_datetime","pdf_file","is_published","id","delete")
         sequence = ("edit","forecast_date","created_by","created_datetime","updated_by","latest_updated_datetime","pdf_file","is_published","id","delete")
+
+        template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
 
         # Add table HTML id and CSS classes here
         attrs = {

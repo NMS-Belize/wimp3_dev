@@ -316,7 +316,8 @@ class ForecastGeneralForm(forms.ModelForm):
                 "coast_high_f","coast_high_c","coast_low_f","coast_low_c",
                 "inland_high_f","inland_high_c","inland_low_f","inland_low_c",
                 "hills_high_f","hills_high_c","hills_low_f","hills_low_c",
-                "light_variable"
+                "light_variable",
+                "is_published"
             ]
     
         widgets = {
@@ -371,7 +372,7 @@ class ForecastGeneralForm(forms.ModelForm):
             "hills_low_f": forms.NumberInput(attrs={"class": "form-control"}),
             "hills_low_c": forms.NumberInput(attrs={"class": "form-control"}),
 
-            #"publish_to_web": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            "is_published": forms.CheckboxInput(attrs={"class": "form-check-input"}),
 
             "forecaster_id": forms.TextInput(attrs={"class": "form-control"}),
         }

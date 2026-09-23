@@ -3,14 +3,21 @@ from click import style
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.staticfiles import finders
 from django.core.management import call_command
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.http import JsonResponse, FileResponse
+from django.http import JsonResponse, FileResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
+from io import BytesIO
+
 from django_tables2 import RequestConfig
+
+from pathlib import Path
+from PIL import Image as PILImage, ImageDraw, ImageFont
+
 from reportlab.lib import styles
 from rest_framework import status, viewsets
 from rest_framework.views import APIView
@@ -414,6 +421,200 @@ def general_forecast_generate_pdf(request, id=None):
     messages.success(request, "PDF saved successfully.")
 
     return redirect("forecasts:general_forecast_list")
+
+def draw_wrapped_text(draw,text,x,y,font,fill,max_width,line_spacing=12):
+
+    words = text.split()
+    line = ""
+
+    for word in words:
+
+        test_line = f"{line} {word}".strip()
+
+        bbox = draw.textbbox((0, 0),test_line,font=font)
+
+        width = bbox[2] - bbox[0]
+
+        if width <= max_width:
+            line = test_line
+
+        else:
+            draw.text((x, y),line,font=font,fill=fill)
+
+            bbox = draw.textbbox((0, 0),line,font=font)
+
+            line_height = bbox[3] - bbox[1]
+
+            y += line_height + line_spacing
+            line = word
+
+    if line:
+        draw.text((x, y),line,font=font,fill=fill)
+
+        bbox = draw.textbbox((0, 0),line,font=font)
+
+        y += (bbox[3] - bbox[1]) + line_spacing
+
+    return y
+
+def general_forecast_image(request, id):
+
+    forecast = get_object_or_404(ForecastGeneral, id=id)
+    background_path = finders.find("images/forecast_bg.png")
+
+    if not background_path:
+        raise FileNotFoundError("General forecast background image not found.")
+
+    image = PILImage.open(background_path).convert("RGBA")
+
+    # Get dimensions directly from the background
+    WIDTH, HEIGHT = image.size
+
+    # Drawing layer
+    draw = ImageDraw.Draw(image)
+
+    # IMAGE SETTINGS
+    #WIDTH = 1600
+    #HEIGHT = 900
+
+    #image   = PILImage.new("RGB", (WIDTH, HEIGHT), "#EAF4F8")
+    #draw    = ImageDraw.Draw(image)
+
+    # FONTS
+    # Change these paths if necessary
+    font_dir        = Path(settings.BASE_DIR) / "static" / "fonts"
+    font_light     = font_dir / "OpenSans-Light.ttf"
+    font_regular    = font_dir / "OpenSans-Regular.ttf"
+    font_bold       = font_dir / "OpenSans-Bold.ttf"
+    font_semibold   = font_dir / "OpenSans-SemiBold.ttf"
+
+    title_font      = ImageFont.truetype(str(font_bold),26)
+    heading_font    = ImageFont.truetype(str(font_bold),20)
+    normal_font     = ImageFont.truetype(str(font_regular),16)
+    small_font      = ImageFont.truetype(str(font_regular),14)
+
+    # COLORS - WIMP3 STYLE
+    NAVY = "#0B1E33"
+    TEAL = "#013C58"
+    AQUA = "#229EBD"
+    LIGHT_AQUA = "#63BBCF"
+    WHITE = "#FFFFFF"
+    GREY = "#5F6B73"
+
+    SPACE = 30
+
+    y = 140
+
+    
+    #draw.rectangle([(0, 0), (WIDTH, 100)],fill=NAVY)
+
+    # TITLE
+    draw.text((70, y),"GENERAL WEATHER FORECAST",font=title_font, fill=NAVY)
+    bbox = draw.textbbox((70, y),"GENERAL WEATHER FORECAST",font=normal_font)
+    y = bbox[3] + 35
+
+    # DATE / TIME
+    forecast_date = forecast.forecast_date.strftime("%b %d, %Y")
+    forecast_time = forecast.forecast_time.strftime("%I:%M %p")
+
+    draw.text((70, y),f"Date: {forecast_date}, {forecast_time}",font=heading_font,fill=TEAL)
+    bbox = draw.textbbox((70, y),"",font=normal_font)
+    y = bbox[3] + SPACE
+
+    # ADD GENERAL SITUATION
+    draw.text((70, y),"General Situation",font=heading_font,fill=TEAL)
+    bbox = draw.textbbox((70, y),"",font=normal_font)
+    y = bbox[3] + SPACE
+
+    
+    situation = getattr(forecast,"general_situation","No general situation available.")
+    y = draw_wrapped_text(draw,str(situation),70,y,normal_font,NAVY,max_width=1450)
+
+    # 24HR WEATHER FORECAST
+    y += 60
+    draw.text((70, y),"24-Hour Forecast",font=heading_font,fill=TEAL)
+    y += 30
+    forecast_text = getattr(forecast,"twenty_four_hour_forecast","No forecast available.")
+    draw_wrapped_text(draw,str(forecast_text),70,y,normal_font,NAVY,max_width=1450)
+
+    # 24HR WEATHER FORECAST
+    y += 60
+    draw.text((70, y),"24-Hour Outlook",font=heading_font,fill=TEAL)
+    y += 30
+    outlook = getattr(forecast,"outlook","No forecast available.")
+    draw_wrapped_text(draw,str(outlook),70,y,normal_font,NAVY,max_width=1450)
+
+    # FOOTER
+    footer_y = HEIGHT - 80
+
+    #draw.rectangle([(0, footer_y), (WIDTH, HEIGHT)],fill=TEAL)
+
+    draw.text((70, footer_y + 25),"National Meteorological Service of Belize",font=small_font,fill=WHITE)
+
+    # SAVE TO MEDIA DIRECTORY
+    filename = (
+        f"General_Forecast_"
+        f"{forecast.forecast_date.strftime('%Y-%m-%d')}_"
+        f"{forecast.forecast_time.strftime('%H%M')}_"
+        f"NMS_BZ.png"
+    )
+
+    directory = Path(settings.MEDIA_ROOT) / "general_forecast" / "images"
+    directory.mkdir(parents=True, exist_ok=True)
+
+    filepath = directory / filename
+
+    image.save(filepath, format="PNG", optimize=True)
+
+    # WRITE PNG TO BROWSER
+    buffer = BytesIO()
+
+    image.save(buffer,format="PNG",optimize=True)
+
+    buffer.seek(0)
+
+    response = HttpResponse(buffer.getvalue(),content_type="image/png")
+    # inline = display image in browser
+    response["Content-Disposition"] = (f'inline; filename="{filename}"')
+    return response
+
+def general_forecast_toggle_is_published(request, id):
+    record = get_object_or_404(ForecastGeneral, id=id)
+
+    if not record.is_published:
+        # Unpublish ALL records first
+        ForecastGeneral.objects.filter(is_published=True).update(is_published=False)
+
+        # Publish selected
+        record.is_published = True
+        status = "published"
+
+    else:
+        # If already published → unpublish it
+        record.is_published = False
+        status = "unpublished"
+
+    record.save(update_fields=["is_published"])
+
+    messages.success(request, f"Record {status} successfully.")
+    return redirect("forecasts:general_forecast_list")
+
+@require_POST
+def general_forecast_toggle_is_published_ajax(request, id):
+    record = get_object_or_404(ForecastGeneral, id=id)
+
+    is_published = request.POST.get("is_published") == "true"
+
+    if is_published:
+        ForecastGeneral.objects.exclude(id=record.id).update(is_published=False)
+
+    record.is_published = is_published
+    record.save(update_fields=["is_published"])
+
+    return JsonResponse({
+        "success": True,
+        "is_published": record.is_published
+    })
 
 ############# GENERAL FORECASTS: Category #############
 def general_forecast_category_list(request, id=None):
@@ -1131,7 +1332,7 @@ def district_forecast_generate_pdf(request, id=None):
     main_text   = ParagraphStyle("MainText",    parent = styles["Normal"],  fontName = "OpenSans-Regular",  fontSize = 10, leading = 18, alignment = TA_LEFT, textColor = "#000000", spaceAfter = 6)
     foot_text   = ParagraphStyle("FootText",    parent = styles["Normal"],  fontName = "OpenSans-Regular",  fontSize = 8, leading = 12, alignment = TA_LEFT, textColor = "#000000", spaceAfter = 2)
     table_head  = ParagraphStyle("TableHeader", parent = styles["Normal"],  fontName = "OpenSans-Bold",     fontSize = 9, leading = 9, spaceAfter = 10 )
-    table_first = ParagraphStyle("TableCol1",   parent = styles["Normal"],  fontName="OpenSans-Bold",       fontSize = 10 )
+    table_first = ParagraphStyle("TableCol1",   parent = styles["Normal"],  fontName  ="OpenSans-Bold",       fontSize = 10 )
     table_body  = ParagraphStyle("TableBody",   parent = styles["Normal"],  fontName = "OpenSans-Regular",  fontSize = 10, leading = 12, spaceAfter = 0 )
     risk_text   = ParagraphStyle("RiskText",    parent = styles["Normal"],  fontName = "OpenSans-Bold",     fontSize = 10, spaceAfter = 40 )
 
