@@ -1,11 +1,14 @@
 from datetime import timezone
 from unicodedata import category
 
+from django_ckeditor_5.widgets import CKEditor5Widget
+
+
 from click import option
 from django import forms
 from pytz import timezone
 from .models import (DistrictForecast, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, 
-                     Probability, Severity, ForecastGeneral, ForescastGeneralCategory, 
+                     Probability, Severity, ForecastGeneral, ForescastGeneralCategory, ForecastDiscussion,
                      WindCondition, WindDirection,
                      ForecastMarine, ForescastMarineCategory
 )
@@ -273,26 +276,7 @@ class ForecastGeneralForm(forms.ModelForm):
     
     class Meta:
         model = ForecastGeneral
-        exclude = ("created_by", "created_time", "updated_by", "updated_time", "auto_update")
 
-        def clean_forecast_file(self):
-            uploaded_file = self.cleaned_data.get("audio_file")
-    
-            if not uploaded_file:
-                return uploaded_file
-    
-            allowed_extensions = (".mp3")
-    
-            if not uploaded_file.name.lower().endswith(allowed_extensions):
-                raise forms.ValidationError("Only MP3 files are allowed.")
-    
-            maximum_size = 10 * 1024 * 1024
-    
-            if uploaded_file.size > maximum_size:
-                raise forms.ValidationError("The uploaded file cannot be larger than 10 MB.")
-    
-            return uploaded_file
-        
         fields = [ 
                 "forecast_date", "forecast_time", "forecast_category",
                 "general_situation","audio_file","twenty_four_hour_forecast",
@@ -318,6 +302,7 @@ class ForecastGeneralForm(forms.ModelForm):
                 "hills_high_f","hills_high_c","hills_low_f","hills_low_c",
                 "light_variable",
                 "is_published"
+                
             ]
     
         widgets = {
@@ -337,9 +322,6 @@ class ForecastGeneralForm(forms.ModelForm):
 
             "advisory":         forms.Textarea(attrs={"rows": 3, "class": "form-control"}),
             "outlook":          forms.Textarea(attrs={"rows": 5, "class": "form-control"}),
-
-            #"cap_alerts":       forms.SelectMultiple(attrs={'class': 'form-select select2'}),
-            #"cap_alerts":       CAPAlertSelectMultiple(attrs={"class": "form-select select2"}),
 
             "tropical_alerts":  forms.SelectMultiple(attrs={'class': 'form-select select2'}),
 
@@ -373,9 +355,25 @@ class ForecastGeneralForm(forms.ModelForm):
             "hills_low_c": forms.NumberInput(attrs={"class": "form-control"}),
 
             "is_published": forms.CheckboxInput(attrs={"class": "form-check-input"}),
-
-            "forecaster_id": forms.TextInput(attrs={"class": "form-control"}),
         }
+
+    def clean_forecast_file(self):
+        uploaded_file = self.cleaned_data.get("audio_file")
+
+        if not uploaded_file:
+            return uploaded_file
+
+        allowed_extensions = (".mp3")
+
+        if not uploaded_file.name.lower().endswith(allowed_extensions):
+            raise forms.ValidationError("Only MP3 files are allowed.")
+
+        maximum_size = 10 * 1024 * 1024
+
+        if uploaded_file.size > maximum_size:
+            raise forms.ValidationError("The uploaded file cannot be larger than 10 MB.")
+
+        return uploaded_file
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -425,4 +423,25 @@ class ForecastMarineForm(forms.ModelForm):
             if not isinstance(field.widget, forms.CheckboxInput):
                 field.widget.attrs.setdefault("class", "form-control")
 
-        
+class ForecastDiscussionForm(forms.ModelForm):
+
+    class Meta:
+        model = ForecastDiscussion
+
+        fields = [
+            "forecast_id",
+            "forecast_discussion",
+        ]
+
+        widgets = {
+            "forecast_id":    forms.Select(attrs={"class": "form-select"}),
+            # WYSIWYG
+            "forecast_discussion":         forms.TextInput(attrs={"class": "form-control"}),
+        }
+
+        '''"forecast_discussion": CKEditor5Widget(
+                        attrs={
+                            "class": "django_ckeditor_5",
+                        },
+                        config_name="default",
+                    ),'''

@@ -15,7 +15,7 @@ from django.conf import settings
 
 from forecasts.models import (
     DistrictForecast, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, 
-    ForecastGeneral, ForescastGeneralCategory, ForecastMarine, ForescastMarineCategory, 
+    ForecastGeneral, ForescastGeneralCategory, ForecastMarine, ForescastMarineCategory, ForecastDiscussion,
     Severity, Probability
 )
 
@@ -332,6 +332,101 @@ class ForecastGeneralTable(tables.Table):
             url         = reverse("forecasts:general_forecast_delete", args=[record.id])
 
         return format_html(link_html, url)
+
+
+class ForecastDiscussionTable(tables.Table):
+    edit            = tables.Column(empty_values=(),verbose_name="Edit",orderable=False,attrs={"th": {"style": "width:60px;","class": "text-center",},"td": {"class": "col_edit text-center",},},)
+
+    forecast_date       = tables.Column(verbose_name="Forecast Date", attrs={"th": {"class": "", "style": "width:120px;","class": "col_link"},"td": {"class": "text-start", },},)
+    forecast_time       = tables.TimeColumn(verbose_name="Time", format="h:i A", attrs={"th": {"style": "width:80px;","class": ""}, "td": {"class": "",},},)
+    forecast_category   = tables.Column(verbose_name="Forecast Type",attrs={"th": {"style": "width:150px;",},"td": {},},)
+    
+    created_by          = tables.Column(verbose_name="Created By",attrs={"th": {"style": "width:120px;",},"td": {},},    )
+    created_datetime    = tables.DateTimeColumn(verbose_name="Created Date",format="M d, Y h:i A",attrs={"th": {"style": "width:160px;",},"td": {"class": "fst-italic"},},)
+
+    updated_by          = tables.Column(verbose_name="Updated By",attrs={"th": {"style": "width:120px;",},"td": {},},)
+    updated_datetime    = tables.DateTimeColumn(verbose_name="Updated Date", format="M d, Y h:i A", attrs={ "th": { "style": "width:160px;", }, "td": {"class": "fst-italic",} })
+
+    #pdf_file        = tables.Column(empty_values=(),verbose_name="PDF",orderable=False, attrs={"th": {"style": "width:40px; text-align:center;","class": ""},"td": {"style": "text-align:center;","class": "col_pdf"}})
+
+    id              = tables.Column(verbose_name="ID", attrs={"th": {"style": "width:80px;","class": "text-end",},"td": {"class": "text-end",},},)
+    delete          = tables.Column(empty_values=(),verbose_name="Delete",orderable=False,attrs={"th": {"style": "width:65px;","class": "text-center col_edit",},"td": {"class": "text-center col_delete",},},)
+
+    class Meta:
+        model = ForecastDiscussion
+        fields = ("edit","forecast_date","forecast_time","forecast_category","created_by","created_datetime","updated_by","updated_datetime","id","delete")
+        sequence = fields
+        template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
+        # Add table HTML id and CSS classes here
+        attrs = {
+            "id": "table_forecast_discussion",           # unique table ID
+            "class": "table table-striped table-condensed table-hover tbl_wimp3" # Bootstrap-friendly styling
+        }
+        order_by = "-id"
+
+    def render_edit(self, record):
+        link_html   = '<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>'
+        url         = reverse("forecasts:discussion_entry", args=[record.id])
+        return format_html(link_html, url, record.forecast_date.strftime("%B %d, %Y"))
+
+    def render_forecast_date(self, record):
+        forecast_date   = record.forecast_date.strftime("%b %d, %Y").upper()
+        link_html   = '<a href="{}" class="btn_link">{}</a>'
+        url         = reverse("forecasts:discussion_entry", args=[record.id])
+        return format_html(link_html, url, forecast_date)
+
+    '''def render_general_situation(self, value):
+        short = value[:20] + "..." if len(value) > 20 else value
+        return format_html('<span title="{}">{}</span>', value, short)'''
+
+    def render_created_by(self, record):
+        if not record:
+            return ""
+        
+        #first_name  = f"{record.created_by.first_name[:1]}"
+        last_name   = f"{record.created_by.last_name}"
+
+        if last_name:
+            return f"{last_name}"
+
+        return record.created_by
+
+    def render_updated_by(self, record):
+        if not record:
+            return ""
+        
+        #first_name  = f"{record.updated_by.first_name[:1]}"
+        last_name   = f"{record.updated_by.last_name}"
+
+        if last_name:
+            return f"{last_name}"
+
+        return record.updated_by
+    
+    '''def render_pdf_file(self, record):
+
+        forecast_time   = record.forecast_time.strftime("%I%M_%p")
+        filename        = (f"General_Forecast_{record.forecast_date}_{forecast_time}_NMS_BZ.pdf")
+
+        # Actual filesystem path
+        pdf_path = os.path.join(settings.MEDIA_ROOT,"forecast","general","doc",filename)
+
+        if os.path.exists(pdf_path):
+            url = (f"{settings.MEDIA_URL}forecast/general/doc/{filename}")
+            pdf_class = "btn_pdf"
+        else:
+            url = reverse("forecasts:general_forecast_generate_pdf", args=[record.id])
+            pdf_class = "text-secondary text-opacity-25"
+
+        link_html   = '<a href="{}" class="{}" target="_blank"><i class="fa-solid fa-file-pdf"></i></a>'
+        
+        return format_html(link_html, url, pdf_class)'''
+    
+    def render_delete(self, record):
+        link_html   = '<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>'
+        url         = reverse("forecasts:general_forecast_delete", args=[record.id])
+        return format_html(link_html, url)
+
 
 class ForecastMarineCategoryTable(tables.Table):
     edit    = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "text-center"}, "td": {"style": "","class": "col_edit"}})

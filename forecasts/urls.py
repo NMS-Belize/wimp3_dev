@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 from forecasts.views import WIMP2FilesAPIView
 
@@ -90,11 +90,17 @@ urlpatterns = [
     #path('marine-forecast/category/entry/<int:id>/delete/', views.general_forecast_category_delete, name='general_forecast_category_delete'),
     #path('marine-forecast/import-data/', views.import_general_weather_forecast_categories, name="import_general_weather_forecast_categories"),
 
-    
+    ## FORECAST DISCUSSION
+    path('forecast-discussion/list/', views.discussion_list, name="discussion_list"),
+    path('forecast-discussion/entry/', views.discussion_entry, name="discussion_entry"),
+    path('forecast-discussion/entry/<int:id>/', views.discussion_entry, name="discussion_entry"),
 
     #path('district-forecast/forecast-entry/<int:fk>/details/entry/',views.district_forecast_details_entry,name='district_forecast_details_entry'),
     #path('district-forecast/forecast-entry/<int:fk>/details/entry/<int:id>/',views.district_forecast_details_entry,name='district_forecast_details_entry'),
     #path('district-forecast/forecast-entry/<int:id>/details/',views.district_forecast_details_entry,name='district_forecast_details_entry'),
     #path('district-forecast/forecast-entry/<int:fk>/details/<int:id>/delete/',views.district_forecast_details_delete,name='district_forecast_details_delete'),
     #path('district-forecast/entry/<int:fk>/item/<int:id>/',views.district_forecast_details_entry_item,name='district_forecast_details_entry_item'),
+
+    # CKEditor 5
+    #path("ckeditor5/", include("django_ckeditor_5.urls")),
 ]

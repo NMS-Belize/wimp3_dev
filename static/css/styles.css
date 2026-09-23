@@ -521,7 +521,7 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
   font-weight: 600;
 }
 .nav-tabs .nav-link.active{
-  color:var(--wimp-sky-blue);
+  color:var(--wimp-blue);
   font-weight: 600;
 }
 

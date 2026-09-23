@@ -1,5 +1,6 @@
 from time import timezone
 
+from datetime import time
 from django.db import models
 from django.conf import settings
 from django.db.models import Max
@@ -187,25 +188,21 @@ class ForescastGeneralCategory(models.Model):
         return str(self.description)
 
 def general_forecast_audio_path(instance, filename):
-
-    if not instance.forecast_time:
-        return f"forecast/general/audio/{filename}"
-    
     forecast_time = instance.forecast_time.strftime("%I%M_%p")
 
     new_filename = (
         f"{instance.forecast_date}_"
         f"{forecast_time}_NMS_BZ.mp3"
     )
-    print("AUDIO PATH CALLED:", new_filename)
+
     return f"forecast/general/audio/{new_filename}"
 
 class ForecastGeneral(models.Model):
 
     legacy_id = models.PositiveBigIntegerField(null=True,blank=True,unique=True,db_index=True,)
 
-    forecast_date       = models.DateField()
-    forecast_time       = models.TimeField(null=True, blank=True)
+    forecast_date       = models.DateField(null=False,blank=False)
+    forecast_time       = models.TimeField(null=False, blank=False, default=time(0, 0))
     forecast_category   = models.ForeignKey(ForescastGeneralCategory,on_delete=models.SET_NULL,null=True,blank=True,related_name="forecast_general_category")
 
     audio_file = models.FileField(upload_to=general_forecast_audio_path,null=True,blank=True)
@@ -270,11 +267,8 @@ class ForecastGeneral(models.Model):
     created_by      = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="general_forecasts_created")
     updated_by      = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="general_forecasts_updated")
 
-    #created_by = models.CharField(max_length=11,null=True, blank=True)
-    created_datetime = models.DateTimeField(null=True, blank=True)
-
-    #updated_by = models.CharField(max_length=11,null=True, blank=True)
-    updated_datetime = models.DateTimeField(null=True, blank=True)
+    created_datetime = models.DateTimeField(auto_now_add=True)
+    updated_datetime = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = "General Weather Forecast"
@@ -283,6 +277,97 @@ class ForecastGeneral(models.Model):
     def __str__(self):
         return f"{self.forecast_date} ({self.id})"
 
+class ForecastDiscussion(models.Model):
+    forecast_date = models.DateField(null=False,blank=False)
+
+    forecast_time = models.TimeField(null=False,blank=False,default=time(0, 0))
+
+    forecast_category   = models.ForeignKey(ForescastGeneralCategory,on_delete=models.SET_NULL,null=True,blank=True,related_name="forecast_discussion_category")
+    forecast_discussion = models.TextField(null=True,blank=True)
+
+    #forecast_id = models.IntegerField(null=True, blank=True)
+
+    forecast_text = models.CharField(max_length=255,null=True,blank=True)
+
+    forecast_id = models.ForeignKey(ForecastGeneral,on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="forecast_discussions"
+    )
+
+    outlook = models.CharField(max_length=1000,null=True,blank=True)
+
+    advisory = models.CharField(max_length=1000,null=True,blank=True)
+
+    wind_speed = models.CharField(max_length=255,null=True,blank=True)
+
+    wind_direction = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True
+    )
+
+    wind_condition = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True
+    )
+
+    sea_state = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True
+    )
+
+    marine_wave = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True
+    )
+
+    wave = models.CharField(
+        max_length=11,
+        null=True,
+        blank=True
+    )
+
+    forecaster_id = models.IntegerField(null=True,blank=True)
+
+    created_by = models.ForeignKey(
+    settings.AUTH_USER_MODEL,
+    on_delete=models.SET_NULL,
+    null=True,
+    blank=True,
+    related_name="forecast_discussions_created"
+    )
+
+    updated_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="forecast_discussions_updated"
+    )
+    created_datetime = models.DateTimeField(auto_now_add=True)
+    updated_datetime = models.DateTimeField(auto_now=True)
+
+    auto_update = models.DateTimeField(null=True,blank=True)
+
+    legacy_id = models.PositiveBigIntegerField(
+        null=True,
+        blank=True,
+        unique=True,
+        db_index=True
+    )
+
+    class Meta:
+        verbose_name = "Forecast Discussion"
+        verbose_name_plural = "Forecast Discussions"
+        ordering = ["-forecast_date", "-forecast_time"]
+
+    def __str__(self):
+        return f"{self.forecast_date} {self.forecast_time} ({self.id})"
+    
 class ForescastMarineCategory(models.Model):
     description         = models.CharField(max_length=200)
     created_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="marine_forecasts_category_created")

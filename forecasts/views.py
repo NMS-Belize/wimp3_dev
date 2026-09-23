@@ -1,6 +1,8 @@
 import os, json
 from click import style
 
+from datetime import timezone
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.staticfiles import finders
@@ -35,12 +37,13 @@ from reportlab.platypus import Image, SimpleDocTemplate, Table, TableStyle, Para
 
 from forecasts.forms import (DistrictForecastDetailsForm, DistrictForecastForm, DistrictForecastInstructionsCategoryForm, DistrictForecastInstructionsForm, DistrictForecastPublishForm, 
                              SeverityForm, ProbabilityForm, 
-                             GeneralForecastCategoryForm, ForecastGeneralForm,
+                             GeneralForecastCategoryForm, ForecastGeneralForm, ForecastDiscussionForm, 
                              ForecastMarineForm
 )
-from forecasts.tables import DistrictForecastDetailsTable, DistrictForecastTable, InstructionsCategoryTable, SeverityTable, ProbabilityTable, InstructionsTable, ForecastGeneralTable, ForecastGeneralCategoryTable, ForecastMarineTable, ForecastMarineCategoryTable
+from forecasts.tables import DistrictForecastDetailsTable, DistrictForecastTable, InstructionsCategoryTable, SeverityTable, ProbabilityTable, InstructionsTable, ForecastGeneralTable, ForecastGeneralCategoryTable, ForecastDiscussionTable, ForecastMarineTable, ForecastMarineCategoryTable
 from forecasts.models import (
     ForecastGeneral, ForescastGeneralCategory, WindDirection, WindCondition, SeaState,
+    ForecastDiscussion, 
     ForecastMarine, ForescastMarineCategory, 
     DistrictForecast, DistrictForecastInstructions, DistrictForecastDetails, DistrictForecastInstructionsCategory, 
     Severity, Probability
@@ -134,14 +137,19 @@ def general_forecast_entry(request, id=None):
             saved_entry = form.save(commit=False)
             audio_field = ForecastGeneral._meta.get_field("audio_file")
 
-            print("UPLOAD TO:", audio_field.upload_to)
-            print("AUDIO BEFORE SAVE:", saved_entry.audio_file)
-            print("FORECAST DATE:", saved_entry.forecast_date)
-            print("FORECAST TIME:", saved_entry.forecast_time)
+            # New record
+            if saved_entry.pk is None:
+                saved_entry.created_by = request.user
+
+            # CREATE + UPDATE
+            saved_entry.updated_by = request.user
+
+            # If this forecast is being published,
+            # unpublish all other forecasts first
+            if form.cleaned_data.get("is_published"):
+                ForecastGeneral.objects.exclude(pk=saved_entry.pk).update(is_published=False)
 
             saved_entry.save()
-
-            print("AUDIO AFTER SAVE:", saved_entry.audio_file.name)
 
             form.save_m2m()
             messages.success(request, "Forecast Deatils saved successfully.")
@@ -707,6 +715,66 @@ def import_general_weather_forecast_categories(request):
         messages.error(request,f"General Weather Forecast Categories import failed: {error}")
 
     return redirect("forecasts:index")
+
+
+############# FORECAST Discussion: Main Entries #############
+def discussion_list(request, id=None):
+    page_name = "Forecast Discussions"
+    qs = ForecastDiscussion.objects.all().order_by('forecast_date', 'forecast_time')
+
+    filterset = ForecastGeneralFilter(request.GET, queryset=qs)
+        
+    table = ForecastDiscussionTable(filterset.qs)    
+    table.empty_text = "No records available"
+    RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+    if id is not None:
+        entry = get_object_or_404(ForecastDiscussion, id=id)
+
+    return render(request, 'general-weather-forecast/table_list_main.html', {
+        'id' : id,
+        'entry': entry,  
+        'page_name': page_name,
+        'prev_page': 'Weather Forecasts',
+        'table': table,
+        "filter": filterset,
+        'new_url':  reverse('forecasts:general_forecast_entry_new'),
+        'back_url': reverse('forecasts:index'),
+        #'api_url':  reverse('general-weather-forecast-list'),
+    })
+
+def discussion_entry(request, id=None):
+
+    page_name = "Forecast Discussion Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(ForecastDiscussion, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = ForecastDiscussionForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('forecasts:instructions_list', saved_entry.id)
+        
+    else:
+        form = ForecastDiscussionForm(instance=entry)
+
+    return render(request, 'discussion/entry_form.html', {
+        'page_name':    page_name,
+        'prev_page':    'District Forecast Instructions',
+        'new_url':      reverse('forecasts:instructions_list'),
+        'details_url':  "",
+        'back_url':     reverse('forecasts:instructions_list'),
+        'api_url':      "/api/pest-risk/",
+        'form': form,
+        'entry': entry
+    })
 
 ############# MARINE FORECASTS: Main Entries #############
 def marine_forecast_list(request, id=None):

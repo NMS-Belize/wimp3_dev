@@ -1,0 +1,65 @@
+{% extends "base_form.html" %}
+{% load static %}
+{% block content %}
+
+<div class="row">
+    <div class="col-12">
+        <form method="post" id="frm_entry_form" name="frm_entry_form">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-3">
+                    <label class="form-label">Forecast: </label>
+                    {{ form.forecast_id }}
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Forecast Discussion: </label>
+                    {{ form.forecast_discussion }}
+                </div>
+            </div>
+            <div class="col-3">
+                <input id="btn_submit" type="submit" value="Submit" class="btn ms-2" />
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'js/tinymce/tinymce.min.js' %}"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+
+    $('#id_forecast_id').select2({
+        placeholder: 'Select Forecast',
+        width: '100%',
+        closeOnSelect: false,
+    });
+
+    tinymce.init({
+        selector: "#id_forecast_discussion",
+
+        height: 450,
+
+        menubar: false,
+
+        plugins: [
+            "lists",
+            "link",
+            "table",
+            "code",
+            "fullscreen"
+        ],
+
+        toolbar:
+            "undo redo | " +
+            "bold italic underline | " +
+            "alignleft aligncenter alignright | " +
+            "bullist numlist | " +
+            "link table | " +
+            "removeformat | code fullscreen",
+
+        branding: false
+    });
+    
+});
+</script>
+{% endblock %}

@@ -24,19 +24,25 @@
         <div class="d-flex flex-row mb-2">
             {{ form.wind_direction_m2m }}<span class="ms-3 me-3 pt-2">BECOMING</span>{{ form.wind_shift_direction_m2m }}
         </div>
+        {% if user.is_superuser %}
         <div class="d-flex flex-row">
             {{ form.wind_direction }}<span class="ms-3 me-3 pt-2">BECOMING</span>{{ form.wind_shift_direction }}
         </div>
+        {% endif %}
     </div>
     <div class="col-6">
         <label class="form-label">Wind Conditions:</label>
         <div class="d-flex flex-row mb-2">
             {{ form.wind_condition_m2m }}<span class="ms-3 me-3 pt-2">BECOMING</span>{{ form.wind_shift_condition_m2m }}
         </div>
+        {% if user.is_superuser %}
         <div class="d-flex flex-row">
             {{ form.wind_condition }}<span class="ms-3 me-3 pt-2">BECOMING</span>{{ form.wind_shift_condition }}
         </div>
+        {% endif %}
+        {% if user.is_superuser %}
         <div class="mt-3">Light & Variable (Legacy Check): {{ form.light_variable }}</div>
+        {% endif %}
     </div>
     <div class="col-12 mt-5 mb-3">
         <div class="fs-5 text-uppercase fw-bold mb-0 fst-italic">Sea Conditions</div>
@@ -46,9 +52,11 @@
         <div class="d-flex flex-row mb-2">
             {{ form.sea_state_m2m }}<span class="ms-3 me-3 pt-2">BECOMING</span>{{ form.sea_state_shift_m2m }}
         </div>
+        {% if user.is_superuser %}
         <div class="d-flex flex-row">
             {{ form.sea_state }}<span class="ms-3 me-3 pt-2">BECOMING</span>{{ form.sea_state_shift }}
         </div>
+        {% endif %}
     </div>
     <div class="col-4">
         <label class="form-label">Waves:</label>
