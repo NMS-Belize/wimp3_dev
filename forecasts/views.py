@@ -897,6 +897,11 @@ def marine_forecast_entry(request, id=None):
             saved_entry.save()
             form.save_m2m()
 
+            marine_details_category = ForecastMarineDetailsCategory.objects.all().order_by("id")[:5]
+            
+            #for det in marine_details_category:
+            #    Forec.objects.get_or_create(forecast=saved_entry,forecast=det)
+
             action = request.POST.get("submit_action")
             
             if action == "continue":

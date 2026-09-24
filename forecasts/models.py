@@ -298,17 +298,10 @@ class ForecastDiscussion(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="forecast_discussions_created")
     updated_by = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="forecast_discussions_updated")
 
-    #created_datetime = models.DateTimeField(auto_now_add=True)
-    #updated_datetime = models.DateTimeField(auto_now=True)
-    created_datetime = models.DateTimeField(
-        null=True,
-        blank=True
-    )
-
-    updated_datetime = models.DateTimeField(
-        null=True,
-        blank=True
-    )
+    created_datetime = models.DateTimeField(auto_now_add=True,null=True,blank=True)
+    updated_datetime = models.DateTimeField(auto_now=True,null=True,blank=True)
+    #created_datetime = models.DateTimeField(null=True,blank=True)
+    #updated_datetime = models.DateTimeField(null=True,blank=True)
 
     auto_update = models.DateTimeField(null=True,blank=True)
 
@@ -435,6 +428,34 @@ class ForecastMarine(models.Model):
     def __str__(self):
         return f"{self.forecast_date} ({self.id})"
 
+class ForecastMarineDetails(models.Model):
+
+    legacy_id           = models.PositiveBigIntegerField(null=True,blank=True,unique=True,db_index=True,)
+    wind_speed          = models.CharField(max_length=10,null=True, blank=True)
+
+    wind_direction      = models.CharField(max_length=50, null=True, blank=True)
+    wind_direction_m2m  = models.ManyToManyField(WindDirection, blank=True,related_name="marine_forecast_details_forecasts_wind_direction")
+
+    wind_shift_condition        = models.CharField(max_length=50, null=True, blank=True)
+    wind_shift_condition_m2m    = models.ManyToManyField(WindCondition, blank=True,related_name="marine_forecast_details_wind_condition_shift")
+
+    sea_state       = models.CharField(max_length=255,null=True, blank=True)
+    sea_state_m2m   = models.ManyToManyField(SeaState, blank=True,related_name="marine_forecast_details_sea_state")
+
+    additional_info = models.TextField(null=True,blank=True)
+    
+    created_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="marine_forecasts_details_created")
+    updated_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="marine_forecasts_details_updated")
+    created_datetime    = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_datetime    = models.DateTimeField(auto_now=True,null=True)
+
+    class Meta:
+        verbose_name = "Marine Forecast Details"
+        verbose_name_plural = "Marine Forecast Details"
+
+    def __str__(self):
+        return str(self.description)
+    
 '''class ForecastMarineDetails(models.Model):
 
     #marine_type         = models.ForeignKey(ForescastMarineDetailsCategory,on_delete=models.SET_NULL,null=True,blank=True,related_name="forecast_marine_category") 
