@@ -423,25 +423,49 @@ class ForecastMarineForm(forms.ModelForm):
             if not isinstance(field.widget, forms.CheckboxInput):
                 field.widget.attrs.setdefault("class", "form-control")
 
+
+class ForecastItemSelect(forms.Select):
+    
+    def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):
+
+        option = super().create_option(name, value, label, selected, index, subindex=subindex, attrs=attrs)
+
+        if value and hasattr(value, "instance"):
+
+            forecast = value.instance
+
+            option["attrs"]["data-id"] = forecast.pk
+            option["attrs"]["data-date"] = (
+                forecast.forecast_date.strftime("%b %d, %Y")
+                if forecast.forecast_date else ""
+            )
+            option["attrs"]["data-time"] = (
+                forecast.forecast_time.strftime("%I:%M %p")
+                if forecast.forecast_time else ""
+            )
+            option["attrs"]["data-category"] = (
+                str(forecast.forecast_category)
+                if forecast.forecast_category else ""
+            )
+
+        return option
+    
 class ForecastDiscussionForm(forms.ModelForm):
+
+    general_forecast = forms.ModelChoiceField(
+        queryset=ForecastGeneral.objects.all().order_by("-id"),
+        required=True, 
+        widget=ForecastItemSelect(attrs={ "class": "form-select"})
+    )
 
     class Meta:
         model = ForecastDiscussion
 
         fields = [
-            "forecast_id",
+            "general_forecast",
             "forecast_discussion",
         ]
 
         widgets = {
-            "forecast_id":    forms.Select(attrs={"class": "form-select"}),
-            # WYSIWYG
-            "forecast_discussion":         forms.TextInput(attrs={"class": "form-control"}),
+            "forecast_discussion": CKEditor5Widget(attrs={"class": "django_ckeditor_5"},config_name="default"),
         }
-
-        '''"forecast_discussion": CKEditor5Widget(
-                        attrs={
-                            "class": "django_ckeditor_5",
-                        },
-                        config_name="default",
-                    ),'''

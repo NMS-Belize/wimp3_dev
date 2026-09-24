@@ -87,7 +87,30 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_filters',
     "django_select2",
+    "django_ckeditor_5",
 ]
+
+CKEDITOR_5_CONFIGS = {
+    "default": {
+        "toolbar": [
+            "heading",
+            "|",
+            "bold",
+            "italic",
+            "underline",
+            "link",
+            "|",
+            "bulletedList",
+            "numberedList",
+            "|",
+            "outdent",
+            "indent",
+            "|",
+            "undo",
+            "redo",
+        ],
+    },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -335,11 +335,11 @@ class ForecastGeneralTable(tables.Table):
 
 
 class ForecastDiscussionTable(tables.Table):
-    edit            = tables.Column(empty_values=(),verbose_name="Edit",orderable=False,attrs={"th": {"style": "width:60px;","class": "text-center",},"td": {"class": "col_edit text-center",},},)
+    edit            = tables.Column(empty_values=(),verbose_name="Edit",orderable=False,attrs={"th": {"style": "width:60px;","class": "text-center",},"td": {"class": "col_edit text-center",}})
 
-    forecast_date       = tables.Column(verbose_name="Forecast Date", attrs={"th": {"class": "", "style": "width:120px;","class": "col_link"},"td": {"class": "text-start", },},)
-    forecast_time       = tables.TimeColumn(verbose_name="Time", format="h:i A", attrs={"th": {"style": "width:80px;","class": ""}, "td": {"class": "",},},)
-    forecast_category   = tables.Column(verbose_name="Forecast Type",attrs={"th": {"style": "width:150px;",},"td": {},},)
+    forecast_date       = tables.Column(verbose_name="Forecast Date",empty_values=(), attrs={"th": {"class": "", "style": "width:120px;","class": "col_link"},"td": {"class": "", }})
+    forecast_time       = tables.TimeColumn(verbose_name="Forecast Time",empty_values=(), attrs={"th": {"style": "width:120px;","class": "text-end"}, "td": {"class": "text-end",}})
+    forecast_category   = tables.Column(verbose_name="Forecast Category", empty_values=(), attrs={"th": {"style": "",},"td": {},},)
     
     created_by          = tables.Column(verbose_name="Created By",attrs={"th": {"style": "width:120px;",},"td": {},},    )
     created_datetime    = tables.DateTimeColumn(verbose_name="Created Date",format="M d, Y h:i A",attrs={"th": {"style": "width:160px;",},"td": {"class": "fst-italic"},},)
@@ -365,19 +365,50 @@ class ForecastDiscussionTable(tables.Table):
         order_by = "-id"
 
     def render_edit(self, record):
-        link_html   = '<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>'
-        url         = reverse("forecasts:discussion_entry", args=[record.id])
-        return format_html(link_html, url, record.forecast_date.strftime("%B %d, %Y"))
+        if record.general_forecast:
+            forecast_date = record.general_forecast.forecast_date
+        else:
+            forecast_date = record.forecast_date
 
-    def render_forecast_date(self, record):
-        forecast_date   = record.forecast_date.strftime("%b %d, %Y").upper()
-        link_html   = '<a href="{}" class="btn_link">{}</a>'
-        url         = reverse("forecasts:discussion_entry", args=[record.id])
+        link_html = '<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>'
+        url = reverse("forecasts:discussion_entry", args=[record.id])
+
         return format_html(link_html, url, forecast_date)
 
-    '''def render_general_situation(self, value):
-        short = value[:20] + "..." if len(value) > 20 else value
-        return format_html('<span title="{}">{}</span>', value, short)'''
+    def render_forecast_date(self, record):
+        
+        if record.general_forecast:
+            forecast_date = record.general_forecast.forecast_date
+        else:
+            forecast_date = record.forecast_date
+
+        forecast_date = forecast_date.strftime('%b %d, %Y').upper()
+            
+        link_html   = '<a href="{}" class="btn_link">{}</a>'
+        url         = reverse("forecasts:discussion_entry", args=[record.id])
+
+        return format_html(link_html, url, forecast_date)
+
+    def render_forecast_time(self, record):
+            
+        if record.general_forecast:
+            forecast_time = record.general_forecast.forecast_time
+        else:
+            forecast_time = record.forecast_time
+
+        if forecast_time:
+            return forecast_time.strftime("%I:%M %p").lstrip("0")
+
+        return ""
+
+    def render_forecast_category(self, record):
+                
+        if record.general_forecast:
+            forecast_category = record.general_forecast.forecast_category
+        else:
+            forecast_category = record.forecast_category
+
+        return forecast_category
 
     def render_created_by(self, record):
         if not record:
@@ -402,25 +433,6 @@ class ForecastDiscussionTable(tables.Table):
             return f"{last_name}"
 
         return record.updated_by
-    
-    '''def render_pdf_file(self, record):
-
-        forecast_time   = record.forecast_time.strftime("%I%M_%p")
-        filename        = (f"General_Forecast_{record.forecast_date}_{forecast_time}_NMS_BZ.pdf")
-
-        # Actual filesystem path
-        pdf_path = os.path.join(settings.MEDIA_ROOT,"forecast","general","doc",filename)
-
-        if os.path.exists(pdf_path):
-            url = (f"{settings.MEDIA_URL}forecast/general/doc/{filename}")
-            pdf_class = "btn_pdf"
-        else:
-            url = reverse("forecasts:general_forecast_generate_pdf", args=[record.id])
-            pdf_class = "text-secondary text-opacity-25"
-
-        link_html   = '<a href="{}" class="{}" target="_blank"><i class="fa-solid fa-file-pdf"></i></a>'
-        
-        return format_html(link_html, url, pdf_class)'''
     
     def render_delete(self, record):
         link_html   = '<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>'
@@ -693,9 +705,6 @@ class DistrictForecastDetailsTable(tables.Table):
                         })
     
     district        = tables.Column(verbose_name="District",attrs={"th": {"style": "width:180px;","class": ""},"td": {"style": "","class": "text-start text-decoration-none"}})
-    
-    
-    
     temp_max_low    = tables.Column(verbose_name="TEMP °F (MAX, LOW)",attrs={"th": {"style": "width:100px;","class": ""},"td": {"style": "","class": "pe-4"}})
     temp_max_high   = tables.Column(verbose_name="TEMP °F (MAX, HIGH)",attrs={"th": {"style": "width:100px;","class": ""},"td": {"style": "","class": "pe-4"}})
     temp_min_low    = tables.Column(verbose_name="TEMP °F (MIN, LOW)",attrs={"th": {"style": "width:100px;","class": ""},"td": {"style": "","class": "pe-4"}})
@@ -945,5 +954,5 @@ class DistrictForecastDetailsTable(tables.Table):
             elif "critical" in risk_text:
                 risk_class = "critical"
 
-        link_html   = '<div class="fst-italic mb-1">{}</div><div class="row"><div class="col"><small>Probability:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Severity:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Risk:</small><br /><div class="badge {}">{}</span></div></div>'
-        return format_html(link_html, record.precip_max, prob_class, record.prob_precip_max, sev_class, record.sev_precip_max, risk_class, record.risk_precip_max)
+        link_html   = '<div class="fst-italic mb-1">{} - {}</div><div class="row"><div class="col"><small>Probability:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Severity:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Risk:</small><br /><div class="badge {}">{}</span></div></div>'
+        return format_html(link_html, record.precip_min, record.precip_max, prob_class, record.prob_precip_max, sev_class, record.sev_precip_max, risk_class, record.risk_precip_max)

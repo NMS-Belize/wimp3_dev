@@ -21,7 +21,7 @@ def dashboard(request):
     '''if id:
         entry = get_object_or_404(Company, id=id)
     else:
-        entry = None'''
+        entry = None'''  
             
     context = {
         'page_name': 'Dashboard'

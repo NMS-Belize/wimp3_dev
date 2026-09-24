@@ -733,14 +733,14 @@ def discussion_list(request, id=None):
     if id is not None:
         entry = get_object_or_404(ForecastDiscussion, id=id)
 
-    return render(request, 'general-weather-forecast/table_list_main.html', {
+    return render(request, 'discussion/table_list_main.html', {
         'id' : id,
         'entry': entry,  
         'page_name': page_name,
         'prev_page': 'Weather Forecasts',
         'table': table,
         "filter": filterset,
-        'new_url':  reverse('forecasts:general_forecast_entry_new'),
+        'new_url':  reverse('forecasts:discussion_entry'),
         'back_url': reverse('forecasts:index'),
         #'api_url':  reverse('general-weather-forecast-list'),
     })
@@ -756,22 +756,41 @@ def discussion_entry(request, id=None):
         entry = None
 
     if request.method == 'POST':
+
         form = ForecastDiscussionForm(request.POST, instance=entry)
 
         if form.is_valid():
-            saved_entry = form.save()    # Creates or updates
-            return redirect('forecasts:instructions_list', saved_entry.id)
+
+            saved_entry = form.save(commit=False)
+
+            if not saved_entry.pk:
+                saved_entry.created_by = request.user
+
+            saved_entry.updated_by = request.user
+            saved_entry.save()
+
+            messages.success(request,"Forecast discussion saved successfully.")
+
+            action = request.POST.get("submit_action")
+
+            if action == "continue":
+                messages.success(request,"Forecast discussion saved successfully.")
+                return redirect("forecasts:discussion_entry", saved_entry.id)
+            elif action == "close":
+                messages.success(request,"Forecast discussion saved successfully.")
+                return redirect("forecasts:discussion_list")
+        else:
+            messages.error(request,f"ERRORS:{form.errors}")
+            #return redirect('forecasts:discussion_list', saved_entry.id)
         
     else:
         form = ForecastDiscussionForm(instance=entry)
 
     return render(request, 'discussion/entry_form.html', {
         'page_name':    page_name,
-        'prev_page':    'District Forecast Instructions',
-        'new_url':      reverse('forecasts:instructions_list'),
-        'details_url':  "",
-        'back_url':     reverse('forecasts:instructions_list'),
-        'api_url':      "/api/pest-risk/",
+        'prev_page':    'Forecast Discussions',
+        'new_url':      reverse('forecasts:discussion_entry'),
+        'back_url':     reverse('forecasts:discussion_list'),
         'form': form,
         'entry': entry
     })

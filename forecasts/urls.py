@@ -1,6 +1,10 @@
+from django.conf import settings
+from django.conf.urls.static import static
 from django.urls import path, include
+
 from . import views
 from forecasts.views import WIMP2FilesAPIView
+
 
 app_name = 'forecasts'
 
@@ -101,6 +105,5 @@ urlpatterns = [
     #path('district-forecast/forecast-entry/<int:fk>/details/<int:id>/delete/',views.district_forecast_details_delete,name='district_forecast_details_delete'),
     #path('district-forecast/entry/<int:fk>/item/<int:id>/',views.district_forecast_details_entry_item,name='district_forecast_details_entry_item'),
 
-    # CKEditor 5
-    #path("ckeditor5/", include("django_ckeditor_5.urls")),
+    
 ]

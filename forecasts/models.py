@@ -278,9 +278,9 @@ class ForecastGeneral(models.Model):
         return f"{self.forecast_date} ({self.id})"
 
 class ForecastDiscussion(models.Model):
-    forecast_date = models.DateField(null=False,blank=False)
+    forecast_date = models.DateField(null=True,blank=True)
 
-    forecast_time = models.TimeField(null=False,blank=False,default=time(0, 0))
+    forecast_time = models.TimeField(null=True,blank=True,default=time(0, 0))
 
     forecast_category   = models.ForeignKey(ForescastGeneralCategory,on_delete=models.SET_NULL,null=True,blank=True,related_name="forecast_discussion_category")
     forecast_discussion = models.TextField(null=True,blank=True)
@@ -289,7 +289,7 @@ class ForecastDiscussion(models.Model):
 
     forecast_text = models.CharField(max_length=255,null=True,blank=True)
 
-    forecast_id = models.ForeignKey(ForecastGeneral,on_delete=models.SET_NULL,
+    general_forecast = models.ForeignKey(ForecastGeneral,on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name="forecast_discussions"

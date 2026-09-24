@@ -1,65 +1,60 @@
 {% extends "base_form.html" %}
 {% load static %}
 {% block content %}
-
+{{ form.media }}
 <div class="row">
     <div class="col-12">
         <form method="post" id="frm_entry_form" name="frm_entry_form">
             {% csrf_token %}
             <div class="row">
-                <div class="col-3">
-                    <label class="form-label">Forecast: </label>
-                    {{ form.forecast_id }}
+                <div class="col-12 d-flex mb-3">
+                    <label class="form-label">General Weather Forecast: </label>
+                    {{ form.general_forecast }}
                 </div>
                 <div class="col-12">
-                    <label class="form-label">Forecast Discussion: </label>
                     {{ form.forecast_discussion }}
                 </div>
             </div>
-            <div class="col-3">
-                <input id="btn_submit" type="submit" value="Submit" class="btn ms-2" />
+            <div class="col-12 mt-3">
+                <button id="btn_submit" name="submit_action" type="submit" value="continue" class="btn btn-success me-2" >Save & Continue</button>
+                <button id="btn_submit_close" name="submit_action" type="submit" value="close" class="btn btn-primary me-2">Save & Close</button>
+                <a id="btn_close" class="btn btn-danger" href="{{ back_url }}">Cancel</a>
             </div>
         </form>
     </div>
 </div>
 {% endblock %}
 {% block extra_js %}
-<script src="{% static 'js/tinymce/tinymce.min.js' %}"></script>
 <script type="text/javascript">
 $(document).ready(function () {
 
-    $('#id_forecast_id').select2({
-        placeholder: 'Select Forecast',
+    $('#id_general_forecast').select2({
         width: '100%',
-        closeOnSelect: false,
+        placeholder: 'Select General Weather Forecast',
+        allowClear: true,
+        templateResult: function(data) {
+            
+            if (!data.id) { return data.text; }
+            
+            const option = $(data.element);
+            const forecast_date  = option.data('date') || '';
+            const forecast_time = option.data('time') || '';
+            const forecast_category   = option.data('category') || '';
+            const forecast_id   = option.data('id') || '';
+            
+            return $(`<div>[ID: ${forecast_id}] ${forecast_date}, ${forecast_time} &mdash; ${forecast_category}</div>`);
+        },
+        templateSelection: function(data) {
+            if (!data.id) { return data.text; }
+            const option = $(data.element);
+            const forecast_date  = option.data('date') || '';
+            const forecast_time = option.data('time') || '';
+            const forecast_category   = option.data('category') || '';
+            const forecast_id   = option.data('id') || '';
+            
+            return $(`<span>[ID: ${forecast_id}] ${forecast_date}, ${forecast_time} &mdash; ${forecast_category}<span>`);
+        }
     });
-
-    tinymce.init({
-        selector: "#id_forecast_discussion",
-
-        height: 450,
-
-        menubar: false,
-
-        plugins: [
-            "lists",
-            "link",
-            "table",
-            "code",
-            "fullscreen"
-        ],
-
-        toolbar:
-            "undo redo | " +
-            "bold italic underline | " +
-            "alignleft aligncenter alignright | " +
-            "bullist numlist | " +
-            "link table | " +
-            "removeformat | code fullscreen",
-
-        branding: false
-    });
-    
 });
 </script>
 {% endblock %}

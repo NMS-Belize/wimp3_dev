@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand
 from django.db import connections, transaction
 from django.contrib.auth import get_user_model
 
-from forecasts.models import ForecastDiscussion, ForescastGeneralCategory
+from forecasts.models import ForecastDiscussion, ForescastGeneralCategory, ForecastGeneral
 
 User = get_user_model()
 
@@ -111,14 +111,21 @@ class Command(BaseCommand):
         records = []
         skipped_count = 0
 
-        # Load category IDs ONCE before processing rows
-        valid_category_ids = set(
-            ForescastGeneralCategory.objects.values_list("id",flat=True))
+        # Load IDs ONCE before processing rows
+        valid_forecast_ids = set(ForecastGeneral.objects.values_list("id", flat=True))
+        valid_category_ids = set(ForescastGeneralCategory.objects.values_list("id",flat=True))
 
         for data in rows:
 
             legacy_id = data["id"]
             forecast_date = data["forecast_date"]
+
+            legacy_forecast_id = data["forecast_id"]
+
+            if legacy_forecast_id in valid_forecast_ids:
+                general_forecast_id = legacy_forecast_id
+            else:
+                general_forecast_id = None
 
             # Required checks
             if not legacy_id or not forecast_date:
@@ -164,8 +171,8 @@ class Command(BaseCommand):
                 # WYSIWYG / HTML content
                 forecast_discussion = clean_required_text(data["forecast_discussion"]),
 
-                forecast_id=data["forecast_id"],
-                forecast=clean_optional_text(data["forecast"]),
+                general_forecast_id=general_forecast_id,
+                forecast_text=clean_optional_text(data["forecast"]),
 
                 outlook=clean_optional_text(data["outlook"]),
                 advisory=clean_optional_text(data["advisory"]),

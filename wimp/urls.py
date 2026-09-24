@@ -80,6 +80,9 @@ urlpatterns = [
     path('inventory/',      include('inventory.urls')),
     path('system/',         include('system_core.urls')),
     path("select2/",        include("django_select2.urls")),
+
+    # CKEditor 5
+    path("ckeditor5/", include("django_ckeditor_5.urls")),
 ]
 
 urlpatterns += static(
