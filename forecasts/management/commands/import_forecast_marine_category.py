@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
-from forecasts.models import ForescastMarineCategory 
+from forecasts.models import ForecastMarineCategory 
 
 class Command(BaseCommand):
     help = "Import Marine Forecast Categories from JSON"
@@ -36,7 +36,7 @@ class Command(BaseCommand):
         updated_count = 0
 
         for item in categories:
-            obj, created = ForescastMarineCategory.objects.update_or_create(
+            obj, created = ForecastMarineCategory.objects.update_or_create(
                 id=item["id"],
                 defaults={
                     "description": item["description"],

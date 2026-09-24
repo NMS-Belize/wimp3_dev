@@ -38,13 +38,13 @@ from reportlab.platypus import Image, SimpleDocTemplate, Table, TableStyle, Para
 from forecasts.forms import (DistrictForecastDetailsForm, DistrictForecastForm, DistrictForecastInstructionsCategoryForm, DistrictForecastInstructionsForm, DistrictForecastPublishForm, 
                              SeverityForm, ProbabilityForm, 
                              GeneralForecastCategoryForm, ForecastGeneralForm, ForecastDiscussionForm, 
-                             ForecastMarineForm
+                             ForecastMarineForm, MarineForecastDetailsCategoryForm, MarineForecastCategoryForm
 )
 from forecasts.tables import DistrictForecastDetailsTable, DistrictForecastTable, InstructionsCategoryTable, SeverityTable, ProbabilityTable, InstructionsTable, ForecastGeneralTable, ForecastGeneralCategoryTable, ForecastDiscussionTable, ForecastMarineTable, ForecastMarineCategoryTable
 from forecasts.models import (
     ForecastGeneral, ForescastGeneralCategory, WindDirection, WindCondition, SeaState,
     ForecastDiscussion, 
-    ForecastMarine, ForescastMarineCategory, 
+    ForecastMarine, ForecastMarineCategory, ForecastMarineDetailsCategory,
     DistrictForecast, DistrictForecastInstructions, DistrictForecastDetails, DistrictForecastInstructionsCategory, 
     Severity, Probability
 )
@@ -769,8 +769,6 @@ def discussion_entry(request, id=None):
             saved_entry.updated_by = request.user
             saved_entry.save()
 
-            messages.success(request,"Forecast discussion saved successfully.")
-
             action = request.POST.get("submit_action")
 
             if action == "continue":
@@ -795,7 +793,27 @@ def discussion_entry(request, id=None):
         'entry': entry
     })
 
-############# MARINE FORECASTS: Main Entries #############
+def discussion_delete(request, id):
+    
+    entry = get_object_or_404(ForecastDiscussion, id=id)
+
+    qs = ForecastDiscussion.objects.all().order_by('id')
+    qs = qs.order_by('id')
+    
+    page_name = "Forecast Discussion Entry"
+
+    if request.method == "POST":
+        entry.delete()
+        return redirect('forecasts:discussion_list')  # redirect anywhere you prefer
+
+    return render(request, "discussion/entry_delete.html", {
+        "entry": entry,
+        'page_name': page_name,
+        'back_url': reverse('forecasts:discussion_list'),
+        'details': qs
+    })
+
+############# MARINE FORECAST / Entries #############
 def marine_forecast_list(request, id=None):
 
     page_name = "Marine Forecasts"
@@ -836,8 +854,8 @@ def marine_forecast_entry(request, id=None):
     else:
         entry = None
 
-    previous_entry  = (ForecastMarine.objects.filter(id__lt=entry.id).order_by('-id').first())
-    next_entry      = (ForecastMarine.objects.filter(id__gt=entry.id).order_by('id').first())
+    #previous_entry  = (ForecastMarine.objects.filter(id__lt=entry.id).order_by('-id').first())
+    #next_entry      = (ForecastMarine.objects.filter(id__gt=entry.id).order_by('id').first())
 
     pdf_url = None
 
@@ -850,7 +868,7 @@ def marine_forecast_entry(request, id=None):
             pass'''
 
     # 2. Check legacy/pre-stored audio file
-    if entry.forecast_date and entry.forecast_time:
+    '''if entry.forecast_date and entry.forecast_time:
 
         legacy_filename = (f"Marine_Forecast_{entry.forecast_date}_{entry.forecast_time.strftime('%I%M_%p')}_NMS_BZ.mp3")
         print(legacy_filename)
@@ -858,40 +876,78 @@ def marine_forecast_entry(request, id=None):
         legacy_path = os.path.join(settings.MEDIA_ROOT, "forecast", "marine", "doc", legacy_filename)
 
         if os.path.exists(legacy_path):
-            pdf_url = (f"{settings.MEDIA_URL}forecast/marine/doc/{legacy_filename}")
+            pdf_url = (f"{settings.MEDIA_URL}forecast/marine/doc/{legacy_filename}")'''
 
     if request.method == 'POST':
         form = ForecastMarineForm(request.POST, request.FILES, instance=entry)
 
         if form.is_valid():
             saved_entry = form.save(commit=False)
+
+            # New record
+            '''if entry is None:
+                saved_entry.created_by = request.user
+            else:
+                # Updating - preserve original creator
+                saved_entry.created_by = entry.created_by'''
+
+            # CREATE + UPDATE
+            saved_entry.updated_by = request.user
+            
             saved_entry.save()
             form.save_m2m()
-            messages.success(request, "Forecast Deatils saved successfully.")
-        
-            return redirect('forecasts:general_forecast_list', saved_entry.id)
+
+            action = request.POST.get("submit_action")
+            
+            if action == "continue":
+                messages.success(request,"Forecast discussion saved successfully.")
+                return redirect("forecasts:marine_forecast_entry", saved_entry.id)
+            elif action == "close":
+                messages.success(request,"Forecast discussion saved successfully.")
+                return redirect("forecasts:marine_forecast_list")
         else:
             messages.error(request, f"Form could not be saved: {form.errors.as_text()}")
-
+            return redirect('forecasts:marine_forecast_entry', saved_entry.id)
+           
     else:
         form = ForecastMarineForm(instance=entry)
 
     return render(request, 'marine-forecast/entry_form.html', {
         'page_name':    page_name,
-        'prev_page':    'General Weather Forecast',
-        'new_url':      reverse('forecasts:general_forecast_list'),
+        'prev_page':    'Marine Forecast',
+        'new_url':      reverse('forecasts:marine_forecast_entry'),
         'back_url':     reverse('forecasts:marine_forecast_list'),
         'form': form,
         'entry': entry,
-        "pdf_url": pdf_url,
-        'previous_entry': previous_entry,
-        'next_entry': next_entry,
+        #"pdf_url": pdf_url,
+        #'previous_entry': previous_entry,
+        #'next_entry': next_entry,
     })
 
+def marine_forecast_delete(request, id):
+    
+    entry = get_object_or_404(ForecastMarine, id=id)
 
+    qs = ForecastMarine.objects.all().order_by('id')
+    qs = qs.order_by('id')
+    
+    page_name = "Marine Forecast Entry"
+
+    if request.method == "POST":
+        entry.delete()
+        return redirect('forecasts:marine_forecast_list')  # redirect anywhere you prefer
+
+    return render(request, "marine-forecast/parameters_delete.html", {
+        "entry": entry,
+        'page_name': page_name,
+        'back_url': reverse('forecasts:marine_forecast_list'),
+        'details': qs
+    })
+
+############# MARINE FORECAST / CATEGORIES #############
 def marine_forecast_category_list(request, id=None):
     page_name = "Marine Forecast Categories"
-    qs = ForescastMarineCategory.objects.all().order_by('id')
+    qs = ForecastMarineCategory.objects.all().order_by('id')
 
     table = ForecastMarineCategoryTable(qs)
     table.empty_text = "No records available"
@@ -906,11 +962,11 @@ def marine_forecast_category_list(request, id=None):
         'page_name': page_name,
         'prev_page': 'Weather Forecasts',
         'table': table,
-        'new_url':  reverse('forecasts:general_forecast_category_entry'),
+        'new_url':  reverse('forecasts:marine_forecast_category_entry'),
         'back_url': reverse('forecasts:index'),
         #'api_url': "/api/pest-risk/",
     }
-    return render(request, 'district-forecast/parameters_table_list.html', context)
+    return render(request, 'marine-forecast/parameters_table_list.html', context)
 
 def marine_forecast_category_entry(request, id=None):
 
@@ -918,26 +974,101 @@ def marine_forecast_category_entry(request, id=None):
 
     # If id exists => update, else => create new
     if id:
-        entry = get_object_or_404(ForescastGeneralCategory, id=id)
+        entry = get_object_or_404(ForecastMarineCategory, id=id)
     else:
         entry = None
 
     if request.method == 'POST':
-        form = GeneralForecastCategoryForm(request.POST, instance=entry)
+        form = MarineForecastCategoryForm(request.POST, instance=entry)
 
         if form.is_valid():
             saved_entry = form.save()    # Creates or updates
-            return redirect('forecasts:general_forecast_category_list', saved_entry.id)
+            return redirect('forecasts:marine_forecast_category_list')
         
     else:
-        form = GeneralForecastCategoryForm(instance=entry)
+        form = MarineForecastCategoryForm(instance=entry)
 
-    return render(request, 'district-forecast/parameters_entry_form.html', {
+    return render(request, 'marine-forecast/parameters_entry_form.html', {
         'page_name':    page_name,
-        'prev_page':    'General Weather Forecast Categories',
-        'new_url':      reverse('forecasts:general_forecast_category_entry'),
+        'prev_page':    'Marine Forecast Categories',
+        'new_url':      reverse('forecasts:marine_forecast_category_entry'),
         'details_url':  "",
-        'back_url':     reverse('forecasts:general_forecast_category_list'),
+        'back_url':     reverse('forecasts:marine_forecast_category_list'),
+        'form': form,
+        'entry': entry
+    })
+
+def marine_forecast_toggle_is_published(request, id):
+    record = get_object_or_404(ForecastMarine, id=id)
+
+    if not record.is_published:
+        # Unpublish ALL records first
+        ForecastMarine.objects.filter(is_published=True).update(is_published=False)
+
+        # Publish selected
+        record.is_published = True
+        status = "published"
+
+    else:
+        # If already published → unpublish it
+        record.is_published = False
+        status = "unpublished"
+
+    record.save(update_fields=["is_published"])
+
+    messages.success(request, f"Record {status} successfully.")
+    return redirect("forecasts:marine_forecast_list")
+
+############# MARINE FORECAST / DETAILS / Categories #############
+def marine_forecast_details_category_list(request, id=None):
+
+    page_name = "Marine Forecast Datails Categories"
+    qs = ForecastMarineDetailsCategory.objects.all().order_by('id')
+
+    table = ForecastMarineCategoryTable(qs)
+    table.empty_text = "No records available"
+    RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+
+    context = {
+        'entry': entry,  
+        'page_name': page_name,
+        'prev_page': 'Weather Forecasts',
+        'table': table,
+        'new_url':  reverse('forecasts:marine_forecast_details_category_entry'),
+        'back_url': reverse('forecasts:index'),
+        #'api_url': "/api/pest-risk/",
+    }
+    return render(request, 'marine-forecast/parameters_table_list.html', context)
+
+def marine_forecast_details_category_entry(request, id=None):
+
+    page_name = "Marine Forecast Details Category Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(ForecastMarineDetailsCategory, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = MarineForecastDetailsCategoryForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('forecasts:marine_forecast_details_category_list')
+        
+    else:
+        form = MarineForecastDetailsCategoryForm(instance=entry)
+
+    return render(request, 'marine-forecast/parameters_entry_form.html', {
+        'page_name':    page_name,
+        'prev_page':    'Marine Forecast Details Categories',
+        'new_url':      reverse('forecasts:marine_forecast_details_category_entry'),
+        'details_url':  "",
+        'back_url':     reverse('forecasts:marine_forecast_details_category_list'),
         'form': form,
         'entry': entry
     })

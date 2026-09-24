@@ -10,7 +10,7 @@ from pytz import timezone
 from .models import (DistrictForecast, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, 
                      Probability, Severity, ForecastGeneral, ForescastGeneralCategory, ForecastDiscussion,
                      WindCondition, WindDirection,
-                     ForecastMarine, ForescastMarineCategory
+                     ForecastMarine, ForecastMarineCategory, ForecastMarineDetailsCategory
 )
 from alerts.models import CAPAlertDetails, CAPAlerts
 
@@ -382,37 +382,50 @@ class ForecastGeneralForm(forms.ModelForm):
             if not isinstance(field.widget, forms.CheckboxInput):
                 field.widget.attrs.setdefault("class", "form-control")
 
+class MarineForecastCategoryForm(forms.ModelForm):
+    class Meta:
+        model = ForecastMarineCategory
+        fields = ['description']
+        labels = {   
+            # <-- add human-friendly labels here
+            'description': 'Description:',
+        }
+        widgets = {            
+            'description': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+class MarineForecastDetailsCategoryForm(forms.ModelForm):
+    class Meta:
+        model = ForecastMarineDetailsCategory
+        fields = ['description']
+        labels = {   
+            # <-- add human-friendly labels here
+            'description': 'Description:',
+        }
+        widgets = {            
+            'description': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
 class ForecastMarineForm(forms.ModelForm):
 
     cap_alerts      = forms.ModelMultipleChoiceField(queryset=CAPAlertDetails.objects.select_related("identifier").order_by("-identifier__pubdate"), required=False, widget=CAPAlertSelectMultiple(attrs={ "class": "form-select select2"}))
-    #forecast_time   = forms.TimeField(input_formats=["%I:%M %p"], widget=forms.TimeInput(format="%I:%M %p", attrs={"type": "text", "class": "form-control", "placeholder": "hh:mm AM/PM" }))
     
     class Meta:
         model = ForecastMarine
-        exclude = ("created_by", "created_time", "updated_by", "updated_time", "auto_update")
         
-        fields = [ 
-                "forecast_date", "forecast_time", "forecast_category",
-                "synopsis", 
-                "advisory", 
-                "cap_alerts","tropical_alerts",
-                "sea_surface_temperature", "min_temperature", "max_temperature"
-            ]
+        fields = '__all__'
     
         widgets = {
             "forecast_date":    forms.DateInput(attrs={"type": "date", "class": "form-control"}),
-            "forecast_time":    forms.TimeInput(format="%H:%M p", attrs={"type": "time", "class": "form-control", "step": "60", "placeholder": "hh:mm AM/PM" }),
+            "forecast_time":    forms.TimeInput(format="%H:%M", attrs={"type": "time", "class": "form-control", "step": "60",}),
             "forecast_category":    forms.Select(attrs={"class": "form-select"}),
 
             "synopsis": forms.Textarea(attrs={"rows": 5, "class": "form-control"}),
-            
             "advisory":         forms.Textarea(attrs={"rows": 3, "class": "form-control"}),
             "sea_surface_temperature": forms.NumberInput(attrs={"class": "form-control"}),
             "min_temperature": forms.NumberInput(attrs={"class": "form-control"}),
             "max_temperature": forms.NumberInput(attrs={"class": "form-control"}),
-
-            #"publish_to_web": forms.CheckboxInput(attrs={"class": "form-check-input"}),
-
+            "is_published": forms.CheckboxInput(attrs={"class": "form-check-input"}),
             "forecaster_id": forms.TextInput(attrs={"class": "form-control"}),
         }
 
@@ -425,7 +438,7 @@ class ForecastMarineForm(forms.ModelForm):
 
 
 class ForecastItemSelect(forms.Select):
-    
+
     def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):
 
         option = super().create_option(name, value, label, selected, index, subindex=subindex, attrs=attrs)

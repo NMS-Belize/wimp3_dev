@@ -4,7 +4,7 @@ import django_filters
 from django import forms
 
 from django.contrib.auth.models import User
-from .models import ForecastGeneral, ForescastGeneralCategory, ForecastMarine, ForescastMarineCategory
+from .models import ForecastGeneral, ForescastGeneralCategory, ForecastMarine, ForecastMarineCategory
 
 class UserChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, user):
@@ -42,7 +42,7 @@ class ForecastMarineFilter(django_filters.FilterSet):
 
     forecast_date   = django_filters.DateFilter(lookup_expr="icontains", label="Forecast Date")
     forecast_time   = django_filters.CharFilter(lookup_expr="icontains", label="Forecast Time")
-    forecast_category = django_filters.ModelChoiceFilter(queryset=ForescastMarineCategory.objects.all(), label="Forecast Category", empty_label="All Categories")
+    forecast_category = django_filters.ModelChoiceFilter(queryset=ForecastMarineCategory.objects.all(), label="Forecast Category", empty_label="All Categories")
     synopsis        = django_filters.CharFilter(lookup_expr="icontains", label="Synopsis")
 
     created_by      = UserModelChoiceFilter(queryset=User.objects.filter(is_active=True).order_by("first_name","last_name","username"), label="Forecaster", empty_label="All Forecasters")

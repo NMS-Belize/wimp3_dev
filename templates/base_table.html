@@ -39,9 +39,11 @@
                 {% include "section_buttons.html" %}
                 {% include "messages.html" %}                
                 {% block content %}{% endblock %}
+                {%if api_url %}
                 <div class="row m-0 text-center">
                     <a class="api_link btn btn-link btn-sm text-decoration-none p-0" href="{{ api_url }}" target="_blank"><i class="fa-solid fa-list"></i>&nbsp;Load API Feed...</a>
-                </div>    
+                </div>
+                {% endif %}    
             </div>
             {% block footer %}
             <footer id="footer" class="footer p-4 text-center">
