@@ -1,9 +1,8 @@
 import os
 from rest_framework import serializers
 from django.conf import settings
-#from system_core.serializers import DistrictSerializer, AlertLevelSerializer
 
-from forecasts.models import DistrictForecast, DistrictForecastDetails, ForecastGeneral
+from forecasts.models import DistrictForecast, DistrictForecastDetails, ForecastGeneral, ForecastMarine, ForecastMarineDetails, SunRiseSet, MoonRiseSet, Tides
 
 class DistrictForecastDetailsSerializer(serializers.ModelSerializer):
     
@@ -275,5 +274,88 @@ class GeneralForecastSerializer(serializers.ModelSerializer):
 
         if os.path.exists(pdf_path):
             return f"{settings.MEDIA_URL}forecast/general/doc/{filename}"
+        else:
+            return ""
+
+class MarineForecastDetailsSerializer(serializers.ModelSerializer):
+    
+    wind_direction_m2m = serializers.SlugRelatedField(many=True, read_only=True, slug_field="description")
+    wind_condition_m2m = serializers.SlugRelatedField(many=True, read_only=True, slug_field="description")
+    sea_state_m2m = serializers.SlugRelatedField(many=True, read_only=True, slug_field="description")
+
+    class Meta:
+        model = ForecastMarineDetails
+        fields = "__all__"
+
+class TideSerializer(serializers.ModelSerializer):
+
+    tide_level_category = serializers.SlugRelatedField(read_only=True, slug_field="description")
+    tide_day_category = serializers.SlugRelatedField(read_only=True, slug_field="description")
+    tide_time = serializers.TimeField(format="%I:%M %p")
+
+    class Meta:
+        model = Tides
+        fields = ["id","tide_level_category","tide_day_category","tide_date","tide_time"]
+
+
+class SunSerializer(serializers.ModelSerializer):
+
+    sun_move_category = serializers.SlugRelatedField(read_only=True, slug_field="description")
+    sun_day_category = serializers.SlugRelatedField(read_only=True, slug_field="description")
+    sun_time = serializers.TimeField(format="%I:%M %p")
+
+    class Meta:
+        model = SunRiseSet
+        fields = ["id","sun_move_category","sun_day_category","sun_date","sun_time"]
+
+class MoonSerializer(serializers.ModelSerializer):
+
+    moon_move_category = serializers.SlugRelatedField(read_only=True, slug_field="description")
+    moon_day_category = serializers.SlugRelatedField(read_only=True, slug_field="description")
+    moon_time = serializers.TimeField(format="%I:%M %p")
+
+    class Meta:
+        model = MoonRiseSet
+        fields = ["id","moon_move_category","moon_day_category","moon_date","moon_time"]
+
+class MarineForecastSerializer(serializers.ModelSerializer):
+
+    created_by  = serializers.SerializerMethodField()
+    updated_by  = serializers.SerializerMethodField()
+    forecast_category = serializers.StringRelatedField()
+    #pdf_file  = serializers.SerializerMethodField()
+
+    forecast_category = serializers.StringRelatedField()
+
+    marine_details = MarineForecastDetailsSerializer(many=True, read_only=True, source="forecast_marine_details")
+    tides   = TideSerializer(many=True, read_only=True, source="marine_tides")
+    sun     = SunSerializer(many=True, read_only=True, source="sunrise_set")
+    moon    = MoonSerializer(many=True, read_only=True, source="moonrise_set")
+
+    class Meta:
+        model   = ForecastMarine
+        fields = ["id","legacy_id","forecast_date","forecast_time","forecast_category","synopsis","sea_surface_temperature","max_temperature", "min_temperature","advisory","cap_alerts","tropical_alerts","marine_details","tides","sun","moon","forecaster_id","created_by","created_datetime","updated_by","updated_datetime"]
+        #fields = "__all__"
+
+    def get_created_by(self, obj):
+        if obj.created_by:
+            return obj.created_by.get_full_name() or obj.created_by.username
+        return ""
+
+    def get_updated_by(self, obj):
+        if obj.updated_by:
+            return obj.updated_by.get_full_name() or obj.updated_by.username
+        return ""
+
+    def get_pdf_file(self, obj):
+        
+        forecast_time   = obj.forecast_time.strftime("%I%M_%p")
+        filename        = (f"Marine_Forecast_{obj.forecast_date}_{forecast_time}_NMS_BZ.pdf")
+
+        # Actual filesystem path
+        pdf_path = os.path.join(settings.MEDIA_ROOT,"forecast","marine","doc",filename)
+
+        if os.path.exists(pdf_path):
+            return f"{settings.MEDIA_URL}forecast/marine/doc/{filename}"
         else:
             return ""

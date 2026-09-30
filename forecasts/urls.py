@@ -99,6 +99,36 @@ urlpatterns = [
     path('marine-forecast/details-category/entry/', views.marine_forecast_details_category_entry, name="marine_forecast_details_category_entry"),
     path('marine-forecast/details-category/entry/<int:id>/', views.marine_forecast_details_category_entry, name="marine_forecast_details_category_entry_id"),
 
+    path('marine-forecast/wind-direction/list/', views.wind_direction_list, name='wind_direction_list'),
+    path('marine-forecast/wind-direction/list/<int:id>/', views.wind_direction_list, name='wind_direction_list'),
+    path('marine-forecast/wind-direction/entry/', views.wind_direction_entry, name="wind_direction_entry"),
+    path('marine-forecast/wind-direction/entry/<int:id>/', views.wind_direction_entry, name="wind_direction_entry"),
+    path('marine-forecast/wind-direction/<int:id>/delete/', views.wind_direction_delete, name='wind_direction_delete'),
+
+    path('marine-forecast/wind-condition/list/', views.wind_condition_list, name='wind_condition_list'),
+    path('marine-forecast/wind-condition/list/<int:id>/', views.wind_condition_list, name='wind_condition_list'),
+    path('marine-forecast/wind-condition/entry/', views.wind_condition_entry, name="wind_condition_entry"),
+    path('marine-forecast/wind-condition/entry/<int:id>/', views.wind_condition_entry, name="wind_condition_entry"),
+    path('marine-forecast/wind-condition/<int:id>/delete/', views.wind_condition_delete, name='wind_condition_delete'),
+
+    path('marine-forecast/tides/<int:id>/delete/', views.tide_delete, name='tide_delete'),
+
+    path('marine-forecast/sun/day/category/list/', views.sun_day_category_list, name='sun_day_category_list'),
+    path('marine-forecast/sun/move/category/list/', views.sun_move_category_list, name='sun_move_category_list'),
+    path("marine-forecast/sun/inline-update/",views.sun_inline_update,name="sun_inline_update"),
+    path("marine-forecast/sun/inline-update/<int:id>/",views.sun_inline_update,name="sun_inline_update"),
+    
+    path('marine-forecast/moon/category/list/', views.moon_day_category_list, name='moon_day_category_list'),
+    path("marine-forecast/moon/inline-update/",views.moon_inline_update,name="moon_inline_update"),
+    path("marine-forecast/moon/inline-update/<int:id>/",views.moon_inline_update,name="moon_inline_update"),
+
+    path('marine-forecast/details/entry/', views.marine_forecast_details_entry, name="marine_forecast_details_entry"),
+    path('marine-forecast/details/entry/<int:id>/', views.marine_forecast_details_entry, name="marine_forecast_details_entry"),
+    path("marine-forecast/details/inline-update/",views.marine_forecast_details_inline_update,name="marine_forecast_details_inline_update"),
+    path("marine-forecast/details/inline-update/<int:id>/",views.marine_forecast_details_inline_update,name="marine_forecast_details_inline_update"),
+    path("marine-forecast/tides/inline-update/",views.marine_forecast_tides_inline_update,name="marine_forecast_tides_inline_update"),
+    path("marine-forecast/tides/inline-update/<int:id>/",views.marine_forecast_tides_inline_update,name="marine_forecast_tides_inline_update"),
+
     ## FORECAST DISCUSSION
     path('forecast-discussion/list/', views.discussion_list, name="discussion_list"),
     path('forecast-discussion/entry/', views.discussion_entry, name="discussion_entry"),

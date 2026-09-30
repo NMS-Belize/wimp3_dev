@@ -103,6 +103,31 @@ class ProbabilityForm(forms.ModelForm):
             'color': forms.TextInput(attrs={'class': 'form-control'})
         }
 
+class WindDirectionForm(forms.ModelForm):
+    class Meta:
+        model = WindDirection
+        fields = ['description']
+        labels = {   
+            # <-- add human-friendly labels here
+            'description': 'Description:',
+        }
+        widgets = {            
+            'description': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+class WindConditionForm(forms.ModelForm):
+    class Meta:
+        model = WindCondition
+        fields = ['description']
+        labels = {   
+            # <-- add human-friendly labels here
+            'description': 'Description:',
+        }
+        widgets = {            
+            'description': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+
 class GeneralForecastCategoryForm(forms.ModelForm):
     class Meta:
         model = ForescastGeneralCategory
@@ -263,6 +288,7 @@ class ForecastGeneralForm(forms.ModelForm):
                 required    = False,
                 widget      = forms.SelectMultiple(attrs={"class": "form-select select2-multiple"})
             )'''
+    forecast_time           = forms.TimeField(input_formats=["%I:%M %p"], widget=forms.TimeInput(format="%I:%M %p", attrs={ "type": "text", "class": "form-control", "placeholder": "hh:mm AM/PM" }))
     
     wind_direction          = forms.CharField(label = "Wind Direction", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
     wind_condition          = forms.CharField(label = "Wind Condition", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
@@ -408,6 +434,12 @@ class MarineForecastDetailsCategoryForm(forms.ModelForm):
 
 class ForecastMarineForm(forms.ModelForm):
 
+    forecast_time   = forms.TimeField(input_formats=[
+                                            "%I:%M %p",   # 5:30 PM
+                                            "%I:%M%p",    # 5:30PM
+                                            "%H:%M",      # 17:30
+                                        ],
+                                      widget=forms.TimeInput(format="%I:%M %p", attrs={ "type": "text", "class": "form-control", "placeholder": "hh:mm AM/PM" }))
     cap_alerts      = forms.ModelMultipleChoiceField(queryset=CAPAlertDetails.objects.select_related("identifier").order_by("-identifier__pubdate"), required=False, widget=CAPAlertSelectMultiple(attrs={ "class": "form-select select2"}))
     
     class Meta:
@@ -417,9 +449,7 @@ class ForecastMarineForm(forms.ModelForm):
     
         widgets = {
             "forecast_date":    forms.DateInput(attrs={"type": "date", "class": "form-control"}),
-            "forecast_time":    forms.TimeInput(format="%H:%M", attrs={"type": "time", "class": "form-control", "step": "60",}),
             "forecast_category":    forms.Select(attrs={"class": "form-select"}),
-
             "synopsis": forms.Textarea(attrs={"rows": 5, "class": "form-control"}),
             "advisory":         forms.Textarea(attrs={"rows": 3, "class": "form-control"}),
             "sea_surface_temperature": forms.NumberInput(attrs={"class": "form-control"}),

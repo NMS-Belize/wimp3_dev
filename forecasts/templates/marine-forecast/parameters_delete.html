@@ -15,9 +15,10 @@
             <h6 class="mb-2"><strong>Entry Details:</strong></h6>
             <ul class="m-0">
                 <li>ID: <strong>{{ entry.id }}</strong></li>
-                <li>Forecast Date: <strong>{{ entry.forecast_date }}</strong></li>
-                <li>Forecast Time: <strong>{{ entry.forecast_time }}</strong></li>
-                <li>Forecast Category: <strong>{{ entry.forecast_category }}</strong></li>
+                {% if entry.forecast_date  %}<li>Forecast Date: <strong>{{ entry.forecast_date }}</strong></li>{% endif %}
+                {% if entry.forecast_time  %}<li>Forecast Time: <strong>{{ entry.forecast_time }}</strong></li>{% endif %}
+                {% if entry.forecast_category  %}<li>Forecast Category: <strong>{{ entry.forecast_category }}</strong></li>{% endif %}
+                {% if entry.description  %}<li>Forecast Category: <strong>{{ entry.description }}</strong></li>{% endif %}
             </ul>
         </div>
     </div>

@@ -1,7 +1,7 @@
-import os, json
+import os, json, re
 from click import style
 
-from datetime import timezone
+from datetime import timezone, timedelta, datetime
 
 from django.conf import settings
 from django.contrib import messages
@@ -36,15 +36,22 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import Image, SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 
 from forecasts.forms import (DistrictForecastDetailsForm, DistrictForecastForm, DistrictForecastInstructionsCategoryForm, DistrictForecastInstructionsForm, DistrictForecastPublishForm, 
-                             SeverityForm, ProbabilityForm, 
+                             SeverityForm, ProbabilityForm, WindDirectionForm, WindConditionForm, 
                              GeneralForecastCategoryForm, ForecastGeneralForm, ForecastDiscussionForm, 
                              ForecastMarineForm, MarineForecastDetailsCategoryForm, MarineForecastCategoryForm
 )
-from forecasts.tables import DistrictForecastDetailsTable, DistrictForecastTable, InstructionsCategoryTable, SeverityTable, ProbabilityTable, InstructionsTable, ForecastGeneralTable, ForecastGeneralCategoryTable, ForecastDiscussionTable, ForecastMarineTable, ForecastMarineCategoryTable
+from forecasts.tables import (DistrictForecastDetailsTable, DistrictForecastTable, 
+                              InstructionsCategoryTable, SeverityTable, ProbabilityTable, InstructionsTable, WindDirectionTable, WindConditionTable, 
+                              ForecastGeneralTable, ForecastGeneralCategoryTable, ForecastDiscussionTable, 
+                              ForecastMarineTable, ForecastMarineCategoryTable, ForecastMarineEntryDetailsTable, TidesTable, SunTable, MoonTable, SunDayTimeCategoryTable, MoonDayCategory, SunMoveCategoryTable,
+)
 from forecasts.models import (
     ForecastGeneral, ForescastGeneralCategory, WindDirection, WindCondition, SeaState,
     ForecastDiscussion, 
-    ForecastMarine, ForecastMarineCategory, ForecastMarineDetailsCategory,
+    ForecastMarine, ForecastMarineCategory, ForecastMarineDetailsCategory, ForecastMarineDetails,
+    Tides, TideDayCategory, TideLevelCategory, 
+    SunRiseSet, MoonRiseSet, SunDayCategory, 
+    MoonDayCategory, SunMovementCategory, MoonMovementCategory, 
     DistrictForecast, DistrictForecastInstructions, DistrictForecastDetails, DistrictForecastInstructionsCategory, 
     Severity, Probability
 )
@@ -52,7 +59,7 @@ from forecasts.models import (
 from forecasts.filters import ForecastGeneralFilter, ForecastMarineFilter
 from system_core.models import District
 
-from forecasts.serializers import DistrictForecastSerializer, DistrictForecastDetailsSerializer, GeneralForecastSerializer
+from forecasts.serializers import DistrictForecastSerializer, DistrictForecastDetailsSerializer, GeneralForecastSerializer, MarineForecastSerializer, MarineForecastDetailsSerializer
 
 PAGE_WIDTH, PAGE_HEIGHT = letter
 
@@ -717,7 +724,7 @@ def import_general_weather_forecast_categories(request):
     return redirect("forecasts:index")
 
 
-############# FORECAST Discussion: Main Entries #############
+############# FORECAST DISCUSSION #############
 def discussion_list(request, id=None):
     page_name = "Forecast Discussions"
     qs = ForecastDiscussion.objects.all().order_by('forecast_date', 'forecast_time')
@@ -851,21 +858,43 @@ def marine_forecast_entry(request, id=None):
     # If id exists => update, else => create new
     if id:
         entry = get_object_or_404(ForecastMarine, id=id)
+        qsd = ForecastMarineDetails.objects.filter(marine_forecast_id=id)
+        qst = Tides.objects.filter(marine_forecast_id=id)
+        qss = SunRiseSet.objects.filter(marine_forecast_id=id)
+        qsm = MoonRiseSet.objects.filter(marine_forecast_id=id)
+
+        previous_entry  = (ForecastMarine.objects.filter(id__lt=entry.id).order_by('-id').first())
+        next_entry      = (ForecastMarine.objects.filter(id__gt=entry.id).order_by('id').first())
     else:
         entry = None
+        qsd = ForecastMarineDetails.objects.none()
+        qst = Tides.objects.none()
+        qss = SunRiseSet.objects.none()
+        qsm = MoonRiseSet.objects.none()
 
-    #previous_entry  = (ForecastMarine.objects.filter(id__lt=entry.id).order_by('-id').first())
-    #next_entry      = (ForecastMarine.objects.filter(id__gt=entry.id).order_by('id').first())
+        previous_entry  = None
+        next_entry      = None
 
+    #filterset = ForecastMarineFilter(request.GET, queryset=qs)
+    #table = ForecastMarineTable(filterset.qs)
+
+    details_table = ForecastMarineEntryDetailsTable(qsd,prefix="details-")
+    details_table.empty_text = "No records available"
+    details_table.order_by = ("id")
+
+    tides_table = TidesTable(qst,prefix="tides-")
+    tides_table.empty_text = "No records available"
+    tides_table.order_by = ("id")
+
+    sun_table = SunTable(qss,prefix="sun-")
+    sun_table.empty_text = "No records available"
+    sun_table.order_by = ("id")
+
+    moon_table = MoonTable(qsm,prefix="moon-")
+    moon_table.empty_text = "No records available"
+    moon_table.order_by = ("id")
+    
     pdf_url = None
-
-    '''# 1. Current FileField upload
-    if entry.audio_file:
-        try:
-            if os.path.exists(entry.audio_file.path):
-                audio_url = entry.audio_file.url
-        except (ValueError, OSError):
-            pass'''
 
     # 2. Check legacy/pre-stored audio file
     '''if entry.forecast_date and entry.forecast_time:
@@ -882,25 +911,46 @@ def marine_forecast_entry(request, id=None):
         form = ForecastMarineForm(request.POST, request.FILES, instance=entry)
 
         if form.is_valid():
+
+            is_new = entry is None
+
             saved_entry = form.save(commit=False)
 
-            # New record
-            '''if entry is None:
+            if is_new:
                 saved_entry.created_by = request.user
-            else:
-                # Updating - preserve original creator
-                saved_entry.created_by = entry.created_by'''
 
             # CREATE + UPDATE
             saved_entry.updated_by = request.user
+
+            # If this forecast is being published, unpublish all other forecasts first
+            if form.cleaned_data.get("is_published"):
+                ForecastMarine.objects.exclude(pk=saved_entry.pk).update(is_published=False)
             
             saved_entry.save()
             form.save_m2m()
 
-            marine_details_category = ForecastMarineDetailsCategory.objects.all().order_by("id")[:5]
-            
-            #for det in marine_details_category:
-            #    Forec.objects.get_or_create(forecast=saved_entry,forecast=det)
+            if is_new:
+                marine_details_category = ForecastMarineDetailsCategory.objects.all().order_by("id")[:5]
+                
+                for d in marine_details_category:
+                    ForecastMarineDetails.objects.get_or_create(marine_forecast=saved_entry,marine_category=d)
+
+                tide_day = TideDayCategory.objects.all().order_by("id")[:2]
+                tide_category = TideLevelCategory.objects.all().order_by("id")[:2]
+
+                for td in tide_day:
+                    for t in tide_category:
+                        Tides.objects.get_or_create(marine_forecast=saved_entry, tide_level_category=t, tide_day_category=td)
+
+                sun_category = SunMovementCategory.objects.all().order_by("id")[:2]
+
+                for s in sun_category:
+                    SunRiseSet.objects.get_or_create(marine_forecast=saved_entry,sun_move_category=s)
+
+                moon_category = MoonMovementCategory.objects.all().order_by("id")[:2]
+                                        
+                for m in moon_category:
+                    MoonRiseSet.objects.get_or_create(marine_forecast=saved_entry,moon_move_category=m)
 
             action = request.POST.get("submit_action")
             
@@ -912,7 +962,7 @@ def marine_forecast_entry(request, id=None):
                 return redirect("forecasts:marine_forecast_list")
         else:
             messages.error(request, f"Form could not be saved: {form.errors.as_text()}")
-            return redirect('forecasts:marine_forecast_entry', saved_entry.id)
+            return redirect('forecasts:marine_forecast_entry') #, saved_entry.id
            
     else:
         form = ForecastMarineForm(instance=entry)
@@ -924,9 +974,13 @@ def marine_forecast_entry(request, id=None):
         'back_url':     reverse('forecasts:marine_forecast_list'),
         'form': form,
         'entry': entry,
+        'details_table': details_table,
+        'tides_table': tides_table,
+        'sun_table': sun_table,
+        'moon_table': moon_table,
         #"pdf_url": pdf_url,
-        #'previous_entry': previous_entry,
-        #'next_entry': next_entry,
+        'previous_entry': previous_entry,
+        'next_entry': next_entry,
     })
 
 def marine_forecast_delete(request, id):
@@ -1024,10 +1078,339 @@ def marine_forecast_toggle_is_published(request, id):
     messages.success(request, f"Record {status} successfully.")
     return redirect("forecasts:marine_forecast_list")
 
+############# WIND DIRECTION #############
+def wind_direction_list(request, id=None):
+    page_name = "Wind Direction"
+    qs = WindDirection.objects.all().order_by('id')
+        
+    table = WindDirectionTable(qs)    
+    table.empty_text = "No records available"
+    RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+    if id is not None:
+        entry = get_object_or_404(WindDirection, id=id)
+
+    return render(request, 'marine-forecast/parameters_table_list.html', {
+        'id' : id,
+        'entry': entry,  
+        'page_name': page_name,
+        'prev_page': 'Weather Forecasts',
+        'table': table,
+        'new_url':  reverse('forecasts:wind_direction_entry'),
+        'back_url': reverse('forecasts:index'),
+        #'api_url':  reverse('general-weather-forecast-list'),
+    })
+
+def wind_direction_entry(request, id=None):
+
+    page_name = "Wind Direction Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(WindDirection, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = WindDirectionForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('forecasts:wind_direction_list', saved_entry.id)
+    else:
+        form = WindDirectionForm(instance=entry)
+
+    return render(request, 'district-forecast/parameters_entry_form.html', {
+        'page_name': page_name,
+        'prev_page': 'Wind Direction List',
+        'new_url':  reverse('forecasts:wind_direction_entry'),
+        'back_url': reverse('forecasts:wind_direction_list'),
+        'form': form,
+        'entry': entry
+    })
+
+def wind_direction_delete(request, id):
+    
+    entry = get_object_or_404(WindDirection, id=id)
+
+    qs = WindDirection.objects.all().order_by('id')
+    qs = qs.order_by('id')
+    
+    page_name = "Wind Direction Delete"
+
+    if request.method == "POST":
+        entry.delete()
+        return redirect('forecasts:wind_direction_list')  # redirect anywhere you prefer
+
+    return render(request, "marine-forecast/parameters_delete.html", {
+        "entry": entry,
+        'page_name': page_name,
+        'back_url': reverse('forecasts:wind_direction_list'),
+        'details': qs
+    })
+
+############# WIND CONDITION #############
+def wind_condition_list(request, id=None):
+    page_name = "Wind Conditions"
+    qs = WindCondition.objects.all().order_by('id')
+        
+    table = WindConditionTable(qs)    
+    table.empty_text = "No records available"
+    RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+    if id is not None:
+        entry = get_object_or_404(WindCondition, id=id)
+
+    return render(request, 'marine-forecast/parameters_table_list.html', {
+        'id' : id,
+        'entry': entry,  
+        'page_name': page_name,
+        'prev_page': 'Weather Forecasts',
+        'table': table,
+        'new_url':  reverse('forecasts:wind_condition_entry'),
+        'back_url': reverse('forecasts:index'),
+    })
+
+def wind_condition_entry(request, id=None):
+
+    page_name = "Wind Direction Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(WindCondition, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = WindConditionForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('forecasts:wind_condition_list', saved_entry.id)
+    else:
+        form = WindConditionForm(instance=entry)
+
+    return render(request, 'district-forecast/parameters_entry_form.html', {
+        'page_name': page_name,
+        'prev_page': 'Wind Direction List',
+        'new_url':  reverse('forecasts:wind_condition_entry'),
+        'back_url': reverse('forecasts:wind_condition_list'),
+        'form': form,
+        'entry': entry
+    })
+
+def wind_condition_delete(request, id):
+    
+    entry = get_object_or_404(WindCondition, id=id)
+
+    qs = WindCondition.objects.all().order_by('id')
+    qs = qs.order_by('id')
+    
+    page_name = "Wind Condition Delete"
+
+    if request.method == "POST":
+        entry.delete()
+        return redirect('forecasts:wind_condition_list')  # redirect anywhere you prefer
+
+    return render(request, "marine-forecast/parameters_delete.html", {
+        "entry": entry,
+        'page_name': page_name,
+        'back_url': reverse('forecasts:wind_condition_list'),
+        'details': qs
+    })
+
+############# MARINE FORECAST / DETAILS #############
+def marine_forecast_details_entry(request, id=None):
+
+    page_name = "Marine Forecast Details Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(ForecastMarineDetailsCategory, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = MarineForecastDetailsCategoryForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('forecasts:marine_forecast_details_category_list')
+        
+    else:
+        form = MarineForecastDetailsCategoryForm(instance=entry)
+
+    return render(request, 'marine-forecast/parameters_entry_form.html', {
+        'page_name':    page_name,
+        'prev_page':    'Marine Forecast Details Categories',
+        'new_url':      reverse('forecasts:marine_forecast_details_category_entry'),
+        'details_url':  "",
+        'back_url':     reverse('forecasts:marine_forecast_details_category_list'),
+        'form': form,
+        'entry': entry
+    })
+
+@require_POST
+def marine_forecast_details_inline_update(request):
+
+    record_id = request.POST.get("id")
+    field = request.POST.get("field")
+
+    record = get_object_or_404(ForecastMarineDetails,id=record_id)
+
+    if field == "wind_direction":
+        values = request.POST.getlist("values")
+        record.wind_direction_m2m.set(values)
+
+        if hasattr(record, "updated_by"):
+            record.updated_by = request.user
+            record.save(update_fields=["updated_by"])
+
+        return JsonResponse({"success": True,"id": record.id,"field": field,"values": values})
+    
+    allowed_fields = ["wind_speed","wind_condition","additional_info"]
+
+    if field not in allowed_fields:
+        return JsonResponse({"success": False,"error": "Invalid field"}, status=400)
+
+    value = request.POST.get("value","")
+
+    setattr(record, field, value)
+
+    # If your model has updated_by
+    if hasattr(record, "updated_by"):
+        record.updated_by = request.user
+
+    record.save()
+    return JsonResponse({
+        "success": True
+    })
+    #return JsonResponse({"success": True,"id": record.id,"field": field,"value": value})
+
+@require_POST
+def marine_forecast_tides_inline_update(request):
+
+    record_id = request.POST.get("id")
+    field = request.POST.get("field")
+    value = request.POST.get("value","")
+
+    record = get_object_or_404(Tides,id=record_id)
+
+    allowed_fields = ["tide_day_category","tide_level_category","tide_time"]
+
+    if field not in allowed_fields:
+        return JsonResponse({"success": False,"error": "Invalid field"}, status=400)
+
+    try:
+        if field == "tide_day_category":
+            record.tide_day_category_id = int(value) if value else None
+
+        elif field == "tide_level_category":
+            record.tide_level_category_id = int(value) if value else None
+
+        elif field == "tide_time":
+            if not value:
+                record.tide_time = None
+            else:
+                try:
+                    value = value.strip().upper()
+                    value = re.sub(r"\s*(AM|PM)$", r" \1", value)
+                    record.tide_time = datetime.strptime(value,"%I:%M %p").time()
+
+                except ValueError:
+                    return JsonResponse({ "success": False, "error": "Enter a valid time, e.g. 05:05 AM or 07:54 PM"}, status=400)
+
+            record.save()
+
+        return JsonResponse({ "success": True, "id": record.id, "field": field, "value": value })
+
+    except Exception as e:
+        return JsonResponse({ "success": False, "error": str(e) }, status=400)
+
+@require_POST
+def sun_inline_update(request):
+
+    record_id = request.POST.get("id")
+    field = request.POST.get("field")
+    value = request.POST.get("value","")
+
+    record = get_object_or_404(SunRiseSet,id=record_id)
+
+    allowed_fields = ["sun_day_category","sun_time"]
+
+    if field not in allowed_fields:
+        return JsonResponse({"success": False,"error": "Invalid field"}, status=400)
+
+    try:
+        if field == "sun_day_category":
+            record.sun_day_category_id = int(value) if value else None
+
+        elif field == "sun_time":
+            if not value:
+                value = None
+            else:
+                try:
+                    value = value.strip().upper()
+                    value = re.sub(r"\s*(AM|PM)$", r" \1", value)
+                    record.sun_time = datetime.strptime(value,"%I:%M %p").time()
+
+                except ValueError:
+                    return JsonResponse({ "success": False, "error": "Enter a valid time, e.g. 05:05 AM or 07:54 PM"}, status=400)
+
+        #setattr(record, field, value)
+        record.save()
+
+        return JsonResponse({ "success": True, "id": record.id, "field": field, "value": value })
+
+    except Exception as e:
+        return JsonResponse({ "success": False, "error": str(e) }, status=400)
+
+@require_POST
+def moon_inline_update(request):
+
+    record_id = request.POST.get("id")
+    field = request.POST.get("field")
+    value = request.POST.get("value","")
+
+    record = get_object_or_404(MoonRiseSet,id=record_id)
+
+    allowed_fields = ["moon_day_category","moon_time"]
+
+    if field not in allowed_fields:
+        return JsonResponse({"success": False,"error": "Invalid field"}, status=400)
+
+    try:
+        if field == "moon_day_category":
+            record.moon_day_category_id = int(value) if value else None
+
+        elif field == "moon_time":
+            if not value:
+                value = None
+            else:
+                try:
+                    value = value.strip().upper()
+                    value = re.sub(r"\s*(AM|PM)$", r" \1", value)
+                    record.moon_time = datetime.strptime(value,"%I:%M %p").time()
+
+                except ValueError:
+                    return JsonResponse({ "success": False, "error": "Enter a valid time, e.g. 05:05 AM or 07:54 PM"}, status=400)
+
+        #setattr(record, field, value)
+        record.save()
+
+        return JsonResponse({ "success": True, "id": record.id, "field": field, "value": value })
+
+    except Exception as e:
+        return JsonResponse({ "success": False, "error": str(e) }, status=400)
+
 ############# MARINE FORECAST / DETAILS / Categories #############
 def marine_forecast_details_category_list(request, id=None):
 
-    page_name = "Marine Forecast Datails Categories"
+    page_name = "Marine Forecast Details Categories"
     qs = ForecastMarineDetailsCategory.objects.all().order_by('id')
 
     table = ForecastMarineCategoryTable(qs)
@@ -1077,6 +1460,96 @@ def marine_forecast_details_category_entry(request, id=None):
         'form': form,
         'entry': entry
     })
+
+############# MARINE FORECAST / TIDES  #############
+def tide_delete(request, id):
+    
+    entry = get_object_or_404(Tides, id=id)
+
+    qs = Tides.objects.all().order_by('id')
+    qs = qs.order_by('id')
+    
+    page_name = "Tides"
+
+    if request.method == "POST":
+        entry.delete()
+        return redirect('forecasts:marine_forecast_entry',id)  # redirect anywhere you prefer
+
+    return render(request, "discussion/entry_delete.html", {
+        "entry": entry,
+        'page_name': page_name,
+        'back_url': reverse('forecasts:discussion_list'),
+        'details': qs
+    })
+############# MARINE FORECAST / SUN & MOON / Categories #############
+def sun_day_category_list(request, id=None):
+
+    page_name = "Sun Day/Time Categories"
+    qs = SunDayCategory.objects.all().order_by('id')
+
+    table = ForecastMarineCategoryTable(qs)
+    table.empty_text = "No records available"
+    RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+
+    context = {
+        'entry': entry,  
+        'page_name': page_name,
+        'prev_page': 'Weather Forecasts',
+        'table': table,
+        'new_url':  reverse('forecasts:marine_forecast_details_category_entry'),
+        'back_url': reverse('forecasts:index'),
+        #'api_url': "/api/pest-risk/",
+    }
+    return render(request, 'marine-forecast/parameters_table_list.html', context)
+
+def sun_move_category_list(request, id=None):
+
+    page_name = "Sun Movement Categories"
+    qs = SunMovementCategory.objects.all().order_by('id')
+
+    table = SunMoveCategoryTable(qs)
+    table.empty_text = "No records available"
+    RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+
+    context = {
+        'entry': entry,  
+        'page_name': page_name,
+        'prev_page': 'Weather Forecasts',
+        'table': table,
+        #'new_url':  reverse('forecasts:marine_forecast_details_category_entry'),
+        'back_url': reverse('forecasts:index'),
+        #'api_url': "/api/pest-risk/",
+    }
+    return render(request, 'marine-forecast/parameters_table_list.html', context)
+
+def moon_day_category_list(request, id=None):
+
+    page_name = "Marine Forecast Datails Categories"
+    qs = MoonDayCategory.objects.all().order_by('id')
+
+    table = ForecastMarineCategoryTable(qs)
+    table.empty_text = "No records available"
+    RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+
+    context = {
+        'entry': entry,  
+        'page_name': page_name,
+        'prev_page': 'Weather Forecasts',
+        'table': table,
+        'new_url':  reverse('forecasts:marine_forecast_details_category_entry'),
+        'back_url': reverse('forecasts:index'),
+        #'api_url': "/api/pest-risk/",
+    }
+    return render(request, 'marine-forecast/parameters_table_list.html', context)
 
 ############# DISTRICT FORECATSTS: Risk Level Entry #############
 def instructions_list(request, id=None):
@@ -1946,5 +2419,16 @@ class GeneralForecastAllViewSet(viewsets.ModelViewSet):
 class GeneralForecastViewSet(viewsets.ModelViewSet):
     queryset = ForecastGeneral.objects.filter(is_published=True)
     serializer_class = GeneralForecastSerializer
+    pagination_class = None
+    http_method_names = ['get', 'head','options']
+
+class MarineForecastDetailsViewSet(viewsets.ModelViewSet):
+   queryset = ForecastMarineDetails.objects.all().order_by('id')
+   serializer_class = MarineForecastDetailsSerializer
+   http_method_names = ['get', 'head','options']
+
+class MarineForecastViewSet(viewsets.ModelViewSet):
+    queryset = ForecastMarine.objects.filter(is_published=True)
+    serializer_class = MarineForecastSerializer
     pagination_class = None
     http_method_names = ['get', 'head','options']

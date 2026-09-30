@@ -331,7 +331,7 @@ class ForecastMarineCategory(models.Model):
 
 class ForecastMarineDetailsCategory(models.Model):
     description         = models.CharField(max_length=200)
-    display_order     = models.IntegerField(null=True, blank=True)
+    display_order       = models.IntegerField(null=True, blank=True)
     created_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="marine_forecasts_details_category_created")
     updated_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="marine_forecasts_details_category_updated")
     created_datetime    = models.DateTimeField(auto_now_add=True, null=True, blank=True)
@@ -430,14 +430,16 @@ class ForecastMarine(models.Model):
 
 class ForecastMarineDetails(models.Model):
 
-    legacy_id           = models.PositiveBigIntegerField(null=True,blank=True,unique=True,db_index=True,)
+    legacy_id           = models.PositiveBigIntegerField(null=True,blank=True,unique=True,db_index=True)
+
+    marine_forecast   = models.ForeignKey(ForecastMarine,on_delete=models.SET_NULL,null=True,blank=True,related_name="forecast_marine_details")
+    marine_category   = models.ForeignKey(ForecastMarineDetailsCategory,on_delete=models.SET_NULL,null=True,blank=True,related_name="forecast_marine_details")
     wind_speed          = models.CharField(max_length=10,null=True, blank=True)
 
     wind_direction      = models.CharField(max_length=50, null=True, blank=True)
     wind_direction_m2m  = models.ManyToManyField(WindDirection, blank=True,related_name="marine_forecast_details_forecasts_wind_direction")
 
-    wind_shift_condition        = models.CharField(max_length=50, null=True, blank=True)
-    wind_shift_condition_m2m    = models.ManyToManyField(WindCondition, blank=True,related_name="marine_forecast_details_wind_condition_shift")
+    wind_condition        = models.CharField(max_length=50, null=True, blank=True)
 
     sea_state       = models.CharField(max_length=255,null=True, blank=True)
     sea_state_m2m   = models.ManyToManyField(SeaState, blank=True,related_name="marine_forecast_details_sea_state")
@@ -454,33 +456,162 @@ class ForecastMarineDetails(models.Model):
         verbose_name_plural = "Marine Forecast Details"
 
     def __str__(self):
-        return str(self.description)
-    
-'''class ForecastMarineDetails(models.Model):
+        return str(self.marine_category)
 
-    #marine_type         = models.ForeignKey(ForescastMarineDetailsCategory,on_delete=models.SET_NULL,null=True,blank=True,related_name="forecast_marine_category") 
-    #marine_date_type varchar(20) 
-    marine_date         = models.DateField() 
-    forecast_id         = models.IntegerField(null=True, blank=True)
-    wind_speed          = models.CharField(max_length=10,null=True, blank=True)
-    #wind_direction varchar(255) 
-    #wind_condition varchar(255) 
-    #sea_state varchar(255) 
-    #waves varchar(255) 
-    #info varchar(255
-
-    created_by      = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="marine_forecasts_details_created")
-    updated_by      = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="marine_forecasts_details_updated")
-
-    #created_by = models.CharField(max_length=11,null=True, blank=True)
-    created_datetime = models.DateTimeField(null=True, blank=True)
-
-    #updated_by = models.CharField(max_length=11,null=True, blank=True)
-    updated_datetime = models.DateTimeField(null=True, blank=True)
+class TideLevelCategory(models.Model):
+    description         = models.CharField(max_length=200)
+    created_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="tide_level_category_created")
+    updated_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="tide_level_category_updated")
+    created_datetime    = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_datetime    = models.DateTimeField(auto_now=True,null=True)
 
     class Meta:
-            verbose_name = "Marine Forecast Details"
-            verbose_name_plural = "Marine Forecast Details"
-    
+        verbose_name = "Tide Level Category"
+        verbose_name_plural = "Tide Level Categories"
+
     def __str__(self):
-        return f"{self.marine_date} ({self.id})"'''
+        return str(self.description)
+    
+class TideDayCategory(models.Model):
+    description         = models.CharField(max_length=200)
+    created_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="tide_day_category_created")
+    updated_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="tide_day_category_updated")
+    created_datetime    = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_datetime    = models.DateTimeField(auto_now=True,null=True)
+
+    class Meta:
+        verbose_name = "Tides Day Category"
+        verbose_name_plural = "Tides Day Categories"
+
+    def __str__(self):
+        return str(self.description)
+    
+class Tides(models.Model):
+
+    #tide_type = models.CharField(max_length=20,choices=TIDE_TYPE_CHOICES)
+    tide_level_category = models.ForeignKey(TideLevelCategory,on_delete=models.CASCADE,related_name="marine_tides_level",null=True,blank=True)
+
+    #tide_date_type      = models.CharField(max_length=20,choices=TIDE_DATE_TYPE_CHOICES)
+    tide_day_category   = models.ForeignKey(TideDayCategory,on_delete=models.CASCADE,related_name="marine_tides_day_category",null=True,blank=True)
+
+    tide_date           = models.DateField(null=True,blank=True)
+    tide_time           = models.TimeField(null=True,blank=True)
+
+    marine_forecast     = models.ForeignKey(ForecastMarine,on_delete=models.CASCADE,related_name="marine_tides",null=True,blank=True)
+
+    #general_forecast   = models.ForeignKey("ForecastGeneral",on_delete=models.SET_NULL,null=True,blank=True,related_name="marine_tides",db_column="general_forecast_id")
+    general_forecast    = models.CharField(max_length=20,null=True,blank=True)
+
+    #created_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="marine_forecasts_tides_created")
+    #updated_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="marine_forecasts_tides_updated")
+
+    created_by          = models.CharField(max_length=255,null=True,blank=True)
+    created_datetime    = models.DateTimeField(auto_now_add=True)
+    updated_by          = models.CharField(max_length=255,null=True,blank=True)
+    updated_datetime    = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["tide_date", "tide_time"]
+
+    def __str__(self):
+        return f"{self.tide_type} - {self.tide_date} {self.tide_time}"
+
+class SunMovementCategory(models.Model):
+    description         = models.CharField(max_length=200)
+    created_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="sun_type_category_created")
+    updated_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="sun_type_category_updated")
+    created_datetime    = models.DateTimeField(auto_now_add=True)
+    updated_datetime    = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Sun Movement Category"
+        verbose_name_plural = "Sun Movement Categories"
+
+    def __str__(self):
+        return str(self.description)
+    
+class SunDayCategory(models.Model):
+    description         = models.CharField(max_length=200)
+    created_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="sun_day_category_created")
+    updated_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="sun_day_category_updated")
+    created_datetime    = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_datetime    = models.DateTimeField(auto_now=True,null=True)
+
+    class Meta:
+        verbose_name = "Sun - Day Category"
+        verbose_name_plural = "Sun - Day Categories"
+
+    def __str__(self):
+        return str(self.description)
+
+class SunRiseSet(models.Model):
+
+    sun_move_category   = models.ForeignKey(SunMovementCategory,on_delete=models.SET_NULL,null=True,blank=True,related_name="sunrise_set_category")
+    sun_day_category    = models.ForeignKey(SunDayCategory,on_delete=models.SET_NULL,null=True,blank=True,related_name="sunrise_set_day_category")
+    sun_date            = models.DateField(null=True,blank=True)
+    sun_time            = models.TimeField(null=True, blank=True)
+
+    marine_forecast = models.ForeignKey(ForecastMarine,on_delete=models.CASCADE,null=True,blank=True,related_name="sunrise_set")
+
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="sunrise_set_created")
+    updated_by = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="sunrise_set_updated")
+
+    created_datetime = models.DateTimeField(auto_now_add=True,null=True,blank=True)
+    updated_datetime = models.DateTimeField(auto_now=True,null=True)
+
+    class Meta:
+        verbose_name = "Sunrise / Sunset"
+        verbose_name_plural = "Sunrise / Sunset"
+
+    def __str__(self):
+        return f"{self.sun_date} - {self.sun_type} - {self.sun_time}"
+    
+class MoonMovementCategory(models.Model):
+    description         = models.CharField(max_length=200)
+    created_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="moon_type_category_created")
+    updated_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="moon_type_category_updated")
+    created_datetime    = models.DateTimeField(auto_now_add=True)
+    updated_datetime    = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Moon Movement Category"
+        verbose_name_plural = "Moon Movement Categories"
+
+    def __str__(self):
+        return str(self.description)
+    
+class MoonDayCategory(models.Model):
+    description         = models.CharField(max_length=200)
+    created_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="moon_day_category_created")
+    updated_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="moon_day_category_updated")
+    created_datetime    = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_datetime    = models.DateTimeField(auto_now=True,null=True)
+
+    class Meta:
+        verbose_name = "Moon - Day Category"
+        verbose_name_plural = "Moon - Day Categories"
+
+    def __str__(self):
+        return str(self.description)
+
+class MoonRiseSet(models.Model):
+
+    moon_move_category = models.ForeignKey(MoonMovementCategory,on_delete=models.SET_NULL,null=True,blank=True,related_name="moonrise_set_category")
+    moon_day_category  = models.ForeignKey(MoonDayCategory,on_delete=models.SET_NULL,null=True,blank=True,related_name="moonrise_set_day_category")
+    moon_date       = models.DateField(null=True,blank=True)
+    moon_time       = models.TimeField(null=True,blank=True)
+
+    marine_forecast = models.ForeignKey(ForecastMarine,on_delete=models.CASCADE,null=True,blank=True,related_name="moonrise_set")
+
+    created_by      = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="moonrise_set_created")
+    updated_by      = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="moonrise_set_updated")
+
+    created_datetime = models.DateTimeField(auto_now_add=True,null=True,blank=True)
+    updated_datetime = models.DateTimeField(auto_now=True,null=True)
+
+    class Meta:
+        verbose_name = "Moonrise / Moonset"
+        verbose_name_plural = "Moonrise / Moonset"
+
+    def __str__(self):
+        return f"{self.moon_date} - {self.moon_type} - {self.moon_time}"
