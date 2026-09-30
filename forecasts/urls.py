@@ -96,8 +96,11 @@ urlpatterns = [
     #path('marine-forecast/import-data/', views.import_general_weather_forecast_categories, name="import_general_weather_forecast_categories"),
 
     path('marine-forecast/details-category/list/', views.marine_forecast_details_category_list, name='marine_forecast_details_category_list'),
+    path('marine-forecast/details-category/list/<int:id>/', views.marine_forecast_details_category_list, name='marine_forecast_details_category_list'),
     path('marine-forecast/details-category/entry/', views.marine_forecast_details_category_entry, name="marine_forecast_details_category_entry"),
     path('marine-forecast/details-category/entry/<int:id>/', views.marine_forecast_details_category_entry, name="marine_forecast_details_category_entry_id"),
+    path('marine-forecast/details-category/entry/<int:id>/delete/', views.marine_forecast_details_category_delete, name='marine_forecast_details_category_delete'),
+
 
     path('marine-forecast/wind-direction/list/', views.wind_direction_list, name='wind_direction_list'),
     path('marine-forecast/wind-direction/list/<int:id>/', views.wind_direction_list, name='wind_direction_list'),
@@ -113,12 +116,46 @@ urlpatterns = [
 
     path('marine-forecast/tides/<int:id>/delete/', views.tide_delete, name='tide_delete'),
 
+    path('marine-forecast/tide/level/category/list/', views.tide_level_category_list, name='tide_level_category_list'),
+    path('marine-forecast/tide/level/category/list/', views.tide_level_category_list, name='tide_level_category_list'),
+    path('marine-forecast/tide/level/category/entry/', views.tide_level_category_entry, name="tide_level_category_entry"),
+    path('marine-forecast/tide/level/category/entry/<int:id>/', views.tide_level_category_entry, name="tide_level_category_entry"),
+    path('marine-forecast/tide/level/category/<int:id>/delete/', views.tide_level_category_delete, name='tide_level_category_delete'),
+
+    path('marine-forecast/tide/day/category/list/', views.tide_day_category_list, name='tide_day_category_list'),
+    path('marine-forecast/tide/day/category/list/', views.tide_day_category_list, name='tide_day_category_list'),
+    path('marine-forecast/tide/day/category/entry/', views.tide_day_category_entry, name="tide_day_category_entry"),
+    path('marine-forecast/tide/day/category/entry/<int:id>/', views.tide_day_category_entry, name="tide_day_category_entry"),
+    path('marine-forecast/tide/day/category/<int:id>/delete/', views.tide_day_category_delete, name='tide_day_category_delete'),
+
+
     path('marine-forecast/sun/day/category/list/', views.sun_day_category_list, name='sun_day_category_list'),
+    path('marine-forecast/sun/day/category/list/<int:id>/', views.sun_day_category_list, name='sun_day_category_list'),
+    path('marine-forecast/sun/day/category/entry/', views.sun_day_category_entry, name="sun_day_category_entry"),
+    path('marine-forecast/sun/day/category/entry/<int:id>/', views.sun_day_category_entry, name="sun_day_category_entry"),
+    path('marine-forecast/sun/day/category/<int:id>/delete/', views.sun_day_category_delete, name='sun_day_category_delete'),
+    
     path('marine-forecast/sun/move/category/list/', views.sun_move_category_list, name='sun_move_category_list'),
+    path('marine-forecast/sun/move/category/list/<int:id>/', views.sun_move_category_list, name='sun_move_category_list'),
+    path('marine-forecast/sun/move/category/entry/', views.sun_move_category_entry, name="sun_move_category_entry"),
+    path('marine-forecast/sun/move/category/entry/<int:id>/', views.sun_move_category_entry, name="sun_move_category_entry"),
+    path('marine-forecast/sun/move/category/<int:id>/delete/', views.sun_move_category_delete, name='sun_move_category_delete'),
+
     path("marine-forecast/sun/inline-update/",views.sun_inline_update,name="sun_inline_update"),
     path("marine-forecast/sun/inline-update/<int:id>/",views.sun_inline_update,name="sun_inline_update"),
-    
-    path('marine-forecast/moon/category/list/', views.moon_day_category_list, name='moon_day_category_list'),
+
+    path('marine-forecast/moon/day/category/list/', views.moon_day_category_list, name='moon_day_category_list'),
+    path('marine-forecast/moon/day/category/list/', views.moon_day_category_list, name='moon_day_category_list'),
+    path('marine-forecast/moon/day/category/entry/', views.moon_day_category_entry, name="moon_day_category_entry"),
+    path('marine-forecast/moon/day/category/entry/<int:id>/', views.moon_day_category_entry, name="moon_day_category_entry"),
+    path('marine-forecast/moon/day/category/<int:id>/delete/', views.moon_day_category_delete, name='moon_day_category_delete'),
+
+    path('marine-forecast/moon/move/category/list/', views.moon_move_category_list, name='moon_move_category_list'),
+    path('marine-forecast/moon/move/category/list/', views.moon_move_category_list, name='moon_move_category_list'),
+    path('marine-forecast/moon/move/category/entry/', views.moon_move_category_entry, name="moon_move_category_entry"),
+    path('marine-forecast/moon/move/category/entry/<int:id>/', views.moon_move_category_entry, name="moon_move_category_entry"),
+    path('marine-forecast/moon/move/category/<int:id>/delete/', views.moon_move_category_delete, name='moon_move_category_delete'),
+
     path("marine-forecast/moon/inline-update/",views.moon_inline_update,name="moon_inline_update"),
     path("marine-forecast/moon/inline-update/<int:id>/",views.moon_inline_update,name="moon_inline_update"),
 

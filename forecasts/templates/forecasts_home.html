@@ -37,7 +37,7 @@
     <div class="col-12 mb-3">
         <h3 class="dashboard_title">Forecast Parameters</h3>
     </div>
-    <div class="col-12 d-flex flex-row mb-3">
+    <div class="col-12 d-flex flex-row mb-5">
         <div class="item_dashboard position-relative">
             <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:instructions_list' %}">
                 <img src="{% static 'button_icons/productivity.png' %}" alt="District Forecast Instructions" />
@@ -68,16 +68,30 @@
                 <span class="task_desc">Wind Conditions</span>
             </a>
         </div>
+    </div>
+    <div class="col-12 d-flex flex-row mb-3">
         <div class="item_dashboard position-relative">
             <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:marine_forecast_category_list' %}">
                 <img src="{% static 'button_icons/day-and-night.png' %}" alt="Marine Category" />
-                <span class="task_desc">Marine Category</span>
+                <span class="task_desc">Marine Forecast Category</span>
             </a>
         </div>
         <div class="item_dashboard position-relative">
             <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:marine_forecast_details_category_list' %}">
                 <img src="{% static 'button_icons/classification.png' %}" alt="Marine Category" />
                 <span class="task_desc">Marine Details Category</span>
+            </a>
+        </div>
+        <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:tide_day_category_list' %}">
+                <img src="{% static 'button_icons/tide.png' %}" alt="Sun Day/Time Category" />
+                <span class="task_desc">Tide<br />Day/Time Category</span>
+            </a>
+        </div>
+        <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:tide_level_category_list' %}">
+                <img src="{% static 'button_icons/water-level.png' %}" alt="Sun Day/Time Category" />
+                <span class="task_desc">Tide<br />Level Category</span>
             </a>
         </div>
         <div class="item_dashboard position-relative">
@@ -88,14 +102,20 @@
         </div>
         <div class="item_dashboard position-relative">
             <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:sun_move_category_list' %}">
-                <img src="{% static 'button_icons/sun.png' %}" alt="Sun Movement Category" />
+                <img src="{% static 'button_icons/sun-move.png' %}" alt="Sun Movement Category" />
                 <span class="task_desc">Sun<br />Movement Category</span>
             </a>
         </div>
         <div class="item_dashboard position-relative">
             <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:moon_day_category_list' %}">
-                <img src="{% static 'button_icons/moon.png' %}" alt="Moon Day/Timeine Category" />
+                <img src="{% static 'button_icons/moon.png' %}" alt="Moon Day/Time Category" />
                 <span class="task_desc">Moon<br />Day/Time Category</span>
+            </a>
+        </div>
+        <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:moon_move_category_list' %}">
+                <img src="{% static 'button_icons/moonrise.png' %}" alt="Moon Movement Category" />
+                <span class="task_desc">Moon<br />Movement Category</span>
             </a>
         </div>
     </div>

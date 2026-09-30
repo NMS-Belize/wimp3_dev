@@ -38,17 +38,24 @@ from reportlab.platypus import Image, SimpleDocTemplate, Table, TableStyle, Para
 from forecasts.forms import (DistrictForecastDetailsForm, DistrictForecastForm, DistrictForecastInstructionsCategoryForm, DistrictForecastInstructionsForm, DistrictForecastPublishForm, 
                              SeverityForm, ProbabilityForm, WindDirectionForm, WindConditionForm, 
                              GeneralForecastCategoryForm, ForecastGeneralForm, ForecastDiscussionForm, 
-                             ForecastMarineForm, MarineForecastDetailsCategoryForm, MarineForecastCategoryForm
+                             ForecastMarineForm, MarineForecastDetailsCategoryForm, MarineForecastCategoryForm,
+                            MoonMovementForm, MoonDayTimeCategoryForm, 
+                            SunMovementForm, SunDayTimeCategoryForm,
+                            TideLevelForm, TideDayTimeCategoryForm
 )
 from forecasts.tables import (DistrictForecastDetailsTable, DistrictForecastTable, 
                               InstructionsCategoryTable, SeverityTable, ProbabilityTable, InstructionsTable, WindDirectionTable, WindConditionTable, 
                               ForecastGeneralTable, ForecastGeneralCategoryTable, ForecastDiscussionTable, 
-                              ForecastMarineTable, ForecastMarineCategoryTable, ForecastMarineEntryDetailsTable, TidesTable, SunTable, MoonTable, SunDayTimeCategoryTable, MoonDayCategory, SunMoveCategoryTable,
+                              ForecastMarineTable, ForecastMarineCategoryTable, ForecastMarineEntryDetailsTable, 
+                              TidesTable, TideLevelTable, TideDayTimeCategoryTable,
+                              SunTable,  SunDayTimeCategoryTable, SunMoveCategoryTable, 
+                              MoonTable, MoonDayTimeCategoryTable, MoonMoveCategoryTable
 )
 from forecasts.models import (
     ForecastGeneral, ForescastGeneralCategory, WindDirection, WindCondition, SeaState,
     ForecastDiscussion, 
-    ForecastMarine, ForecastMarineCategory, ForecastMarineDetailsCategory, ForecastMarineDetails,
+    ForecastMarine, ForecastMarineCategory, ForecastMarineDetailsCategory, 
+    ForecastMarineDetails,
     Tides, TideDayCategory, TideLevelCategory, 
     SunRiseSet, MoonRiseSet, SunDayCategory, 
     MoonDayCategory, SunMovementCategory, MoonMovementCategory, 
@@ -704,8 +711,6 @@ def general_forecast_category_delete(request, id):
         'back_url': reverse('forecasts:general_forecast_category_list'),
         'details': qs
     })
-
-
 
 def is_admin(user):
     return user.is_authenticated and user.is_staff
@@ -1461,6 +1466,25 @@ def marine_forecast_details_category_entry(request, id=None):
         'entry': entry
     })
 
+def marine_forecast_details_category_delete(request, id):
+    
+    entry = get_object_or_404(ForecastMarineDetailsCategory, id=id)
+
+    qs = ForecastMarineDetailsCategory.objects.all().order_by('id')
+    qs = qs.order_by('id')
+    
+    page_name = "Marine Forecast Details (Category)"
+
+    if request.method == "POST":
+        entry.delete()
+        return redirect('forecasts:marine_forecast_details_category_list')  # redirect anywhere you prefer
+
+    return render(request, "marine-forecast/parameters_delete.html", {
+        "entry": entry,
+        'page_name': page_name,
+        'back_url': reverse('forecasts:marine_forecast_details_category_list'),
+        'details': qs
+    })
 ############# MARINE FORECAST / TIDES  #############
 def tide_delete(request, id):
     
@@ -1481,13 +1505,14 @@ def tide_delete(request, id):
         'back_url': reverse('forecasts:discussion_list'),
         'details': qs
     })
-############# MARINE FORECAST / SUN & MOON / Categories #############
+############# MARINE FORECAST / SUN  #############
+
 def sun_day_category_list(request, id=None):
 
     page_name = "Sun Day/Time Categories"
     qs = SunDayCategory.objects.all().order_by('id')
 
-    table = ForecastMarineCategoryTable(qs)
+    table = SunDayTimeCategoryTable(qs)
     table.empty_text = "No records available"
     RequestConfig(request).configure(table)
 
@@ -1499,11 +1524,60 @@ def sun_day_category_list(request, id=None):
         'page_name': page_name,
         'prev_page': 'Weather Forecasts',
         'table': table,
-        'new_url':  reverse('forecasts:marine_forecast_details_category_entry'),
+        'new_url':  reverse('forecasts:sun_day_category_entry'),
         'back_url': reverse('forecasts:index'),
-        #'api_url': "/api/pest-risk/",
     }
     return render(request, 'marine-forecast/parameters_table_list.html', context)
+
+def sun_day_category_entry(request, id=None):
+
+    page_name = "Sun Day/Time Category Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(SunDayCategory, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = SunDayTimeCategoryForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('forecasts:sun_day_category_list')
+        
+    else:
+        form = SunDayTimeCategoryForm(instance=entry)
+
+    return render(request, 'marine-forecast/parameters_entry_form.html', {
+        'page_name':    page_name,
+        'prev_page':    'Sun Day/Time Categories',
+        'new_url':      reverse('forecasts:sun_day_category_entry'),
+        'details_url':  "",
+        'back_url':     reverse('forecasts:sun_day_category_list'),
+        'form': form,
+        'entry': entry
+    })
+
+def sun_day_category_delete(request, id):
+    
+    entry = get_object_or_404(SunDayCategory, id=id)
+
+    qs = SunDayCategory.objects.all().order_by('id')
+    qs = qs.order_by('id')
+    
+    page_name = "Sun Day/Time Category Delete"
+
+    if request.method == "POST":
+        entry.delete()
+        return redirect('forecasts:sun_day_category_list')  # redirect anywhere you prefer
+
+    return render(request, "marine-forecast/parameters_delete.html", {
+        "entry": entry,
+        'page_name': page_name,
+        'back_url': reverse('forecasts:sun_day_category_list'),
+        'details': qs
+    })
 
 def sun_move_category_list(request, id=None):
 
@@ -1528,12 +1602,63 @@ def sun_move_category_list(request, id=None):
     }
     return render(request, 'marine-forecast/parameters_table_list.html', context)
 
+def sun_move_category_entry(request, id=None):
+
+    page_name = "Sun Movement Category Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(SunMovementCategory, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = SunMovementForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('forecasts:sun_move_category_list')
+    else:
+        form = SunMovementForm(instance=entry)
+
+    return render(request, 'marine-forecast/parameters_entry_form.html', {
+        'page_name':    page_name,
+        'prev_page':    'Sun Day/Time Categories',
+        'new_url':      reverse('forecasts:sun_move_category_entry'),
+        'details_url':  "",
+        'back_url':     reverse('forecasts:sun_move_category_list'),
+        'form': form,
+        'entry': entry
+    })
+
+def sun_move_category_delete(request, id):
+    
+    entry = get_object_or_404(SunMovementCategory, id=id)
+
+    qs = SunMovementCategory.objects.all().order_by('id')
+    qs = qs.order_by('id')
+    
+    page_name = "Sun Movement Category Delete"
+
+    if request.method == "POST":
+        entry.delete()
+        return redirect('forecasts:sun_move_category_list')  # redirect anywhere you prefer
+
+    return render(request, "marine-forecast/parameters_delete.html", {
+        "entry": entry,
+        'page_name': page_name,
+        'back_url': reverse('forecasts:sun_move_category_list'),
+        'details': qs
+    })
+
+############# MARINE FORECAST / MOON  #############
+
 def moon_day_category_list(request, id=None):
 
-    page_name = "Marine Forecast Datails Categories"
+    page_name = "Moon Day/Time Categories"
     qs = MoonDayCategory.objects.all().order_by('id')
 
-    table = ForecastMarineCategoryTable(qs)
+    table = MoonDayTimeCategoryTable(qs)
     table.empty_text = "No records available"
     RequestConfig(request).configure(table)
 
@@ -1545,11 +1670,277 @@ def moon_day_category_list(request, id=None):
         'page_name': page_name,
         'prev_page': 'Weather Forecasts',
         'table': table,
-        'new_url':  reverse('forecasts:marine_forecast_details_category_entry'),
+        'new_url':  reverse('forecasts:moon_day_category_entry'),
         'back_url': reverse('forecasts:index'),
         #'api_url': "/api/pest-risk/",
     }
     return render(request, 'marine-forecast/parameters_table_list.html', context)
+
+def moon_day_category_entry(request, id=None):
+
+    page_name = "Moon Day/Time Category Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(MoonDayCategory, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = MoonDayTimeCategoryForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('forecasts:moon_day_category_list')
+        
+    else:
+        form = MoonDayTimeCategoryForm(instance=entry)
+
+    return render(request, 'marine-forecast/parameters_entry_form.html', {
+        'page_name':    page_name,
+        'prev_page':    'Moon Day/Time Categories',
+        'new_url':      reverse('forecasts:moon_day_category_entry'),
+        'details_url':  "",
+        'back_url':     reverse('forecasts:moon_day_category_list'),
+        'form': form,
+        'entry': entry
+    })
+
+def moon_day_category_delete(request, id):
+    
+    entry = get_object_or_404(MoonDayCategory, id=id)
+
+    qs = MoonDayCategory.objects.all().order_by('id')
+    qs = qs.order_by('id')
+    
+    page_name = "Moon Movement Category Delete"
+
+    if request.method == "POST":
+        entry.delete()
+        return redirect('forecasts:moon_day_category_list')  # redirect anywhere you prefer
+
+    return render(request, "marine-forecast/parameters_delete.html", {
+        "entry": entry,
+        'page_name': page_name,
+        'back_url': reverse('forecasts:moon_day_category_list'),
+        'details': qs
+    })
+
+def moon_move_category_list(request, id=None):
+
+    page_name = "Moon Movement Categories"
+    qs = MoonMovementCategory.objects.all().order_by('id')
+
+    table = MoonMoveCategoryTable(qs)
+    table.empty_text = "No records available"
+    RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+
+    context = {
+        'entry': entry,  
+        'page_name': page_name,
+        'prev_page': 'Weather Forecasts',
+        'table': table,
+        'new_url':  reverse('forecasts:moon_move_category_entry'),
+        'back_url': reverse('forecasts:index'),
+        #'api_url': "/api/pest-risk/",
+    }
+    return render(request, 'marine-forecast/parameters_table_list.html', context)
+
+def moon_move_category_entry(request, id=None):
+
+    page_name = "Moon Day/Time Category Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(MoonMovementCategory, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = MoonMovementForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('forecasts:moon_move_category_list')
+    else:
+        form = MoonMovementForm(instance=entry)
+
+    return render(request, 'marine-forecast/parameters_entry_form.html', {
+        'page_name':    page_name,
+        'prev_page':    'Moon Day/Time Categories',
+        'new_url':      reverse('forecasts:moon_day_category_entry'),
+        'details_url':  "",
+        'back_url':     reverse('forecasts:moon_day_category_list'),
+        'form': form,
+        'entry': entry
+    })
+
+def moon_move_category_delete(request, id):
+    
+    entry = get_object_or_404(MoonMovementCategory, id=id)
+
+    qs = MoonMovementCategory.objects.all().order_by('id')
+    qs = qs.order_by('id')
+    
+    page_name = "Moon Movement Category Delete"
+
+    if request.method == "POST":
+        entry.delete()
+        return redirect('forecasts:moon_move_category_list')  # redirect anywhere you prefer
+
+    return render(request, "marine-forecast/parameters_delete.html", {
+        "entry": entry,
+        'page_name': page_name,
+        'back_url': reverse('forecasts:moon_move_category_list'),
+        'details': qs
+    })
+
+############# MARINE FORECAST / TIDES  #############
+
+def tide_level_category_list(request, id=None):
+
+    page_name = "Tide Level Categories"
+    qs = TideLevelCategory.objects.all().order_by('id')
+
+    table = TideLevelTable(qs)
+    table.empty_text = "No records available"
+    RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+
+    context = {
+        'entry': entry,  
+        'page_name': page_name,
+        'prev_page': 'Weather Forecasts',
+        'table': table,
+        'new_url':  reverse('forecasts:tide_level_category_entry'),
+        'back_url': reverse('forecasts:index'),
+    }
+    return render(request, 'marine-forecast/parameters_table_list.html', context)
+
+def tide_level_category_entry(request, id=None):
+
+    page_name = "Tide Level Category Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(TideLevelCategory, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = TideLevelForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('forecasts:tide_level_category_list')
+    else:
+        form = TideLevelForm(instance=entry)
+
+    return render(request, 'marine-forecast/parameters_entry_form.html', {
+        'page_name':    page_name,
+        'prev_page':    'Tide Level Categories',
+        'new_url':      reverse('forecasts:tide_level_category_entry'),
+        'details_url':  "",
+        'back_url':     reverse('forecasts:tide_level_category_list'),
+        'form': form,
+        'entry': entry
+    })
+
+def tide_level_category_delete(request, id):
+    
+    entry = get_object_or_404(TideLevelCategory, id=id)
+
+    qs = TideLevelCategory.objects.all().order_by('id')
+    qs = qs.order_by('id')
+    
+    page_name = "Tide Level Category Delete"
+
+    if request.method == "POST":
+        entry.delete()
+        return redirect('forecasts:tide_level_category_list')  # redirect anywhere you prefer
+
+    return render(request, "marine-forecast/parameters_delete.html", {
+        "entry": entry,
+        'page_name': page_name,
+        'back_url': reverse('forecasts:tide_level_category_list'),
+        'details': qs
+    })
+
+def tide_day_category_list(request, id=None):
+
+    page_name = "Tide Day Categories"
+    qs = TideDayCategory.objects.all().order_by('id')
+
+    table = TideDayTimeCategoryTable(qs)
+    table.empty_text = "No records available"
+    RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+
+    context = {
+        'entry': entry,  
+        'page_name': page_name,
+        'prev_page': 'Weather Forecasts',
+        'table': table,
+        'new_url':  reverse('forecasts:tide_day_category_entry'),
+        'back_url': reverse('forecasts:index'),
+    }
+    return render(request, 'marine-forecast/parameters_table_list.html', context)
+
+def tide_day_category_entry(request, id=None):
+
+    page_name = "Tide Day Category Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(TideDayCategory, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = TideDayTimeCategoryForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('forecasts:tide_day_category_list')
+    else:
+        form = TideDayTimeCategoryForm(instance=entry)
+
+    return render(request, 'marine-forecast/parameters_entry_form.html', {
+        'page_name':    page_name,
+        'prev_page':    'Tide Level Categories',
+        'new_url':      reverse('forecasts:tide_day_category_entry'),
+        'details_url':  "",
+        'back_url':     reverse('forecasts:tide_day_category_list'),
+        'form': form,
+        'entry': entry
+    })
+
+def tide_day_category_delete(request, id):
+    
+    entry = get_object_or_404(TideDayCategory, id=id)
+
+    qs = TideDayCategory.objects.all().order_by('id')
+    qs = qs.order_by('id')
+    
+    page_name = "Tide Level Category Delete"
+
+    if request.method == "POST":
+        entry.delete()
+        return redirect('forecasts:tide_day_category_list')  # redirect anywhere you prefer
+
+    return render(request, "marine-forecast/parameters_delete.html", {
+        "entry": entry,
+        'page_name': page_name,
+        'back_url': reverse('forecasts:tide_day_category_list'),
+        'details': qs
+    })
 
 ############# DISTRICT FORECATSTS: Risk Level Entry #############
 def instructions_list(request, id=None):
@@ -1578,6 +1969,26 @@ def instructions_list(request, id=None):
         #'api_url': "/api/pest-risk/",
     }
     return render(request, 'district-forecast/parameters_table_list.html', context)
+
+'''def tide_level_category_delete(request, id):
+    
+    entry = get_object_or_404(MoonMovementCategory, id=id)
+
+    qs = MoonMovementCategory.objects.all().order_by('id')
+    qs = qs.order_by('id')
+    
+    page_name = "Moon Movement Category Delete"
+
+    if request.method == "POST":
+        entry.delete()
+        return redirect('forecasts:moon_move_category_list')  # redirect anywhere you prefer
+
+    return render(request, "marine-forecast/parameters_delete.html", {
+        "entry": entry,
+        'page_name': page_name,
+        'back_url': reverse('forecasts:moon_move_category_list'),
+        'details': qs
+    })'''
 
 def instructions_entry(request, id=None):
 

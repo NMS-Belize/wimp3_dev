@@ -93,9 +93,6 @@ h1{ font-weight: 300; font-size: 50px; }
 }
 
 .text-white{ color: #fff !important; }
-#header{
-  height: 90px;
-}
 #header a{ color: var(--wimp-dark-navy); }
 #main_logo{ height: 100%; }
 #login-info{

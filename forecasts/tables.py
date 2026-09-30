@@ -517,16 +517,16 @@ class ForecastMarineCategoryTable(tables.Table):
         }
     
     def render_edit(self, record):
-        url = reverse("forecasts:general_forecast_category_entry", args=[record.id])
+        url = reverse("forecasts:marine_forecast_details_category_entry_id", args=[record.id])
         return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
     
     def render_description(self, record):
         link_html = '<a href="{}" class="btn btn_edit_link p-0 text-decoration-none">{}</a>'
-        url = reverse("forecasts:general_forecast_category_entry", args=[record.id])
+        url = reverse("forecasts:marine_forecast_details_category_entry_id", args=[record.id])
         return format_html(link_html, url, record.description)
 
     def render_delete(self, record):
-        url = reverse("forecasts:general_forecast_category_delete", args=[record.id])
+        url = reverse("forecasts:marine_forecast_details_category_delete", args=[record.id])
         return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
 
 class ForecastMoonDayTimeCategoryTable(tables.Table):
@@ -584,7 +584,7 @@ class SunDayTimeCategoryTable(tables.Table):
         return format_html(link_html, url, record.description)
 
     def render_delete(self, record):
-        url = reverse("forecasts:general_forecast_category_delete", args=[record.id])
+        url = reverse("forecasts:sun_day_category_delete", args=[record.id])
         return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
 
 class SunMoveCategoryTable(tables.Table):
@@ -604,16 +604,16 @@ class SunMoveCategoryTable(tables.Table):
         }
     
     def render_edit(self, record):
-        url = reverse("forecasts:general_forecast_category_entry", args=[record.id])
+        url = reverse("forecasts:sun_move_category_entry", args=[record.id])
         return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
     
     def render_description(self, record):
         link_html = '<a href="{}" class="btn btn_edit_link p-0 text-decoration-none">{}</a>'
-        url = reverse("forecasts:general_forecast_category_entry", args=[record.id])
+        url = reverse("forecasts:sun_move_category_entry", args=[record.id])
         return format_html(link_html, url, record.description)
 
     def render_delete(self, record):
-        url = reverse("forecasts:general_forecast_category_delete", args=[record.id])
+        url = reverse("forecasts:sun_move_category_delete", args=[record.id])
         return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
 
 class MoonDayTimeCategoryTable(tables.Table):
@@ -633,18 +633,105 @@ class MoonDayTimeCategoryTable(tables.Table):
         }
     
     def render_edit(self, record):
-        url = reverse("forecasts:general_forecast_category_entry", args=[record.id])
+        url = reverse("forecasts:moon_day_category_entry", args=[record.id])
         return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
     
     def render_description(self, record):
         link_html = '<a href="{}" class="btn btn_edit_link p-0 text-decoration-none">{}</a>'
-        url = reverse("forecasts:general_forecast_category_entry", args=[record.id])
+        url = reverse("forecasts:moon_day_category_entry", args=[record.id])
         return format_html(link_html, url, record.description)
 
     def render_delete(self, record):
-        url = reverse("forecasts:general_forecast_category_delete", args=[record.id])
+        url = reverse("forecasts:moon_day_category_delete", args=[record.id])
         return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
 
+class MoonMoveCategoryTable(tables.Table):
+    edit    = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "text-center"}, "td": {"style": "","class": "col_edit"}})
+    id      = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": "col_id"}, "td": {"style": "","class": "col_id"}})
+    description = tables.Column(verbose_name="Description", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+    delete  = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
+
+    class Meta:
+        model = MoonMovementCategory
+        template_name = "django_tables2/bootstrap5.html"
+        fields = ("edit","description","id","delete")
+
+        attrs = {
+            "id": "table_pest_alert_level", 
+            "class": "table table-striped table-condensed table-hover tbl_wimp3" 
+        }
+    
+    def render_edit(self, record):
+        url = reverse("forecasts:moon_move_category_entry", args=[record.id])
+        return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
+    
+    def render_description(self, record):
+        link_html = '<a href="{}" class="btn btn_edit_link p-0 text-decoration-none">{}</a>'
+        url = reverse("forecasts:moon_move_category_entry", args=[record.id])
+        return format_html(link_html, url, record.description)
+
+    def render_delete(self, record):
+        url = reverse("forecasts:moon_move_category_delete", args=[record.id])
+        return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
+
+class TideLevelTable(tables.Table):
+    edit    = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "text-center"}, "td": {"style": "","class": "col_edit"}})
+    id      = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": "col_id"}, "td": {"style": "","class": "col_id"}})
+    description = tables.Column(verbose_name="Description", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+    delete  = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
+
+    class Meta:
+        model = TideLevelCategory
+        template_name = "django_tables2/bootstrap5.html"
+        fields = ("edit","description","id","delete")
+
+        attrs = {
+            "id": "table_pest_alert_level", 
+            "class": "table table-striped table-condensed table-hover tbl_wimp3" 
+        }
+    
+    def render_edit(self, record):
+        url = reverse("forecasts:tide_level_category_entry", args=[record.id])
+        return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
+    
+    def render_description(self, record):
+        link_html = '<a href="{}" class="btn btn_edit_link p-0 text-decoration-none">{}</a>'
+        url = reverse("forecasts:tide_level_category_entry", args=[record.id])
+        return format_html(link_html, url, record.description)
+
+    def render_delete(self, record):
+        url = reverse("forecasts:tide_level_category_delete", args=[record.id])
+        return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
+
+class TideDayTimeCategoryTable(tables.Table):
+    edit    = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "text-center"}, "td": {"style": "","class": "col_edit"}})
+    id      = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": "col_id"}, "td": {"style": "","class": "col_id"}})
+    description = tables.Column(verbose_name="Description", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+    delete  = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
+
+    class Meta:
+        model = TideDayCategory
+        template_name = "django_tables2/bootstrap5.html"
+        fields = ("edit","description","id","delete")
+
+        attrs = {
+            "id": "table_pest_alert_level", 
+            "class": "table table-striped table-condensed table-hover tbl_wimp3" 
+        }
+    
+    def render_edit(self, record):
+        url = reverse("forecasts:tide_day_category_entry", args=[record.id])
+        return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
+    
+    def render_description(self, record):
+        link_html = '<a href="{}" class="btn btn_edit_link p-0 text-decoration-none">{}</a>'
+        url = reverse("forecasts:tide_day_category_entry", args=[record.id])
+        return format_html(link_html, url, record.description)
+
+    def render_delete(self, record):
+        url = reverse("forecasts:tide_day_category_delete", args=[record.id])
+        return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
+    
 class ForecastMarineDetailsCategoryTable(tables.Table):
     edit    = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "text-center"}, "td": {"style": "","class": "col_edit"}})
     id      = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": "col_id"}, "td": {"style": "","class": "col_id"}})

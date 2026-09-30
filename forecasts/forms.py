@@ -10,6 +10,9 @@ from pytz import timezone
 from .models import (DistrictForecast, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, 
                      Probability, Severity, ForecastGeneral, ForescastGeneralCategory, ForecastDiscussion,
                      WindCondition, WindDirection,
+                     MoonMovementCategory, MoonDayCategory,
+                     SunMovementCategory, SunDayCategory,
+                     TideLevelCategory, TideDayCategory,
                      ForecastMarine, ForecastMarineCategory, ForecastMarineDetailsCategory
 )
 from alerts.models import CAPAlertDetails, CAPAlerts
@@ -127,6 +130,77 @@ class WindConditionForm(forms.ModelForm):
             'description': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
+class MoonMovementForm(forms.ModelForm):
+    class Meta:
+        model = MoonMovementCategory
+        fields = ['description']
+        labels = {   
+            # <-- add human-friendly labels here
+            'description': 'Description:',
+        }
+        widgets = {            
+            'description': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+class MoonDayTimeCategoryForm(forms.ModelForm):
+    class Meta:
+        model = MoonDayCategory
+        fields = ['description']
+        labels = {   
+            # <-- add human-friendly labels here
+            'description': 'Description:',
+        }
+        widgets = {            
+            'description': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+class SunMovementForm(forms.ModelForm):
+    class Meta:
+        model = SunMovementCategory
+        fields = ['description']
+        labels = {   
+            # <-- add human-friendly labels here
+            'description': 'Description:',
+        }
+        widgets = {            
+            'description': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+class SunDayTimeCategoryForm(forms.ModelForm):
+    class Meta:
+        model = SunDayCategory
+        fields = ['description']
+        labels = {   
+            # <-- add human-friendly labels here
+            'description': 'Description:',
+        }
+        widgets = {            
+            'description': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+class TideLevelForm(forms.ModelForm):
+    class Meta:
+        model = TideLevelCategory
+        fields = ['description']
+        labels = {   
+            # <-- add human-friendly labels here
+            'description': 'Description:',
+        }
+        widgets = {            
+            'description': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+class TideDayTimeCategoryForm(forms.ModelForm):
+    class Meta:
+        model = TideDayCategory
+        fields = ['description']
+        labels = {   
+            # <-- add human-friendly labels here
+            'description': 'Description:',
+        }
+        widgets = {            
+            'description': forms.TextInput(attrs={'class': 'form-control'}),
+        }
 
 class GeneralForecastCategoryForm(forms.ModelForm):
     class Meta:
