@@ -1751,7 +1751,7 @@ def moon_move_category_list(request, id=None):
 
 def moon_move_category_entry(request, id=None):
 
-    page_name = "Moon Day/Time Category Entry"
+    page_name = "Moon Movement Category Entry"
 
     # If id exists => update, else => create new
     if id:
