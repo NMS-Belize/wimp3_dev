@@ -36,8 +36,7 @@ $(function () {
     }
 
     // Start collapsed
-    sidebar.classList.add('collapsed');
-
+    //sidebar.classList.add('collapsed');
 
     // Auto dismiss alerts
     document.querySelectorAll(".auto-dismiss").forEach(function (alert) {
@@ -65,11 +64,8 @@ $(function () {
 
     // Collapse again when mouse leaves
     sidebar.addEventListener('mouseleave', function () {
-
         if (sidebarCollapsed) {
             sidebar.classList.add('collapsed');
         }
-
     });
-
 });
