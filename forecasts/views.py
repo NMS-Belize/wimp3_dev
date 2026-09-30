@@ -1596,7 +1596,7 @@ def sun_move_category_list(request, id=None):
         'page_name': page_name,
         'prev_page': 'Weather Forecasts',
         'table': table,
-        #'new_url':  reverse('forecasts:marine_forecast_details_category_entry'),
+        'new_url':  reverse('forecasts:sun_move_category_entry'),
         'back_url': reverse('forecasts:index'),
         #'api_url': "/api/pest-risk/",
     }
@@ -1873,7 +1873,7 @@ def tide_level_category_delete(request, id):
 
 def tide_day_category_list(request, id=None):
 
-    page_name = "Tide Day Categories"
+    page_name = "Tide Day/Time Categories"
     qs = TideDayCategory.objects.all().order_by('id')
 
     table = TideDayTimeCategoryTable(qs)
