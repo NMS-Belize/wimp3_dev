@@ -444,6 +444,8 @@ class ForecastMarineDetails(models.Model):
     sea_state       = models.CharField(max_length=255,null=True, blank=True)
     sea_state_m2m   = models.ManyToManyField(SeaState, blank=True,related_name="marine_forecast_details_sea_state")
 
+    waves           = models.CharField(max_length=255,null=True, blank=True)
+
     additional_info = models.TextField(null=True,blank=True)
     
     created_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="marine_forecasts_details_created")

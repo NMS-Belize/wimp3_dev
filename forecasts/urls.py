@@ -101,6 +101,12 @@ urlpatterns = [
     path('marine-forecast/details-category/entry/<int:id>/', views.marine_forecast_details_category_entry, name="marine_forecast_details_category_entry_id"),
     path('marine-forecast/details-category/entry/<int:id>/delete/', views.marine_forecast_details_category_delete, name='marine_forecast_details_category_delete'),
 
+    path('marine-forecast/sea-state/list/', views.sea_state_list, name='sea_state_list'),
+    path('marine-forecast/sea-state/list/<int:id>/', views.sea_state_list, name='sea_state_list'),
+    path('marine-forecast/sea-state/entry/', views.sea_state_entry, name="sea_state_entry"),
+    path('marine-forecast/sea-state/entry/<int:id>/', views.sea_state_entry, name="sea_state_entry_id"),
+    path('marine-forecast/sea-state/entry/<int:id>/delete/', views.sea_state_delete, name='sea_state_delete'),
+    
 
     path('marine-forecast/wind-direction/list/', views.wind_direction_list, name='wind_direction_list'),
     path('marine-forecast/wind-direction/list/<int:id>/', views.wind_direction_list, name='wind_direction_list'),
@@ -161,10 +167,15 @@ urlpatterns = [
 
     path('marine-forecast/details/entry/', views.marine_forecast_details_entry, name="marine_forecast_details_entry"),
     path('marine-forecast/details/entry/<int:id>/', views.marine_forecast_details_entry, name="marine_forecast_details_entry"),
+    path('marine-forecast/details/entry/<int:id>/delete/', views.marine_details_delete, name='marine_details_delete'),
+    
     path("marine-forecast/details/inline-update/",views.marine_forecast_details_inline_update,name="marine_forecast_details_inline_update"),
     path("marine-forecast/details/inline-update/<int:id>/",views.marine_forecast_details_inline_update,name="marine_forecast_details_inline_update"),
+    
     path("marine-forecast/tides/inline-update/",views.marine_forecast_tides_inline_update,name="marine_forecast_tides_inline_update"),
     path("marine-forecast/tides/inline-update/<int:id>/",views.marine_forecast_tides_inline_update,name="marine_forecast_tides_inline_update"),
+
+    path('marine-forecast/tides/list/', views.tides_list, name='tides_list'),
 
     ## FORECAST DISCUSSION
     path('forecast-discussion/list/', views.discussion_list, name="discussion_list"),

@@ -36,7 +36,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import Image, SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 
 from forecasts.forms import (DistrictForecastDetailsForm, DistrictForecastForm, DistrictForecastInstructionsCategoryForm, DistrictForecastInstructionsForm, DistrictForecastPublishForm, 
-                             SeverityForm, ProbabilityForm, WindDirectionForm, WindConditionForm, 
+                             SeverityForm, ProbabilityForm, WindDirectionForm, WindConditionForm, SeaStateForm, 
                              GeneralForecastCategoryForm, ForecastGeneralForm, ForecastDiscussionForm, 
                              ForecastMarineForm, MarineForecastDetailsCategoryForm, MarineForecastCategoryForm,
                             MoonMovementForm, MoonDayTimeCategoryForm, 
@@ -44,10 +44,10 @@ from forecasts.forms import (DistrictForecastDetailsForm, DistrictForecastForm, 
                             TideLevelForm, TideDayTimeCategoryForm
 )
 from forecasts.tables import (DistrictForecastDetailsTable, DistrictForecastTable, 
-                              InstructionsCategoryTable, SeverityTable, ProbabilityTable, InstructionsTable, WindDirectionTable, WindConditionTable, 
+                              InstructionsCategoryTable, SeverityTable, ProbabilityTable, InstructionsTable, WindDirectionTable, WindConditionTable, SeaStateTable, 
                               ForecastGeneralTable, ForecastGeneralCategoryTable, ForecastDiscussionTable, 
                               ForecastMarineTable, ForecastMarineCategoryTable, ForecastMarineEntryDetailsTable, 
-                              TidesTable, TideLevelTable, TideDayTimeCategoryTable,
+                              TidesTable, TideLevelTable, TideDayTimeCategoryTable, TidesAllTable,
                               SunTable,  SunDayTimeCategoryTable, SunMoveCategoryTable, 
                               MoonTable, MoonDayTimeCategoryTable, MoonMoveCategoryTable
 )
@@ -1008,6 +1008,37 @@ def marine_forecast_delete(request, id):
         'details': qs
     })
 
+'''def marine_details_delete(request, id):
+    
+    '''
+    
+'''page_name = "Marine Details Delete"
+
+    if request.method == "POST":
+        
+        return redirect('forecasts:sea_state_list')  # redirect anywhere you prefer
+
+    return render(request, "marine-forecast/parameters_delete.html", {
+        "entry": entry,
+        'page_name': page_name,
+        'back_url': reverse('forecasts:sea_state_list'),
+        'details': qs
+    })'''
+@require_POST
+def marine_details_delete(request, id):
+
+    entry = get_object_or_404(ForecastMarineDetails, id=id)
+    
+    qs = ForecastMarineDetails.objects.all().order_by('id')
+    qs = qs.order_by('id')
+    
+    if not id:
+        return JsonResponse({ "success": False, "error": "ID is required." })
+    else:
+        entry.delete()
+        messages.success(request, "Marine forecast details deleted successfully.")
+        return JsonResponse({ "success": True })
+
 ############# MARINE FORECAST / CATEGORIES #############
 def marine_forecast_category_list(request, id=None):
     page_name = "Marine Forecast Categories"
@@ -1082,6 +1113,79 @@ def marine_forecast_toggle_is_published(request, id):
 
     messages.success(request, f"Record {status} successfully.")
     return redirect("forecasts:marine_forecast_list")
+
+############# SEA STATE #############
+def sea_state_list(request, id=None):
+    page_name = "Sea State List"
+    qs = SeaState.objects.all().order_by('id')
+        
+    table = SeaStateTable(qs)    
+    table.empty_text = "No records available"
+    RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+    if id is not None:
+        entry = get_object_or_404(SeaState, id=id)
+
+    return render(request, 'marine-forecast/parameters_table_list.html', {
+        'id' : id,
+        'entry': entry,  
+        'page_name': page_name,
+        'prev_page': 'Weather Forecasts',
+        'table': table,
+        'new_url':  reverse('forecasts:sea_state_entry'),
+        'back_url': reverse('forecasts:index'),
+    })
+
+def sea_state_entry(request, id=None):
+
+    page_name = "Sea State Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(SeaState, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = SeaStateForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('forecasts:sea_state_list', saved_entry.id)
+    else:
+        form = SeaStateForm(instance=entry)
+
+    return render(request, 'district-forecast/parameters_entry_form.html', {
+        'page_name': page_name,
+        'prev_page': 'Wind Direction List',
+        'new_url':  reverse('forecasts:sea_state_entry'),
+        'back_url': reverse('forecasts:sea_state_list'),
+        'form': form,
+        'entry': entry
+    })
+
+def sea_state_delete(request, id):
+    
+    entry = get_object_or_404(SeaState, id=id)
+
+    qs = SeaState.objects.all().order_by('id')
+    qs = qs.order_by('id')
+    
+    page_name = "Sea State Delete"
+
+    if request.method == "POST":
+        entry.delete()
+        return redirect('forecasts:sea_state_list')  # redirect anywhere you prefer
+
+    return render(request, "marine-forecast/parameters_delete.html", {
+        "entry": entry,
+        'page_name': page_name,
+        'back_url': reverse('forecasts:sea_state_list'),
+        'details': qs
+    })
+
 
 ############# WIND DIRECTION #############
 def wind_direction_list(request, id=None):
@@ -1277,7 +1381,7 @@ def marine_forecast_details_inline_update(request):
 
         return JsonResponse({"success": True,"id": record.id,"field": field,"values": values})
     
-    allowed_fields = ["wind_speed","wind_condition","additional_info"]
+    allowed_fields = ["wind_speed","wind_condition","waves","additional_info"]
 
     if field not in allowed_fields:
         return JsonResponse({"success": False,"error": "Invalid field"}, status=400)
@@ -1485,6 +1589,7 @@ def marine_forecast_details_category_delete(request, id):
         'back_url': reverse('forecasts:marine_forecast_details_category_list'),
         'details': qs
     })
+
 ############# MARINE FORECAST / TIDES  #############
 def tide_delete(request, id):
     
@@ -1941,6 +2046,32 @@ def tide_day_category_delete(request, id):
         'back_url': reverse('forecasts:tide_day_category_list'),
         'details': qs
     })
+
+############# ASTRONOMICAL CONDITIONS #############
+def tides_list(request, id=None):
+
+    page_name = "Astronomical Conditions List"
+    qs = Tides.objects.all().order_by('tide_date','tide_time')
+        
+    table = TidesAllTable(qs)    
+    table.empty_text = "No records available"
+    RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+    if id is not None:
+        entry = get_object_or_404(Tides, id=id)
+
+    return render(request, 'marine-forecast/parameters_table_list.html', {
+        'id' : id,
+        'entry': entry,  
+        'page_name': page_name,
+        'prev_page': 'Weather Forecasts',
+        'table': table,
+        'new_url':  reverse('forecasts:sea_state_entry'),
+        'back_url': reverse('forecasts:index'),
+    })
+
 
 ############# DISTRICT FORECATSTS: Risk Level Entry #############
 def instructions_list(request, id=None):

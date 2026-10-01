@@ -9,7 +9,7 @@ from django import forms
 from pytz import timezone
 from .models import (DistrictForecast, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, 
                      Probability, Severity, ForecastGeneral, ForescastGeneralCategory, ForecastDiscussion,
-                     WindCondition, WindDirection,
+                     WindCondition, WindDirection, SeaState,
                      MoonMovementCategory, MoonDayCategory,
                      SunMovementCategory, SunDayCategory,
                      TideLevelCategory, TideDayCategory,
@@ -104,6 +104,18 @@ class ProbabilityForm(forms.ModelForm):
         widgets = {            
             'description': forms.TextInput(attrs={'class': 'form-control'}),
             'color': forms.TextInput(attrs={'class': 'form-control'})
+        }
+
+class SeaStateForm(forms.ModelForm):
+    class Meta:
+        model = SeaState
+        fields = ['description']
+        labels = {   
+            # <-- add human-friendly labels here
+            'description': 'Description:',
+        }
+        widgets = {            
+            'description': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
 class WindDirectionForm(forms.ModelForm):

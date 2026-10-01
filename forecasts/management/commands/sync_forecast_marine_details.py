@@ -183,78 +183,37 @@ class Command(BaseCommand):
 
         for data in rows:
 
-            # ----------------------------------------------------
             # USER MAPPING
-            # ----------------------------------------------------
+            created_user = get_user(data["created_by"])
+            updated_user = get_user(data["updated_by"])
 
-            created_user = get_user(
-                data["created_by"]
-            )
-
-            updated_user = get_user(
-                data["updated_by"]
-            )
-
-            # ----------------------------------------------------
             # MARINE FORECAST FK
-            # ----------------------------------------------------
 
             marine_forecast = None
 
             if data["forecast_id"]:
+                marine_forecast = ForecastMarine.objects.filter(id=data["forecast_id"]).first()
 
-                marine_forecast = ForecastMarine.objects.filter(
-                    id=data["forecast_id"]
-                ).first()
-
-            # ----------------------------------------------------
             # MARINE CATEGORY
-            # ----------------------------------------------------
-
             marine_category = None
 
-            #
-            # First try marine_type.
-            #
-            # If your category mapping actually depends on
-            # marine_date_type instead, this can be adjusted.
-            #
-
+            # First try marine_type. If your category mapping actually depends on marine_date_type instead, this can be adjusted.
             if data["marine_type"] is not None:
+                marine_category = get_category(data["marine_type"])
 
-                marine_category = get_category(
-                    data["marine_type"]
-                )
-
-            # ----------------------------------------------------
             # CREATE MODEL OBJECT
-            # ----------------------------------------------------
-
             record = ForecastMarineDetails(
-
-                # Preserve WIMP2 primary key
-                legacy_id=data["id"],
-
+                legacy_id=data["id"],   # Preserve WIMP2 primary key
                 marine_forecast=marine_forecast,
-
                 marine_category=marine_category,
-
-                wind_speed=clean_optional_text(
-                    data["wind_speed"]
-                ),
-
-                # Preserve legacy text
-                wind_direction=clean_optional_text(
-                    data["wind_direction"]
-                ),
-
-                wind_condition=clean_optional_text(
-                    data["wind_condition"]
-                ),
+                wind_speed=clean_optional_text(data["wind_speed"]),
+                wind_direction=clean_optional_text(data["wind_direction"]),
+                wind_condition=clean_optional_text(data["wind_condition"]),
+                sea_state=clean_optional_text(data["sea_state"]),
 
                 # Preserve legacy text
-                sea_state=clean_optional_text(
-                    data["sea_state"]
+                waves=clean_optional_text(
+                    data["waves"]
                 ),
 
                 additional_info=clean_optional_text(
@@ -366,6 +325,7 @@ class Command(BaseCommand):
                     current.wind_direction = record.wind_direction
                     current.wind_condition = record.wind_condition
                     current.sea_state = record.sea_state
+                    current.waves = record.waves
                     current.additional_info = record.additional_info
 
                     current.created_by = record.created_by
@@ -387,6 +347,7 @@ class Command(BaseCommand):
                     "wind_direction",
                     "wind_condition",
                     "sea_state",
+                    "waves",
                     "additional_info",
                     "created_by",
                     "created_datetime",

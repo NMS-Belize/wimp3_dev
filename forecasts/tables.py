@@ -442,6 +442,35 @@ class ForecastDiscussionTable(tables.Table):
         url         = reverse("forecasts:discussion_delete", args=[record.id])
         return format_html(link_html, url)
 
+class SeaStateTable(tables.Table):
+    edit    = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "text-center"}, "td": {"style": "","class": "col_edit"}})
+    id      = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": "col_id"}, "td": {"style": "","class": "col_id"}})
+    description = tables.Column(verbose_name="Description", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+    delete  = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
+
+    class Meta:
+        model = SeaState
+        template_name = "django_tables2/bootstrap5.html"
+        fields = ("edit","description","id","delete")
+
+        attrs = {
+            "id": "table_pest_alert_level", 
+            "class": "table table-striped table-condensed table-hover tbl_wimp3" 
+        }
+    
+    def render_edit(self, record):
+        url = reverse("forecasts:sea_state_entry_id", args=[record.id])
+        return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
+    
+    def render_description(self, record):
+        link_html = '<a href="{}" class="btn btn_edit_link p-0 text-decoration-none">{}</a>'
+        url = reverse("forecasts:sea_state_entry_id", args=[record.id])
+        return format_html(link_html, url, record.description)
+
+    def render_delete(self, record):
+        url = reverse("forecasts:sea_state_delete", args=[record.id])
+        return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
+
 class WindDirectionTable(tables.Table):
     edit    = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "text-center"}, "td": {"style": "","class": "col_edit"}})
     id      = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": "col_id"}, "td": {"style": "","class": "col_id"}})
@@ -816,6 +845,25 @@ class TidesTable(tables.Table):
     '''def render_delete(self, record):
         url = reverse("forecasts:tide_delete", args=[record.id])
         return format_html('<button type="button" class="btn btn-link btn_delete" data-bs-toggle="modal" data-bs-target="#modal_delete_tide"><i class="delete-tide fa-solid fa-trash"></i></button>')'''
+
+class TidesAllTable(tables.Table):
+    #id                      = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
+    '''tide_level_category     = tables.Column(verbose_name="Tide Level", empty_values=(), attrs={"th": {"style": "width:33.3%","class": ""}, "td": {"style": "text-upper","class": ""}})
+    tide_day_category       = tables.Column(verbose_name="Day", empty_values=(), attrs={"th": {"style": "width:33.3%","class": ""}, "td": {"style": "","class": ""}})
+    tide_time               = tables.TimeColumn(verbose_name="Time", format="h:i A", attrs={"th": {"style": "width:33.3%","class": ""}, "td": {"style": "","class": ""}})
+    '''
+    #delete                  = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
+
+    class Meta:
+        model = Tides
+        template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
+        #fields = ("tide_day_category","tide_level_category","tide_time")
+
+        attrs = {
+            "id": "table_marine_tides",
+            "class": "table table-striped table-condensed table-hover tbl_wimp3 align-middle mb-4",
+        }
+
     
 class SunTable(tables.Table):
     #id                  = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
@@ -993,16 +1041,19 @@ class ForecastMarineTable(tables.Table):
 
 class ForecastMarineEntryDetailsTable(tables.Table):
 
-    marine_category     = tables.Column(verbose_name="Marine Category", orderable=False, attrs={"th": {"style": "width:160px;","class": "",},"td": {"class": "fw-bold"}})
-    wind_speed          = tables.Column(verbose_name="Wind Speed", orderable=False, empty_values=(),attrs={"th": { "style": "width:140px;" },"td": {"class": "editable-cell"}})
-    wind_direction      = tables.Column(verbose_name="Wind Direction", orderable=False, empty_values=(),attrs={"th": { "style": "width:200px;" },"td": {"class": "editable-cell"}})
-    wind_condition      = tables.Column(verbose_name="Wind Condition", orderable=False, empty_values=(),attrs={"th": { "style": "width:200px;" },"td": {"class": "editable-cell"}})
-    sea_state           = tables.Column(verbose_name="Sea State", orderable=False, empty_values=(),attrs={"th": { "style": "width:300px;"},"td": {"class": "editable-cell"}})
+    marine_category     = tables.Column(verbose_name="Marine Category", orderable=False, attrs={"th": {"style": "width:120px;","class": "",},"td": {"class": "fw-bold"}})
+    wind_speed          = tables.Column(verbose_name="Wind Speed", orderable=False, empty_values=(),attrs={"th": { "style": "width:120px;" },"td": {"class": "editable-cell"}})
+    wind_direction      = tables.Column(verbose_name="Wind Direction", orderable=False, empty_values=(),attrs={"th": { "style": "width:140px;" },"td": {"class": "editable-cell"}})
+    wind_condition      = tables.Column(verbose_name="Wind Condition", orderable=False, empty_values=(),attrs={"th": { "style": "width:180px;" },"td": {"class": "editable-cell"}})
+    sea_state           = tables.Column(verbose_name="Sea State", orderable=False, empty_values=(),attrs={"th": { "style": "width:260px;"},"td": {"class": "editable-cell"}})
+    waves               = tables.Column(verbose_name="Waves (ft)", orderable=False, empty_values=(),attrs={"th": { "style": "width:140px;" },"td": {"class": "editable-cell"}})
     additional_info     = tables.Column(verbose_name="Additional Info", orderable=False, empty_values=(),attrs={"th": {},"td": {"class": "editable-cell"}})
+    delete              = tables.Column(empty_values=(),verbose_name="Delete",orderable=False,attrs={"th": {"style": "width:65px;","class": "text-center col_edit",},"td": {"class": "text-center col_delete"}})
 
     class Meta:
         model = ForecastMarineDetails
         exclude = ("id","marine_forecast","legacy_id","created_by","created_datetime","updated_by","updated_datetime")
+        sequence = ("marine_category","wind_speed","wind_direction","wind_condition","sea_state","waves","additional_info")
         template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
         attrs = {
             "id": "table_marine_forecast_details",           # unique table ID
@@ -1012,69 +1063,79 @@ class ForecastMarineEntryDetailsTable(tables.Table):
     '''def render_marine_category(self, value, record):
         return format_html('{} <small style="color:red;">[ID: {}]</small>', value, record.id)'''
 
+    def render_waves(self, value, record):
+        return table_format_html('<input type="text" class="form-control form-control inline-edit" data-id="{}" data-field="waves" value="{}">', record.id, value if value is not None else "")
+    
     def render_wind_speed(self, value, record):
         return table_format_html('<input type="text" class="form-control form-control inline-edit" data-id="{}" data-field="wind_speed" value="{}">', record.id, value if value is not None else "")
 
     def render_wind_direction(self, value, record):
 
-        selected = list(record.wind_direction_m2m.values_list("id","description"))
-        
-        '''print(
-            "RENDERING:",
-            "detail_id =", record.id,
-            "forecast_id =", record.marine_forecast_id,
-            "category =", record.marine_category,
-            "legacy =", record.wind_direction,
-            "m2m =", selected,
-        )'''
-        
         selected_ids = set(record.wind_direction_m2m.values_list("id", flat=True))
 
-        options = format_html_join(
-            "",
-            '<option value="{}"{}>{}</option>',
-            (
-                (
-                    item.id,
-                    ' selected="selected" '
-                    if item.id in selected_ids else "",
-                    item.description
-                )
-                for item in WindDirection.objects.all()
-            )
+        options = []
+
+        for item in WindDirection.objects.all():
+
+            if item.id in selected_ids:
+                options.append(format_html('<option value="{}" selected="selected">{}</option>', item.id, item.description))
+            else:
+                options.append(format_html('<option value="{}">{}</option>', item.id, item.description))
+
+        options_html = format_html_join("", "{}",((option,) for option in options))
+
+        return format_html(
+            '''
+            <select class="form-select marine-wind-direction data-id="{}" data-field="wind_direction" multiple="multiple" style="width:100%;">{}</select>
+            ''',
+            record.id,
+            options_html
         )
-        return format_html('<select class="select-wind-direction form-select" data-id="{}" data-field="wind_direction" multiple="multiple">{}</select>', record.id, options)
 
     def render_wind_condition(self, value, record):
 
-        options = format_html('<option value="">---------</option>')
+        options = []
+
+        for item in WindCondition.objects.all():
+            if str(record.wind_condition) == str(item.id) or str(record.wind_condition) == str(item.description):
+                options.append(format_html('<option value="{}" selected="selected">{}</option>', item.id, item.description))
+            else:
+                options.append(format_html('<option value="{}">{}</option>', item.id, item.description))
+
+        options_html = format_html_join("", "{}",((option,) for option in options))
+
+        return format_html(
+                    '''
+                    <select class="form-select marine-wind-direction data-id="{}" data-field="wind_direction" multiple="multiple" style="width:100%;">{}</select>
+                    ''',
+                    record.id,
+                    options_html
+                )
+
+        '''options = format_html('<option value="">---------</option>')
 
         options += format_html_join(
             "",
-            '<option value="{}"{}>{}</option>',
+            '<option value="{}" {} >{}</option>',
             (
                 (
                     item.id,
-                    "selected" if str(record.wind_condition) == str(item.id) else "",
+                    ' selected="selected" ' if str(record.wind_condition) == str(item.id) or str(record.wind_condition) == str(item.description) else "",
                     item
                 )
                 for item in WindCondition.objects.all()
             )
         )
 
-        return format_html('<select class="form-select details-inline-edit" data-id="{}" data-field="wind_condition">{}</select>',record.id,options)
-
+        return format_html('<select class="form-select details-inline-edit" data-id="{}" data-field="wind_condition">{}</select><small>{}</small>',record.id,options, record.wind_condition)
+'''
     def render_sea_state(self, value, record):
 
-        selected_ids = set(record.sea_state_m2m.values_list(
-                "id",
-                flat=True
-            )
-        )
+        selected_ids = set(record.sea_state_m2m.values_list("id", flat=True))
 
         options = format_html_join(
             "",
-            '<option value="{}"{}>{}</option>',
+            '<option value="{}" {} >{}</option>',
             (
                 (
                     item.id,
@@ -1086,12 +1147,18 @@ class ForecastMarineEntryDetailsTable(tables.Table):
                 for item in SeaState.objects.all()
             )
         )
-        return format_html('<select class="form-select select-sea-state" data-id="{}" data-field="sea_state" multiple="multiple">{}</select>', record.id, options)
+        return format_html('<select class="form-select marine-sea-state" data-id="{}" data-field="sea_state" multiple="multiple">{}</select>', record.id, options)
 
     def render_additional_info(self, value, record):
-        return table_format_html('<input type="text" class="form-control form-control details-inline-edit" data-id="{}" data-field="additional_info" value="{}">', record.id, value if value is not None else "")
+        return table_format_html('<textarea type="text" class="form-control form-control details-inline-edit" data-id="{}" data-field="additional_info">{}</textarea>', record.id, value if value is not None else "")
 
+    def render_delete(self, record): 
+        link_html   = '<a href="{}" class="btn_delete" data-id="{}" data-marine_category="{}" data-bs-toggle="modal" data-bs-target="#modal_delete_details"><i class="fa-solid fa-trash"></i></a>'
+        url         = reverse("forecasts:marine_details_delete", args=[record.id])
 
+        return format_html(link_html, None, record.id, record.marine_category)
+
+    
 ############# DISTRICT FORECAST #############
 
 class DistrictForecastTable(tables.Table):

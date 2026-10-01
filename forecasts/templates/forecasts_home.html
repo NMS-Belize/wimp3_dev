@@ -83,6 +83,12 @@
             </a>
         </div>
         <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:sea_state_list' %}">
+                <img src="{% static 'button_icons/ocean.png' %}" alt="Sea State" />
+                <span class="task_desc">Sea State</span>
+            </a>
+        </div>
+        <div class="item_dashboard position-relative">
             <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:tide_day_category_list' %}">
                 <img src="{% static 'button_icons/tide.png' %}" alt="Sun Day/Time Category" />
                 <span class="task_desc">Tide<br />Day/Time Category</span>
