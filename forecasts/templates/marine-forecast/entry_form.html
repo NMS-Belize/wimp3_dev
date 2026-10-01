@@ -46,7 +46,7 @@
 <script type="text/javascript">
 $(document).ready(function () {
 
-    $('#id_cap_alerts').select2({
+    /*$('#id_cap_alerts').select2({
         width: '100%',
         placeholder: 'Select CAP Alerts',
         allowClear: true,
@@ -115,55 +115,24 @@ $(document).ready(function () {
         placeholder: 'Select Tropical Alerts',
         width: '100%',
         closeOnSelect: false,
-    });
+    });*/
 
-    /*$('.inline-edit-select2').select2({
+    $('.marine-wind-direction').select2({
+        placeholder: 'Select Wind Direction',
         width: '100%',
-        placeholder: 'Select wind direction',
-        allowClear: true
-    });*/
-
-    /*$(".select-wind-direction").select2({
-        width: "100%",
-        placeholder: 'Select wind direction',
-        allowClear: true
-    });*/
-
-    $('.marine-wind-direction').each(function () {
-
-        const $select = $(this);
-
-        $select.select2({
-            width: '100%',
-            placeholder: 'Select wind',
-            closeOnSelect: false
-        });
-
+        closeOnSelect: false,
     });
 
-    $('.marine-sea-state').each(function () {
-
-        const $select = $(this);
-
-        $select.select2({
-            width: '100%',
-            placeholder: 'Select wind',
-            closeOnSelect: false
-        });
-
+    $('.marine-sea-state').select2({
+        placeholder: 'Select Sea State',
+        width: '100%',
+        closeOnSelect: false,
     });
-
-    /*$(".select-sea-state").select2({
-        width: "100%",
-        placeholder: 'Select wind direction',
-        allowClear: true
-    });*/
 
     $(".btn_delete").click(function () {
         const marine_category = $(this).data("marine_category");
         $("#marine_category_name").text(marine_category);
         $("#delete_entry_id").val($(this).data("id"));
-
         $(this).closest("tr").addClass("table-danger remove-row");
     });
 
@@ -204,23 +173,56 @@ $(document).ready(function () {
 
         const input = $(this);
 
+        const data = {
+            id: input.data("id"),
+            field: input.data("field"),
+            csrfmiddlewaretoken: "{{ csrf_token }}"
+        };
+
+        if (input.data("field") === "wind_direction") {
+            const selectedValues = input.val() || [];
+            //console.log("Selected wind directions:", selectedValues);
+            data.values = selectedValues;
+        } 
+        else if (input.data("field") === "sea_state") {
+            const selectedValues = input.val() || [];
+            //console.log("Selected sea states:", selectedValues);
+            data.values = selectedValues;
+        } 
+        else {
+            data.value = input.val();
+        }
+
         $.ajax({
             url: "{% url 'forecasts:marine_forecast_details_inline_update' %}",
             type: "POST",
-            data: {
-                id: input.data("id"),
-                field: input.data("field"),
-                value: input.val(),
-                csrfmiddlewaretoken: "{{ csrf_token }}"
-            },
+            traditional: true,
+            data: data,
             success: function (response) {
-                console.log("Saved:", response);
-                input.addClass("is-valid");
-                setTimeout(function () { input.removeClass("is-valid"); }, 1000);
+                //console.log("Saved:", response);
+                if (input.hasClass("select2-hidden-accessible")) {
+                    const selection = input.next(".select2-container").find(".select2-selection");
+                    selection.addClass("is-valid");
+                    setTimeout(function () {
+                        selection.removeClass("is-valid");
+                    }, 1000);
+                }
+                else {
+                    input.addClass("is-valid");
+                    setTimeout(function () {
+                        input.removeClass("is-valid");
+                    }, 1000);
+                }
             },
             error: function (xhr) {
                 console.error(xhr.responseText);
-                input.addClass("is-invalid");
+
+                if (input.hasClass("select2-hidden-accessible")) {
+                    input.next(".select2-container").find(".select2-selection").addClass("is-invalid");
+                } 
+                else {
+                    input.addClass("is-invalid");
+                }
             }
         });
     });
@@ -334,18 +336,6 @@ $(document).ready(function () {
             }
         });
     });
-
-    /*$("btn_delete_confirm").addEventListener("click", function () {
-
-        
-    });*/
-
-    /*$('#id_wind_direction_m2m').select2({ placeholder: 'Select Wind Direction', width: '100%', closeOnSelect: false });
-    $('#id_wind_shift_direction_m2m').select2({ placeholder: 'Select Wind Shift Direction', width: '100%', closeOnSelect: false });
-    $('#id_wind_condition_m2m').select2({ placeholder: 'Select Wind Condition(s)', width: '100%', closeOnSelect: false });
-    $('#id_wind_shift_condition_m2m').select2({ placeholder: 'Select Wind Condition(s)', width: '100%', closeOnSelect: false });
-    $('#id_sea_state_m2m').select2({ placeholder: 'Select Sea State', width: '100%', closeOnSelect: false });
-    $('#id_sea_state_shift_m2m').select2({ placeholder: 'Select Sea State', width: '100%', closeOnSelect: false });*/
 });
 </script>
 {% endblock %}

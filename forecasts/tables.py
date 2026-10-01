@@ -1042,7 +1042,7 @@ class ForecastMarineTable(tables.Table):
 class ForecastMarineEntryDetailsTable(tables.Table):
 
     marine_category     = tables.Column(verbose_name="Marine Category", orderable=False, attrs={"th": {"style": "width:120px;","class": "",},"td": {"class": "fw-bold"}})
-    wind_speed          = tables.Column(verbose_name="Wind Speed", orderable=False, empty_values=(),attrs={"th": { "style": "width:120px;" },"td": {"class": "editable-cell"}})
+    wind_speed          = tables.Column(verbose_name="Wind Speed (kts)", orderable=False, empty_values=(),attrs={"th": { "style": "width:120px;" },"td": {"class": "editable-cell"}})
     wind_direction      = tables.Column(verbose_name="Wind Direction", orderable=False, empty_values=(),attrs={"th": { "style": "width:140px;" },"td": {"class": "editable-cell"}})
     wind_condition      = tables.Column(verbose_name="Wind Condition", orderable=False, empty_values=(),attrs={"th": { "style": "width:180px;" },"td": {"class": "editable-cell"}})
     sea_state           = tables.Column(verbose_name="Sea State", orderable=False, empty_values=(),attrs={"th": { "style": "width:260px;"},"td": {"class": "editable-cell"}})
@@ -1064,10 +1064,10 @@ class ForecastMarineEntryDetailsTable(tables.Table):
         return format_html('{} <small style="color:red;">[ID: {}]</small>', value, record.id)'''
 
     def render_waves(self, value, record):
-        return table_format_html('<input type="text" class="form-control form-control inline-edit" data-id="{}" data-field="waves" value="{}">', record.id, value if value is not None else "")
+        return table_format_html('<input type="text" class="form-control form-control details-inline-edit" data-id="{}" data-field="waves" value="{}">', record.id, value if value is not None else "")
     
     def render_wind_speed(self, value, record):
-        return table_format_html('<input type="text" class="form-control form-control inline-edit" data-id="{}" data-field="wind_speed" value="{}">', record.id, value if value is not None else "")
+        return table_format_html('<input type="text" class="form-control form-control details-inline-edit" data-id="{}" data-field="wind_speed" value="{}">', record.id, value if value is not None else "")
 
     def render_wind_direction(self, value, record):
 
@@ -1084,17 +1084,13 @@ class ForecastMarineEntryDetailsTable(tables.Table):
 
         options_html = format_html_join("", "{}",((option,) for option in options))
 
-        return format_html(
-            '''
-            <select class="form-select marine-wind-direction data-id="{}" data-field="wind_direction" multiple="multiple" style="width:100%;">{}</select>
-            ''',
-            record.id,
-            options_html
-        )
+        return format_html('<select class="form-select marine-wind-direction details-inline-edit" data-id="{}" data-field="wind_direction" multiple="multiple" style="width:100%;">{}</select>', record.id, options_html)
 
     def render_wind_condition(self, value, record):
 
         options = []
+
+        options.append(format_html('<option value="">-----------</option>'))
 
         for item in WindCondition.objects.all():
             if str(record.wind_condition) == str(item.id) or str(record.wind_condition) == str(item.description):
@@ -1104,50 +1100,24 @@ class ForecastMarineEntryDetailsTable(tables.Table):
 
         options_html = format_html_join("", "{}",((option,) for option in options))
 
-        return format_html(
-                    '''
-                    <select class="form-select marine-wind-direction data-id="{}" data-field="wind_direction" multiple="multiple" style="width:100%;">{}</select>
-                    ''',
-                    record.id,
-                    options_html
-                )
-
-        '''options = format_html('<option value="">---------</option>')
-
-        options += format_html_join(
-            "",
-            '<option value="{}" {} >{}</option>',
-            (
-                (
-                    item.id,
-                    ' selected="selected" ' if str(record.wind_condition) == str(item.id) or str(record.wind_condition) == str(item.description) else "",
-                    item
-                )
-                for item in WindCondition.objects.all()
-            )
-        )
-
-        return format_html('<select class="form-select details-inline-edit" data-id="{}" data-field="wind_condition">{}</select><small>{}</small>',record.id,options, record.wind_condition)
-'''
+        return format_html('<select class="form-select marine-wind-condition details-inline-edit" data-id="{}" data-field="wind_condition" style="width:100%;">{}</select>', record.id, options_html)
+    
     def render_sea_state(self, value, record):
 
         selected_ids = set(record.sea_state_m2m.values_list("id", flat=True))
+        
+        options = []
 
-        options = format_html_join(
-            "",
-            '<option value="{}" {} >{}</option>',
-            (
-                (
-                    item.id,
-                    ' selected="selected"'
-                    if item.id in selected_ids
-                    else "",
-                    item.description
-                )
-                for item in SeaState.objects.all()
-            )
-        )
-        return format_html('<select class="form-select marine-sea-state" data-id="{}" data-field="sea_state" multiple="multiple">{}</select>', record.id, options)
+        for item in SeaState.objects.all():
+
+            if item.id in selected_ids:
+                options.append(format_html('<option value="{}" selected="selected">{}</option>', item.id, item.description))
+            else:
+                options.append(format_html('<option value="{}">{}</option>', item.id, item.description))
+
+        options_html = format_html_join("", "{}",((option,) for option in options))
+        
+        return format_html('<select class="form-select marine-sea-state details-inline-edit" data-id="{}" data-field="sea_state" multiple="multiple">{}</select>', record.id, options_html)
 
     def render_additional_info(self, value, record):
         return table_format_html('<textarea type="text" class="form-control form-control details-inline-edit" data-id="{}" data-field="additional_info">{}</textarea>', record.id, value if value is not None else "")
@@ -1158,7 +1128,6 @@ class ForecastMarineEntryDetailsTable(tables.Table):
 
         return format_html(link_html, None, record.id, record.marine_category)
 
-    
 ############# DISTRICT FORECAST #############
 
 class DistrictForecastTable(tables.Table):

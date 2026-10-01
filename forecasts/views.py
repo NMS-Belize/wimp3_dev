@@ -1008,22 +1008,6 @@ def marine_forecast_delete(request, id):
         'details': qs
     })
 
-'''def marine_details_delete(request, id):
-    
-    '''
-    
-'''page_name = "Marine Details Delete"
-
-    if request.method == "POST":
-        
-        return redirect('forecasts:sea_state_list')  # redirect anywhere you prefer
-
-    return render(request, "marine-forecast/parameters_delete.html", {
-        "entry": entry,
-        'page_name': page_name,
-        'back_url': reverse('forecasts:sea_state_list'),
-        'details': qs
-    })'''
 @require_POST
 def marine_details_delete(request, id):
 
@@ -1369,36 +1353,33 @@ def marine_forecast_details_inline_update(request):
     record_id = request.POST.get("id")
     field = request.POST.get("field")
 
-    record = get_object_or_404(ForecastMarineDetails,id=record_id)
+    allowed_fields = ["wind_speed","wind_direction","wind_condition","sea_state","waves","additional_info"]
 
-    if field == "wind_direction":
-        values = request.POST.getlist("values")
-        record.wind_direction_m2m.set(values)
-
-        if hasattr(record, "updated_by"):
-            record.updated_by = request.user
-            record.save(update_fields=["updated_by"])
-
-        return JsonResponse({"success": True,"id": record.id,"field": field,"values": values})
-    
-    allowed_fields = ["wind_speed","wind_condition","waves","additional_info"]
+    value = None
+    values = None
 
     if field not in allowed_fields:
         return JsonResponse({"success": False,"error": "Invalid field"}, status=400)
-
-    value = request.POST.get("value","")
-
-    setattr(record, field, value)
-
-    # If your model has updated_by
-    if hasattr(record, "updated_by"):
-        record.updated_by = request.user
-
-    record.save()
-    return JsonResponse({
-        "success": True
-    })
-    #return JsonResponse({"success": True,"id": record.id,"field": field,"value": value})
+    else:
+        record = get_object_or_404(ForecastMarineDetails,id=record_id)
+        
+        if field == "wind_direction":
+            values = request.POST.getlist("values")
+            record.wind_direction_m2m.set(values)
+        elif field == "sea_state":
+            values = request.POST.getlist("values")
+            record.sea_state_m2m.set(values)
+        else:
+            value = request.POST.get("value","")
+            setattr(record, field, value)
+    
+        # If your model has updated_by
+        if hasattr(record, "updated_by"):
+            record.updated_by = request.user
+            record.save(update_fields=["updated_by"])
+    
+        record.save()
+        return JsonResponse({"success": True,"id": record.id,"field": field,"value": value, "values": values })
 
 @require_POST
 def marine_forecast_tides_inline_update(request):
