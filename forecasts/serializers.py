@@ -55,10 +55,10 @@ class DistrictForecastDetailsSerializer(serializers.ModelSerializer):
     def get_district(self, obj): return obj.district.district_name if obj.district_id else ""
     
     # Precipitation MIn
-    def get_precip_min(self, obj): return f"{obj.precip_min:.1f} in" if obj.precip_min is not None else ""
+    def get_precip_min(self, obj): return f"{obj.precip_min:.2f} in" if obj.precip_min is not None else ""
 
     # Precipitation Max
-    def get_precip_max(self, obj): return f"{obj.precip_max:.1f} in" if obj.precip_max is not None else ""
+    def get_precip_max(self, obj): return f"{obj.precip_max:.2f} in" if obj.precip_max is not None else ""
 
     def get_prob_precip_max(self, obj):
         prob = obj.prob_precip_max
