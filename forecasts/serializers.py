@@ -2,7 +2,7 @@ import os
 from rest_framework import serializers
 from django.conf import settings
 
-from forecasts.models import DistrictForecast, DistrictForecastDetails, ForecastGeneral, ForecastMarine, ForecastMarineDetails, SunRiseSet, MoonRiseSet, Tides
+from forecasts.models import DistrictForecast, DistrictForecastDetails, ForecastGeneral, ForecastMarine, ForecastMarineDetails, SunRiseSet, MoonRiseSet, Tides, WindCondition, SeaState
 
 class DistrictForecastDetailsSerializer(serializers.ModelSerializer):
     
@@ -277,16 +277,6 @@ class GeneralForecastSerializer(serializers.ModelSerializer):
         else:
             return ""
 
-class MarineForecastDetailsSerializer(serializers.ModelSerializer):
-    
-    wind_direction_m2m = serializers.SlugRelatedField(many=True, read_only=True, slug_field="description")
-    wind_condition_m2m = serializers.SlugRelatedField(many=True, read_only=True, slug_field="description")
-    sea_state_m2m = serializers.SlugRelatedField(many=True, read_only=True, slug_field="description")
-
-    class Meta:
-        model = ForecastMarineDetails
-        fields = "__all__"
-
 class TideSerializer(serializers.ModelSerializer):
 
     tide_level_category = serializers.SlugRelatedField(read_only=True, slug_field="description")
@@ -296,7 +286,6 @@ class TideSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tides
         fields = ["id","tide_level_category","tide_day_category","tide_date","tide_time"]
-
 
 class SunSerializer(serializers.ModelSerializer):
 
@@ -318,24 +307,39 @@ class MoonSerializer(serializers.ModelSerializer):
         model = MoonRiseSet
         fields = ["id","moon_move_category","moon_day_category","moon_date","moon_time"]
 
+class MarineForecastDetailsSerializer(serializers.ModelSerializer):
+    
+    marine_category     = serializers.SlugRelatedField(read_only=True, slug_field="description")
+    wind_direction_m2m  = serializers.SlugRelatedField(many=True, read_only=True, slug_field="description")
+    wind_condition      = serializers.SerializerMethodField()
+    sea_state_m2m       = serializers.SlugRelatedField(many=True, read_only=True, slug_field="description")
+
+    def get_wind_condition(self, obj):
+        if not obj.wind_condition:
+            return None
+        try:
+            return WindCondition.objects.get(id=int(obj.wind_condition)).description
+        except (WindCondition.DoesNotExist, ValueError, TypeError):
+            return obj.wind_condition
+
+    class Meta:
+        model = ForecastMarineDetails
+        fields = "__all__"
+
 class MarineForecastSerializer(serializers.ModelSerializer):
 
+    forecast_category = serializers.StringRelatedField()
+    marine_details = MarineForecastDetailsSerializer(many=True, read_only=True, source="forecast_marine_details")
+    tide_details   = TideSerializer(many=True, read_only=True, source="marine_tides")
+    sun_details     = SunSerializer(many=True, read_only=True, source="sunrise_set")
+    moon_details    = MoonSerializer(many=True, read_only=True, source="moonrise_set")
+    pdf_file  = serializers.SerializerMethodField()
     created_by  = serializers.SerializerMethodField()
     updated_by  = serializers.SerializerMethodField()
-    forecast_category = serializers.StringRelatedField()
-    #pdf_file  = serializers.SerializerMethodField()
-
-    forecast_category = serializers.StringRelatedField()
-
-    marine_details = MarineForecastDetailsSerializer(many=True, read_only=True, source="forecast_marine_details")
-    tides   = TideSerializer(many=True, read_only=True, source="marine_tides")
-    sun     = SunSerializer(many=True, read_only=True, source="sunrise_set")
-    moon    = MoonSerializer(many=True, read_only=True, source="moonrise_set")
 
     class Meta:
         model   = ForecastMarine
-        fields = ["id","legacy_id","forecast_date","forecast_time","forecast_category","synopsis","sea_surface_temperature","max_temperature", "min_temperature","advisory","cap_alerts","tropical_alerts","marine_details","tides","sun","moon","forecaster_id","created_by","created_datetime","updated_by","updated_datetime"]
-        #fields = "__all__"
+        fields = ["id","legacy_id","forecast_date","forecast_time","forecast_category","synopsis","sea_surface_temperature","max_temperature", "min_temperature","advisory","cap_alerts","tropical_alerts","marine_details","tide_details","sun_details","moon_details","pdf_file","forecaster_id","created_by","created_datetime","updated_by","updated_datetime"]
 
     def get_created_by(self, obj):
         if obj.created_by:
