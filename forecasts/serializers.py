@@ -342,7 +342,7 @@ class MarineForecastSerializer(serializers.ModelSerializer):
         fields = ["id","legacy_id","forecast_date","forecast_time","forecast_category","synopsis","sea_surface_temperature","max_temperature", "min_temperature","advisory","cap_alerts","tropical_alerts","marine_details","tide_details","sun_details","moon_details","pdf_file","forecaster_id","created_by","created_datetime","updated_by","updated_datetime"]
 
     def get_tide_details(self, obj):
-        tides = obj.marine_tides.order_by("-id")
+        tides = obj.marine_tides.order_by("id")
         return TideSerializer(tides, many=True, context=self.context).data
     
     def get_created_by(self, obj):
