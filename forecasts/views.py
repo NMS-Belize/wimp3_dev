@@ -1355,31 +1355,33 @@ def marine_forecast_details_inline_update(request):
 
     allowed_fields = ["wind_speed","wind_direction","wind_condition","sea_state","waves","additional_info"]
 
-    value = None
-    values = None
+    
 
     if field not in allowed_fields:
         return JsonResponse({"success": False,"error": "Invalid field"}, status=400)
+    
+    record = get_object_or_404(ForecastMarineDetails,id=record_id)
+
+    value = None
+    values = None
+    
+    if field == "wind_direction":
+        values = request.POST.getlist("values[]")
+        record.wind_direction_m2m.set(values)
+    elif field == "sea_state":
+        values = request.POST.getlist("values[]")
+        record.sea_state_m2m.set(values)
     else:
-        record = get_object_or_404(ForecastMarineDetails,id=record_id)
-        
-        if field == "wind_direction":
-            values = request.POST.getlist("values")
-            record.wind_direction_m2m.set(values)
-        elif field == "sea_state":
-            values = request.POST.getlist("values")
-            record.sea_state_m2m.set(values)
-        else:
-            value = request.POST.get("value","")
-            setattr(record, field, value)
-    
-        # If your model has updated_by
-        if hasattr(record, "updated_by"):
-            record.updated_by = request.user
-            record.save(update_fields=["updated_by"])
-    
-        record.save()
-        return JsonResponse({"success": True,"id": record.id,"field": field,"value": value, "values": values })
+        value = request.POST.get("value","")
+        setattr(record, field, value)
+
+    # If your model has updated_by
+    #if hasattr(record, "updated_by"):
+    #    record.updated_by = request.user
+    #    record.save(update_fields=["updated_by"])
+
+    record.save()
+    return JsonResponse({"success": True,"id": record.id,"field": field,"value": value, "values": values })
 
 @require_POST
 def marine_forecast_tides_inline_update(request):
@@ -1414,8 +1416,7 @@ def marine_forecast_tides_inline_update(request):
                 except ValueError:
                     return JsonResponse({ "success": False, "error": "Enter a valid time, e.g. 05:05 AM or 07:54 PM"}, status=400)
 
-            record.save()
-
+        record.save()
         return JsonResponse({ "success": True, "id": record.id, "field": field, "value": value })
 
     except Exception as e:

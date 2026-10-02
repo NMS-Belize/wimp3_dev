@@ -792,7 +792,7 @@ class ForecastMarineDetailsCategoryTable(tables.Table):
 
     
 class TidesTable(tables.Table):
-    id                      = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
+    #id                      = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
     tide_level_category     = tables.Column(verbose_name="Tide Level", empty_values=(), attrs={"th": {"style": "width:33.3%","class": ""}, "td": {"style": "text-upper","class": ""}})
     tide_day_category       = tables.Column(verbose_name="Day", empty_values=(), attrs={"th": {"style": "width:33.3%","class": ""}, "td": {"style": "","class": ""}})
     tide_time               = tables.TimeColumn(verbose_name="Time", format="h:i A", attrs={"th": {"style": "width:33.3%","class": ""}, "td": {"style": "","class": ""}})
