@@ -513,7 +513,7 @@ class Tides(models.Model):
     updated_datetime    = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ["tide_date", "tide_time"]
+        ordering = ["id"]
 
     def __str__(self):
         return f"{self.tide_type} - {self.tide_date} {self.tide_time}"
