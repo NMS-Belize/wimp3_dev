@@ -792,7 +792,7 @@ class ForecastMarineDetailsCategoryTable(tables.Table):
 
     
 class TidesTable(tables.Table):
-    #id                      = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
+    id                      = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
     tide_level_category     = tables.Column(verbose_name="Tide Level", empty_values=(), attrs={"th": {"style": "width:33.3%","class": ""}, "td": {"style": "text-upper","class": ""}})
     tide_day_category       = tables.Column(verbose_name="Day", empty_values=(), attrs={"th": {"style": "width:33.3%","class": ""}, "td": {"style": "","class": ""}})
     tide_time               = tables.TimeColumn(verbose_name="Time", format="h:i A", attrs={"th": {"style": "width:33.3%","class": ""}, "td": {"style": "","class": ""}})
@@ -802,7 +802,7 @@ class TidesTable(tables.Table):
     class Meta:
         model = Tides
         template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
-        fields = ("tide_day_category","tide_level_category","tide_time")
+        fields = ("tide_day_category","tide_level_category","tide_time","id")
 
         attrs = {
             "id": "table_marine_tides",
