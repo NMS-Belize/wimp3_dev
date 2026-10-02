@@ -16,6 +16,10 @@ from django.urls import reverse
 
 from django_tables2 import RequestConfig
 from rest_framework import permissions, viewsets
+from rest_framework.pagination import PageNumberPagination
+
+class CommodityPagination(PageNumberPagination):
+    page_size = 20
 from wimp.serializers import GroupSerializer, UserSerializer
 
 from agro.models import PestRisk, PestRiskEntryDetails, PestRiskAction, PestRiskEffect, Sector, Commodity, DroughtAlertLevel, PestRiskInfo
@@ -940,6 +944,7 @@ class CommodityTypeViewSet(viewsets.ModelViewSet):
    queryset = Commodity.objects.all().order_by('id')
    serializer_class = CommodityCategorySerializer
    http_method_names = ['get', 'head','options']
+   pagination_class = None
 
 class ActionItemsViewSet(viewsets.ModelViewSet):
    queryset = PestRiskAction.objects.all().order_by('id')
