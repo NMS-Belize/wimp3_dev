@@ -1355,8 +1355,6 @@ def marine_forecast_details_inline_update(request):
 
     allowed_fields = ["wind_speed","wind_direction","wind_condition","sea_state","waves","additional_info"]
 
-    
-
     if field not in allowed_fields:
         return JsonResponse({"success": False,"error": "Invalid field"}, status=400)
     
@@ -1366,10 +1364,10 @@ def marine_forecast_details_inline_update(request):
     values = None
     
     if field == "wind_direction":
-        values = request.POST.getlist("values[]")
+        values = request.POST.getlist("values")
         record.wind_direction_m2m.set(values)
     elif field == "sea_state":
-        values = request.POST.getlist("values[]")
+        values = request.POST.getlist("values")
         record.sea_state_m2m.set(values)
     else:
         value = request.POST.get("value","")
