@@ -285,3 +285,8 @@ class CAPAlertDetailsViewSet(viewsets.ModelViewSet):
    queryset = CAPAlertDetails.objects.all()
    serializer_class = CAPAlertDetailsSerializer
    http_method_names = ['get', 'head','options']
+
+class TropicalAlertsAllViewSet(viewsets.ModelViewSet):
+   queryset = TropicalWeatherAlerts.objects.filter(is_published=True)
+   serializer_class = TropicalAlertsSerializer
+   http_method_names = ['get', 'head','options']

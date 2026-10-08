@@ -29,9 +29,24 @@ class CAPAlertsSerializer(serializers.ModelSerializer):
         return value
 
 class TropicalAlertsSerializer(serializers.ModelSerializer):
+
+    storm_category = serializers.StringRelatedField()
+    created_by  = serializers.SerializerMethodField()
+    updated_by  = serializers.SerializerMethodField()
+    
     class Meta:
         model   = TropicalWeatherAlerts
         fields  = '__all__'
+
+    def get_created_by(self, obj):
+            if obj.created_by:
+                return obj.created_by.get_full_name() or obj.created_by.username
+            return ""
+    
+    def get_updated_by(self, obj):
+        if obj.updated_by:
+            return obj.updated_by.get_full_name() or obj.updated_by.username
+        return ""
 
 class TropicalAlertsCategoriesSerializer(serializers.ModelSerializer):
     class Meta:

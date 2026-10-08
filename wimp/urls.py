@@ -49,7 +49,7 @@ router.register('pest-risk',    agro_views.PestRiskViewSet, basename='pestrisk')
 ### ALERTS API ROUTES ###
 router.register('cap', alert_views.CAPAlertsViewSet, basename='cap')
 router.register('cap-all', alert_views.CAPAlertsAllViewSet, basename='cap-all')
-#router.register('cap-alert-details', alert_views.CAPAlertDetailsViewSet, basename='capalertdetails')
+router.register('tropical-alerts', alert_views.TropicalAlertsAllViewSet, basename='tropical-alerts')
 
 ### RADAR SERVICES API ROUTES ###
 router.register('radar-images', radar_views.RadarImagesViewSet, basename='radarimages')
