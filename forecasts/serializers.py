@@ -2,7 +2,9 @@ import os
 from rest_framework import serializers
 from django.conf import settings
 
-from forecasts.models import DistrictForecast, DistrictForecastDetails, ForecastGeneral, ForecastMarine, ForecastMarineDetails, SunRiseSet, MoonRiseSet, Tides, WindCondition, SeaState
+from forecasts.models import DistrictForecast, DistrictForecastDetails, ForecastGeneral, ForecastMarine, ForecastMarineDetails, SunRiseSet, MoonRiseSet, Tides, WindCondition, SeaState, TropicalWeatherAlerts
+from alerts.models import CAPAlerts
+from alerts.serializers import TropicalAlertsSerializer, CAPAlertsSerializer, CAPAlertDetailsSerializer
 
 class DistrictForecastDetailsSerializer(serializers.ModelSerializer):
     
@@ -231,6 +233,9 @@ class GeneralForecastSerializer(serializers.ModelSerializer):
     sea_state_m2m = serializers.StringRelatedField(many=True)
     sea_state_shift_m2m = serializers.StringRelatedField(many=True)
 
+    cap_alerts  = serializers.SerializerMethodField()
+    tropical_alerts  = serializers.SerializerMethodField()
+
     created_by  = serializers.SerializerMethodField()
     updated_by  = serializers.SerializerMethodField()
     forecast_category = serializers.StringRelatedField()
@@ -240,6 +245,14 @@ class GeneralForecastSerializer(serializers.ModelSerializer):
     class Meta:
         model   = ForecastGeneral
         fields = '__all__'
+
+    def get_cap_alerts(self, obj):
+        alerts = obj.cap_alerts.all()
+        return CAPAlertDetailsSerializer(alerts, many=True).data
+    
+    def get_tropical_alerts(self, obj):
+        alerts = obj.tropical_alerts.all()
+        return TropicalAlertsSerializer(alerts, many=True).data
 
     def get_created_by(self, obj):
         if obj.created_by:

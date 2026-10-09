@@ -12,6 +12,8 @@ class CAPAlertsAllSerializer(serializers.ModelSerializer):
 
 class CAPAlertDetailsSerializer(serializers.ModelSerializer):
 
+    url = serializers.URLField(source="identifier.link",read_only=True)
+
     class Meta:
         model = CAPAlertDetails
         fields = '__all__'
