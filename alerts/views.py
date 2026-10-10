@@ -246,7 +246,7 @@ def tropical_alerts_delete(request, id):
     qs = TropicalWeatherAlerts.objects.all().order_by('id')
     qs = qs.order_by('id')
     
-    page_name = "District Forecast Instructions Entry"
+    page_name = "Tropical Weather Alert Entry"
 
     if request.method == "POST":
         entry.delete()
