@@ -320,7 +320,7 @@ def general_forecast_generate_pdf(request, id=None, auto_generate=False):
 
     # New M2M data
     if forecast.wind_shift_condition_m2m.exists():
-        wind_shift += "-".join(forecast.wind_direction_shift_m2m.values_list("description",flat=True))
+        wind_shift += "-".join(forecast.wind_shift_condition_m2m.values_list("description",flat=True))
     # Legacy JSON/string data
     elif forecast.wind_shift_condition:
         try:

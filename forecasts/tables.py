@@ -1023,9 +1023,11 @@ class ForecastMarineTable(tables.Table):
             url = reverse("forecasts:marine_forecast_generate_pdf", args=[record.id])
             pdf_class = "text-secondary text-opacity-25"
 
-        link_html   = '<a href="{}" class="{}" target="_blank"><i class="fa-solid fa-file-pdf"></i></a>'
+        target = ' target="_blank"' if os.path.exists(pdf_path) else ""
+
+        link_html   = "<a href='{}' class='{}' {}><i class='fa-solid fa-file-pdf'></i></a>"
         
-        return format_html(link_html, url, pdf_class)
+        return format_html(link_html, url, pdf_class,  target)
 
     def render_delete(self, record):
         if record.is_published:
