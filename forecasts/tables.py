@@ -19,7 +19,7 @@ from forecasts.models import (
     ForecastGeneral, ForescastGeneralCategory, 
     ForecastMarine, ForecastMarineCategory, ForecastMarineDetailsCategory, ForecastMarineDetails, WindCondition, WindDirection, SeaState, 
     Tides, TideLevelCategory, TideDayCategory, SunRiseSet, SunDayCategory, SunMovementCategory, MoonRiseSet, MoonDayCategory, MoonMovementCategory, 
-    ForecastDiscussion,
+    ForecastDiscussion, MunicipalityForecast, 
     Severity, Probability
 )
 
@@ -789,8 +789,7 @@ class ForecastMarineDetailsCategoryTable(tables.Table):
     def render_delete(self, record):
         url = reverse("forecasts:general_forecast_category_delete", args=[record.id])
         return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
-
-    
+   
 class TidesTable(tables.Table):
     #id                      = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
     tide_level_category     = tables.Column(verbose_name="Tide Level", empty_values=(), attrs={"th": {"style": "width:33.3%","class": ""}, "td": {"style": "text-upper","class": ""}})
@@ -863,7 +862,6 @@ class TidesAllTable(tables.Table):
             "id": "table_marine_tides",
             "class": "table table-striped table-condensed table-hover tbl_wimp3 align-middle mb-4",
         }
-
     
 class SunTable(tables.Table):
     #id                  = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
@@ -1022,7 +1020,7 @@ class ForecastMarineTable(tables.Table):
             url = (f"{settings.MEDIA_URL}forecast/marine/doc/{filename}")
             pdf_class = "btn_pdf"
         else:
-            url = reverse("forecasts:general_forecast_generate_pdf", args=[record.id])
+            url = reverse("forecasts:marine_forecast_generate_pdf", args=[record.id])
             pdf_class = "text-secondary text-opacity-25"
 
         link_html   = '<a href="{}" class="{}" target="_blank"><i class="fa-solid fa-file-pdf"></i></a>'
@@ -1500,3 +1498,114 @@ class DistrictForecastDetailsTable(tables.Table):
 
         link_html   = '<div class="fst-italic mb-1">{} - {}</div><div class="row"><div class="col"><small>Probability:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Severity:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Risk:</small><br /><div class="badge {}">{}</span></div></div>'
         return format_html(link_html, record.precip_min, record.precip_max, prob_class, record.prob_precip_max, sev_class, record.sev_precip_max, risk_class, record.risk_precip_max)
+
+class MunicipalityForecastTable(tables.Table):
+    edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:60px;","class": "text-center"}, "td": {"style": "","class": "col_edit text-center"}})
+    
+    forecast_date       = tables.Column(verbose_name="Forecast Date", attrs={"th": {"style": "width:120px;","class": ""}, "td": {"style": "","class": "col_link text-start"}})
+    forecast_time       = tables.TimeColumn(verbose_name="Time", format="h:i A", attrs={"th": {"style": "","class": ""}, "td": {"class": "",},},)
+        
+    created_by          = tables.Column(verbose_name="Created By", attrs={"th": {"style": "width:120px;","class": ""}, "td": {"style": "","class": ""}})
+    created_datetime    = tables.Column(verbose_name="Created Date", attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "","class": "fst-italic" }})
+    updated_by          = tables.Column(verbose_name="Updated By", attrs={"th": {"style": "width:120px;","class": ""}, "td": {"style": "","class": ""}})
+
+    #latest_updated_datetime = tables.Column(empty_values=(), verbose_name="Latest Updated Date", orderable=False, attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "","class": "fst-italic" }})
+
+    #pdf_file            = tables.Column(empty_values=(),verbose_name="PDF",orderable=False, attrs={"th": {"style": "width:65px; text-align:center;","class": ""},"td": {"style": "text-align:center;","class": "col_pdf"}})
+    is_published        = tables.TemplateColumn(template_name="district-forecast/district_forecast_publish_toggle.html", verbose_name="Status", orderable=False, 
+                            attrs={"th": {"style": "width:75px;", "class": "text-center "},
+                                   "td": {"style": "","class": "text-center"}}
+                        )
+    
+    id                  = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:80px;","class": "text-end"}, "td": {"style": "","class": "text-end"}})
+    delete              = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:65px;","class": "text-center col_edit"},"td": {"style": "","class": "text-center col_delete"}})
+
+    class Meta:
+        model = MunicipalityForecast
+        template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
+        fields = ("edit","forecast_date","forecast_time","created_by","created_datetime","updated_by","is_published","id","delete")
+        sequence = ("edit","forecast_date","forecast_time","created_by","created_datetime","updated_by","is_published","id","delete")
+
+        template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
+
+        # Add table HTML id and CSS classes here
+        attrs = {
+            "class": "table table-striped table-condensed table-hover tbl_wimp3" # Bootstrap-friendly styling
+        }
+
+    def render_edit(self, record):
+        link_html   = '<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>'
+        url         = reverse("forecasts:district_forecast_details_entry", args=[record.id])
+        return format_html(link_html, url, record.forecast_date.strftime("%B %d, %Y"))
+
+    def render_forecast_date(self, record):
+        link_html   = '<a href="{}" class="btn_link" disabled>{}</a>'
+        url         = reverse("forecasts:district_forecast_details_entry",args=[record.id])
+        return format_html(link_html, url, record.forecast_date.strftime("%b %d, %Y"))
+    
+    def render_created_by(self, record):
+        if not record:
+            return ""
+        
+        last_name   = f"{record.created_by.last_name}"
+
+        if last_name:
+            return f"{last_name}"
+
+        return record.created_by
+
+    def render_created_datetime(self, record):
+        value = record.created_datetime
+
+        if value:
+            value = timezone.localtime(value)
+            return value.strftime("%b %d, %Y %I:%M %p")
+
+        return ""
+    
+    def render_updated_by(self, record):
+        if not record:
+            return ""
+        
+        last_name   = f"{record.updated_by.last_name}"
+
+        if last_name:
+            return f"{last_name}"
+
+        return record.updated_by
+
+    def render_latest_updated_datetime(self, record):
+        value = record.latest_updated_datetime
+
+        if value:
+            value = timezone.localtime(value)
+            return value.strftime("%b %d, %Y %I:%M %p")
+
+        return ""
+    
+    '''def render_pdf_file(self, record):
+        filename    = f"District_Forecast_{record.forecast_date}_NMS_BZ.pdf"
+        url         = reverse("forecasts:district_forecast_generate_pdf", args=[record.id])  # change "pest_edit" to your URL name
+
+        pdf_path    = os.path.join(settings.MEDIA_ROOT, "forecast", "district_forecasts", "doc", filename)
+        
+        if os.path.exists(pdf_path):
+            url = f"{settings.MEDIA_ROOT}/forecast/district_forecasts/doc/{filename}"
+            pdf_class = "btn_pdf"
+        else:
+            url = reverse("forecasts:district_forecast_generate_pdf", args=[record.id])
+            pdf_class = "text-secondary text-opacity-25"
+
+        link_html   = '<a href="{}" class="{}" target="_blank"><i class="fa-solid fa-file-pdf"></i></a>'
+        
+        return format_html(link_html, url, pdf_class)'''
+    
+    def render_delete(self, record):
+        #link_html   = '<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>'
+        url         = reverse("forecasts:district_forecast_delete", args=[record.id])
+
+        if record.is_published:
+            return format_html('<i class="fa-solid fa-ban text-secondary text-opacity-25 fa-lg"></i>')
+        else:
+            return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-solid fa-trash"></i></a>',url)
+        

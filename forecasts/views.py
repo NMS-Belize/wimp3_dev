@@ -8,8 +8,10 @@ from django.contrib import messages
 from django.contrib.staticfiles import finders
 from django.core.management import call_command
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.db import transaction
 from django.http import JsonResponse, FileResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.test import RequestFactory
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
@@ -49,10 +51,11 @@ from forecasts.tables import (DistrictForecastDetailsTable, DistrictForecastTabl
                               ForecastMarineTable, ForecastMarineCategoryTable, ForecastMarineEntryDetailsTable, 
                               TidesTable, TideLevelTable, TideDayTimeCategoryTable, TidesAllTable,
                               SunTable,  SunDayTimeCategoryTable, SunMoveCategoryTable, 
-                              MoonTable, MoonDayTimeCategoryTable, MoonMoveCategoryTable
+                              MoonTable, MoonDayTimeCategoryTable, MoonMoveCategoryTable, MunicipalityForecastTable
 )
 from forecasts.models import (
     ForecastGeneral, ForescastGeneralCategory, WindDirection, WindCondition, SeaState,
+    MunicipalityForecast, 
     ForecastDiscussion, 
     ForecastMarine, ForecastMarineCategory, ForecastMarineDetailsCategory, 
     ForecastMarineDetails,
@@ -166,9 +169,22 @@ def general_forecast_entry(request, id=None):
             saved_entry.save()
 
             form.save_m2m()
+
+            # Generate PDF after successful commit
+            transaction.on_commit(
+                lambda forecast_id=saved_entry.id:
+                    general_forecast_generate_pdf(request,forecast_id,auto_generate=True)
+            )
             messages.success(request, "Forecast Deatils saved successfully.")
-        
-            return redirect('forecasts:general_forecast_list', saved_entry.id)
+
+            action = request.POST.get("submit_action")
+
+            if action == "continue":
+                messages.success(request,"Forecast discussion saved successfully.")
+                return redirect('forecasts:general_forecast_entry', saved_entry.id)
+            elif action == "close":
+                messages.success(request,"Forecast discussion saved successfully.")
+                return redirect("forecasts:general_forecast_list")
         else:
             messages.error(request, f"Form could not be saved: {form.errors.as_text()}")
 
@@ -207,7 +223,7 @@ def general_forecast_delete(request, id):
         'details': qs
     })
 
-def general_forecast_generate_pdf(request, id=None):
+def general_forecast_generate_pdf(request, id=None, auto_generate=False):
 
     forecast = get_object_or_404(ForecastGeneral, id=id)
     print(forecast.wind_direction_m2m)
@@ -440,6 +456,14 @@ def general_forecast_generate_pdf(request, id=None):
     # Return saved PDF as download
     #return FileResponse(open(file_path, "rb"), as_attachment=False, filename=filename)
 
+    #messages.success(request, "PDF saved successfully.")
+
+    #return redirect("forecasts:general_forecast_list")
+    # AUTOMATIC GENERATION - No redirect
+    if auto_generate:
+        return file_path
+
+    # MANUAL GENERATION - Redirect to list
     messages.success(request, "PDF saved successfully.")
 
     return redirect("forecasts:general_forecast_list")
@@ -917,54 +941,62 @@ def marine_forecast_entry(request, id=None):
 
         if form.is_valid():
 
-            is_new = entry is None
+            with transaction.atomic():
 
-            saved_entry = form.save(commit=False)
+                is_new = entry is None
 
-            if is_new:
-                saved_entry.created_by = request.user
+                saved_entry = form.save(commit=False)
 
-            # CREATE + UPDATE
-            saved_entry.updated_by = request.user
+                if is_new:
+                    saved_entry.created_by = request.user
 
-            # If this forecast is being published, unpublish all other forecasts first
-            if form.cleaned_data.get("is_published"):
-                ForecastMarine.objects.exclude(pk=saved_entry.pk).update(is_published=False)
-            
-            saved_entry.save()
-            form.save_m2m()
+                # CREATE + UPDATE
+                saved_entry.updated_by = request.user
 
-            if is_new:
-                marine_details_category = ForecastMarineDetailsCategory.objects.all().order_by("id")[:5]
+                # If this forecast is being published, unpublish all other forecasts first
+                if form.cleaned_data.get("is_published"):
+                    ForecastMarine.objects.exclude(pk=saved_entry.pk).update(is_published=False)
                 
-                for d in marine_details_category:
-                    ForecastMarineDetails.objects.get_or_create(marine_forecast=saved_entry,marine_category=d)
+                saved_entry.save()
+                form.save_m2m()
 
-                tide_day = TideDayCategory.objects.all().order_by("id")[:2]
-                tide_category = TideLevelCategory.objects.all().order_by("id")[:2]
+                if is_new:
+                    marine_details_category = ForecastMarineDetailsCategory.objects.all().order_by("id")[:5]
+                    
+                    for d in marine_details_category:
+                        ForecastMarineDetails.objects.get_or_create(marine_forecast=saved_entry,marine_category=d)
 
-                for td in tide_day:
-                    for t in tide_category:
-                        Tides.objects.get_or_create(marine_forecast=saved_entry, tide_level_category=t, tide_day_category=td)
+                    tide_day = TideDayCategory.objects.all().order_by("id")[:2]
+                    tide_category = TideLevelCategory.objects.all().order_by("id")[:2]
 
-                sun_category = SunMovementCategory.objects.all().order_by("id")[:2]
+                    for td in tide_day:
+                        for t in tide_category:
+                            Tides.objects.get_or_create(marine_forecast=saved_entry, tide_level_category=t, tide_day_category=td)
 
-                for s in sun_category:
-                    SunRiseSet.objects.get_or_create(marine_forecast=saved_entry,sun_move_category=s)
+                    sun_category = SunMovementCategory.objects.all().order_by("id")[:2]
 
-                moon_category = MoonMovementCategory.objects.all().order_by("id")[:2]
-                                        
-                for m in moon_category:
-                    MoonRiseSet.objects.get_or_create(marine_forecast=saved_entry,moon_move_category=m)
+                    for s in sun_category:
+                        SunRiseSet.objects.get_or_create(marine_forecast=saved_entry,sun_move_category=s)
 
-            action = request.POST.get("submit_action")
-            
-            if action == "continue":
-                messages.success(request,"Forecast discussion saved successfully.")
-                return redirect("forecasts:marine_forecast_entry", saved_entry.id)
-            elif action == "close":
-                messages.success(request,"Forecast discussion saved successfully.")
-                return redirect("forecasts:marine_forecast_list")
+                    moon_category = MoonMovementCategory.objects.all().order_by("id")[:2]
+                                            
+                    for m in moon_category:
+                        MoonRiseSet.objects.get_or_create(marine_forecast=saved_entry,moon_move_category=m)
+
+                # Generate PDF after successful commit
+                transaction.on_commit(
+                    lambda forecast_id=saved_entry.id:
+                        marine_forecast_generate_pdf(request,forecast_id,auto_generate=True)
+                )
+                        
+                action = request.POST.get("submit_action")
+                
+                if action == "continue":
+                    messages.success(request,"Forecast discussion saved successfully.")
+                    return redirect("forecasts:marine_forecast_entry", saved_entry.id)
+                elif action == "close":
+                    messages.success(request,"Forecast discussion saved successfully.")
+                    return redirect("forecasts:marine_forecast_list")
         else:
             messages.error(request, f"Form could not be saved: {form.errors.as_text()}")
             return redirect('forecasts:marine_forecast_entry') #, saved_entry.id
@@ -987,6 +1019,250 @@ def marine_forecast_entry(request, id=None):
         'previous_entry': previous_entry,
         'next_entry': next_entry,
     })
+
+def marine_forecast_generate_pdf(request, id=None, auto_generate=False):
+
+    forecast = get_object_or_404(ForecastMarine, id=id)
+    marine_details = ForecastMarineDetails.objects.filter(marine_forecast_id=id)
+    marine_tides = Tides.objects.filter(marine_forecast_id=id).order_by('id')
+    marine_sun = SunRiseSet.objects.filter(marine_forecast_id=id).order_by('id')
+    marine_moon = MoonRiseSet.objects.filter(marine_forecast_id=id).order_by('id')
+
+    # Folder where PDF will be saved
+    folder_path = os.path.join(settings.MEDIA_ROOT, "forecast", "marine", "doc")
+    os.makedirs(folder_path, exist_ok=True)
+
+    # Full PDF file path
+    filename = (
+        f"Marine_Forecast_"
+        f"{forecast.forecast_date}_"
+        f"{forecast.forecast_time.strftime('%I%M_%p')}_"
+        f"NMS_BZ.pdf"
+    )
+    file_path = os.path.join(folder_path, filename)
+
+    doc = SimpleDocTemplate(file_path, pagesize=letter, leftMargin=0.5 * inch, rightMargin=0.5 * inch, topMargin=1.8 * inch, bottomMargin=0.5 * inch)
+
+    styles = getSampleStyleSheet()
+    elements = []
+
+    main_title  = ParagraphStyle("MainTitle",   parent = styles["Title"],   fontName = "OpenSans-SemiBold", fontSize = 14, leading = 20, alignment = TA_LEFT, textColor = "#00537A", spaceAfter = 4)
+    date_title   = ParagraphStyle("SubTitle",    parent = styles["Title"],   fontName = "OpenSans-Bold",     fontSize = 10, leading = 10, alignment = TA_RIGHT, textColor = "#235558", spaceAfter = 0)
+
+    sub_title   = ParagraphStyle("SubTitle",    parent = styles["Title"],   fontName = "OpenSans-Bold",     fontSize = 10, leading = 14, alignment = TA_LEFT, textColor = "#000000", spaceAfter = 2)
+    sub_title_2   = ParagraphStyle("SubTitle",    parent = styles["Title"],   fontName = "OpenSans-Bold",     fontSize = 10, leading = 12, alignment = TA_LEFT, textColor = "#00537A", spaceAfter = 0)
+
+    # ALERT TITLES
+    alert_title     = ParagraphStyle("SubTitle",    parent = styles["Title"],   fontName = "OpenSans-Bold",     fontSize = 10, leading = 16, alignment = TA_LEFT, backColor=colors.HexColor("#f8e5e5"), textColor = "#82312f", spaceAfter = 2)
+    talert_title    = ParagraphStyle("SubTitle",    parent = styles["Title"],   fontName = "OpenSans-Bold",     fontSize = 10, leading = 16, alignment = TA_LEFT, backColor=colors.HexColor("#ddf2f3"), textColor = "#2c676c", spaceAfter = 2)
+
+    # ALERT SUBTITLES
+    cat_title   = ParagraphStyle("SubTitle",    parent = styles["Title"],   fontName = "OpenSans-Bold",     fontSize = 9, leading = 12, alignment = TA_LEFT, textColor = "#82312f", spaceAfter = 2)
+    tcat_title  = ParagraphStyle("SubTitle",    parent = styles["Title"],   fontName = "OpenSans-Bold",     fontSize = 9, leading = 12, alignment = TA_LEFT, textColor = "#235558", spaceAfter = 2)
+
+    main_text   = ParagraphStyle("MainText",    parent = styles["Normal"],  fontName = "OpenSans-Regular",  fontSize = 9, leading = 14, alignment = TA_LEFT, textColor = "#000000", spaceAfter = 5)
+
+    foot_text   = ParagraphStyle("FootText",    parent = styles["Normal"],  fontName = "OpenSans-Regular",  fontSize = 8, leading = 12, alignment = TA_LEFT, textColor = "#000000", spaceAfter = 2)
+    table_head  = ParagraphStyle("TableHeader", parent = styles["Normal"],  fontName = "OpenSans-Bold",     fontSize = 9, leading = 9, spaceAfter = 0, textColor = "#000000", )
+    table_body  = ParagraphStyle("TableBody",   parent = styles["Normal"],  fontName = "OpenSans-Regular",  fontSize = 10, leading = 12, spaceAfter = 0 )
+
+    available_width = doc.width
+
+    data_head = [[ Paragraph("Marine Forecast", main_title), Paragraph(f"{forecast.forecast_date.strftime('%B %d, %Y')}, "f"{forecast.forecast_time.strftime('%I:%M %p')}", date_title) ]]
+
+    header_table = Table(data_head, colWidths=[ available_width * 0.5, available_width * 0.5 ])
+
+    data_details = [[Paragraph("", table_head), Paragraph("WINDS", table_head), Paragraph("SEA", table_head), Paragraph("WAVES", table_head), Paragraph("DETAILS", table_head) ]]
+
+    for detail in marine_details:
+
+        wind = ""
+
+        if detail.wind_direction_m2m.exists():
+            wind += "-".join(detail.wind_direction_m2m.values_list("description",flat=True))
+        # Legacy JSON/string data
+        elif detail.wind_direction:
+            try:
+                direction_ids = json.loads(detail.wind_direction)
+                wind += "-".join(WindDirection.objects.filter(id__in=direction_ids).values_list("description",flat=True))
+            except (json.JSONDecodeError, TypeError):
+                wind += str(detail.wind_direction)
+
+        # WIND SPEED
+        if detail.wind_speed is not None:
+            wind += ", "
+            wind += f"{detail.wind_speed} kts"
+
+        # WIND CONDITION
+        if detail.wind_condition and str(detail.wind_condition).strip().isdigit():
+
+            condition = WindCondition.objects.filter(id=detail.wind_condition).first()
+
+            if (condition and (condition.description == 'Light + Variable') or (condition.description == 'Light+Variable')):
+                wind = f"Light + Variable"
+            else:
+                wind += f", {condition.description}"
+
+        sea = ""
+        
+        # New M2M data: SEA STATE
+        if detail.sea_state_m2m.exists():
+            sea += " to ".join(detail.sea_state_m2m.values_list("description",flat=True))
+        # Legacy JSON/string data
+        elif detail.sea_state:
+            try:
+                sea_state_ids = json.loads(detail.sea_state)
+                sea += "-".join(SeaState.objects.filter(id__in=sea_state_ids).values_list("description",flat=True))
+            except (json.JSONDecodeError, TypeError):
+                sea += str(detail.sea_state)
+
+        data_details.append([ 
+            Paragraph(str(f'{detail.marine_category}' or ""), table_body), 
+            Paragraph(str(f'{wind}' or ""), table_body), 
+            Paragraph(str(f'{sea}' or ""), table_body),
+            Paragraph(str(f'{detail.waves} ft' or ""), table_body),
+            Paragraph(str(f'{detail.additional_info}' or ""), table_body) 
+        ])
+
+    data = [[Paragraph("SEA SURFACE Temperature", table_head), Paragraph("MINIMUM Temperature", table_head), Paragraph("MAXIMUM Temperature", table_head) ]]
+    data.append([ Paragraph(str(f'{forecast.sea_surface_temperature} °F' or ""), table_body), Paragraph(str(f'{forecast.min_temperature} °F' or ""), table_body), Paragraph(str(f'{forecast.max_temperature} °F' or ""), table_body) ])
+
+    data_tides = [[Paragraph("", table_head), Paragraph("", table_head), Paragraph("", table_head) ]]
+
+    for tide in marine_tides:
+        tide_time_display = None
+        if tide.tide_time:
+            tide_time_display = tide.tide_time.strftime("%I:%M %p").lstrip("0")
+        data_tides.append([ Paragraph(str(f'{tide.tide_day_category}' or ""), table_head), Paragraph(str(f'{tide.tide_level_category}' or ""), table_body), Paragraph(str(f'{tide_time_display}' or ""), table_body) ])
+
+    data_sun_moon = [[Paragraph("", table_head), Paragraph("", table_head), Paragraph("", table_head) ]]
+
+    for sun in marine_sun:
+        sun_time_display = None
+        if sun.sun_time:
+            sun_time_display = sun.sun_time.strftime("%I:%M %p").lstrip("0")
+        data_sun_moon.append([ Paragraph(str(f'{sun.sun_move_category}' or ""), table_head), Paragraph(str(f'{sun.sun_day_category}' or ""), table_body), Paragraph(str(f'{sun_time_display}' or ""), table_body) ])
+
+    for moon in marine_moon:
+        moon_time_display = None
+        if moon.moon_time:
+            moon_time_display = moon.moon_time.strftime("%I:%M %p").lstrip("0")
+        data_sun_moon.append([ Paragraph(str(f'{moon.moon_move_category}' or ""), table_head), Paragraph(str(f'{moon.moon_day_category}' or ""), table_body), Paragraph(str(f'{moon_time_display}' or ""), table_body) ])
+    
+    table_temps     = Table(data, colWidths=[ available_width * 0.32, available_width * 0.35, available_width * 0.32 ], repeatRows = 1)
+    table_details   = Table(data_details, colWidths=[ available_width * 0.18, available_width * 0.2, available_width * 0.2, available_width * 0.1, available_width * 0.31 ], repeatRows = 1)
+    
+    table_tides     = Table(data_tides, colWidths=[ available_width * 0.2, available_width * 0.2, available_width * 0.59 ], repeatRows = 1)
+    table_sun_moon  = Table(data_sun_moon, colWidths=[ available_width * 0.2, available_width * 0.2, available_width * 0.59 ], repeatRows = 1)
+    
+    style = TableStyle([
+        #("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#ffffff")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.black),
+        ("ALIGN", (1, 1), (4, -1), "CENTER"),
+        #("VALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("VALIGN", (0, 0), (-1, 0), "MIDDLE"),
+        ("ALIGN", (0, 1), (-1, -1), "LEFT"),
+        
+        # Data rows
+        ("VALIGN", (0, 1), (-1, -1), "TOP"),
+        #("GRID", (0, 0), (-1, -1), 0.5, colors.white),
+        ("LEFTPADDING", (0, 0), (-1, -1), 4),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 4),
+        ("TOPPADDING", (0, 0), (-1, -1), 2),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
+    ])
+
+    for row in range(2, len(data), 2):
+        style.add("LINEBELOW",(0, row),(-1, row),0.5, colors.HexColor("#b2d9d0"))
+    
+    forecaster = ""
+    if forecast.created_by:
+        forecaster = forecast.created_by.get_full_name() or forecast.created_by.username
+
+    header_table.setStyle(style)
+    elements.append(header_table)
+    elements.append(Spacer(1, 6))
+
+    elements.append(Paragraph(f"Synopsis", sub_title))
+    elements.append(Paragraph(f"{forecast.synopsis}", main_text))
+    elements.append(Spacer(1, 6))
+
+    table_details.setStyle(style)
+    elements.append(Paragraph(f"Marine Conditions", sub_title))
+    elements.append(table_details)
+    elements.append(Spacer(1, 12))
+
+    table_temps.setStyle(style)
+    elements.append(table_temps)
+    elements.append(Spacer(1, 12))
+            
+    # New M2M data: Tropical Weather Outlook
+    if forecast.cap_alerts.exists():
+
+        elements.append(Paragraph(f"&nbsp;&nbsp;*** Alerts & Advisories ***", alert_title))
+
+        for alert in forecast.cap_alerts.all():
+            elements.append(Paragraph(f"{alert.headline}", cat_title))
+
+            if alert.description:
+                elements.append(Paragraph(f"{alert.description}", main_text))
+
+            elements.append(Spacer(1, 6))
+        
+    # New M2M data: Tropical Weather Outlook
+    if forecast.tropical_alerts.exists():
+
+        elements.append(Paragraph("&nbsp;&nbsp;*** Tropical Weather Outlook ***", talert_title))
+
+        for storm in forecast.tropical_alerts.all():
+
+            # Storm name
+            if storm.storm_name or storm.storm_category:
+                elements.append(Paragraph(f"<b>{storm.storm_category}, {storm.storm_name}</b>", tcat_title))
+
+            # Description
+            if storm.description:
+                elements.append(Paragraph(f"{storm.description}", main_text))
+
+            # Space between storms
+            elements.append(Spacer(1, 6))
+
+    elements.append(Paragraph(f"Astronomical Condition", sub_title))
+    elements.append(Spacer(1, 4))
+
+    elements.append(Paragraph(f"Tides", sub_title_2))
+    table_tides.setStyle(style)
+    elements.append(table_tides)
+    elements.append(Spacer(1, 10))
+
+    elements.append(Paragraph(f"Sun/Moon", sub_title_2))
+    table_tides.setStyle(style)
+    elements.append(table_sun_moon)
+
+    elements.append(Spacer(1, 12))
+    
+    elements.append(Paragraph(f"Forecaster: {forecaster} | Date Created: {forecast.created_datetime.strftime('%B %d, %Y, %I:%M %p')} | Last Updated: {forecast.updated_datetime.strftime('%B %d, %Y, %I:%M %p')}", foot_text))
+
+    doc.build(elements,
+        onFirstPage=add_background_wafs_full,
+        onLaterPages=add_background_wafs_full
+    )
+    available_width = doc.width
+
+    # Return saved PDF as download
+    #return FileResponse(open(file_path, "rb"), as_attachment=False, filename=filename)
+    #messages.success(request, "PDF saved successfully.")
+    #return redirect("forecasts:marine_forecast_list")
+
+    # AUTOMATIC GENERATION - No redirect
+    if auto_generate:
+        return file_path
+
+    # MANUAL GENERATION - Redirect to list
+    messages.success(request, "PDF saved successfully.")
+
+    return redirect("forecasts:marine_forecast_list")
+
 
 def marine_forecast_delete(request, id):
     
@@ -1169,7 +1445,6 @@ def sea_state_delete(request, id):
         'back_url': reverse('forecasts:sea_state_list'),
         'details': qs
     })
-
 
 ############# WIND DIRECTION #############
 def wind_direction_list(request, id=None):
@@ -2831,6 +3106,30 @@ def get_risk_color(level):
 
     return "#000000"
 
+
+############# DISTRICT FORECASTS: Main Entries #############
+def municipality_forecast_list(request, id=None):
+    page_name = "Municipality Forecasts"
+    qs = MunicipalityForecast.objects.all().order_by('-id')
+    table = MunicipalityForecastTable(qs)
+    table.empty_text = "No records available"
+    RequestConfig(request).configure(table)
+
+    # Load entry ONLY if id is provided
+    entry = None
+    if id is not None:
+        entry = get_object_or_404(MunicipalityForecast, id=id)
+
+    return render(request, 'district-forecast/table_list_main.html', {
+        'id' : id,
+        'entry': entry,  
+        'page_name': page_name,
+        'prev_page': 'Weather Forecasts',
+        'table': table,
+        'new_url':  reverse('forecasts:district_forecast_entry'),
+        'back_url': reverse('forecasts:index'),
+        'api_url':  reverse('district-forecast-list'),
+    })
 
 
 class WIMP2FilesAPIView(APIView):

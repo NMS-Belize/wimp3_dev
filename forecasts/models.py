@@ -9,7 +9,8 @@ from system_core.models import District, AlertLevel, RiskLevel
 from alerts.models import CAPAlertDetails, TropicalWeatherAlerts
 
 # Create your models here.
-     
+
+    
 class Probability(models.Model):
     description = models.CharField(max_length=20)
     color       = models.CharField(max_length=20,default="",null=True, blank=True)
@@ -617,3 +618,80 @@ class MoonRiseSet(models.Model):
 
     def __str__(self):
         return f"{self.moon_date} - {self.moon_type} - {self.moon_time}"
+
+class MunicipalityForecast(models.Model):
+    forecast_date       = models.DateField(unique=False)
+    forecast_time       = models.TimeField(null=False, blank=False, default=time(0, 0))
+    forecast_category   = models.ForeignKey(ForescastGeneralCategory,on_delete=models.SET_NULL,null=True,blank=True,related_name="forecast_municiplaity_category")
+    is_published        = models.BooleanField(default=False)
+    created_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="municiplaity_forecasts_created")
+    updated_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="municiplaity_forecasts_updated")
+    created_datetime    = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_datetime    = models.DateTimeField(auto_now=True,null=True)
+
+    '''@property
+    def latest_updated_datetime(self):
+        latest_detail = self.district_forecast_details.aggregate(
+            latest=Max("updated_datetime")
+        )["latest"]
+
+        dates = [
+            dt for dt in (
+                self.updated_datetime,
+                latest_detail,
+            )
+            if dt is not None
+        ]
+
+        return max(dates) if dates else None'''
+
+    class Meta:
+        verbose_name = "Municiplaity Forecast"
+        verbose_name_plural = "Municiplaity Forecasts"
+
+    def __str__(self):
+        return f"{self.forecast_date}"
+
+class MunicipalityZone(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    zone_name = models.CharField(max_length=100,null=True,blank=True)
+    description = models.CharField(max_length=100,null=True,blank=True)
+    latitude = models.DecimalField(default=0.0,decimal_places=10,max_digits=13,null=True,blank=True)
+    longitude = models.DecimalField(default=0.0,decimal_places=10,max_digits=13,null=True,blank=True)
+    forecaster_id = models.IntegerField(null=True,blank=True)
+    published_date = models.DateTimeField(auto_now=True,null=True)
+    created_datetime    = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True)
+    updated_datetime = models.DateTimeField(auto_now_add=True,null=True)
+    def __str__(self): return self.zone_name
+
+class MunicipalityForecastDetails(models.Model):
+
+    legacy_id       = models.PositiveBigIntegerField(null=True,blank=True,unique=True,db_index=True)
+
+    municipality_forecast   = models.ForeignKey(MunicipalityForecast,on_delete=models.SET_NULL,null=True,blank=True,related_name="forecast_municipality_details")
+    municipality_area   = models.ForeignKey(MunicipalityZone,on_delete=models.SET_NULL,null=True,blank=True,related_name="forecast_municipality_details")
+
+    temp_min        = models.IntegerField(default=0)
+    temp_max        = models.IntegerField(default=0)
+    
+    wind_speed          = models.CharField(max_length=10,null=True, blank=True)
+
+    wind_direction      = models.CharField(max_length=50, null=True, blank=True)
+    wind_direction_m2m  = models.ManyToManyField(WindDirection, blank=True,related_name="municipality_forecast_details_wind_direction")
+
+    wind_condition        = models.CharField(max_length=50, null=True, blank=True)
+
+    created_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="municipality_forecasts_details_created")
+    updated_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="municipality_forecasts_details_updated")
+    created_datetime    = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_datetime    = models.DateTimeField(auto_now=True,null=True)
+
+    class Meta:
+        verbose_name = "Municipality Forecast Details"
+        verbose_name_plural = "Municipality Forecast Details"
+
+    def __str__(self):
+        return str(self.municipality_area)
+
+    

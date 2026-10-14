@@ -2,18 +2,21 @@
 {% load static %}
 {% block title %}{{ page_name }} | WIMP3{% endblock %}
 {% block content %}
-<div class="row mb-5">
+<div class="row mb-4">
+    <div class="col-12 mb-3">
+        <h3 class="dashboard_title">Weather Observation Modules</h3>
+    </div>
     <div class="col-12 d-flex flex-row mb-3">
         <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'observations:index' %}">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'observations:weather_code_list' %}">
                 <img src="{% static 'button_icons/binary-code.png' %}" alt="Weather Codes" />
-                <span class="task_desc">Codes</span>
+                <span class="task_desc">Weather Codes</span>
             </a>
         </div>
         <div class="item_dashboard position-relative">
             <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'observations:weather_icon_list' %}">
                 <img src="{% static 'button_icons/cloudy2.png' %}" alt="Weather Icons" />
-                <span class="task_desc">Weather Icon List</span>
+                <span class="task_desc">Weather Icons</span>
             </a>
         </div>
     </div>

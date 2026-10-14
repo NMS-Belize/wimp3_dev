@@ -13,6 +13,7 @@ from rest_framework.routers import DefaultRouter
 from company import views as company_views
 from agro import views as agro_views
 from forecasts import views as forecasts_views
+from observations import views as observations_views
 from alerts import views as alert_views
 from radar import views as radar_views
 from system_core import views as system_core_views
@@ -25,6 +26,10 @@ app_name = 'wimp'
 router = routers.DefaultRouter()
 router.register('users',    agro_views.UserViewSet)
 router.register('groups',   agro_views.GroupViewSet)
+
+### OBSERVATIONS API ROUTES ###
+router.register('weather-codes',            observations_views.WeatherCodesViewSet,        basename='weather-codes')
+router.register('weather-code',            observations_views.WeatherCodesViewSet,        basename='weather-code')
 
 ### FORECASTS API ROUTES ###
 router.register('district-forecast',            forecasts_views.DistrictForecastViewSet,        basename='district-forecast')
@@ -43,8 +48,6 @@ router.register('drought-alert-levels', agro_views.DroughtAlertLevelViewSet, bas
 router.register('action-items', agro_views.ActionItemsViewSet, basename='actionitems')
 router.register('effect-items', agro_views.EffectItemsViewSet, basename='effectitems')
 router.register('pest-risk',    agro_views.PestRiskViewSet, basename='pestrisk')
-
-#router.register('alert-levels', agro_views.AlertLevelViewSet, basename='pestalertlevels')
 
 ### ALERTS API ROUTES ###
 router.register('cap', alert_views.CAPAlertsViewSet, basename='cap')

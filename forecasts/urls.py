@@ -61,6 +61,12 @@ urlpatterns = [
     path('district-forecast/probability-entry/<int:id>/', views.probability_entry,name='probability_entry'),
     path('district-forecast/probability-entry/<int:id>/delete/', views.probability_delete,name='probability_delete'),
 
+
+    ## DISTRICT FORECASTS
+    path('municipality-forecast/list/', views.municipality_forecast_list, name="municipality_forecast_list"),
+    path('municipality-forecast/list/<int:id>/', views.municipality_forecast_list,name='municipality_forecast_list_id'),
+
+
     ## GENERAL WEATHER FORECAST
     path('general-weather-forecast/list/', views.general_forecast_list, name="general_forecast_list"),
     path('general-weather-forecast/list/<int:id>/', views.general_forecast_list, name='general_forecast_list'),
@@ -73,7 +79,7 @@ urlpatterns = [
     path("general-weather-forecast/<int:id>/image/",views.general_forecast_image,name="general_forecast_image"),
 
     path('general-weather-forecast/category/list/', views.general_forecast_category_list, name="general_forecast_category_list"),
-    path('general-weather-forecast/category/list/<int:id>/', views.general_forecast_category_list, name='general_forecast_category_list'),
+    #path('general-weather-forecast/category/list/<int:id>/', views.general_forecast_category_list, name='general_forecast_category_list'),
     path('general-weather-forecast/category/entry/', views.general_forecast_category_entry, name="general_forecast_category_entry"),
     path('general-weather-forecast/category/entry/<int:id>/', views.general_forecast_category_entry, name="general_forecast_category_entry"),
     path('general-weather-forecast/category/entry/<int:id>/delete/', views.general_forecast_category_delete, name='general_forecast_category_delete'),
@@ -81,10 +87,11 @@ urlpatterns = [
 
     ## MARINE FORECAST
     path('marine-forecast/list/', views.marine_forecast_list, name="marine_forecast_list"),
-    #path('marine-forecast/category/list/<int:id>/', views.marine_forecast_category_list, name='marine_forecast_category_list'),
+    #path('marine-forecast/entry/list/<int:id>/', views.marine_forecast_list, name='marine_forecast_list'),
     path('marine-forecast/entry/', views.marine_forecast_entry, name="marine_forecast_entry"),
     path('marine-forecast/entry/<int:id>/', views.marine_forecast_entry, name="marine_forecast_entry"),
     path('marine-forecast/entry/<int:id>/delete/', views.marine_forecast_delete, name='marine_forecast_delete'),
+    path('marine-forecast/entry/<int:id>/generate-pdf/', views.marine_forecast_generate_pdf, name="marine_forecast_generate_pdf"),
     path('marine-forecast/entry/<int:id>/toggle-publish/', views.marine_forecast_toggle_is_published, name='marine_forecast_toggle_is_published'),
     #path("marine-forecast/import-data/", views.import_marine_forecast_categories, name="import_marine_forecast_categories"),'''
     

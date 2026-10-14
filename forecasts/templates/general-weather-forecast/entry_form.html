@@ -14,8 +14,11 @@
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {% include "general-weather-forecast/tab_nav.html" %}
-    <input id="btn_submit" type="submit" value="Save" class="btn ms-2" />
-    <a href="{{ back_url }}" class="btn btn-danger">Cancel</a>
+    <div class="col-12 mt-3">
+        <button id="btn_submit" name="submit_action" type="submit" value="continue" class="btn btn-success me-2" >Save & Continue</button>
+        <button id="btn_submit_close" name="submit_action" type="submit" value="close" class="btn btn-primary me-2">Save & Close</button>
+        <a id="btn_close" class="btn btn-danger" href="{{ back_url }}">Cancel</a>
+    </div>
 </form>
 {% endblock %}
 {% block extra_js %}

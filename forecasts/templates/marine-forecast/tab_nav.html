@@ -12,6 +12,9 @@
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="tab_astronomical" data-bs-toggle="tab" data-bs-target="#tab_astronomical_pane" type="button" role="tab" aria-controls="tab_astronomical_pane" aria-selected="false">Astronomical Conditions</button>
     </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tab_alerts" data-bs-toggle="tab" data-bs-target="#tab_alerts_pane" type="button" role="tab" aria-controls="tab_alerts_pane" aria-selected="false">Alerts & Advisories</button>
+    </li>
     <div class="position-absolute end-0 pt-2">
         <div class="form-check form-switch">
             {{ form.is_published }}
@@ -52,5 +55,8 @@
                 {% render_table moon_table %}
             </div>
         </div>
+    </div>
+    <div class="tab-pane pt-3 fade" id="tab_alerts_pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="4">
+        {% include "general-weather-forecast/tab_alerts.html" %}
     </div>
 </div>

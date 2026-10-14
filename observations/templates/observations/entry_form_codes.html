@@ -1,0 +1,160 @@
+{% extends "base_form.html" %}
+{% block title %}{{ page_name }} | Agro-Climat Services | WIMP3 | National Meteorological Service of Belize{% endblock %}
+{% block content %}
+{% load static %}
+<div class="row">
+    <div class="col-12">
+        <form method="post" id="frm_pest_risk_main" name="frm_pest_risk_main">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <div class="row mb-3">
+                <div class="col-1">{{ form.code.label_tag }}</div>
+                <div class="col-2">{{ form.code }}</div>
+                <div class="clear"></div>
+                <div class="col-12">{{ form.code.errors }}</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-1">{{ form.description.label_tag }}</div>
+                <div class="col-2">{{ form.description }}</div>
+                <div class="clear"></div>
+                <div class="col-12">{{ form.description.errors }}</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-1"><label class="form-label">Day Icon:</label></div>
+                <div class="col-11">
+                    <div class="weather-icon-grid mb-3">
+                        {% for radio in form.day_icon_choice %}
+                            <div class="weather-icon-option">
+                                {{ radio.tag }}
+                                <label for="{{ radio.id_for_label }}" class="weather-icon-card">{{ radio.choice_label|safe }}</label>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <!--<div class="col-3">
+                    <button type="button" id="choose_day" name="choose_day" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#modal_icon_day">Choose Icon...</button>
+                </div>
+                
+                <div class="modal" tabindex="-1" id="modal_icon_day">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Weather Icon (Day)</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Select</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>-->
+            </div>
+            <div class="row mb-3">
+                <div class="col-1"><label class="form-label">Night Icon:</label></div>
+                <div class="col-11">
+                    <div class="weather-icon-grid mb-3">
+                    {% for radio in form.night_icon_choice %}
+                        <div class="weather-icon-option">
+                            {{ radio.tag }}
+                            <label for="{{ radio.id_for_label }}" class="weather-icon-card">{{ radio.choice_label|safe }}</label>
+                        </div>
+                    {% endfor %}
+                    </div>
+                </div>
+                <!--<div class="col-3">
+                    <button type="button" id="choose_night" name="choose_night" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#modal_icon_night">Choose Icon...</button>
+                </div>
+                <div class="modal" tabindex="-1" id="modal_icon_night">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Weather Icon (Night)</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary">Select</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>-->
+            </div>
+            <div class="row mb-3">
+                <div class="col-3">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<style>
+.weather-icon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 12px;
+}
+
+.weather-icon-option {
+    position: relative;
+}
+
+/* Keep the radios accessible to keyboard users. */
+.weather-icon-option input[type="radio"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
+.weather-icon-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 100%;
+    min-height: 120px;
+    padding: 12px;
+    border: 2px solid #dee2e6;
+    border-radius: 10px;
+    background: #fff;
+    cursor: pointer;
+    text-align: center;
+}
+
+.weather-icon-card img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+}
+
+.weather-icon-card span {
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.weather-icon-card:hover {
+    border-color: #006A94;
+}
+
+.weather-icon-option input:checked + .weather-icon-card {
+    border-color: #006A94;
+    background: #e7f3f7;
+    box-shadow: 0 0 0 2px #006A94;
+}
+
+.weather-icon-option input:focus-visible + .weather-icon-card {
+    outline: 3px solid #FFBA08;
+    outline-offset: 4px;
+}
+</style>
+{% endblock %}

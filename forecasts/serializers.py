@@ -346,6 +346,10 @@ class MarineForecastSerializer(serializers.ModelSerializer):
     tide_details   = TideSerializer(many=True, read_only=True, source="marine_tides")
     sun_details     = SunSerializer(many=True, read_only=True, source="sunrise_set")
     moon_details    = MoonSerializer(many=True, read_only=True, source="moonrise_set")
+
+    cap_alerts  = serializers.SerializerMethodField()
+    tropical_alerts  = serializers.SerializerMethodField()
+    
     pdf_file  = serializers.SerializerMethodField()
     created_by  = serializers.SerializerMethodField()
     updated_by  = serializers.SerializerMethodField()
@@ -380,3 +384,11 @@ class MarineForecastSerializer(serializers.ModelSerializer):
             return f"{settings.MEDIA_URL}forecast/marine/doc/{filename}"
         else:
             return ""
+
+    def get_cap_alerts(self, obj):
+            alerts = obj.cap_alerts.all()
+            return CAPAlertDetailsSerializer(alerts, many=True).data
+        
+    def get_tropical_alerts(self, obj):
+        alerts = obj.tropical_alerts.all()
+        return TropicalAlertsSerializer(alerts, many=True).data

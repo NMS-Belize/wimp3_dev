@@ -14,6 +14,12 @@
             </a>
         </div>
         <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:municipality_forecast_list' %}">
+                <img src="{% static 'button_icons/municipality.png' %}" alt="District Forecasts" />
+                <span class="task_desc">Municipality Forecasts</span>
+            </a>
+        </div>
+        <div class="item_dashboard position-relative">
             <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:general_forecast_list' %}">
                 <img src="{% static 'button_icons/forecast.png' %}" alt="General Weather Forecasts" />
                 <span class="task_desc">General Weather Forecasts</span>

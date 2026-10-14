@@ -262,6 +262,7 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 #top_buttons a{ text-decoration: none; font-weight: 600; }
 
 /*********** DASHBOARD ICONS ************/
+
 #dashboard .dashboard_title{ font-size: 18px; font-weight: 600; text-transform: uppercase; background: var(--wimp-teal); color: #fff; padding: 5px 10px; margin-bottom: 15px; }
 .dashboard_title{ font-size: 18px; font-weight: 600; text-transform: uppercase; background: var(--wimp-teal); color: #fff; padding: 5px 10px; margin-bottom: 15px; }
 
@@ -273,6 +274,10 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 .item_dashboard_app a{ text-decoration: none; }
 .item_dashboard_app .task_desc{ font-weight: 500; text-decoration: none; text-transform: uppercase; line-height: 1.1; color: var(--teal-2); font-size:18px; }
 
+.horizontal .item_dashboard{ width:300px; }
+.horizontal .item_dashboard img{ width: 80px; }
+.horizontal .item_dashboard .task_desc{ font-weight: 500; text-decoration: none; text-transform: uppercase; line-height: 1.1; color: var(--teal-2); }
+
 .item_dashboard{ width:125px; height: 125px; padding: 5px; margin: 0 8px; text-align: center;  }
 .item_dashboard img{ width: 80px; }
 .item_dashboard .task_desc{ font-weight: 500; text-decoration: none; text-transform: uppercase; line-height: 1.1; color: var(--teal-2); }
@@ -282,6 +287,12 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 .table_item_dashboard img{ height: 40px; display: inline-block; }
 .table_item_dashboard .task_desc{ font-weight: 500; text-decoration: none; text-transform: uppercase; line-height: 1.1; color: var(--teal-2); display: inline-block; }
 .table_item_dashboard a{ text-decoration: none; }
+
+#icon_card{ min-height: 160px; overflow: visible; }
+
+#modal_icon_day, #modal_icon_night{
+    width: 100% !important;
+}
 
 /*********** ALERT LEVELS ************/
 .color-select{ background-color: none !important; }
