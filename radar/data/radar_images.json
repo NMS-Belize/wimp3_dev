@@ -1,7 +1,7 @@
 [
     {
         "id": 1,
-        "image_url": "http://radar.nms.gov.bz/radar-images/Recent/Recent_50km_loop.gif",
+        "image_url": "http://radar.nms.gov.bz/radar-images/Recent/50km_loop.gif",
         "web_directory": "/media/radar/",
         "image_title": "50 Km Loop"
     },
@@ -19,7 +19,7 @@
     },
     {   
         "id": 4,
-        "image_url": "http://radar.nms.gov.bz/radar-images/Recent/Recent_250km_loop.gif",
+        "image_url": "http://radar.nms.gov.bz/radar-images/Recent/250km_loop.gif",
         "web_directory": "/media/radar/",
         "image_title": "250 Km Loop"
     },
@@ -31,19 +31,19 @@
     },
     {
         "id": 6,
-        "image_url": "http://radar.nms.gov.bz/radar-images/Recent/Recent_400km_loop.gif",
+        "image_url": "http://radar.nms.gov.bz/radar-images/Recent/400km_loop.gif",
         "web_directory": "/media/radar/",
         "image_title": "400 Km Loop"
     },
     {
         "id": 7,
-        "image_url": "http://radar.nms.gov.bz/radar-images/Recent/Recent_175km_sri_pic.gif",
+        "image_url": "http://radar.nms.gov.bz/radar-images/Recent/175km_sri.gif",
         "web_directory": "/media/radar/",
         "image_title": "175 Km SRI Static"
     },
     {
         "id": 8,
-        "image_url": "http://radar.nms.gov.bz/radar-images/Recent/Recent_250km_9am_daily_pac_pic.gif",
+        "image_url": "http://radar.nms.gov.bz/radar-images/Recent/250km_pac.gif",
         "web_directory": "/media/radar/",
         "image_title": "250 Km Cumulative"
     }
