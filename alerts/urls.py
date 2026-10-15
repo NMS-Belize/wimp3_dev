@@ -34,7 +34,8 @@ urlpatterns = [
 
     ## CAP ALERTS
     path('cap-alerts-list/', views.cap_alerts_list, name="cap_alerts_list"),
-    path('cap-alerts-import/', views.cap_alerts_import, name="cap_alerts_import"),
+    path('cap-alerts-import/', views.cap_alerts_import_page, name="cap_alerts_import_page"),
+    path('cap-alerts-import-items/', views.cap_alerts_import, name="cap_alerts_import"),
     path('cap-alerts-details/<int:id>/', views.cap_alerts_details, name="cap_alerts_details"),
     path('cap-alerts-toggle-is-published/<int:id>/', views.cap_alert_toggle_is_published, name="cap_alert_toggle_is_published"),
 ]

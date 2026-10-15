@@ -34,4 +34,19 @@
         </div>
     </div>
 </div>
+<div class="row">
+    <div class="col-12 mb-3">
+        <h3 class="dashboard_title">Get Data</h3>
+    </div>
+    <div class="col-12 d-flex flex-row mb-3">
+        <div class="item_dashboard_import position-relative shadow-sm p-3 me-3">
+            <div class="position-absolute top-50 start-0 translate-middle-y p-3">
+                <a class="d-flex text-decoration-none" href="{% url 'alerts:cap_alerts_import_page' %}">
+                    <img src="{% static 'button_icons/file-import.png' %}" alt="Import CAP Alerts" />
+                    <span class="task_desc">Import CAP Alerts</span>
+                </a>
+            </div> 
+        </div>
+    </div>
+</div>
 {% endblock %}

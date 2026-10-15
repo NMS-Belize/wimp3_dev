@@ -10,9 +10,11 @@ from django.urls import reverse
 from django_tables2 import RequestConfig
 
 from django.contrib.auth.decorators import login_required, permission_required
+from django.views.decorators.http import require_POST
+
 from requests import request
 
-#from alerts.utils.cap_rss import fetch_cap_alerts
+from django.core.management import call_command
 from wimp import serializers
 
 #from .forms import *
@@ -58,16 +60,31 @@ def cap_alerts_list(request, id=None):
     }
     return render(request, 'cap_list_template.html', context)
 
+@require_POST
 def cap_alerts_import(request, id=None):
-    try:
-        # Run the fetch function
-        fetch_cap_alerts()
-        messages.success(request, "CAP alerts fetched successfully!")
-    except Exception as e:
-        # Ensure we pass a string to messages
-        messages.error(request, f"Failed to fetch CAP alerts: {str(e)}")
 
-    return redirect("alerts:cap_alerts_list")
+    try:
+        # Execute Django management command
+        call_command("fetch_cap_alerts")
+        #messages.success(request,"CAP alerts fetched successfully!")
+        return JsonResponse({ 
+            "success": True, 
+            "message": "CAP alerts fetched successfully!" ,
+            "redirect_url": reverse("alerts:cap_alerts_list")
+        })
+
+    except Exception as e:
+        #messages.error(request,f"Failed to fetch CAP alerts: {str(e)}")
+        return JsonResponse({"success": False,"message": f"Failed to import CAP alerts: {str(e)}"}, status=500)
+
+def cap_alerts_import_page(request, id=None):
+
+    context = {
+        "page_name": "CAP Alerts Details",
+        "prev_page": "CAP Alerts List",
+        "back_url": reverse("alerts:cap_alerts_list"),
+    }
+    return render(request,"cap/entry_form.html",context)
 
 def cap_alerts_details(request, id=None):
 

@@ -139,6 +139,8 @@ class CAPAlertsTable(tables.Table):
     title       = tables.Column(verbose_name="Title",   attrs={"th": {"style": "width:275px;","class": ""}, "td": {"style": "","class": ""}})
     description = tables.Column(verbose_name="Description", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
     author      = tables.Column(verbose_name="Issued By", attrs={"th": {"style": "width: 120px","class": ""}, "td": {"style": "","class": ""}})
+
+    #severity     = tables.Column(verbose_name="Severity", empty_values=(), orderable=False, attrs={"th": {"style": "width:160px","class": ""}, "td": {"style": "","class": ""}})
     
     pubdate     = tables.Column(verbose_name="Published Date", attrs={"th": {"style": "width:160px","class": ""}, "td": {"style": "","class": "fst-italic"}})
 
@@ -184,6 +186,22 @@ class CAPAlertsTable(tables.Table):
 
         except (ValueError, TypeError):
             return record.pubdate'''
+
+    '''def render_severity(self, record):
+
+        try:
+            entry_details = CAPAlertDetails.objects.filter(
+                identifier_id=record.pk
+            ).first()
+
+            if entry_details:
+                return entry_details.severity or "-"
+
+            return "-"
+
+        except Exception as e:
+            print(f"Error retrieving severity: {e}")
+            return "-"'''
     
     def render_link(self, record):
         url = record.link
