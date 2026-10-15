@@ -290,6 +290,10 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 
 #icon_card{ min-height: 160px; overflow: visible; }
 
+.item_dashboard_import{ height: 100px; min-width: 200px; overflow: visible;}
+.item_dashboard_import img{ width: 60px; height: 60px; margin-right: 15px; }
+.item_dashboard_import span{  }
+
 #modal_icon_day, #modal_icon_night{
     width: 100% !important;
 }
