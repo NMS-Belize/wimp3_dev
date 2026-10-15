@@ -1,16 +1,104 @@
 {% extends "base_form.html" %}
 {% block title %}{{ page_name }} | Agro-Climat Services | WIMP3 | National Meteorological Service of Belize{% endblock %}
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <form method="post" id="frm_pest_risk_main" name="frm_pest_risk_main" class="wimp3_form">
-            {% csrf_token %}
-            {{ form.as_ul }}
-            <li>
-                <label for="btn_submit">&nbsp;</label>
-                <input id="btn_submit" type="submit" value="Submit" class="btn" />
-            </li>
-        </form>
+{% load static %}
+<style type="text/css">
+
+</style>
+<form method="post" id="frm_pest_risk_main" name="frm_pest_risk_main" class="wimp3_form">
+    {% csrf_token %}
+
+    <div class="row mb-3">
+        <div class="col-2">
+            <label>Image Name:</label>
+        </div>
+        <div class="col-6">
+            {{ form.name }}
+        </div>
     </div>
-</div>
+
+    <div class="row mb-3">
+        <div class="col-2">
+            <label>Image DAY:</label>
+        </div>
+        <div class="col-3">
+            {{ form.image_day }}
+        </div>
+        <div class="col-2">
+            <label>Image NIGHT:</label>
+        </div>
+        <div class="col-3">
+            {{ form.image_night }}
+        </div>
+        
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-2">
+            <label>&nbsp;</label>
+        </div>
+        <div class="col-3">
+            <img id="preview_day" class="img-fluid" src="" width="150px" style="object-fit:contain; display:none;" alt="Day Weather Icon" />
+        </div>
+        <div class="col-2">
+            <label>&nbsp;</label>
+        </div>
+        <div class="col-3">
+            <img id="preview_night" class="img-fluid" src="" width="150px" style="object-fit:contain; display:none;" alt="Day Weather Icon" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2">
+            <label>&nbsp;</label>
+        </div>
+        <div class="col-6">
+            <input id="btn_submit" type="submit" value="Submit" class="btn" />
+        </div>
+    </div>
+</form>
+{% endblock %}
+{% block extra_js %}
+<script type="text/javascript">
+$(document).ready(function () {
+
+    const iconURL = "{% static 'weather_icons/' %}";
+
+    // Display weather icon alongside filename
+    function formatWeatherIcon(icon) {
+
+        if (!icon.id) {
+            return icon.text;
+        }
+
+        let filename = icon.id.replace(/^weather_icons\//, '');
+        let imageURL = iconURL + filename;
+        let $option = $('<span class="d-flex align-items-center"></span>');
+
+        let $image = $('<img>', {
+            src: imageURL,
+            width: 60,
+            height: 60,
+            css: {
+                'object-fit': 'contain',
+                'margin-right': '5px'
+            }
+        });
+
+        let $text = $('<span></span>').text(icon.text);
+        $option.append($image).append($text);
+        return $option;
+    }
+
+    // Initialize Select2
+    $('.select2-weather').select2({
+        width: '100%',
+        templateResult: formatWeatherIcon,
+        templateSelection: formatWeatherIcon,
+        escapeMarkup: function(markup) {
+            return markup;
+        }
+    });
+});
+</script>
 {% endblock %}

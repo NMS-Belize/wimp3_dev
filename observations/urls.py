@@ -12,12 +12,12 @@ urlpatterns = [
     path('weather-code-list/', views.weather_code_list, name="weather_code_list"),
     path('weather-code-entry/', views.weather_code_entry, name="weather_code_entry"),
     path('weather-code-entry/<int:id>/', views.weather_code_entry,name='weather_code_entry'),
-    #path('weather-icon-entry/<int:id>/delete/', views.weather_icon_delete,name='weather_icon_delete'),
+    
     
     path('api/weather-icon/<str:code>/',views.get_weather_icon,name='get_weather_icon'),
 
     path('weather-icon-list/', views.weather_icon_list, name="weather_icon_list"),
     path('weather-icon-entry/', views.weather_icon_entry, name="weather_icon_entry"),
     path('weather-icon-entry/<int:id>/', views.weather_icon_entry,name='weather_icon_entry'),
-
+    path('weather-icon-entry/<int:id>/delete/', views.weather_icon_delete,name='weather_icon_delete'),
 ]

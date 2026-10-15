@@ -558,3 +558,29 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
   background-position: right calc(.375em + .1875rem) center;
   background-size: calc(.75em + .375rem) calc(.75em + .375rem);
 }
+
+.select2-results__option {
+}
+.select2-results__option img {
+    vertical-align: middle;
+}
+.select2-selection__rendered img {
+    vertical-align: middle;
+}
+.select2-container--default .select2-selection--single {
+    height: 48px;
+    display: flex;
+    align-items: center;
+}
+.select2-container--default
+.select2-selection--single
+.select2-selection__rendered {
+    display: flex;
+    align-items: center;
+    line-height: normal;
+}
+.select2-container--default
+.select2-selection--single
+.select2-selection__arrow {
+    height: 46px;
+}

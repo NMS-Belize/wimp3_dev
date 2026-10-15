@@ -1,0 +1,16 @@
+{% extends "base_table.html" %}
+{% load static %}
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-light">
+            <label class="col-1 mb-1">Entry ID:</label> <label class="col-2"><strong>{{ id }}</strong></label>
+        </div>
+    </div>
+    <div class="col-12">
+        <h4>Forecast Details</h4>
+        {% load render_table from django_tables2 %}
+        {% render_table table %}
+    </div>
+</div>
+{% endblock %}

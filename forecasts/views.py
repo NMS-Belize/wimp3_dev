@@ -38,6 +38,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import Image, SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 
 from forecasts.forms import (DistrictForecastDetailsForm, DistrictForecastForm, DistrictForecastInstructionsCategoryForm, DistrictForecastInstructionsForm, DistrictForecastPublishForm, 
+                             MunicipalityForecastForm, MunicipalityZoneForm, 
                              SeverityForm, ProbabilityForm, WindDirectionForm, WindConditionForm, SeaStateForm, 
                              GeneralForecastCategoryForm, ForecastGeneralForm, ForecastDiscussionForm, 
                              ForecastMarineForm, MarineForecastDetailsCategoryForm, MarineForecastCategoryForm,
@@ -45,17 +46,17 @@ from forecasts.forms import (DistrictForecastDetailsForm, DistrictForecastForm, 
                             SunMovementForm, SunDayTimeCategoryForm,
                             TideLevelForm, TideDayTimeCategoryForm
 )
-from forecasts.tables import (DistrictForecastDetailsTable, DistrictForecastTable, 
+from forecasts.tables import (DistrictForecastDetailsTable, DistrictForecastTable, MunicipalityForecastTable, MunicipalityForecastDetailsTable, MunicipalityZoneTable, WeatherConditionsTable, 
                               InstructionsCategoryTable, SeverityTable, ProbabilityTable, InstructionsTable, WindDirectionTable, WindConditionTable, SeaStateTable, 
                               ForecastGeneralTable, ForecastGeneralCategoryTable, ForecastDiscussionTable, 
                               ForecastMarineTable, ForecastMarineCategoryTable, ForecastMarineEntryDetailsTable, 
                               TidesTable, TideLevelTable, TideDayTimeCategoryTable, TidesAllTable,
                               SunTable,  SunDayTimeCategoryTable, SunMoveCategoryTable, 
-                              MoonTable, MoonDayTimeCategoryTable, MoonMoveCategoryTable, MunicipalityForecastTable
+                              MoonTable, MoonDayTimeCategoryTable, MoonMoveCategoryTable
 )
 from forecasts.models import (
     ForecastGeneral, ForescastGeneralCategory, WindDirection, WindCondition, SeaState,
-    MunicipalityForecast, 
+    MunicipalityForecast, MunicipalityZone, MunicipalityForecastDetails, WeatherConditions, 
     ForecastDiscussion, 
     ForecastMarine, ForecastMarineCategory, ForecastMarineDetailsCategory, 
     ForecastMarineDetails,
@@ -175,18 +176,18 @@ def general_forecast_entry(request, id=None):
                 lambda forecast_id=saved_entry.id:
                     general_forecast_generate_pdf(request,forecast_id,auto_generate=True)
             )
-            messages.success(request, "Forecast Deatils saved successfully.")
+            #messages.success(request, "Forecast Details saved successfully.")
 
             action = request.POST.get("submit_action")
 
             if action == "continue":
-                messages.success(request,"Forecast discussion saved successfully.")
+                messages.success(request,"General Weather Forecast saved successfully.")
                 return redirect('forecasts:general_forecast_entry', saved_entry.id)
             elif action == "close":
-                messages.success(request,"Forecast discussion saved successfully.")
+                messages.success(request,"General Weather Forecast saved successfully.")
                 return redirect("forecasts:general_forecast_list")
         else:
-            messages.error(request, f"Form could not be saved: {form.errors.as_text()}")
+            messages.error(request, f"Entry could not be saved: {form.errors.as_text()}")
 
     else:
         form = ForecastGeneralForm(instance=entry)
@@ -3107,7 +3108,7 @@ def get_risk_color(level):
     return "#000000"
 
 
-############# DISTRICT FORECASTS: Main Entries #############
+############# MUNICIPALITY FORECASTS: Main Entries #############
 def municipality_forecast_list(request, id=None):
     page_name = "Municipality Forecasts"
     qs = MunicipalityForecast.objects.all().order_by('-id')
@@ -3120,17 +3121,210 @@ def municipality_forecast_list(request, id=None):
     if id is not None:
         entry = get_object_or_404(MunicipalityForecast, id=id)
 
-    return render(request, 'district-forecast/table_list_main.html', {
+    return render(request, 'municipality-forecast/table_list_main.html', {
         'id' : id,
         'entry': entry,  
         'page_name': page_name,
         'prev_page': 'Weather Forecasts',
         'table': table,
-        'new_url':  reverse('forecasts:district_forecast_entry'),
+        'new_url':  reverse('forecasts:municipality_forecast_entry'),
         'back_url': reverse('forecasts:index'),
-        'api_url':  reverse('district-forecast-list'),
+        #'api_url':  reverse('district-forecast-list'),
     })
 
+def municipality_forecast_entry(request, id=None):
+
+    page_name = "Municipality Forecast Entry"
+
+    if id:
+        entry = get_object_or_404(MunicipalityForecast, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+
+        form = MunicipalityForecastForm(request.POST, instance=entry)
+
+        if form.is_valid():
+
+            saved_entry = form.save(commit=False)
+
+            # New record only
+            if entry is None:
+                saved_entry.created_by = request.user
+
+            # Every save/update
+            saved_entry.updated_by = request.user
+
+            # IMPORTANT: save before using in ForeignKey queries
+            saved_entry.save()
+
+            # If your form has many-to-many fields
+            form.save_m2m()
+
+            municipality_zones = MunicipalityZone.objects.all().order_by("id")[:6]
+
+            for zone in municipality_zones:
+                MunicipalityForecastDetails.objects.get_or_create(
+                    municipality_forecast=saved_entry,
+                    municipality_area=zone
+                )
+
+            return redirect('forecasts:municipality_forecast_details_list',saved_entry.id)
+
+        else:
+            print(form.errors)
+
+    else:
+        form = MunicipalityForecastForm(instance=entry)
+
+    return render(request, 'municipality-forecast/entry_form.html', {
+        'page_name': page_name,
+        'prev_page': "Municipality Forecasts",
+        'new_url':  reverse('forecasts:municipality_forecast_entry'),
+        'back_url':  reverse('forecasts:municipality_forecast_list'),
+        'form': form,
+        'entry': entry,
+    })
+
+def municipality_forecast_details_list(request, id=None, fk=None):
+
+    #print(fk);
+    page_name = "Municipality Forecast Entry"
+
+    # Parent forecast
+    parent_entry = get_object_or_404(MunicipalityForecast, id=id)
+
+    # Get only details for this forecast
+    qs = MunicipalityForecastDetails.objects.filter(municipality_forecast_id=id).order_by('id')
+    table = MunicipalityForecastDetailsTable(qs)
+    RequestConfig(request).configure(table)
+
+    print("Forecast ID:", id)
+    print("Details count:", qs.count())
+    print(qs.query)
+
+    return render(request, 'municipality-forecast/table_list_details.html', {
+        'id' : id,
+        'page_name': page_name,
+        'prev_page': "Municipality Forecasts",
+        'table': table,
+        #'entry': entry,
+        'parent_entry': parent_entry,
+        'new_url': reverse('forecasts:municipality_forecast_details_entry'),
+        'back_url': reverse('forecasts:municipality_forecast_list'),
+        'details_url': reverse('forecasts:municipality_forecast_details_entry', kwargs={'id': id}),
+    })
+
+def municipality_forecast_details_entry(request, id):
+
+    page_name = "Municipality Forecast Details"
+    qs = MunicipalityForecastDetails.objects.filter(municipality_forecast_id=id).order_by('id')
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(MunicipalityForecast, id=id)
+    else:
+        entry = None
+
+    table = MunicipalityForecastDetailsTable(qs)
+    table.empty_text = "No records available"
+    RequestConfig(request).configure(table)
+
+    if request.method == 'POST':
+        print(request.POST)
+        form = DistrictForecastPublishForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            messages.success(request, "Record saved successfully.")
+            #return redirect('forecasts:district_forecast_details_entry', saved_entry.id)            
+
+            # Save & Close button
+            #if 'btn_submit_close' in request.POST:
+            #   return redirect('forecasts:district_forecast_list')
+
+            # Regular Save button
+            return redirect('forecasts:district_forecast_details_entry', saved_entry.id)  
+            
+        else:
+            messages.error(request, "Please correct the errors below.")
+            print(form.errors)  # check terminal
+    else:
+        form = DistrictForecastPublishForm(instance=entry)
+
+    return render(request, 'municipality-forecast/table_list_details_entry_form.html', {
+        'page_name': page_name,
+        'forecast_id': id,
+        'new_url':  reverse('forecasts:municipality_forecast_entry'),
+        'prev_page': 'Municipality Forecasts',
+        'back_url': reverse('forecasts:municipality_forecast_list'),
+        #'details_url': reverse('forecasts:district_forecast_details_entry', kwargs={'id': id}),
+        #'api_url': reverse('zones-list'),
+        'form': form,
+        'entry': entry,
+        'table':    table,
+    })
+
+def municipality_area_list(request, id=None):
+    page_name = "Municipality Areas"
+    qs = MunicipalityZone.objects.all().order_by('id')
+    table = MunicipalityZoneTable(qs)
+    RequestConfig(request).configure(table)
+    
+    return render(request, 'municipality-forecast/parameters_table_list.html', {
+       'id' : id,
+        'page_name': page_name,
+        "prev_page": 'Weather Forecasts',
+        'table': table,
+        'new_url':  reverse('forecasts:municipality_area_entry'),
+        'back_url': reverse('forecasts:index'),
+    })
+
+def municipality_area_entry(request, id=None):
+
+    page_name = "Municipality Area Entry"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(MunicipalityZone, id=id)
+    else:
+        entry = None
+
+    if request.method == 'POST':
+        form = MunicipalityZoneForm(request.POST, instance=entry)
+
+        if form.is_valid():
+            saved_entry = form.save()    # Creates or updates
+            return redirect('forecasts:municipality_area_list')
+        
+    else:
+        form = MunicipalityZoneForm(instance=entry)
+
+    return render(request, 'municipality-forecast/parameters_entry_form.html', {
+        'page_name':    page_name,
+        'prev_page':    'Municipality Areas',
+        'new_url':      reverse('forecasts:municipality_area_list'),
+        'details_url':  "",
+        'back_url':     reverse('forecasts:municipality_area_list'),
+        'form': form,
+        'entry': entry
+    })
+
+def weather_conditions_list(request, id=None):
+    page_name = "Weather Conditions"
+    qs = WeatherConditions.objects.all().order_by('id')
+    table = WeatherConditionsTable(qs)
+    RequestConfig(request).configure(table)
+    
+    return render(request, 'municipality-forecast/parameters_table_list.html', {
+       'id' : id,
+        'page_name': page_name,
+        "prev_page": 'Weather Forecasts',
+        'table': table,
+        'new_url':  reverse('forecasts:municipality_area_entry'),
+        'back_url': reverse('forecasts:index'),
+    })
 
 class WIMP2FilesAPIView(APIView):
 

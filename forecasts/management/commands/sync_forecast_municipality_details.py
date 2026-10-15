@@ -2,21 +2,11 @@ from django.core.management.base import BaseCommand
 from django.db import connections, transaction
 from django.contrib.auth import get_user_model
 
-from forecasts.models import (
-    MunicipalityForecast,
-    MunicipalityForecastDetails, MunicipalityZone,
-    WindDirection,
-    SeaState,
-)
-
+from forecasts.models import MunicipalityForecast, MunicipalityForecastDetails, MunicipalityZone, WeatherConditions, WindCondition
 
 User = get_user_model()
 
-
-# ============================================================
 # HELPERS
-# ============================================================
-
 def get_user(value):
     """Convert legacy usernames to WIMP3 users."""
 
@@ -72,82 +62,33 @@ def clean_optional_text(value):
 
     return value if value else None
 
-
-def get_category(value):
-    """
-    Resolve MunicipalityForecastDetailsCategory.
-
-    Legacy value may be:
-        ID
-        numeric string
-        description text
-    """
-
-    if value is None:
-        return None
-
-    value = str(value).strip()
-
-    if not value:
-        return None
-
-    # Try ID first
-    if value.isdigit():
-
-        obj = MunicipalityForecastDetailsCategory.objects.filter(
-            id=int(value)
-        ).first()
-
-        if obj:
-            return obj
-
-    # Try description
-    return MunicipalityForecastDetailsCategory.objects.filter(
-        description__iexact=value
-    ).first()
-
-
-# ============================================================
 # COMMAND
-# ============================================================
-
 class Command(BaseCommand):
 
     help = "Sync MunicipalityForecastDetails records from legacy WIMP2."
 
     def add_arguments(self, parser):
-
-        parser.add_argument(
-            "--replace",
-            action="store_true",
-            help="Delete existing MunicipalityForecastDetails before importing.",
-        )
-
-        parser.add_argument(
-            "--batch-size",
-            type=int,
-            default=500,
-            help="Number of records processed per batch.",
-        )
+        parser.add_argument("--replace",action="store_true",help="Delete existing MunicipalityForecastDetails before importing.")
+        parser.add_argument("--batch-size",type=int,default=500,help="Number of records processed per batch.")
 
     def handle(self, *args, **options):
 
         # READ LEGACY DATA
         with connections["legacy"].cursor() as cursor:
-
             cursor.execute("""
                 SELECT
                     id,
                     zone_id,
                     temp_max,
                     temp_min,
-                    forecast_id,
                     wind_speed,
-                    wind_direction,
-                    wind_condition,
+                    wind_cond,
                     icon_day,
                     icon_night,
                     weather_condition,
+                    icon_day,
+                    icon_night,
+                    forecast_id,
                     auto_update
                 FROM tbl_forecast_area_zone
             """)
@@ -172,12 +113,15 @@ class Command(BaseCommand):
         for data in rows:
 
             # USER MAPPING
-            created_user = get_user(data["created_by"])
-            updated_user = get_user(data["updated_by"])
+            #created_user = get_user(data["created_by"])
+            #updated_user = get_user(data["updated_by"])
 
             # MARINE FORECAST FK
 
             municipality_forecast_entry = None
+            zone_id = None
+            wind_cond = None
+            weather_cond = None
 
             if data["forecast_id"]:
                 municipality_forecast_entry = MunicipalityForecast.objects.filter(id=data["forecast_id"]).first()
@@ -185,27 +129,32 @@ class Command(BaseCommand):
             if data["zone_id"]:
                 zone_id = MunicipalityZone.objects.filter(id=data["zone_id"]).first()
 
-            # MARINE CATEGORY
-            marine_category = None
+            if data["wind_cond"]:
+                wind_cond = WindCondition.objects.filter(id=data["wind_cond"]).first()
 
-            # First try marine_type. If your category mapping actually depends on marine_date_type instead, this can be adjusted.
-            if data["marine_type"] is not None:
-                marine_category = get_category(data["marine_type"])
+            if data["weather_condition"]:
+                weather_cond = WeatherConditions.objects.filter(id=data["weather_condition"]).first()
 
             # CREATE MODEL OBJECT
             record = MunicipalityForecastDetails(
-                legacy_id=data["id"],   # Preserve WIMP2 primary key
+                legacy_id=data["id"],
+
                 municipality_forecast=municipality_forecast_entry,
                 municipality_area=zone_id,
+
+                temp_max=data["temp_max"] or 0,
+                temp_min=data["temp_min"] or 0,
+
                 wind_speed=clean_optional_text(data["wind_speed"]),
-                wind_direction=clean_optional_text(data["wind_direction"]),
-                wind_condition=clean_optional_text(data["wind_condition"]),
-                sea_state=clean_optional_text(data["sea_state"]),
-                weather_condition=clean_optional_text(data["weather_condition"]),
-                created_by=created_user,
-                created_datetime=data["created_time"],
-                updated_by=updated_user,
-                updated_datetime=data["updated_time"],
+
+                # No wind_direction field in legacy table
+                wind_direction=None,
+
+                # Legacy wind_cond value
+                wind_condition=wind_cond,
+                weather_condition=weather_cond,
+
+                updated_datetime=data["auto_update"],
             )
             records.append(record)
 
@@ -217,9 +166,7 @@ class Command(BaseCommand):
             # REPLACE
             if options["replace"]:
 
-                deleted_count, _ = (
-                    MunicipalityForecastDetails.objects.all().delete()
-                )
+                deleted_count, _ = (MunicipalityForecastDetails.objects.all().delete())
 
                 self.stdout.write(
                     self.style.WARNING(
@@ -234,9 +181,7 @@ class Command(BaseCommand):
                 for record in records
             ]
 
-            existing_ids = set(
-                MunicipalityForecastDetails.objects.filter(legacy_id__in=legacy_ids).values_list("legacy_id",flat=True)
-            )
+            existing_ids = set(MunicipalityForecastDetails.objects.filter(legacy_id__in=legacy_ids).values_list("legacy_id",flat=True))
 
             # CREATE
             new_records = [
@@ -246,18 +191,12 @@ class Command(BaseCommand):
             ]
 
             if new_records:
-
-                MunicipalityForecastDetails.objects.bulk_create(
-                    new_records,
-                    batch_size=batch_size,
-                )
+                MunicipalityForecastDetails.objects.bulk_create(new_records,batch_size=batch_size)
 
             # GET EXISTING OBJECTS
             existing_objects = {
                 obj.legacy_id: obj
-                for obj in MunicipalityForecastDetails.objects.filter(
-                    legacy_id__in=existing_ids
-                )
+                for obj in MunicipalityForecastDetails.objects.filter(legacy_id__in=existing_ids)
             }
 
             # UPDATE CHANGED RECORDS
@@ -274,19 +213,17 @@ class Command(BaseCommand):
                 if current.updated_datetime != record.updated_datetime:
 
                     # Copy imported values onto the existing DB object
-                    current.marine_forecast = record.marine_forecast
-                    current.marine_category = record.marine_category
+                    current.municipality_forecast = record.municipality_forecast
+                    current.municipality_area = record.municipality_area
+
+                    current.temp_max = record.temp_max
+                    current.temp_min = record.temp_min
+
                     current.wind_speed = record.wind_speed
                     current.wind_direction = record.wind_direction
                     current.wind_condition = record.wind_condition
-                    current.sea_state = record.sea_state
-                    current.waves = record.waves
-                    current.additional_info = record.additional_info
+                    current.weather_condition = record.weather_condition
 
-                    current.created_by = record.created_by
-                    current.created_datetime = record.created_datetime
-
-                    current.updated_by = record.updated_by
                     current.updated_datetime = record.updated_datetime
 
                     existing_records.append(current)
@@ -296,17 +233,14 @@ class Command(BaseCommand):
             if existing_records:
 
                 field_names = [
-                    "marine_forecast",
-                    "marine_category",
+                    "municipality_forecast",
+                    "municipality_area",
+                    "temp_max",
+                    "temp_min",
                     "wind_speed",
                     "wind_direction",
                     "wind_condition",
-                    "sea_state",
-                    "waves",
-                    "additional_info",
-                    "created_by",
-                    "created_datetime",
-                    "updated_by",
+                    "weather_condition",
                     "updated_datetime",
                 ]
                 MunicipalityForecastDetails.objects.bulk_update(existing_records,field_names,batch_size=batch_size)
@@ -342,24 +276,6 @@ class Command(BaseCommand):
 
                 if not detail:
                     continue
-
-                # WIND DIRECTION M2M
-                wind_values = split_values(data["wind_direction"])
-
-                if wind_values:
-                    wind_items = WindDirection.objects.filter(description__in=wind_values)
-                    detail.wind_direction_m2m.set(wind_items)
-                else:
-                    detail.wind_direction_m2m.clear()
-
-                # SEA STATE M2M
-                sea_values = split_values(data["sea_state"])
-
-                if sea_values:
-                    sea_items = SeaState.objects.filter(description__in=sea_values)
-                    detail.sea_state_m2m.set(sea_items)
-                else:
-                    detail.sea_state_m2m.clear()
 
         # COMPLETE
         self.stdout.write(

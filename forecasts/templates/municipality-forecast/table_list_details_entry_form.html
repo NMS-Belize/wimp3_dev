@@ -1,0 +1,44 @@
+{% extends "base_blank.html" %}
+{% load static %}
+{% block content %}
+    <div class="row mt-2">
+        <div class="col-6">
+            <h4>Forecast Date: <strong>{{ entry.forecast_date }}</strong></h4>
+        </div>
+        <div class="col-6 d-flex flex-row-reverse">
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-12">
+        {% load render_table from django_tables2 %}
+        {% render_table table %}
+        </div>   
+    </div>
+    <script type="text/javascript">
+
+        /*document.getElementById("id_is_published").addEventListener("change", function () {
+            console.log("Checkbox changed: ", this.checked);
+            const checkbox = this;
+            const statusText = document.getElementById("publishStatus");
+
+            fetch("{% url 'forecasts:district_forecast_toggle_is_published_ajax' entry.id %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: new URLSearchParams({
+                    is_published: checkbox.checked ? "true" : "false"
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    statusText.innerText = data.is_published
+                        ? "Published successfully."
+                        : "Unpublished successfully.";
+                }
+            });
+        });*/
+    </script>
+{% endblock %}

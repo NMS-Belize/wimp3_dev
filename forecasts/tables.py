@@ -19,7 +19,8 @@ from forecasts.models import (
     ForecastGeneral, ForescastGeneralCategory, 
     ForecastMarine, ForecastMarineCategory, ForecastMarineDetailsCategory, ForecastMarineDetails, WindCondition, WindDirection, SeaState, 
     Tides, TideLevelCategory, TideDayCategory, SunRiseSet, SunDayCategory, SunMovementCategory, MoonRiseSet, MoonDayCategory, MoonMovementCategory, 
-    ForecastDiscussion, MunicipalityForecast, 
+    ForecastDiscussion, 
+    MunicipalityForecast, MunicipalityForecastDetails, MunicipalityZone, WeatherConditions, 
     Severity, Probability
 )
 
@@ -1501,11 +1502,78 @@ class DistrictForecastDetailsTable(tables.Table):
         link_html   = '<div class="fst-italic mb-1">{} - {}</div><div class="row"><div class="col"><small>Probability:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Severity:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Risk:</small><br /><div class="badge {}">{}</span></div></div>'
         return format_html(link_html, record.precip_min, record.precip_max, prob_class, record.prob_precip_max, sev_class, record.sev_precip_max, risk_class, record.risk_precip_max)
 
+class WeatherConditionsTable(tables.Table):
+    edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "text-center"}, "td": {"style": "","class": "col_edit text-center"}})
+    id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
+    description = tables.Column(verbose_name="Area", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+
+    delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
+
+    class Meta:
+        model = WeatherConditions
+        template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
+        fields = ("edit","description","id","delete")
+
+        # Add table HTML id and CSS classes here
+        attrs = {
+            "class": "table table-striped table-condensed table-hover tbl_wimp3" # Bootstrap-friendly styling
+        }
+    
+    def render_edit(self, record):
+        url = reverse("forecasts:municipality_area_entry", args=[record.id])
+        return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
+
+    def render_description(self, record):
+        link_html = '<a href="{}" class="btn_edit p-0 text-decoration-none">{}</a>'
+        url = reverse("forecasts:municipality_area_entry", args=[record.id])
+        return format_html(link_html, url, record.description)
+
+    def render_delete(self, record):
+        url = reverse("forecasts:instructions_delete", args=[record.id])
+        return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
+    
+class MunicipalityZoneTable(tables.Table):
+    edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:75px;","class": "text-center"}, "td": {"style": "","class": "col_edit text-center"}})
+    id = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:75px;","class": ""}, "td": {"style": "","class": ""}})
+    district = tables.Column(verbose_name="District", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+    description = tables.Column(verbose_name="Area", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+
+    latitude = tables.Column(verbose_name="Latitude", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+    longitude = tables.Column(verbose_name="Longitude", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": ""}})
+
+    delete = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:75px;","class": "col_edit"},"td": {"style": "","class": "col_delete"}})
+
+    class Meta:
+        model = MunicipalityZone
+        template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
+        fields = ("edit","description","district","latitude","longitude","id","delete")
+
+        # Add table HTML id and CSS classes here
+        attrs = {
+            "class": "table table-striped table-condensed table-hover tbl_wimp3" # Bootstrap-friendly styling
+        }
+    
+    def render_edit(self, record):
+        url = reverse("forecasts:municipality_area_entry", args=[record.id])
+        return format_html('<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>', url)
+
+    def render_description(self, record):
+        link_html = '<a href="{}" class="btn_edit p-0 text-decoration-none">{}</a>'
+        url = reverse("forecasts:municipality_area_entry", args=[record.id])
+        return format_html(link_html, url, record.description)
+
+    def render_district(self, record):
+        return record.district.district_name
+
+    def render_delete(self, record):
+        url = reverse("forecasts:instructions_delete", args=[record.id])
+        return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
+    
 class MunicipalityForecastTable(tables.Table):
     edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:60px;","class": "text-center"}, "td": {"style": "","class": "col_edit text-center"}})
     
     forecast_date       = tables.Column(verbose_name="Forecast Date", attrs={"th": {"style": "width:120px;","class": ""}, "td": {"style": "","class": "col_link text-start"}})
-    forecast_time       = tables.TimeColumn(verbose_name="Time", format="h:i A", attrs={"th": {"style": "","class": ""}, "td": {"class": "",},},)
+    #forecast_time       = tables.TimeColumn(verbose_name="Time", format="h:i A", attrs={"th": {"style": "","class": ""}, "td": {"class": "",},},)
         
     created_by          = tables.Column(verbose_name="Created By", attrs={"th": {"style": "width:120px;","class": ""}, "td": {"style": "","class": ""}})
     created_datetime    = tables.Column(verbose_name="Created Date", attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "","class": "fst-italic" }})
@@ -1525,8 +1593,8 @@ class MunicipalityForecastTable(tables.Table):
     class Meta:
         model = MunicipalityForecast
         template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
-        fields = ("edit","forecast_date","forecast_time","created_by","created_datetime","updated_by","is_published","id","delete")
-        sequence = ("edit","forecast_date","forecast_time","created_by","created_datetime","updated_by","is_published","id","delete")
+        fields = ("edit","forecast_date","created_by","created_datetime","updated_by","is_published","id","delete")
+        sequence = ("edit","forecast_date","created_by","created_datetime","updated_by","is_published","id","delete")
 
         template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
 
@@ -1537,12 +1605,12 @@ class MunicipalityForecastTable(tables.Table):
 
     def render_edit(self, record):
         link_html   = '<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>'
-        url         = reverse("forecasts:district_forecast_details_entry", args=[record.id])
+        url         = reverse("forecasts:municipality_forecast_details_entry", args=[record.id])
         return format_html(link_html, url, record.forecast_date.strftime("%B %d, %Y"))
 
     def render_forecast_date(self, record):
         link_html   = '<a href="{}" class="btn_link" disabled>{}</a>'
-        url         = reverse("forecasts:district_forecast_details_entry",args=[record.id])
+        url         = reverse("forecasts:municipality_forecast_details_entry",args=[record.id])
         return format_html(link_html, url, record.forecast_date.strftime("%b %d, %Y"))
     
     def render_created_by(self, record):
@@ -1610,4 +1678,275 @@ class MunicipalityForecastTable(tables.Table):
             return format_html('<i class="fa-solid fa-ban text-secondary text-opacity-25 fa-lg"></i>')
         else:
             return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-solid fa-trash"></i></a>',url)
+
+class MunicipalityForecastDetailsTable(tables.Table):
+
+    #edit            = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:60px;","class": "col_edit text-center"},"td": {"style": "","class": "col_edit text-center"}})
+    
+    municipality_area        = tables.Column(verbose_name="Municipality",attrs={"th": {"style": "width:180px;","class": ""},"td": {"style": "","class": "fw-bold text-decoration-none"}})
+    temp_max        = tables.Column(verbose_name="TEMP °F (MAX)",attrs={"th": {"style": "width:120px;","class": ""},"td": {"style": "","class": "pe-4"}})
+    temp_min        = tables.Column(verbose_name="TEMP °F (MIN)",attrs={"th": {"style": "width:120px;","class": ""},"td": {"style": "","class": "pe-4"}})
+    
+    wind_speed      = tables.Column(verbose_name="Winds (Kts)",empty_values=(),attrs={"th": {"style": "width:200px;","class": ""},"td": {"style": "","class": "pe-4"} })
+    wind_condition  = tables.Column(verbose_name="Wind Condition",empty_values=(),attrs={"th": {"style": "","class": ""},"td": {"style": "","class": "pe-4"} })
+
+    weather_condition = tables.Column(verbose_name="Weather Conditions",attrs={"th": {"style": "width:350px;","class": ""},"td": {"style": "","class": ""}})
+
+    icon_day        = tables.Column(verbose_name="Icon (Day)",empty_values=(),attrs={"th": {"style": "","class": ""},"td": {"style": "","class": "pe-4"} })
+    icon_night      = tables.Column(verbose_name="Icon (Night)",attrs={"th": {"style": "","class": ""},"td": {"style": "","class": "pe-4"}})
+
+    class Meta:
+        model = MunicipalityForecastDetails
+        template_name = "django_tables2/bootstrap4.html"  # or bootstrap5
+        fields      = ("municipality_area","temp_max","temp_min","wind_speed","weather_condition","icon_day","icon_night")
         
+        # Add table ID and class here
+        attrs = {
+            "id": "",
+            "class": "tbl_wimp3 table table-striped table-condensed table-hover tbl_wimp3",
+        }
+
+    
+
+    def render_weather_condition(self, record):
+        return record.weather_condition.description
+
+    '''def render_wind_condition(self, record):
+            return record.wind_condition
+    
+    def render_icon_day(self, record):
+        if record.icon_day and record.icon_day.icon:
+            return format_html('<img src="{}" alt="Day Weather" style="width:45px;height:45px;object-fit:contain;">',record.icon_day.icon.url)
+        return "—"
+
+    def render_icon_night(self, record):
+        if record.icon_night and record.icon_night.icon:
+            return format_html('<img src="{}" alt="Night Weather" style="width:45px;height:45px;object-fit:contain;">',record.icon_night.icon.url)
+        return "—"'''
+
+    '''def render_edit(self, record):
+        link_html   = '<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>'
+        url         = reverse("forecasts:municipality_forecast_details_entry", args=[record.municipality_forecast_id, record.id,])
+        return format_html(link_html, url, record.municipality_area)
+    
+    
+    
+    def render_temp_max(self, record):
+
+        prob_class  = "bg-dark"
+        sev_class   = "bg-dark"
+        risk_class  = "bg-dark"
+
+        if record.prob_temp_max:
+            
+            prob_text = str(record.prob_temp_max).lower()
+
+            if "low" in prob_text:
+                prob_class = "low"
+            elif "medium" in prob_text:
+                prob_class = "med text-dark"
+            elif "high" in prob_text:
+                prob_class = "high"
+
+        if record.sev_temp_max:
+
+            sev_text = str(record.sev_temp_max).lower()
+
+            if "low" in sev_text:
+                sev_class = "low"
+            elif "medium" in sev_text:
+                sev_class = "med text-dark"
+            elif "high" in sev_text:
+                sev_class = "high" 
+
+        if record.risk_temp_max:
+
+            risk_text = str(record.risk_temp_max).lower()
+
+            if "low" in risk_text:
+                risk_class = "low"
+            elif "medium" in risk_text:
+                risk_class = "med text-dark"
+            elif "high" in risk_text:
+                risk_class = "high"
+            elif "critical" in risk_text:
+                risk_class = "critical"
+
+        link_html   = '<div class="fst-italic mb-1">{}</div><div class="row text-opacity-25"><div class="col"><small>Probability:</small><br /><div class="badge {}">{}</div></div><div class="col"><small>Severity:</small><br /><div class="badge {}">{}</div></div><div class="col"><small>Risk:</small><br /><div class="badge {}">{}</div></div></div>'
+        return format_html(link_html, record.temp_max, prob_class, record.prob_temp_max, sev_class, record.sev_temp_max, risk_class, record.risk_temp_max)
+    
+    def render_temp_min(self, record):
+
+        prob_class  = "bg-dark"
+        sev_class   = "bg-dark"
+        risk_class  = "bg-dark"
+
+        if record.prob_temp_min:
+            
+            prob_text = str(record.prob_temp_min).lower()
+
+            if "low" in prob_text:
+                prob_class = "low"
+            elif "medium" in prob_text:
+                prob_class = "med text-dark"
+            elif "high" in prob_text:
+                prob_class = "high"
+
+        if record.sev_temp_min:
+            
+            sev_text = str(record.sev_temp_min).lower()
+
+            if "low" in sev_text:
+                sev_class = "low"
+            elif "medium" in sev_text:
+                sev_class = "med text-dark"
+            elif "high" in sev_text:
+                sev_class = "high"
+
+        if record.risk_temp_min:
+            
+            risk_text = str(record.risk_temp_min).lower()
+
+            if "low" in risk_text:
+                risk_class = "low"
+            elif "medium" in risk_text:
+                risk_class = "med text-dark"
+            elif "high" in risk_text:
+                risk_class = "high"
+            elif "critical" in risk_text:
+                risk_class = "critical"
+
+        link_html   = '<div class="fst-italic mb-1">{}</div><div class="row text-opacity-25"><div class="col"><small>Probability:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Severity:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Risk:</small><br /><span class="badge {}">{}</span></div></div>'
+        return format_html(link_html, record.temp_min, prob_class, record.prob_temp_min, sev_class, record.sev_temp_min, risk_class, record.risk_temp_min)
+    
+    def render_winds(self, record):
+
+        prob_class  = "bg-dark"
+        sev_class   = "bg-dark"
+        risk_class  = "bg-dark"
+
+        if record.prob_winds:
+            
+            prob_text = str(record.prob_winds).lower()
+
+            if "low" in prob_text:
+                prob_class = "low"
+            elif "medium" in prob_text:
+                prob_class = "med text-dark"
+            elif "high" in prob_text:
+                prob_class = "high"
+
+        if record.sev_winds:
+            
+            sev_text = str(record.sev_winds).lower()
+
+            if "low" in sev_text:
+                sev_class = "low"
+            elif "medium" in sev_text:
+                sev_class = "med text-dark"
+            elif "high" in sev_text:
+                sev_class = "high"
+            
+        if record.risk_winds:
+            
+            risk_text = str(record.risk_winds).lower()
+
+            if "low" in risk_text:
+                risk_class = "low"
+            elif "medium" in risk_text:
+                risk_class = "med text-dark"
+            elif "high" in risk_text:
+                risk_class = "high"
+            elif "critical" in risk_text:
+                risk_class = "critical"
+
+        link_html   = '<div class="fst-italic mb-1">{} - {}</div><div class="row"><div class="col"><small>Probability:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Severity:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Risk:</small><br /><span class="badge {}">{}</span></div></div>'
+        return format_html(link_html, record.winds_min, record.winds_max, prob_class, record.prob_winds, sev_class, record.sev_winds, risk_class, record.risk_winds)
+    
+    def render_weather_conditions(self, record):
+
+        prob_class = "bg-dark"
+        sev_class = "bg-dark"
+        risk_class = "bg-dark"
+
+        prob_id = record.prob_weather_conditions_id
+        sev_id = record.sev_weather_conditions_id
+
+        ALERT_CLASSES = {
+            1: "low", 2: "med text-dark", 3: "high",
+        }
+
+        if prob_id:
+            prob_class = ALERT_CLASSES.get(prob_id, "bg-dark")
+
+        if sev_id:
+            sev_class = ALERT_CLASSES.get(sev_id, "bg-dark")
+        
+        RISK_MATRIX = {
+
+            # PROBABILITY
+            1: {  # LOW
+                1: "low",
+                2: "med text-dark",
+                3: "med text-dark",
+            },
+            2: {  # MED
+                1: "low",
+                2: "med text-dark",
+                3: "high",
+            },
+            3: {  # HIGH
+                1: "low",
+                2: "high",
+                3: "critical"
+            }
+        }
+
+        if prob_id and sev_id:
+            risk_class = RISK_MATRIX.get(prob_id, {}).get(sev_id, "bg-dark")
+
+        link_html   = '<div class="fst-italic mb-2">{}</div><div class="row"><div class="col"><small>Probability:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Severity:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Risk:</small><br /><span class="badge {}">{}</span></div></div>'
+        return format_html(link_html, record.weather_conditions, prob_class, record.prob_weather_conditions, sev_class, record.sev_weather_conditions, risk_class, record.risk_weather_conditions)
+    
+    def render_precip_max(self, record):
+
+        prob_class  = "bg-dark"
+        sev_class   = "bg-dark"
+        risk_class  = "bg-dark"
+
+        if record.prob_precip_max:
+            
+            prob_text = str(record.prob_precip_max).lower()
+
+            if "low" in prob_text:
+                prob_class = "low"
+            elif "medium" in prob_text:
+                prob_class = "med text-dark"
+            elif "high" in prob_text:
+                prob_class = "high"
+        
+        if record.sev_precip_max:
+            
+            sev_text = str(record.sev_precip_max).lower()
+
+            if "low" in sev_text:
+                sev_class = "low"
+            elif "medium" in sev_text:
+                sev_class = "med text-dark"
+            elif "high" in sev_text:
+                sev_class = "high"
+            
+        if record.risk_precip_max:
+            risk_text = str(record.risk_precip_max).lower()
+
+            if "low" in risk_text:
+                risk_class = "low"
+            elif "medium" in risk_text:
+                risk_class = "med text-dark"
+            elif "high" in risk_text:
+                risk_class = "high"
+            elif "critical" in risk_text:
+                risk_class = "critical"
+
+        link_html   = '<div class="fst-italic mb-1">{} - {}</div><div class="row"><div class="col"><small>Probability:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Severity:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Risk:</small><br /><div class="badge {}">{}</span></div></div>'
+        return format_html(link_html, record.precip_min, record.precip_max, prob_class, record.prob_precip_max, sev_class, record.sev_precip_max, risk_class, record.risk_precip_max)'''

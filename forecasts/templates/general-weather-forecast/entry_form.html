@@ -96,7 +96,51 @@ $(document).ready(function () {
         closeOnSelect: false,
     });
 
-    $('#id_wind_direction_m2m').select2({ placeholder: 'Select Wind Direction', width: '100%', closeOnSelect: false });
+    const $wind = $('#id_wind_direction_m2m');
+
+    $wind.select2({
+        placeholder: 'Select Wind Direction',
+        width: '100%',
+        closeOnSelect: false
+    });
+
+    // Store selected IDs in their current order
+    function updateWindOrder() {
+        $('#id_wind_direction_order').val(
+            ($wind.val() || []).join(',')
+        );
+    }
+
+    $wind.on('select2:select', function (e) {
+        const selected = e.params.data.id;
+
+        const option = $(this).find('option').filter(function () {
+            return this.value == selected;
+        });
+
+        option.detach();
+        $(this).append(option);
+
+        $(this).trigger('change.select2');
+        updateWindOrder();
+    });
+
+    $wind.on('select2:unselect', updateWindOrder);
+
+    const savedOrder = $('#id_wind_direction_order').val();
+
+    if (savedOrder) {
+        savedOrder.split(',').forEach(function (id) {
+            const option = $wind.find('option').filter(function () {
+                return this.value === id;
+            });
+
+            option.detach();
+            $wind.append(option);
+        });
+        $wind.trigger('change.select2');
+    }
+
     $('#id_wind_shift_direction_m2m').select2({ placeholder: 'Select Wind Shift Direction', width: '100%', closeOnSelect: false });
     $('#id_wind_condition_m2m').select2({ placeholder: 'Select Wind Condition(s)', width: '100%', closeOnSelect: false });
     $('#id_wind_shift_condition_m2m').select2({ placeholder: 'Select Wind Condition(s)', width: '100%', closeOnSelect: false });

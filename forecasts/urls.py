@@ -62,10 +62,31 @@ urlpatterns = [
     path('district-forecast/probability-entry/<int:id>/delete/', views.probability_delete,name='probability_delete'),
 
 
-    ## DISTRICT FORECASTS
+    ## MUNICIPALITY FORECAST
     path('municipality-forecast/list/', views.municipality_forecast_list, name="municipality_forecast_list"),
     path('municipality-forecast/list/<int:id>/', views.municipality_forecast_list,name='municipality_forecast_list_id'),
+    path('municipality-forecast/severity-entry/', views.municipality_forecast_entry, name="municipality_forecast_entry"),
+    path('municipality-forecast/severity-entry/<int:id>/', views.municipality_forecast_entry,name='municipality_forecast_entry'),
 
+    ## MUNICIPALITY FORECAST: Details
+    path('municipality-forecast/entry/details/',views.municipality_forecast_details_entry,name='municipality_forecast_details_entry'),
+    path('municipality-forecast/entry/details/<int:id>/',views.municipality_forecast_details_entry,name='municipality_forecast_details_entry'),
+    path('municipality-forecast/entry/details-list/', views.municipality_forecast_details_list, name="municipality_forecast_details_list"),
+    path('municipality-forecast/entry/details-list/<int:id>/', views.municipality_forecast_details_list, name="municipality_forecast_details_list"),
+
+    ## MUNICIPALITY FORECASTS: Area
+    path('municipality-forecast/area/list/', views.municipality_area_list, name="municipality_area_list"),
+    #path('municipality-forecast/area/list/<int:id>/', views.municipality_area_list, name='municipality_area_list'),
+    path('municipality-forecast/area/entry/', views.municipality_area_entry, name="municipality_area_entry"),
+    path('municipality-forecast/area/entry/<int:id>/', views.municipality_area_entry, name='municipality_area_entry'),
+    #path('municipality-forecast/area/entry/<int:id>/delete/', views.municipality_area_delete, name='municipality_area_delete'),
+
+    ## MUNICIPALITY FORECASTS: Weather Conditions
+    path('municipality-forecast/weather-conditions/list/', views.weather_conditions_list, name="weather_conditions_list"),
+    #path('municipality-forecast/area/list/<int:id>/', views.municipality_area_list, name='municipality_area_list'),
+    #path('municipality-forecast/area/entry/', views.municipality_area_entry, name="municipality_area_entry"),
+    #path('municipality-forecast/area/entry/<int:id>/', views.municipality_area_entry, name='municipality_area_entry'),
+    #path('municipality-forecast/area/entry/<int:id>/delete/', views.municipality_area_delete, name='municipality_area_delete'),
 
     ## GENERAL WEATHER FORECAST
     path('general-weather-forecast/list/', views.general_forecast_list, name="general_forecast_list"),

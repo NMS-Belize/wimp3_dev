@@ -1,22 +1,11 @@
 {% extends "base_table.html" %}
-
-{% block title %}Weather Icons Table Details | Agro-Climat Services | WIMP3 | National Meteorological Service of Belize{% endblock %}
-
 {% block content %}
 {% load static %}
-
-<div class="row">
-    <div class="mb-4 col-12">
-        <span class="badge bg-primary">
-            {{ total_icons }} Icons
-        </span>
-    </div>
-</div>
 <div class="row d-flex">
     {% load render_table from django_tables2 %}
     {% render_table table %}
     {% for icon in icons %}
-    <div id="icon_card" class="card col-1 border border-secondar-subtle mb-3 text-center rounded me-2" >
+    <div id="icon_card" class="card col-1 border border-secondar-subtle mb-3 text-center rounded me-2 d-none" >
         <div class="card-body">
             <img src="{{ icon.url }}" alt="{{ icon.name }}" loading="lazy" />
         </div>

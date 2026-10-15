@@ -57,6 +57,18 @@
             </a>
         </div>
         <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:municipality_area_list' %}">
+                <img src="{% static 'button_icons/district.png' %}" alt="General Forecast Category" />
+                <span class="task_desc">Municipality Area</span>
+            </a>
+        </div>
+        <div class="item_dashboard position-relative">
+            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:weather_conditions_list' %}">
+                <img src="{% static 'button_icons/meteorology.png' %}" alt="General Forecast Category" />
+                <span class="task_desc">Weather Conditions</span>
+            </a>
+        </div>
+        <div class="item_dashboard position-relative">
             <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:general_forecast_category_list' %}">
                 <img src="{% static 'button_icons/time.png' %}" alt="General Forecast Category" />
                 <span class="task_desc">General Forecast Category</span>

@@ -7,7 +7,7 @@ from django_ckeditor_5.widgets import CKEditor5Widget
 from click import option
 from django import forms
 from pytz import timezone
-from .models import (DistrictForecast, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, 
+from .models import (DistrictForecast, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, MunicipalityForecast, MunicipalityZone, 
                      Probability, Severity, ForecastGeneral, ForescastGeneralCategory, ForecastDiscussion,
                      WindCondition, WindDirection, SeaState,
                      MoonMovementCategory, MoonDayCategory,
@@ -341,6 +341,48 @@ class DistrictForecastDetailsForm(forms.ModelForm):
         self.fields['ins_winds'].queryset = (DistrictForecastInstructions.objects.filter(category_id__in=[3, 5]).order_by(Lower('description')))
         self.fields['ins_precip_max'].queryset = (DistrictForecastInstructions.objects.filter(category_id__in=[4, 5]).order_by(Lower('description')))
 
+class MunicipalityZoneForm(forms.ModelForm):
+    class Meta:
+        model = MunicipalityZone
+        fields = ['description','district','latitude','longitude']
+        widgets = {            
+            'description': forms.TextInput(attrs={'class': 'form-control'}),
+            'district': forms.Select(attrs={'class': 'form-select'}),
+            'latitude': forms.TextInput(attrs={'class': 'form-control'}),
+            'longitude': forms.TextInput(attrs={'class': 'form-control'})
+        }
+
+class MunicipalityForecastForm(forms.ModelForm):
+    class Meta:
+        model = MunicipalityForecast
+        fields = ['forecast_date']
+        labels = {   
+            # <-- add human-friendly labels here
+            'forecast_date': 'Forecast Date:',
+            #'is_published': 'Is Published:'
+        }
+        widgets = {            
+            'forecast_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            #'is_published': DjangoToggleSwitchWidget(attrs={'class': 'form-check-input'})
+            #'is_published': forms.CheckboxInput(attrs={'class': 'form-check-input', 'role': 'switch'})
+        }
+
+    def clean_forecast_date(self):
+        forecast_date = self.cleaned_data.get("forecast_date")
+
+        if forecast_date and forecast_date < timezone.now().date():
+            raise forms.ValidationError("Forecast date cannot be earlier than today.")
+
+        qs = MunicipalityForecast.objects.filter(forecast_date=forecast_date)
+
+        if self.instance.pk:
+            qs = qs.exclude(pk=self.instance.pk)
+
+        if qs.exists():
+            raise forms.ValidationError("A forecast already exists for this date.")
+
+        return forecast_date
+
 class CAPAlertSelectMultiple(forms.SelectMultiple):
 
     def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):
@@ -385,6 +427,9 @@ class ForecastGeneralForm(forms.ModelForm):
     light_variable          = forms.IntegerField(label = "Light + Variable", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
 
     cap_alerts              = forms.ModelMultipleChoiceField(queryset=CAPAlertDetails.objects.select_related("identifier").order_by("-identifier__pubdate"), required=False, widget=CAPAlertSelectMultiple(attrs={ "class": "form-select select2"}))
+
+    wind_direction_order    = forms.CharField(required=False,widget=forms.HiddenInput())
+    wind_shift_direction_order    = forms.CharField(required=False,widget=forms.HiddenInput())
     
     class Meta:
         model = ForecastGeneral
@@ -413,8 +458,9 @@ class ForecastGeneralForm(forms.ModelForm):
                 "inland_high_f","inland_high_c","inland_low_f","inland_low_c",
                 "hills_high_f","hills_high_c","hills_low_f","hills_low_c",
                 "light_variable",
-                "is_published"
-                
+                "is_published",
+                "wind_direction_order",
+                "wind_shift_direction_order"
             ]
     
         widgets = {
@@ -467,6 +513,7 @@ class ForecastGeneralForm(forms.ModelForm):
             "hills_low_c": forms.NumberInput(attrs={"class": "form-control"}),
 
             "is_published": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            
         }
 
     def clean_forecast_file(self):
@@ -493,6 +540,32 @@ class ForecastGeneralForm(forms.ModelForm):
         for field in self.fields.values():
             if not isinstance(field.widget, forms.CheckboxInput):
                 field.widget.attrs.setdefault("class", "form-control")
+
+        if self.instance.pk:
+            order = self.instance.wind_direction_order or []
+            self.fields["wind_direction_order"].initial = ",".join(map(str, order))
+
+            order_sft = self.instance.wind_shift_direction_order or []
+            self.fields["wind_shift_direction_order"].initial = ",".join(map(str, order_sft))
+
+    def save(self, commit=True):
+        instance = super().save(commit=commit)
+
+        if commit:
+            order = self.cleaned_data.get("wind_direction_order", "")
+            order_sft = self.cleaned_data.get("wind_shift_direction_order", "")
+
+            instance.wind_direction_order = [
+                int(pk) for pk in order.split(",") if pk
+            ]
+            instance.save(update_fields=["wind_direction_order"])
+
+            instance.wind_shift_direction_order = [
+                int(pk) for pk in order.split(",") if pk
+            ]
+            instance.save(update_fields=["wind_shift_direction_order"])
+
+        return instance
 
 class MarineForecastCategoryForm(forms.ModelForm):
     class Meta:
@@ -551,7 +624,6 @@ class ForecastMarineForm(forms.ModelForm):
         for field in self.fields.values():
             if not isinstance(field.widget, forms.CheckboxInput):
                 field.widget.attrs.setdefault("class", "form-control")
-
 
 class ForecastItemSelect(forms.Select):
 

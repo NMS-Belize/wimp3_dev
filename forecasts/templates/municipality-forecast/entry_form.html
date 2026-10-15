@@ -1,0 +1,14 @@
+{% extends "base_form.html" %}
+{% load static %}
+{% block content %}
+<form method="post" id="frm_entry_form" name="frm_entry_form" class="wimp3_form">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-6">
+            <label class="form-label">Forecast Date:</label>
+            {{ form.forecast_date }}
+            <input id="btn_submit" type="submit" value="Submit" class="btn ms-2" />
+        </div>
+    </div>
+</form>
+{% endblock %}

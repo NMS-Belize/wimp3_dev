@@ -1,7 +1,10 @@
+from django.db import transaction
 from django.conf import settings
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django_tables2 import RequestConfig
+from django.contrib import messages
+
 
 from pathlib import Path
 
@@ -120,20 +123,39 @@ def weather_icon_entry(request, id=None):
 
         if form.is_valid():
             saved_entry = form.save()    # Creates or updates
-            return redirect('observations:weather_code_list', saved_entry.id)
+            return redirect('observations:weather_icon_list')
     else:
         form = WeatherIconsForm(instance=entry)
 
     return render(request, 'observations/entry_form.html', {
         'page_name': page_name,
         'prev_page': 'Weather Icons',
-        'new_url':  reverse('observations:weather_code_entry'),
-        'back_url': reverse('observations:weather_code_list'),
+        'new_url':  reverse('observations:weather_icon_entry'),
+        'back_url': reverse('observations:weather_icon_list'),
         'api_url':  reverse('sectors-list'),
         'form': form,
         'entry': entry
     })
 
+def weather_icon_delete(request, id):
+    
+    entry = get_object_or_404(WeatherIcons, id=id)
+
+    qs = WeatherIcons.objects.all().order_by('id')
+    qs = qs.order_by('id')
+    
+    page_name = "DELETE Weather Icon Entry"
+
+    if request.method == "POST":
+        entry.delete()
+        messages.success(request, f"Record {id} deleted successfully.")
+        return redirect('observations:weather_icon_list')  # redirect anywhere you prefer
+        
+    return render(request, "observations/parameters_delete.html", {
+        "entry": entry,
+        'page_name': page_name,
+        'details': qs
+    })
 @api_view(['GET'])
 def get_weather_icon(request, code):
 

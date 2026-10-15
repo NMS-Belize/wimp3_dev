@@ -7,6 +7,7 @@ from django.db.models import Max
 
 from system_core.models import District, AlertLevel, RiskLevel
 from alerts.models import CAPAlertDetails, TropicalWeatherAlerts
+from observations.models import WeatherIcons
 
 # Create your models here.
 
@@ -94,7 +95,6 @@ class DistrictForecastDetails(models.Model):
     prob_temp_min   = models.ForeignKey(AlertLevel,on_delete=models.SET_NULL,null=True,blank=True,related_name="probability_temp_min")
     sev_temp_min    = models.ForeignKey(AlertLevel,on_delete=models.SET_NULL,null=True,blank=True,related_name="severity_temp_min")
     risk_temp_min   = models.ForeignKey(RiskLevel,on_delete=models.SET_NULL,null=True,blank=True,related_name="risk_temp_min")
-    #ins_temp_min    = models.ForeignKey(DistrictForecastInstructions,on_delete=models.SET_NULL,null=True,blank=True,)
     ins_temp_min    = models.ManyToManyField(DistrictForecastInstructions, blank=True, related_name="instructions_temp_min")
 
     winds_min       = models.IntegerField(default=0)
@@ -102,7 +102,6 @@ class DistrictForecastDetails(models.Model):
     prob_winds      = models.ForeignKey(AlertLevel,on_delete=models.SET_NULL,null=True,blank=True,related_name="probability_winds")
     sev_winds       = models.ForeignKey(AlertLevel,on_delete=models.SET_NULL,null=True,blank=True,related_name="severity_winds")
     risk_winds      = models.ForeignKey(RiskLevel,on_delete=models.SET_NULL,null=True,blank=True,related_name="risk_winds")
-    #ins_winds       = models.ForeignKey(DistrictForecastInstructions,on_delete=models.SET_NULL,null=True,blank=True,)
     ins_winds       = models.ManyToManyField(DistrictForecastInstructions, blank=True, related_name="instructions_winds")
 
     precip_min      = models.DecimalField(default=0.00,max_digits=5,decimal_places=2)
@@ -110,14 +109,12 @@ class DistrictForecastDetails(models.Model):
     prob_precip_max = models.ForeignKey(AlertLevel,on_delete=models.SET_NULL,null=True,blank=True,related_name="probability_precip_max")
     sev_precip_max  = models.ForeignKey(AlertLevel,on_delete=models.SET_NULL,null=True,blank=True,related_name="severity_precip_max")
     risk_precip_max = models.ForeignKey(RiskLevel,on_delete=models.SET_NULL,null=True,blank=True,related_name="risk_precip_max")
-    #ins_precip_max  = models.ForeignKey(DistrictForecastInstructions,on_delete=models.SET_NULL,null=True,blank=True,)
     ins_precip_max  = models.ManyToManyField(DistrictForecastInstructions, blank=True, related_name="instructions_precip_max")
 
     weather_conditions         = models.TextField(blank=True, null=True)
     prob_weather_conditions    = models.ForeignKey(AlertLevel,on_delete=models.SET_NULL,null=True,blank=True,related_name="probability_weather_conditions")
     sev_weather_conditions     = models.ForeignKey(AlertLevel,on_delete=models.SET_NULL,null=True,blank=True,related_name="severity_weather_conditions")
     risk_weather_conditions    = models.ForeignKey(RiskLevel,on_delete=models.SET_NULL,null=True,blank=True,related_name="risk_weather_conditions")
-    #ins_weather_conditions     = models.ForeignKey(DistrictForecastInstructions,on_delete=models.SET_NULL,null=True,blank=True,)
     ins_weather_conditions  = models.ManyToManyField(DistrictForecastInstructions, blank=True, related_name="instructions_weather_conditions")
 
     created_by              = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="district_forecast_details_created")
@@ -217,6 +214,7 @@ class ForecastGeneral(models.Model):
 
     wind_direction      = models.CharField(max_length=50, null=True, blank=True)
     wind_direction_m2m  = models.ManyToManyField(WindDirection, blank=True,related_name="general_forecasts_wind_direction")
+    wind_direction_order = models.JSONField(default=list,blank=True)
 
     wind_condition      = models.CharField(max_length=50, null=True, blank=True)
     wind_condition_m2m  = models.ManyToManyField(WindCondition, blank=True,related_name="general_forecasts_wind_condition")
@@ -225,7 +223,8 @@ class ForecastGeneral(models.Model):
 
     wind_shift_direction        = models.CharField(max_length=50, null=True, blank=True)
     wind_shift_direction_m2m    = models.ManyToManyField(WindDirection, blank=True,related_name="general_forecasts_wind_direction_shift")
-    
+    wind_shift_direction_order = models.JSONField(default=list,blank=True)
+
     wind_shift_condition        = models.CharField(max_length=50, null=True, blank=True)
     wind_shift_condition_m2m    = models.ManyToManyField(WindCondition, blank=True,related_name="general_forecasts_wind_condition_shift")
 
@@ -652,9 +651,26 @@ class MunicipalityForecast(models.Model):
     def __str__(self):
         return f"{self.forecast_date}"
 
+class WindSpeed(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    description = models.CharField(max_length=100,null=True,blank=True)
+    created_datetime    = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True)
+    updated_datetime = models.DateTimeField(auto_now_add=True,null=True)
+    def __str__(self): return self.description
+
+class WeatherConditions(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    description = models.CharField(max_length=100,null=True,blank=True)
+    created_datetime    = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True)
+    updated_datetime = models.DateTimeField(auto_now_add=True,null=True)
+    def __str__(self): return self.description
+
 class MunicipalityZone(models.Model):
     id = models.BigAutoField(primary_key=True)
     zone_name = models.CharField(max_length=100,null=True,blank=True)
+    district        = models.ForeignKey(District,on_delete=models.CASCADE,null=True,blank=True,related_name="municipality_district")
     description = models.CharField(max_length=100,null=True,blank=True)
     latitude = models.DecimalField(default=0.0,decimal_places=10,max_digits=13,null=True,blank=True)
     longitude = models.DecimalField(default=0.0,decimal_places=10,max_digits=13,null=True,blank=True)
@@ -663,7 +679,7 @@ class MunicipalityZone(models.Model):
     created_datetime    = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True)
     updated_datetime = models.DateTimeField(auto_now_add=True,null=True)
-    def __str__(self): return self.zone_name
+    def __str__(self): return self.description
 
 class MunicipalityForecastDetails(models.Model):
 
@@ -675,12 +691,18 @@ class MunicipalityForecastDetails(models.Model):
     temp_min        = models.IntegerField(default=0)
     temp_max        = models.IntegerField(default=0)
     
-    wind_speed          = models.CharField(max_length=10,null=True, blank=True)
+    #wind_speed          = models.CharField(max_length=10,null=True, blank=True)
+    wind_speed      = models.ForeignKey(WindSpeed,on_delete=models.SET_NULL,null=True,blank=True)
 
     wind_direction      = models.CharField(max_length=50, null=True, blank=True)
     wind_direction_m2m  = models.ManyToManyField(WindDirection, blank=True,related_name="municipality_forecast_details_wind_direction")
 
-    wind_condition        = models.CharField(max_length=50, null=True, blank=True)
+    #wind_condition        = models.CharField(max_length=50, null=True, blank=True)
+    wind_condition      = models.ForeignKey(WindCondition,on_delete=models.SET_NULL,null=True,blank=True)
+    weather_condition   = models.ForeignKey(WeatherConditions,on_delete=models.SET_NULL,null=True,blank=True)
+
+    icon_day            = models.ForeignKey(WeatherIcons,on_delete=models.CASCADE,null=True,blank=True,related_name="municipality_icon_day")
+    icon_night          = models.ForeignKey(WeatherIcons,on_delete=models.CASCADE,null=True,blank=True,related_name="municipality_icon_night")
 
     created_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="municipality_forecasts_details_created")
     updated_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="municipality_forecasts_details_updated")

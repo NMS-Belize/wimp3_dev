@@ -4,21 +4,25 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 
+from .storage import weather_icon_storage
+
 import os
 
 # Create your models here.
 class WeatherIcons(models.Model):
     
+    legacy_id   = models.PositiveIntegerField(null=True, blank=True, unique=True, db_index=True)
     name        = models.CharField(max_length=100, unique=True)
-    icon_file   = models.FileField(upload_to='static/weather_icons/')
-    created_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="weather_icon_created")
-    updated_by          = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="weather_icon_updated")
-    created_datetime    = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    updated_datetime    = models.DateTimeField(auto_now=True,null=True)
+    image_day   = models.CharField(max_length=255,null=True,blank=True)
+    image_night = models.CharField(max_length=255,null=True,blank=True)
+    created_by  = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="weather_icon_created")
+    updated_by  = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="weather_icon_updated")
+    created_datetime = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_datetime = models.DateTimeField(auto_now=True, null=True)
 
     class Meta:
-        ordering = ['name']
-        verbose_name_plural = 'Weather Icons'
+        ordering = ["name"]
+        verbose_name_plural = "Weather Icons"
 
     def __str__(self):
         return self.name
