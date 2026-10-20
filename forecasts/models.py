@@ -686,7 +686,7 @@ class MunicipalityForecastDetails(models.Model):
     legacy_id       = models.PositiveBigIntegerField(null=True,blank=True,unique=True,db_index=True)
 
     municipality_forecast   = models.ForeignKey(MunicipalityForecast,on_delete=models.SET_NULL,null=True,blank=True,related_name="forecast_municipality_details")
-    municipality_area   = models.ForeignKey(MunicipalityZone,on_delete=models.SET_NULL,null=True,blank=True,related_name="forecast_municipality_details")
+    municipality_area   = models.ForeignKey(MunicipalityZone,on_delete=models.SET_NULL,null=True,blank=True,related_name="forecast_municipality_area_details")
 
     temp_min        = models.IntegerField(default=0)
     temp_max        = models.IntegerField(default=0)
@@ -694,8 +694,8 @@ class MunicipalityForecastDetails(models.Model):
     #wind_speed          = models.CharField(max_length=10,null=True, blank=True)
     wind_speed      = models.ForeignKey(WindSpeed,on_delete=models.SET_NULL,null=True,blank=True)
 
-    wind_direction      = models.CharField(max_length=50, null=True, blank=True)
-    wind_direction_m2m  = models.ManyToManyField(WindDirection, blank=True,related_name="municipality_forecast_details_wind_direction")
+    #wind_direction      = models.CharField(max_length=50, null=True, blank=True)
+    #wind_direction_m2m  = models.ManyToManyField(WindDirection, blank=True,related_name="municipality_forecast_details_wind_direction")
 
     #wind_condition        = models.CharField(max_length=50, null=True, blank=True)
     wind_condition      = models.ForeignKey(WindCondition,on_delete=models.SET_NULL,null=True,blank=True)

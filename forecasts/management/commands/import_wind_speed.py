@@ -44,7 +44,7 @@ class Command(BaseCommand):
 
         with connections["legacy"].cursor() as cursor:
             cursor.execute("""
-                SELECT * FROM val_sea_state WHERE description IS NOT NULL
+                SELECT * FROM val_wind_speed WHERE description IS NOT NULL
             """)
 
             columns = [
@@ -61,16 +61,16 @@ class Command(BaseCommand):
 
         for data in rows:
 
-            updated_user = get_user(data["updated_by"])
+            #updated_user = get_user(data["updated_by"])
 
             record = WindSpeed(
                 id              = data["id"],
 
                 description     = clean_required_text(data["description"]),
 
-                created_datetime = data["created_time"],
-                updated_by      = updated_user,
-                updated_datetime = data["updated_time"],
+                #created_datetime = data["created_time"],
+                #updated_by      = updated_user,
+                #updated_datetime = data["updated_time"],
             )
 
             records.append(record)

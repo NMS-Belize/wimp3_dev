@@ -37,7 +37,8 @@ router.register('district-forecasts-all',       forecasts_views.DistrictForecast
 router.register('general-weather-forecast',     forecasts_views.GeneralForecastViewSet,         basename='general-weather-forecast')
 router.register('general-weather-forecast-all', forecasts_views.GeneralForecastAllViewSet,      basename='general-weather-forecast-all')
 
-router.register('marine-forecast',     forecasts_views.MarineForecastViewSet,         basename='marine-forecast')
+router.register('marine-forecast',          forecasts_views.MarineForecastViewSet,          basename='marine-forecast')
+router.register('municipality-forecast',    forecasts_views.MunicipalityForecastViewSet,    basename='municipality-forecast')
 
 ### AGRO API ROUTES ###
 router.register('sectors',      agro_views.SectorViewSet, basename='sectors')

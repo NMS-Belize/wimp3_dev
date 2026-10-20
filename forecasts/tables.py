@@ -13,11 +13,14 @@ from django.db.models import Max
 from django.db.models.functions import Greatest, Coalesce
 
 from django.conf import settings
+from django.templatetags.static import static
+
+from observations.models import WeatherIcons
 
 from forecasts.models import (
     DistrictForecast, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, 
     ForecastGeneral, ForescastGeneralCategory, 
-    ForecastMarine, ForecastMarineCategory, ForecastMarineDetailsCategory, ForecastMarineDetails, WindCondition, WindDirection, SeaState, 
+    ForecastMarine, ForecastMarineCategory, ForecastMarineDetailsCategory, ForecastMarineDetails, WindCondition, WindDirection, SeaState, WindSpeed, 
     Tides, TideLevelCategory, TideDayCategory, SunRiseSet, SunDayCategory, SunMovementCategory, MoonRiseSet, MoonDayCategory, MoonMovementCategory, 
     ForecastDiscussion, 
     MunicipalityForecast, MunicipalityForecastDetails, MunicipalityZone, WeatherConditions, 
@@ -1572,7 +1575,7 @@ class MunicipalityZoneTable(tables.Table):
 class MunicipalityForecastTable(tables.Table):
     edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:60px;","class": "text-center"}, "td": {"style": "","class": "col_edit text-center"}})
     
-    forecast_date       = tables.Column(verbose_name="Forecast Date", attrs={"th": {"style": "width:120px;","class": ""}, "td": {"style": "","class": "col_link text-start"}})
+    forecast_date       = tables.Column(verbose_name="Forecast Date", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": "col_link text-start"}})
     #forecast_time       = tables.TimeColumn(verbose_name="Time", format="h:i A", attrs={"th": {"style": "","class": ""}, "td": {"class": "",},},)
         
     created_by          = tables.Column(verbose_name="Created By", attrs={"th": {"style": "width:120px;","class": ""}, "td": {"style": "","class": ""}})
@@ -1683,22 +1686,22 @@ class MunicipalityForecastDetailsTable(tables.Table):
 
     #edit            = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:60px;","class": "col_edit text-center"},"td": {"style": "","class": "col_edit text-center"}})
     
-    municipality_area        = tables.Column(verbose_name="Municipality",attrs={"th": {"style": "width:180px;","class": ""},"td": {"style": "","class": "fw-bold text-decoration-none"}})
-    temp_max        = tables.Column(verbose_name="TEMP °F (MAX)",attrs={"th": {"style": "width:120px;","class": ""},"td": {"style": "","class": "pe-4"}})
-    temp_min        = tables.Column(verbose_name="TEMP °F (MIN)",attrs={"th": {"style": "width:120px;","class": ""},"td": {"style": "","class": "pe-4"}})
+    municipality_area        = tables.Column(verbose_name="Municipality",attrs={"th": {"style": "width:180px;","class": ""},"td": {"style": "","class": "fw-bold text-decoration-none align-middle"}})
+    temp_max        = tables.Column(verbose_name="TEMP °F (MAX)",attrs={"th": {"style": "width:120px;","class": ""},"td": {"style": "","class": "pe-4 align-middle"}})
+    temp_min        = tables.Column(verbose_name="TEMP °F (MIN)",attrs={"th": {"style": "width:120px;","class": ""},"td": {"style": "","class": "pe-4 align-middle"}})
     
-    wind_speed      = tables.Column(verbose_name="Winds (Kts)",empty_values=(),attrs={"th": {"style": "width:200px;","class": ""},"td": {"style": "","class": "pe-4"} })
-    wind_condition  = tables.Column(verbose_name="Wind Condition",empty_values=(),attrs={"th": {"style": "","class": ""},"td": {"style": "","class": "pe-4"} })
+    wind_speed      = tables.Column(verbose_name="Winds (Kts)",empty_values=(),attrs={"th": {"style": "width:150px;","class": ""},"td": {"style": "","class": "pe-4 align-middle"} })
+    wind_condition  = tables.Column(verbose_name="Wind Condition",empty_values=(),attrs={"th": {"style": "width:200px","class": ""},"td": {"style": "","class": "pe-4 align-middle"} })
 
-    weather_condition = tables.Column(verbose_name="Weather Conditions",attrs={"th": {"style": "width:350px;","class": ""},"td": {"style": "","class": ""}})
+    weather_condition = tables.Column(verbose_name="Weather Conditions",attrs={"th": {"style": "width:350px;","class": ""},"td": {"style": "","class": "align-middle"}})
 
-    icon_day        = tables.Column(verbose_name="Icon (Day)",empty_values=(),attrs={"th": {"style": "","class": ""},"td": {"style": "","class": "pe-4"} })
-    icon_night      = tables.Column(verbose_name="Icon (Night)",attrs={"th": {"style": "","class": ""},"td": {"style": "","class": "pe-4"}})
+    icon_day        = tables.Column(verbose_name="Icon (Day)",attrs={"th": {"style": "","class": ""},"td": {"style": "","class": "pe-4 align-middle"} })
+    icon_night      = tables.Column(verbose_name="Icon (Night)",attrs={"th": {"style": "","class": ""},"td": {"style": "","class": "pe-4 align-middle"}})
 
     class Meta:
         model = MunicipalityForecastDetails
         template_name = "django_tables2/bootstrap4.html"  # or bootstrap5
-        fields      = ("municipality_area","temp_max","temp_min","wind_speed","weather_condition","icon_day","icon_night")
+        fields      = ("municipality_area","temp_max","temp_min","wind_speed","wind_condition","weather_condition","icon_day","icon_night")
         
         # Add table ID and class here
         attrs = {
@@ -1706,247 +1709,85 @@ class MunicipalityForecastDetailsTable(tables.Table):
             "class": "tbl_wimp3 table table-striped table-condensed table-hover tbl_wimp3",
         }
 
-    
+    def render_temp_max(self, value, record):
+        return table_format_html('<input type="text" class="form-control form-control inline-edit" data-id="{}" data-field="temp_max" value="{}">', record.id, value if value is not None else "")
 
+    def render_temp_min(self, value, record):
+        return table_format_html('<input type="text" class="form-control form-control inline-edit" data-id="{}" data-field="temp_min" value="{}">', record.id, value if value is not None else "")
+
+    def render_wind_speed(self, record):
+        
+        options = []
+        options.append(format_html('<option value="">-----------</option>'))
+
+        for item in WindSpeed.objects.all(): 
+            if str(record.wind_speed_id) == str(item.id) or str(record.wind_speed) == str(item.description):
+                print(record.wind_speed)
+                options.append(format_html('<option value="{}" selected="selected">{}</option>', item.id, item.description))
+            else:
+                options.append(format_html('<option value="{}">{}</option>', item.id, item.description))
+
+        options_html = format_html_join("", "{}",((option,) for option in options))
+
+        return format_html('<select class="form-select wind-speed inline-edit" data-id="{}" data-value="{}" data-field="wind_speed" style="width:100%;">{}</select>', record.id, record.wind_speed_id, options_html)
+    
+    def render_wind_condition(self, record):
+    
+        options = []
+        options.append(format_html('<option value="">-----------</option>'))
+
+        for item in WindCondition.objects.all():
+            if str(record.wind_condition_id) == str(item.id) or str(record.wind_condition) == str(item.description):
+                options.append(format_html('<option value="{}" selected="selected">{}</option>', item.id, item.description))
+            else:
+                options.append(format_html('<option value="{}">{}</option>', item.id, item.description))
+
+        options_html = format_html_join("", "{}",((option,) for option in options))
+
+        return format_html('<select class="form-select wind-condition inline-edit" data-id="{}" data-field="wind_condition" style="width:100%;">{}</select>', record.id, options_html)
+    
     def render_weather_condition(self, record):
-        return record.weather_condition.description
-
-    '''def render_wind_condition(self, record):
-            return record.wind_condition
+        #return record.weather_condition.description
     
-    def render_icon_day(self, record):
-        if record.icon_day and record.icon_day.icon:
-            return format_html('<img src="{}" alt="Day Weather" style="width:45px;height:45px;object-fit:contain;">',record.icon_day.icon.url)
-        return "—"
+        options = []
+        options.append(format_html('<option value="">-----------</option>'))
 
-    def render_icon_night(self, record):
-        if record.icon_night and record.icon_night.icon:
-            return format_html('<img src="{}" alt="Night Weather" style="width:45px;height:45px;object-fit:contain;">',record.icon_night.icon.url)
-        return "—"'''
+        for item in WeatherConditions.objects.all():
+            if str(record.weather_condition) == str(item.id) or str(record.weather_condition) == str(item.description):
+                options.append(format_html('<option value="{}" selected="selected">{}</option>', item.id, item.description))
+            else:
+                options.append(format_html('<option value="{}">{}</option>', item.id, item.description))
 
-    '''def render_edit(self, record):
-        link_html   = '<a href="{}" class="btn_edit"><i class="fa-solid fa-pen-to-square"></i></a>'
-        url         = reverse("forecasts:municipality_forecast_details_entry", args=[record.municipality_forecast_id, record.id,])
-        return format_html(link_html, url, record.municipality_area)
+        options_html = format_html_join("", "{}",((option,) for option in options))
+
+        return format_html('<select class="form-select weather-condition inline-edit" data-id="{}" data-field="weather_condition" style="width:100%;">{}</select>', record.id, options_html)
+
+    def render_icon_day(self, value, record):
+
+        options = []
+        options.append(format_html('<option value="">-----------</option>'))
+
+        for item in WeatherIcons.objects.all():
+            if str(record.icon_day) == str(item.id) or str(record.icon_day) == str(item.name):
+                options.append(format_html('<option value="{}" selected="selected">{}</option>', item.id, item.name))
+            else:
+                options.append(format_html('<option value="{}" data-image="{}">{}</option>', item.id, item.image_day, item.name))
+
+        options_html = format_html_join("", "{}",((option,) for option in options))
+
+        return format_html('<select class="form-select image-day weather-icon-select inline-edit" data-id="{}" data-field="image_day" style="width:100%;">{}</select>', record.id, options_html)
+       
+    def render_icon_night(self, value, record):
     
-    
-    
-    def render_temp_max(self, record):
+        options = []
+        options.append(format_html('<option value="">-----------</option>'))
 
-        prob_class  = "bg-dark"
-        sev_class   = "bg-dark"
-        risk_class  = "bg-dark"
+        for item in WeatherIcons.objects.all():
+            if str(record.icon_day) == str(item.id) or str(record.icon_night) == str(item.name):
+                options.append(format_html('<option value="{}" selected="selected">{}</option>', item.id, item.name))
+            else:
+                options.append(format_html('<option value="{}" data-image="{}">{}</option>', item.id, item.image_night, item.name))
 
-        if record.prob_temp_max:
-            
-            prob_text = str(record.prob_temp_max).lower()
+        options_html = format_html_join("", "{}",((option,) for option in options))
 
-            if "low" in prob_text:
-                prob_class = "low"
-            elif "medium" in prob_text:
-                prob_class = "med text-dark"
-            elif "high" in prob_text:
-                prob_class = "high"
-
-        if record.sev_temp_max:
-
-            sev_text = str(record.sev_temp_max).lower()
-
-            if "low" in sev_text:
-                sev_class = "low"
-            elif "medium" in sev_text:
-                sev_class = "med text-dark"
-            elif "high" in sev_text:
-                sev_class = "high" 
-
-        if record.risk_temp_max:
-
-            risk_text = str(record.risk_temp_max).lower()
-
-            if "low" in risk_text:
-                risk_class = "low"
-            elif "medium" in risk_text:
-                risk_class = "med text-dark"
-            elif "high" in risk_text:
-                risk_class = "high"
-            elif "critical" in risk_text:
-                risk_class = "critical"
-
-        link_html   = '<div class="fst-italic mb-1">{}</div><div class="row text-opacity-25"><div class="col"><small>Probability:</small><br /><div class="badge {}">{}</div></div><div class="col"><small>Severity:</small><br /><div class="badge {}">{}</div></div><div class="col"><small>Risk:</small><br /><div class="badge {}">{}</div></div></div>'
-        return format_html(link_html, record.temp_max, prob_class, record.prob_temp_max, sev_class, record.sev_temp_max, risk_class, record.risk_temp_max)
-    
-    def render_temp_min(self, record):
-
-        prob_class  = "bg-dark"
-        sev_class   = "bg-dark"
-        risk_class  = "bg-dark"
-
-        if record.prob_temp_min:
-            
-            prob_text = str(record.prob_temp_min).lower()
-
-            if "low" in prob_text:
-                prob_class = "low"
-            elif "medium" in prob_text:
-                prob_class = "med text-dark"
-            elif "high" in prob_text:
-                prob_class = "high"
-
-        if record.sev_temp_min:
-            
-            sev_text = str(record.sev_temp_min).lower()
-
-            if "low" in sev_text:
-                sev_class = "low"
-            elif "medium" in sev_text:
-                sev_class = "med text-dark"
-            elif "high" in sev_text:
-                sev_class = "high"
-
-        if record.risk_temp_min:
-            
-            risk_text = str(record.risk_temp_min).lower()
-
-            if "low" in risk_text:
-                risk_class = "low"
-            elif "medium" in risk_text:
-                risk_class = "med text-dark"
-            elif "high" in risk_text:
-                risk_class = "high"
-            elif "critical" in risk_text:
-                risk_class = "critical"
-
-        link_html   = '<div class="fst-italic mb-1">{}</div><div class="row text-opacity-25"><div class="col"><small>Probability:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Severity:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Risk:</small><br /><span class="badge {}">{}</span></div></div>'
-        return format_html(link_html, record.temp_min, prob_class, record.prob_temp_min, sev_class, record.sev_temp_min, risk_class, record.risk_temp_min)
-    
-    def render_winds(self, record):
-
-        prob_class  = "bg-dark"
-        sev_class   = "bg-dark"
-        risk_class  = "bg-dark"
-
-        if record.prob_winds:
-            
-            prob_text = str(record.prob_winds).lower()
-
-            if "low" in prob_text:
-                prob_class = "low"
-            elif "medium" in prob_text:
-                prob_class = "med text-dark"
-            elif "high" in prob_text:
-                prob_class = "high"
-
-        if record.sev_winds:
-            
-            sev_text = str(record.sev_winds).lower()
-
-            if "low" in sev_text:
-                sev_class = "low"
-            elif "medium" in sev_text:
-                sev_class = "med text-dark"
-            elif "high" in sev_text:
-                sev_class = "high"
-            
-        if record.risk_winds:
-            
-            risk_text = str(record.risk_winds).lower()
-
-            if "low" in risk_text:
-                risk_class = "low"
-            elif "medium" in risk_text:
-                risk_class = "med text-dark"
-            elif "high" in risk_text:
-                risk_class = "high"
-            elif "critical" in risk_text:
-                risk_class = "critical"
-
-        link_html   = '<div class="fst-italic mb-1">{} - {}</div><div class="row"><div class="col"><small>Probability:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Severity:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Risk:</small><br /><span class="badge {}">{}</span></div></div>'
-        return format_html(link_html, record.winds_min, record.winds_max, prob_class, record.prob_winds, sev_class, record.sev_winds, risk_class, record.risk_winds)
-    
-    def render_weather_conditions(self, record):
-
-        prob_class = "bg-dark"
-        sev_class = "bg-dark"
-        risk_class = "bg-dark"
-
-        prob_id = record.prob_weather_conditions_id
-        sev_id = record.sev_weather_conditions_id
-
-        ALERT_CLASSES = {
-            1: "low", 2: "med text-dark", 3: "high",
-        }
-
-        if prob_id:
-            prob_class = ALERT_CLASSES.get(prob_id, "bg-dark")
-
-        if sev_id:
-            sev_class = ALERT_CLASSES.get(sev_id, "bg-dark")
-        
-        RISK_MATRIX = {
-
-            # PROBABILITY
-            1: {  # LOW
-                1: "low",
-                2: "med text-dark",
-                3: "med text-dark",
-            },
-            2: {  # MED
-                1: "low",
-                2: "med text-dark",
-                3: "high",
-            },
-            3: {  # HIGH
-                1: "low",
-                2: "high",
-                3: "critical"
-            }
-        }
-
-        if prob_id and sev_id:
-            risk_class = RISK_MATRIX.get(prob_id, {}).get(sev_id, "bg-dark")
-
-        link_html   = '<div class="fst-italic mb-2">{}</div><div class="row"><div class="col"><small>Probability:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Severity:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Risk:</small><br /><span class="badge {}">{}</span></div></div>'
-        return format_html(link_html, record.weather_conditions, prob_class, record.prob_weather_conditions, sev_class, record.sev_weather_conditions, risk_class, record.risk_weather_conditions)
-    
-    def render_precip_max(self, record):
-
-        prob_class  = "bg-dark"
-        sev_class   = "bg-dark"
-        risk_class  = "bg-dark"
-
-        if record.prob_precip_max:
-            
-            prob_text = str(record.prob_precip_max).lower()
-
-            if "low" in prob_text:
-                prob_class = "low"
-            elif "medium" in prob_text:
-                prob_class = "med text-dark"
-            elif "high" in prob_text:
-                prob_class = "high"
-        
-        if record.sev_precip_max:
-            
-            sev_text = str(record.sev_precip_max).lower()
-
-            if "low" in sev_text:
-                sev_class = "low"
-            elif "medium" in sev_text:
-                sev_class = "med text-dark"
-            elif "high" in sev_text:
-                sev_class = "high"
-            
-        if record.risk_precip_max:
-            risk_text = str(record.risk_precip_max).lower()
-
-            if "low" in risk_text:
-                risk_class = "low"
-            elif "medium" in risk_text:
-                risk_class = "med text-dark"
-            elif "high" in risk_text:
-                risk_class = "high"
-            elif "critical" in risk_text:
-                risk_class = "critical"
-
-        link_html   = '<div class="fst-italic mb-1">{} - {}</div><div class="row"><div class="col"><small>Probability:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Severity:</small><br /><span class="badge {}">{}</span></div><div class="col"><small>Risk:</small><br /><div class="badge {}">{}</span></div></div>'
-        return format_html(link_html, record.precip_min, record.precip_max, prob_class, record.prob_precip_max, sev_class, record.sev_precip_max, risk_class, record.risk_precip_max)'''
+        return format_html('<select class="form-select image-night weather-icon-select inline-edit" data-id="{}" data-field="image_night" style="width:100%;">{}</select>', record.id, options_html)

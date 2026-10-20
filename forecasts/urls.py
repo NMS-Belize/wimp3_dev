@@ -74,6 +74,9 @@ urlpatterns = [
     path('municipality-forecast/entry/details-list/', views.municipality_forecast_details_list, name="municipality_forecast_details_list"),
     path('municipality-forecast/entry/details-list/<int:id>/', views.municipality_forecast_details_list, name="municipality_forecast_details_list"),
 
+    path("municipality-forecast/details/inline-update/",views.municipality_forecast_inline_update,name="municipality_forecast_inline_update"),
+    path("municipality-forecast/details/inline-update/<int:id>/",views.municipality_forecast_inline_update,name="municipality_forecast_inline_update"),
+
     ## MUNICIPALITY FORECASTS: Area
     path('municipality-forecast/area/list/', views.municipality_area_list, name="municipality_area_list"),
     #path('municipality-forecast/area/list/<int:id>/', views.municipality_area_list, name='municipality_area_list'),
@@ -87,6 +90,9 @@ urlpatterns = [
     #path('municipality-forecast/area/entry/', views.municipality_area_entry, name="municipality_area_entry"),
     #path('municipality-forecast/area/entry/<int:id>/', views.municipality_area_entry, name='municipality_area_entry'),
     #path('municipality-forecast/area/entry/<int:id>/delete/', views.municipality_area_delete, name='municipality_area_delete'),
+
+    ## MUNICIPALITY FORECASTS: Wind Speed
+    path('municipality-forecast/wind-speed/list/', views.wind_speed_list, name="wind_speed_list"),
 
     ## GENERAL WEATHER FORECAST
     path('general-weather-forecast/list/', views.general_forecast_list, name="general_forecast_list"),
@@ -161,7 +167,6 @@ urlpatterns = [
     path('marine-forecast/tide/day/category/entry/', views.tide_day_category_entry, name="tide_day_category_entry"),
     path('marine-forecast/tide/day/category/entry/<int:id>/', views.tide_day_category_entry, name="tide_day_category_entry"),
     path('marine-forecast/tide/day/category/<int:id>/delete/', views.tide_day_category_delete, name='tide_day_category_delete'),
-
 
     path('marine-forecast/sun/day/category/list/', views.sun_day_category_list, name='sun_day_category_list'),
     path('marine-forecast/sun/day/category/list/<int:id>/', views.sun_day_category_list, name='sun_day_category_list'),

@@ -2,7 +2,7 @@ import os
 from rest_framework import serializers
 from django.conf import settings
 
-from forecasts.models import DistrictForecast, DistrictForecastDetails, ForecastGeneral, ForecastMarine, ForecastMarineDetails, SunRiseSet, MoonRiseSet, Tides, WindCondition, SeaState, TropicalWeatherAlerts
+from forecasts.models import DistrictForecast, DistrictForecastDetails, ForecastGeneral, ForecastMarine, ForecastMarineDetails, SunRiseSet, MoonRiseSet, Tides, WindCondition, SeaState, MunicipalityForecast, MunicipalityForecastDetails
 from alerts.models import CAPAlerts
 from alerts.serializers import TropicalAlertsSerializer, CAPAlertsSerializer, CAPAlertDetailsSerializer
 
@@ -392,3 +392,80 @@ class MarineForecastSerializer(serializers.ModelSerializer):
     def get_tropical_alerts(self, obj):
         alerts = obj.tropical_alerts.all()
         return TropicalAlertsSerializer(alerts, many=True).data
+
+class MunicipalityForecastDetailsSerializer(serializers.ModelSerializer):
+
+    temp_min = serializers.SerializerMethodField()
+    temp_max = serializers.SerializerMethodField()
+
+    wind_speed = serializers.SerializerMethodField()
+    wind_condition = serializers.SerializerMethodField()
+
+    weather_condition = serializers.SerializerMethodField()
+
+    icon_day = serializers.SerializerMethodField()
+    icon_night = serializers.SerializerMethodField()
+
+    class Meta:
+        model = MunicipalityForecastDetails
+        fields = ['temp_min', 'temp_max', 'wind_speed', 'wind_condition', 'icon_day', 'icon_night', 'weather_condition']
+    
+    def get_temp_min(self, obj):
+        return f"{obj.temp_min:.0f} °F" if obj.temp_min is not None else ""
+
+    def get_temp_max(self, obj):
+        return f"{obj.temp_max:.0f} °F" if obj.temp_max is not None else ""
+
+    def get_wind_speed(self, obj):
+        return obj.wind_speed.description if obj.wind_speed_id else ""
+
+    def get_wind_condition(self, obj):
+        return obj.wind_condition.description if obj.wind_condition_id else ""
+
+    def get_weather_condition(self, obj):
+        return obj.weather_condition.description if obj.weather_condition_id else ""
+
+    def get_icon_day(self, obj):
+        return obj.icon_day.image_day if obj.icon_day_id else ""
+
+    def get_icon_night(self, obj):
+        return obj.icon_night.image_night if obj.icon_night_id else ""
+    
+    
+class MunicipalityForecastSerializer(serializers.ModelSerializer):
+
+    municipality    = serializers.SerializerMethodField()
+    created_by  = serializers.SerializerMethodField()
+    updated_by  = serializers.SerializerMethodField()
+
+    latest_updated_datetime = serializers.DateTimeField(read_only=True)
+
+    class Meta:
+        model   = MunicipalityForecast
+        fields  = ['id', 'forecast_date', 'created_by', 'created_datetime', 'latest_updated_datetime', 'updated_by', 'updated_datetime', 'municipality']
+
+    def get_created_by(self, obj):
+        if obj.created_by:
+            return obj.created_by.get_full_name() or obj.created_by.username
+        return ""
+
+    def get_updated_by(self, obj):
+        if obj.updated_by:
+            return obj.updated_by.get_full_name() or obj.updated_by.username
+        return ""
+
+    def get_municipality(self, obj):
+
+        results = []
+
+        for detail in obj.forecast_municipality_details.all():
+
+            if detail.municipality_area:
+
+                results.append({
+                    "id": detail.municipality_area_id,
+                    "area_name": detail.municipality_area.description,
+                    "details": MunicipalityForecastDetailsSerializer(detail).data
+                })
+
+        return results

@@ -125,273 +125,210 @@
 {% endblock %} 
 {% block extra_js %}
 <script type="text/javascript">
+$(document).ready(function () {
 
-    $('.select2').select2({
-        width: '100%',
-        placeholder: 'Select one or more option',
-        allowClear: true
+    
+
+    document.getElementById("btn_proceed").addEventListener("click", function () {
+
+        const entry_id = $("#delete_entry_id").val();
+        const errorBox = document.getElementById("error");
+            
+        fetch("{% url 'forecasts:marine_details_delete' id=0 %}".replace("0", entry_id), {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: new URLSearchParams({
+                //marine_category: marine_category,
+            })
+        })
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                errorBox.innerText = "";
+                const modalElement = document.getElementById("modal_delete_details");
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                modal.hide();
+                $(".remove-row").remove();
+            }
+            else {
+                console.log(data.error);
+                errorBox.innerText = data.error;
+            }
+        });
     });
 
-    $("#id_risk_weather_conditions").height(25);
-    $("#risk_level_weather_conditions").height(40);
+    $(document).on("change", ".details-inline-edit", function () {
 
-    document.addEventListener("DOMContentLoaded", function () {
+        const input = $(this);
 
-        //calculateRisk("id_prob_weather_conditions","id_sev_weather_conditions","id_risk_weather_conditions","risk_level_weather_conditions");
-        //calculateRisk("id_prob_temp_max","id_sev_temp_max","id_risk_temp_max","risk_level_temp_max");
-       //calculateRisk("id_prob_temp_min","id_sev_temp_min","id_risk_temp_min","risk_level_temp_min");
-        //calculateRisk("id_prob_winds","id_sev_winds","id_risk_winds","risk_level_winds");
-        //calculateRisk("id_prob_precip_max","id_sev_precip_max","id_risk_precip_max","risk_level_precip_max");
+        const data = {
+            id: input.data("id"),
+            field: input.data("field"),
+            csrfmiddlewaretoken: "{{ csrf_token }}"
+        };
 
-        loadRisk("id_risk_weather_conditions","risk_level_weather_conditions");
-        loadRisk("id_risk_temp_max","risk_level_temp_max");
-        loadRisk("id_risk_temp_min","risk_level_temp_min");
-        loadRisk("id_risk_winds","risk_level_winds");
-        loadRisk("id_risk_precip_max","risk_level_precip_max");
-        
-        // TEMP MAX
-        document.getElementById("id_prob_temp_max").addEventListener("change", function () {
-            calculateRisk("id_prob_temp_max","id_sev_temp_max","id_risk_temp_max","risk_level_temp_max");
-        });
-        document.getElementById("id_sev_temp_max").addEventListener("change", function () {
-            calculateRisk("id_prob_temp_max","id_sev_temp_max","id_risk_temp_max","risk_level_temp_max");
-        });
-
-         // TEMP MIN
-        document.getElementById("id_prob_temp_min").addEventListener("change", function () {
-            calculateRisk("id_prob_temp_min","id_sev_temp_min","id_risk_temp_min","risk_level_temp_min");
-        });
-        document.getElementById("id_sev_temp_min").addEventListener("change", function () {
-            calculateRisk("id_prob_temp_min","id_sev_temp_min","id_risk_temp_min","risk_level_temp_min");
-        });
-
-        // WEATHER CONDITIONS
-        document.getElementById("id_prob_weather_conditions").addEventListener("change", function () {
-            calculateRisk("id_prob_weather_conditions","id_sev_weather_conditions","id_risk_weather_conditions","risk_level_weather_conditions");
-        });
-        document.getElementById("id_sev_weather_conditions").addEventListener("change", function () {
-            calculateRisk("id_prob_weather_conditions","id_sev_weather_conditions","id_risk_weather_conditions","risk_level_weather_conditions");
-        });
-
-        // WINDS
-        document.getElementById("id_prob_winds").addEventListener("change", function () {
-            calculateRisk("id_prob_winds","id_sev_winds","id_risk_winds","risk_level_winds");
-        });
-        document.getElementById("id_sev_winds").addEventListener("change", function () {
-            calculateRisk("id_prob_winds","id_sev_winds","id_risk_winds","risk_level_winds");
-        });
-
-        // PRECIP
-        document.getElementById("id_prob_precip_max").addEventListener("change", function () {
-            calculateRisk("id_prob_precip_max","id_sev_precip_max","id_risk_precip_max","risk_level_precip_max");
-        });
-        document.getElementById("id_prob_precip_max").addEventListener("change", function () {
-            calculateRisk("id_prob_precip_max","id_sev_precip_max","id_risk_precip_max","risk_level_precip_max");
-        });
-
-        // Change RISK
-        document.getElementById("id_risk_weather_conditions").addEventListener("change", function () {
-            changeRisk("id_risk_weather_conditions","risk_level_weather_conditions");
-        });
-        document.getElementById("id_risk_temp_max").addEventListener("change", function () {
-            changeRisk("id_risk_temp_max","risk_level_temp_max");
-        });
-        document.getElementById("id_risk_temp_min").addEventListener("change", function () {
-            changeRisk("id_risk_temp_min","risk_level_temp_min");
-        });
-        document.getElementById("id_risk_winds").addEventListener("change", function () {
-            changeRisk("id_risk_winds","risk_level_winds");
-        });
-        document.getElementById("id_risk_precip_max").addEventListener("change", function () {
-            changeRisk("id_risk_precip_max","risk_level_precip_max");
-        });
-
-
-        function calculateRisk(probFieldId, sevFieldId, riskFieldId, riskSpan) {
-        
-            const prob = document.getElementById(probFieldId);
-            const sev  = document.getElementById(sevFieldId);
-            const risk = document.getElementById(riskFieldId);
-            const risk_alert = document.getElementById(riskSpan);
-
-            if (!prob || !sev || !risk) return;
-
-            function updateRisk(probFieldId, sevFieldId, riskFieldId, riskSpan) {
-                
-                const prob_val = prob.value;
-                const sev_val = sev.value;
-
-                let riskValue = "";
-                let riskClass = "";
-                let riskText = "";
-
-                const riskData = getRisk(prob_val,sev_val);
-
-                if (riskData) {
-                    risk.value = riskData.value;
-                    //risk_alert.innerText = riskData.text;
-                    risk_alert.classList.remove("low","medium","high","critical");
-                    risk_alert.classList.add(riskData.class);
-                }
-            }
-
-            function getRisk(prob_val, sev_val){
-                const RISK_MATRIX = {
-                    1: { // LOW probability
-                        1: { value: 1, text: "LOW", class: "low" }, // LOW Seveverity
-                        2: { value: 2, text: "MEDIUM", class: "med" },
-                        3: { value: 2, text: "MEDIUM", class: "med" },
-                        //4: { value: 4, text: "CRITICAL", class: "critical" }
-                    },
-                    2: { // MED probability
-                        1: { value: 1, text: "LOW", class: "low" }, // LOW Seveverity
-                        2: { value: 2, text: "MEDIUM", class: "med" },
-                        3: { value: 3, text: "HIGH", class: "high" },
-                    },
-                    3: { // HIGH probability
-                        1: { value: 1, text: "LOW", class: "low" }, // LOW Seveverity
-                        2: { value: 3, text: "HIGH", class: "high" },
-                        3: { value: 4, text: "CRITICAL", class: "critical" },
-                    }
-                };
-                return RISK_MATRIX?.[prob_val]?.[sev_val] || null;
-            }
-
-            prob.addEventListener("change", updateRisk);
-            sev.addEventListener("change", updateRisk);
-            updateRisk(probFieldId, sevFieldId, riskFieldId, riskSpan);
+        if (input.data("field") === "wind_direction") {
+            const selectedValues = input.val() || [];
+            //console.log("Selected wind directions:", selectedValues);
+            data.values = selectedValues;
+        } 
+        else if (input.data("field") === "sea_state") {
+            const selectedValues = input.val() || [];
+            //console.log("Selected sea states:", selectedValues);
+            data.values = selectedValues;
+        } 
+        else {
+            data.value = input.val();
         }
 
-        function changeRisk(riskFieldId,riskSpan) {
-
-            const risk = document.getElementById(riskFieldId);
-            const risk_alert = document.getElementById(riskSpan);
-
-            const risk_val = risk.value;
-
-            var risk_class = {
-                1: "low",
-                2: "med",
-                3: "high",
-                4: "critical"
-            } 
-            
-            risk_alert.classList.remove("low","med","high","critical");
-
-            // Add class based on selected value
-            if (risk_class[risk_val]) {
-                risk_alert.classList.add(risk_class[risk_val]);
-            }
-            //console.log("Risk:", risk_val);
-            //console.log("Class:", risk_class[risk_val]);
-        }
-
-        function loadRisk(riskFieldId,riskSpan) {
-
-            const risk = document.getElementById(riskFieldId);
-            const risk_alert = document.getElementById(riskSpan);
-
-            //const risk_val = risk.value;
-
-            var risk_class = {
-                1: "low",
-                2: "med",
-                3: "high",
-                4: "critical"
-            } 
-
-            const risk_val = risk.value;
-            
-            risk_alert.classList.remove("low","med","high","critical");
-
-            // Add class based on selected value
-            if (risk_class[risk_val]) {
-                risk_alert.classList.add(risk_class[risk_val]);
-            }
-            //console.log("Risk:", risk_val);
-            //console.log("Class:", risk_class[risk_val]);
-        }
-
-        document.getElementById("saveInstructionBtn").addEventListener("click", function () {
-
-            const description = document.getElementById("new_instruction").value;
-            const category = document.getElementById("new_instruction_category").value;
-            const errorBox = document.getElementById("instructionError");
-
-            fetch("{% url 'forecasts:district_forecast_instructions_ajax_add' %}", {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": "{{ csrf_token }}",
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-                body: new URLSearchParams({
-                    description: description,
-                    category: category
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                
-                if (data.success) {
-
-                    const selectMap = {
-                        "1": ["id_ins_weather_conditions"],
-                        "2": ["id_ins_temp_min"],
-                        "3": ["id_ins_winds"],
-                        "4": ["id_ins_precip_max"],
-                        "6": ["id_ins_temp_max"],
-                        // Category 5 → add to ALL selects
-                        //"5": ["id_ins_weather_conditions","id_ins_precip_max","id_ins_temp_max","id_ins_temp_min","id_ins_winds"]
-                    };
-                    //console.log(selectMap);
-                    const selectIds = [
-                        selectMap[category]
-                    ];
-                    
-                    selectIds.forEach(function(selectId) {
-
-                        const select = document.getElementById(selectId);
-
-                        if (select) {
-                            // Remove previous selection
-                            Array.from(select.options).forEach(option => {
-                                option.selected = false;
-                            });
-
-                            // Add new option if it doesn't already exist
-                            let option = select.querySelector(`option[value="${data.id}"]`);
-
-                            if (!option) {
-                                option = new Option(data.description, data.id, true, true);
-                                select.add(option);
-                            }
-
-                            // Select the new option
-                            select.value = data.id;
-
-                            // Notify listeners
-                            select.dispatchEvent(new Event("change", { bubbles: true }));
-                        }
-                    });
-                                
-                    //const select = document.getElementById("id_ins_precip_max");
-                    //const option = new Option(data.description, data.id, true, true);
-                    //select.add(option);
-
-                    document.getElementById("new_instruction").value = "";
-                    document.getElementById("new_instruction_category").value = "";
-                    errorBox.innerText = "";
-
-                    const modalElement = document.getElementById("addInstructionModal");
-                    const modal = bootstrap.Modal.getInstance(modalElement);
-                    modal.hide();
+        $.ajax({
+            url: "{% url 'forecasts:marine_forecast_details_inline_update' %}",
+            type: "POST",
+            traditional: true,
+            data: data,
+            success: function (response) {
+                //console.log("Saved:", response);
+                if (input.hasClass("select2-hidden-accessible")) {
+                    const selection = input.next(".select2-container").find(".select2-selection");
+                    selection.addClass("is-valid");
+                    setTimeout(function () {
+                        selection.removeClass("is-valid");
+                    }, 1000);
                 }
                 else {
-                    console.log(data.error);
-                    errorBox.innerText = data.error;
+                    input.addClass("is-valid");
+                    setTimeout(function () {
+                        input.removeClass("is-valid");
+                    }, 1000);
                 }
-            });
+            },
+            error: function (xhr) {
+                console.error(xhr.responseText);
+
+                if (input.hasClass("select2-hidden-accessible")) {
+                    input.next(".select2-container").find(".select2-selection").addClass("is-invalid");
+                } 
+                else {
+                    input.addClass("is-invalid");
+                }
+            }
         });
     });
+
+    $(document).on("change", ".tides-inline-edit", function () {
+
+        const input = $(this);
+
+        $.ajax({
+            url: "{% url 'forecasts:marine_forecast_tides_inline_update' %}",
+            type: "POST",
+            data: {
+                id: input.data("id"),
+                field: input.data("field"),
+                value: input.val(),
+                csrfmiddlewaretoken: "{{ csrf_token }}"
+            },
+            success: function (response) {
+                console.log("Saved:", response);
+                input.addClass("is-valid").removeClass("is-invalid");
+                setTimeout(function () { input.removeClass("is-valid"); }, 1000);
+                $("#alert_tide").html("");
+            },
+            error: function (xhr) {
+                console.error(xhr.responseText);
+                input.addClass("is-invalid");
+                const errorMessage = xhr.responseJSON?.error || "An error occurred.";
+                $("#alert_tide").html('<div class="alert alert-danger alert-dismissable">' + errorMessage + '</div>');
+            }
+        });
+    });
+
+    $(document).on("change", ".sun-inline-edit", function () {
+
+        const input = $(this);
+
+        $.ajax({
+            url: "{% url 'forecasts:sun_inline_update' %}",
+            type: "POST",
+            data: {
+                id: input.data("id"),
+                field: input.data("field"),
+                value: input.val(),
+                csrfmiddlewaretoken: "{{ csrf_token }}"
+            },
+            success: function (response) {
+                console.log("Saved:", response);
+                input.addClass("is-valid");
+                input.removeClass("is-invalid");
+                setTimeout(function () { input.removeClass("is-valid"); }, 1000);
+                $("#alert_sun").html("");
+            },
+            error: function (xhr) {
+                console.error(xhr.responseText);
+                input.addClass("is-invalid");
+                const errorMessage = xhr.responseJSON?.error || "An error occurred.";
+                $("#alert_sun").html('<div class="alert alert-danger alert-dismissable">' + errorMessage + '</div>');
+            }
+        });
+    });
+
+    $(document).on("change", ".moon-inline-edit", function () {
+
+        const input = $(this);
+
+        $.ajax({
+            url: "{% url 'forecasts:moon_inline_update' %}",
+            type: "POST",
+            data: {
+                id: input.data("id"),
+                field: input.data("field"),
+                value: input.val(),
+                csrfmiddlewaretoken: "{{ csrf_token }}"
+            },
+            success: function (response) {
+                console.log("Saved:", response);
+                input.addClass("is-valid");
+                input.removeClass("is-invalid");
+                setTimeout(function () { input.removeClass("is-valid"); }, 1000);
+                $("#alert_moon").html("");
+            },
+            error: function (xhr) {
+                console.error(xhr.responseText);
+                input.addClass("is-invalid");
+                const errorMessage = xhr.responseJSON?.error || "An error occurred.";
+                $("#alert_moon").html('<div class="alert alert-danger alert-dismissable">' + errorMessage + "</div>");
+            }
+        });
+    });
+
+    $(document).on('change', '.inline-edit-select2', function () {
+
+        const select = $(this);
+
+        $.ajax({
+            url: "{% url 'forecasts:marine_forecast_details_inline_update' %}",
+            type: "POST",
+
+            data: {
+                id: select.data("id"),
+                field: select.data("field"),
+                values: select.val(),
+                csrfmiddlewaretoken: "{{ csrf_token }}"
+            },
+            traditional: true,
+            success: function (response) {
+                console.log("Saved", response);
+            },
+            error: function (xhr) {
+                console.error(xhr.responseText);
+            }
+        });
+    });
+});
 </script>
 {% endblock %}

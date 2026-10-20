@@ -9,6 +9,7 @@ from django.contrib.staticfiles import finders
 from django.core.management import call_command
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db import transaction
+from django.db.models import Prefetch
 from django.http import JsonResponse, FileResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.test import RequestFactory
@@ -56,7 +57,7 @@ from forecasts.tables import (DistrictForecastDetailsTable, DistrictForecastTabl
 )
 from forecasts.models import (
     ForecastGeneral, ForescastGeneralCategory, WindDirection, WindCondition, SeaState,
-    MunicipalityForecast, MunicipalityZone, MunicipalityForecastDetails, WeatherConditions, 
+    MunicipalityForecast, MunicipalityZone, MunicipalityForecastDetails, WeatherConditions, WindSpeed, 
     ForecastDiscussion, 
     ForecastMarine, ForecastMarineCategory, ForecastMarineDetailsCategory, 
     ForecastMarineDetails,
@@ -70,7 +71,7 @@ from forecasts.models import (
 from forecasts.filters import ForecastGeneralFilter, ForecastMarineFilter
 from system_core.models import District
 
-from forecasts.serializers import DistrictForecastSerializer, DistrictForecastDetailsSerializer, GeneralForecastSerializer, MarineForecastSerializer, MarineForecastDetailsSerializer
+from forecasts.serializers import DistrictForecastSerializer, DistrictForecastDetailsSerializer, GeneralForecastSerializer, MarineForecastSerializer, MarineForecastDetailsSerializer, MunicipalityForecastSerializer
 
 PAGE_WIDTH, PAGE_HEIGHT = letter
 
@@ -3266,6 +3267,44 @@ def municipality_forecast_details_entry(request, id):
         'table':    table,
     })
 
+@require_POST
+def municipality_forecast_inline_update(request):
+
+    record_id = request.POST.get("id")
+    field = request.POST.get("field")
+
+    allowed_fields = ["temp_max","temp_min","wind_speed","wind_condition","weather_condition","image_day","image_night"]
+
+    if field not in allowed_fields:
+        return JsonResponse({"success": False,"error": "Invalid field"}, status=400)
+    
+    record = get_object_or_404(MunicipalityForecastDetails,id=record_id)
+
+    value = None
+    values = None
+
+    if field == "wind_condition":
+        record.wind_condition_id = int(value) if value else None
+    elif field == "wind_speed":
+        record.wind_speed_id = int(value) if value else None
+    elif field == "weather_condition":
+        record.weather_condition_id = int(value) if value else None
+    elif field == "image_day":
+        record.image_day_id = int(value) if value else None
+    elif field == "image_night":
+        record.image_night_id = int(value) if value else None
+    else:
+        value = request.POST.get("value","")
+        setattr(record, field, value)
+
+    # If your model has updated_by
+    #if hasattr(record, "updated_by"):
+    #    record.updated_by = request.user
+    #    record.save(update_fields=["updated_by"])
+
+    record.save()
+    return JsonResponse({"success": True,"id": record.id,"field": field,"value": value, "values": values })
+
 def municipality_area_list(request, id=None):
     page_name = "Municipality Areas"
     qs = MunicipalityZone.objects.all().order_by('id')
@@ -3314,6 +3353,21 @@ def municipality_area_entry(request, id=None):
 def weather_conditions_list(request, id=None):
     page_name = "Weather Conditions"
     qs = WeatherConditions.objects.all().order_by('id')
+    table = WeatherConditionsTable(qs)
+    RequestConfig(request).configure(table)
+    
+    return render(request, 'municipality-forecast/parameters_table_list.html', {
+       'id' : id,
+        'page_name': page_name,
+        "prev_page": 'Weather Forecasts',
+        'table': table,
+        'new_url':  reverse('forecasts:municipality_area_entry'),
+        'back_url': reverse('forecasts:index'),
+    })
+
+def wind_speed_list(request, id=None):
+    page_name = "Wind Speed"
+    qs = WindSpeed.objects.all().order_by('id')
     table = WeatherConditionsTable(qs)
     RequestConfig(request).configure(table)
     
@@ -3445,5 +3499,15 @@ class MarineForecastDetailsViewSet(viewsets.ModelViewSet):
 class MarineForecastViewSet(viewsets.ModelViewSet):
     queryset = ForecastMarine.objects.filter(is_published=True)
     serializer_class = MarineForecastSerializer
+    pagination_class = None
+    http_method_names = ['get', 'head','options']
+
+class MunicipalityForecastViewSet(viewsets.ModelViewSet):
+    #queryset = MunicipalityForecast.objects.filter(is_published=True).prefetch_related("forecast_municipality_details")
+    queryset = (MunicipalityForecast.objects.filter(is_published=True)
+                .prefetch_related(Prefetch("forecast_municipality_details",queryset=MunicipalityForecastDetails.objects.select_related("municipality_area","wind_speed","wind_condition","weather_condition","icon_day","icon_night"))
+        )
+    )
+    serializer_class = MunicipalityForecastSerializer
     pagination_class = None
     http_method_names = ['get', 'head','options']
