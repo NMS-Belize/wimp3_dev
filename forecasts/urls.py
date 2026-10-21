@@ -68,6 +68,9 @@ urlpatterns = [
     path('municipality-forecast/severity-entry/', views.municipality_forecast_entry, name="municipality_forecast_entry"),
     path('municipality-forecast/severity-entry/<int:id>/', views.municipality_forecast_entry,name='municipality_forecast_entry'),
 
+    path('municipality-forecast/entry/<int:id>/toggle-publish/', views.municipality_forecast_toggle_is_published, name='municipality_forecast_toggle_is_published'),
+    path('municipality-forecast/entry/<int:id>/toggle-publish-ajax/', views.municipality_forecast_toggle_is_published_ajax, name='municipalityt_forecast_toggle_is_published_ajax'),
+
     ## MUNICIPALITY FORECAST: Details
     path('municipality-forecast/entry/details/',views.municipality_forecast_details_entry,name='municipality_forecast_details_entry'),
     path('municipality-forecast/entry/details/<int:id>/',views.municipality_forecast_details_entry,name='municipality_forecast_details_entry'),

@@ -1163,6 +1163,7 @@ class DistrictForecastTable(tables.Table):
 
         # Add table HTML id and CSS classes here
         attrs = {
+            "id":"table_district_forecast",
             "class": "table table-striped table-condensed table-hover tbl_wimp3" # Bootstrap-friendly styling
         }
 
@@ -1573,25 +1574,24 @@ class MunicipalityZoneTable(tables.Table):
         return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>', url)
     
 class MunicipalityForecastTable(tables.Table):
-    edit = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:60px;","class": "text-center"}, "td": {"style": "","class": "col_edit text-center"}})
+    edit = tables.Column(empty_values=(), verbose_name="Edit", orderable=False, attrs={"th": {"style": "width:60px;","class": "text-center"}, "td": {"style": "","class": "col_edit text-center"}})
     
     forecast_date       = tables.Column(verbose_name="Forecast Date", attrs={"th": {"style": "","class": ""}, "td": {"style": "","class": "col_link text-start"}})
-    #forecast_time       = tables.TimeColumn(verbose_name="Time", format="h:i A", attrs={"th": {"style": "","class": ""}, "td": {"class": "",},},)
         
-    created_by          = tables.Column(verbose_name="Created By", attrs={"th": {"style": "width:120px;","class": ""}, "td": {"style": "","class": ""}})
-    created_datetime    = tables.Column(verbose_name="Created Date", attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "","class": "fst-italic" }})
-    updated_by          = tables.Column(verbose_name="Updated By", attrs={"th": {"style": "width:120px;","class": ""}, "td": {"style": "","class": ""}})
+    created_by          = tables.Column(verbose_name="Created By", orderable=False, attrs={"th": {"style": "width:120px;","class": ""}, "td": {"style": "","class": ""}})
+    created_datetime    = tables.Column(verbose_name="Created Date", orderable=False, attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "","class": "fst-italic" }})
+    updated_by          = tables.Column(verbose_name="Updated By", orderable=False, attrs={"th": {"style": "width:120px;","class": ""}, "td": {"style": "","class": ""}})
 
     #latest_updated_datetime = tables.Column(empty_values=(), verbose_name="Latest Updated Date", orderable=False, attrs={"th": {"style": "width:200px;","class": ""}, "td": {"style": "","class": "fst-italic" }})
 
     #pdf_file            = tables.Column(empty_values=(),verbose_name="PDF",orderable=False, attrs={"th": {"style": "width:65px; text-align:center;","class": ""},"td": {"style": "text-align:center;","class": "col_pdf"}})
-    is_published        = tables.TemplateColumn(template_name="district-forecast/district_forecast_publish_toggle.html", verbose_name="Status", orderable=False, 
+    is_published        = tables.TemplateColumn(template_name="municipality-forecast/publish_toggle.html", verbose_name="Status", orderable=False, 
                             attrs={"th": {"style": "width:75px;", "class": "text-center "},
                                    "td": {"style": "","class": "text-center"}}
                         )
     
     id                  = tables.Column(verbose_name="ID",attrs={"th": {"style": "width:80px;","class": "text-end"}, "td": {"style": "","class": "text-end"}})
-    delete              = tables.Column(empty_values=(), verbose_name="Delete",attrs={"th": {"style": "width:65px;","class": "text-center col_edit"},"td": {"style": "","class": "text-center col_delete"}})
+    delete              = tables.Column(empty_values=(),orderable=False,  verbose_name="Delete",attrs={"th": {"style": "width:65px;","class": "text-center col_edit"},"td": {"style": "","class": "text-center col_delete"}})
 
     class Meta:
         model = MunicipalityForecast
@@ -1603,6 +1603,7 @@ class MunicipalityForecastTable(tables.Table):
 
         # Add table HTML id and CSS classes here
         attrs = {
+             "id": "table_municipality_forecast",           # unique table ID
             "class": "table table-striped table-condensed table-hover tbl_wimp3" # Bootstrap-friendly styling
         }
 
@@ -1687,16 +1688,16 @@ class MunicipalityForecastDetailsTable(tables.Table):
     #edit            = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:60px;","class": "col_edit text-center"},"td": {"style": "","class": "col_edit text-center"}})
     
     municipality_area        = tables.Column(verbose_name="Municipality",attrs={"th": {"style": "width:180px;","class": ""},"td": {"style": "","class": "fw-bold text-decoration-none align-middle"}})
-    temp_max        = tables.Column(verbose_name="TEMP °F (MAX)",attrs={"th": {"style": "width:120px;","class": ""},"td": {"style": "","class": "pe-4 align-middle"}})
-    temp_min        = tables.Column(verbose_name="TEMP °F (MIN)",attrs={"th": {"style": "width:120px;","class": ""},"td": {"style": "","class": "pe-4 align-middle"}})
+    temp_max        = tables.Column(verbose_name="TEMP °F (MAX)",attrs={"th": {"style": "width:120px;","class": ""},"td": {"style": "","class": "align-middle"}})
+    temp_min        = tables.Column(verbose_name="TEMP °F (MIN)",attrs={"th": {"style": "width:120px;","class": ""},"td": {"style": "","class": "align-middle"}})
     
-    wind_speed      = tables.Column(verbose_name="Winds (Kts)",empty_values=(),attrs={"th": {"style": "width:150px;","class": ""},"td": {"style": "","class": "pe-4 align-middle"} })
-    wind_condition  = tables.Column(verbose_name="Wind Condition",empty_values=(),attrs={"th": {"style": "width:200px","class": ""},"td": {"style": "","class": "pe-4 align-middle"} })
+    wind_speed      = tables.Column(verbose_name="Winds (Kts)",empty_values=(),attrs={"th": {"style": "width:150px;","class": ""},"td": {"style": "","class": "align-middle"} })
+    wind_condition  = tables.Column(verbose_name="Wind Condition",empty_values=(),attrs={"th": {"style": "width:200px","class": ""},"td": {"style": "","class": "align-middle"} })
 
-    weather_condition = tables.Column(verbose_name="Weather Conditions",attrs={"th": {"style": "width:350px;","class": ""},"td": {"style": "","class": "align-middle"}})
+    weather_condition = tables.Column(verbose_name="Weather Conditions", empty_values=(), attrs={"th": {"style": "width:350px;","class": ""},"td": {"style": "","class": "align-middle"}})
 
-    icon_day        = tables.Column(verbose_name="Icon (Day)",attrs={"th": {"style": "","class": ""},"td": {"style": "","class": "pe-4 align-middle"} })
-    icon_night      = tables.Column(verbose_name="Icon (Night)",attrs={"th": {"style": "","class": ""},"td": {"style": "","class": "pe-4 align-middle"}})
+    icon_day        = tables.Column(verbose_name="Icon (Day)", empty_values=(), attrs={"th": {"style": "","class": ""},"td": {"style": "","class": "pe-4 align-middle"},  })
+    icon_night      = tables.Column(verbose_name="Icon (Night)", empty_values=(), attrs={"th": {"style": "","class": ""},"td": {"style": "","class": "pe-4 align-middle"}})
 
     class Meta:
         model = MunicipalityForecastDetails
@@ -1705,7 +1706,6 @@ class MunicipalityForecastDetailsTable(tables.Table):
         
         # Add table ID and class here
         attrs = {
-            "id": "",
             "class": "tbl_wimp3 table table-striped table-condensed table-hover tbl_wimp3",
         }
 

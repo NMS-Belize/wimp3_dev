@@ -13,6 +13,7 @@ from django.db.models import Prefetch
 from django.http import JsonResponse, FileResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.test import RequestFactory
+from django.templatetags.static import static
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
@@ -68,7 +69,7 @@ from forecasts.models import (
     Severity, Probability
 )
 
-from forecasts.filters import ForecastGeneralFilter, ForecastMarineFilter
+from forecasts.filters import ForecastGeneralFilter, ForecastMarineFilter, ForecastMunicipalityFilter, DistrictForecastFilter
 from system_core.models import District
 
 from forecasts.serializers import DistrictForecastSerializer, DistrictForecastDetailsSerializer, GeneralForecastSerializer, MarineForecastSerializer, MarineForecastDetailsSerializer, MunicipalityForecastSerializer
@@ -81,9 +82,236 @@ pdfmetrics.registerFont(TTFont("OpenSans-SemiBold","static/fonts/OpenSans-SemiBo
 pdfmetrics.registerFont(TTFont("OpenSans-Bold","static/fonts/OpenSans-Bold.ttf"))
 
 def index(request):
+
+    buttons_main = [
+        {
+            "url_view": reverse("forecasts:general_forecast_list"),
+            "url_add": reverse("forecasts:general_forecast_entry_new"),
+            "image": static("/button_icons/forecast.png"),
+            "text": "General Weather Forecasts",
+            "permission_view": "forecasts.view_forecastgeneral",
+            "permission_add": "forecasts.add_forecastgeneral",
+            "permission_change": "forecasts.change_forecastgeneral",
+            "permission_delete": "forecasts.delete_forecastgeneral",
+        },
+        {
+            "url_view": reverse("forecasts:marine_forecast_list"),
+            "url_add": reverse("forecasts:marine_forecast_entry"),
+            "image": static("/button_icons/marine-forecast.png"),
+            "text": "Marine Forecast",
+            "permission_view": "forecasts.view_forecastmarine",
+            "permission_add": "forecasts.add_forecastmarine",
+            "permission_change": "forecasts.change_forecastmarine",
+            "permission_delete": "forecasts.delete_forecastmarine",
+        },
+        {
+                "url_view": reverse("forecasts:district_forecast_list"),
+                "url_add": reverse("forecasts:district_forecast_entry"),
+                "image": static("/button_icons/district-forecast.png"),
+                "text": "District Forecast",
+                "permission_view": "forecasts.view_districtforecast",
+                "permission_add": "forecasts.add_districtforecast",
+                "permission_change": "forecasts.change_districtforecast",
+                "permission_delete": "forecasts.delete_districtforecast",
+            },
+        {
+            "url_view": reverse("forecasts:municipality_forecast_list"),
+            "url_add": reverse("forecasts:municipality_forecast_entry"),
+            "image": static("/button_icons/municipality.png"),
+            "text": "Municipality Forecast",
+            "permission_view": "forecasts.view_municipalityforecast",
+            "permission_add": "forecasts.add_municipalityforecast",
+            "permission_change": "forecasts.change_municipalityforecast",
+            "permission_delete": "forecasts.delete_municipalityforecast",
+        },
+        {
+            "url_view": reverse("forecasts:discussion_list"),
+            "url_add": reverse("forecasts:discussion_entry"),
+            "image": static("/button_icons/qa.png"),
+            "text": "Forecast Discussion",
+            "permission_view": "forecasts.view_forecastdiscussion",
+            "permission_add": "forecasts.add_forecastdiscussion",
+            "permission_change": "forecasts.change_forecastdiscussion",
+            "permission_delete": "forecasts.delete_forecastdiscussion",
+        }
+    ]
+
+    buttons_parameters = [
+        {
+            "url_view": reverse("forecasts:general_forecast_category_list"),
+            "url_add": reverse("forecasts:general_forecast_category_entry"),
+            "image": static("/button_icons/day-and-night.png"),
+            "text_cat": "General Forecast",
+            "text": "Category",
+            "permission_view": "forecasts.view_forescastgeneralcategory",
+            "permission_add": "forecasts.add_forescastgeneralcategory",
+        },
+        {
+            "url_view": reverse("forecasts:marine_forecast_category_list"),
+            "url_add": reverse("forecasts:marine_forecast_category_entry"),
+            "image": static("/button_icons/day-and-night.png"),
+            "text_cat": "Marine Forecast",
+            "text": "Category",
+            "permission_view": "forecasts.view_forescastmarinecategory",
+            "permission_add": "forecasts.add_forescastmarinecategory",
+        },
+        {
+            "url_view": reverse("forecasts:marine_forecast_details_category_list"),
+            "url_add": reverse("forecasts:marine_forecast_details_category_entry"),
+            "image": static("/button_icons/classification.png"),
+            "text_cat": "Marine Forecast",
+            "text": "Details Category",
+            "permission_view": "forecasts.view_forecastmarinedetails",
+            "permission_add": "forecasts.add_forecastmarinedetails",
+        },
+        {
+            "url_view": reverse("forecasts:sea_state_list"),
+            "url_add": reverse("forecasts:sea_state_entry"),
+            "image": static("/button_icons/ocean.png"),
+            "text_cat": "Marine Forecast",
+            "text": "Sea State",
+            "permission_view": "forecasts.view_seastates",
+            "permission_add": "forecasts.add_seastate",
+        },
+        {
+            "url_view": reverse("forecasts:instructions_list"),
+            "url_add": reverse("forecasts:instructions_entry"),
+            "image": static("/button_icons/options.png"),
+            "text_cat": "District Forecast",
+            "text": "Instructions Category",
+            "permission_view": "forecasts.view_districtforecastinstructions",
+            "permission_add": "forecasts.add_districtforecastinstructions",
+        },
+        {
+            "url_view": reverse("forecasts:instructions_category_list"),
+            "url_add": reverse("forecasts:instructions_category_entry"),
+            "image": static("/button_icons/productivity.png"),
+            "text_cat": "District Forecast",
+            "text": "Instructions",
+            "permission_view": "forecasts.view_districtforecastinstructionscategory",
+            "permission_add": "forecasts.add_districtforecastinstructionscategory",
+        },
+        {
+            "url_view": reverse("forecasts:municipality_area_list"),
+            "url_add": reverse("forecasts:municipality_area_entry"),
+            "image": static("/button_icons/district.png"),
+            "text_cat": "Municipality Forecast",
+            "text": "Area/Zone",
+            "permission_view": "forecasts.view_municipalityzone",
+            "permission_add": "forecasts.add_municipalityzone",
+        },
+        {
+            "url_view": reverse("forecasts:wind_direction_list"),
+            "url_add": reverse("forecasts:wind_direction_entry"),
+            "image": static("/button_icons/compass.png"),
+            "text_cat": "Municipality Forecast",
+            "text": "Wind Direction",
+            "permission_view": "forecasts.view_winddirection",
+            "permission_add": "forecasts.add_winddirection",
+        },
+        {
+            "url_view": reverse("forecasts:wind_speed_list"),
+            #"url_add": reverse("forecasts:wind_speed_entry"),
+            "image": static("/button_icons/barometer.png"),
+            "text_cat": "Municipality Forecast",
+            "text": "Wind Speed",
+            "permission_view": "forecasts.view_windspeed",
+            "permission_add": "forecasts.add_windspeed",
+        },
+        {
+            "url_view": reverse("forecasts:wind_condition_list"),
+            "url_add": reverse("forecasts:wind_condition_entry"),
+            "image": static("/button_icons/wind.png"),
+            "text_cat": "Municipality Forecast",
+            "text": "Wind Conditions",
+            "permission_view": "forecasts.view_windcondition",
+            "permission_add": "forecasts.add_windcondition",
+        },
+        {
+            "url_view": reverse("forecasts:weather_conditions_list"),
+            #"url_add": reverse("forecasts:weather_conditions_entry"),
+            "image": static("/button_icons/meteorology.png"),
+            "text_cat": "Municipality Forecast",
+            "text": "Weather Conditions",
+            "permission_view": "forecasts.view_weatherconditions",
+            "permission_add": "forecasts.add_weatherconditions",
+        },
+        {
+            "url_view": reverse("forecasts:tide_day_category_list"),
+            "url_add": reverse("forecasts:tide_day_category_entry"),
+            "image": static("/button_icons/tide.png"),
+            "text_cat": "Tides",
+            "text": "Day/Time Category",
+            "permission_view": "forecasts.view_tides",
+            "permission_add": "forecasts.add_tides",
+        },
+        {
+            "url_view": reverse("forecasts:tide_level_category_list"),
+            "url_add": reverse("forecasts:tide_level_category_entry"),
+            "image": static("/button_icons/moonrise.png"),
+            "text_cat": "Tides",
+            "text": "Level Category",
+            "permission_view": "forecasts.view_tidelevelcategory",
+            "permission_add": "forecasts.add_tidelevelcategory",
+        },
+        {
+            "url_view": reverse("forecasts:sun_day_category_list"),
+            "url_add": reverse("forecasts:sun_day_category_entry"),
+            "image": static("/button_icons/sun.png"),
+            "text_cat": "Sun",
+            "text": "Day/Time Category",
+            "permission_view": "forecasts.view_sundaycategory",
+            "permission_add": "forecasts.add_sundaycategory",
+        },
+        {
+            "url_view": reverse("forecasts:sun_move_category_list"),
+            "url_add": reverse("forecasts:sun_move_category_entry"),
+            "image": static("/button_icons/sun-move.png"),
+            "text_cat": "Sun",
+            "text": "Movement Category",
+            "permission_view": "forecasts.view_sunmovementcategory",
+            "permission_add": "forecasts.add_sunmovementcategory",
+        },
+        {
+            "url_view": reverse("forecasts:moon_move_category_list"),
+            "url_add": reverse("forecasts:moon_move_category_entry"),
+            "image": static("/button_icons/moonrise.png"),
+            "text_cat": "Moon",
+            "text": "Movement Category",
+            "permission_view": "forecasts.view_moonmovementcategory",
+            "permission_add": "forecasts.add_moonmovementcategory",
+        },
+        {
+            "url_view": reverse("forecasts:moon_day_category_list"),
+            "url_add": reverse("forecasts:moon_day_category_entry"),
+            "image": static("/button_icons/tide.png"),
+            "text_cat": "Moon",
+            "text": "Day/Time Category",
+            "permission_view": "forecasts.view_moondaycategory",
+            "permission_add": "forecasts.add_moondaycategory",
+        },
+    ]
+    
+    # Add permission status to each button
+    for button in buttons_main:
+        button["has_permission_view"] = request.user.has_perm(button["permission_view"])
+        button["has_permission_add"] = request.user.has_perm(button["permission_add"])
+
+    for buttonp in buttons_parameters:
+        buttonp["has_permission_view"] = request.user.has_perm(buttonp["permission_view"])
+        buttonp["has_permission_add"] = request.user.has_perm(buttonp["permission_add"])
+
     context = {
-        'page_name': 'Weather Forecasts',
+        'page_name':    'Weather Forecasts',
+        'buttons_view': buttons_main,
+        'buttons_add':  buttons_main,
+        'buttons_p_view': buttons_parameters,
+        'buttons_p_add': buttons_parameters
     }
+
+    #context["buttons_view"] = buttons_main
+    #context["buttons_add"] = buttons_main
+
     return render(request, 'forecasts_home.html', context)
 
 ############# GENERAL WEATHER FORECASTS: Main Entries #############
@@ -855,7 +1083,7 @@ def discussion_delete(request, id):
 def marine_forecast_list(request, id=None):
 
     page_name = "Marine Forecasts"
-    qs = ForecastMarine.objects.all().order_by("-forecast_date","-forecast_category",)
+    qs = ForecastMarine.objects.all().order_by("-forecast_date","-forecast_category")
 
     filterset = ForecastMarineFilter(request.GET, queryset=qs)
     
@@ -865,21 +1093,15 @@ def marine_forecast_list(request, id=None):
 
     RequestConfig(request).configure(table)
 
-    # Load entry ONLY if id is provided
-    entry = None
-    if id is not None:
-        entry = get_object_or_404(ForecastMarine, id=id)
-
     return render(request, 'marine-forecast/table_list_main.html', {
         'id' : id,
-        'entry': entry, 
         'page_name': page_name,
         'prev_page': 'Weather Forecasts',
         'table': table,
         "filter": filterset,
         'new_url':  reverse('forecasts:marine_forecast_entry'),
         'back_url': reverse('forecasts:index'),
-        'api_url':  reverse('general-weather-forecast-list'),
+        'api_url':  reverse('marine-forecast-list'),
     })
 
 def marine_forecast_entry(request, id=None):
@@ -2666,21 +2888,19 @@ def probability_delete(request, id):
 def district_forecast_list(request, id=None):
     page_name = "District Level Forecasts"
     qs = DistrictForecast.objects.all().order_by('-id')
-    table = DistrictForecastTable(qs)
+
+    filterset = DistrictForecastFilter(request.GET, queryset=qs)
+
+    table = DistrictForecastTable(filterset.qs)
     table.empty_text = "No records available"
     RequestConfig(request).configure(table)
 
-    # Load entry ONLY if id is provided
-    entry = None
-    if id is not None:
-        entry = get_object_or_404(DistrictForecast, id=id)
-
     return render(request, 'district-forecast/table_list_main.html', {
         'id' : id,
-        'entry': entry,  
         'page_name': page_name,
         'prev_page': 'Weather Forecasts',
         'table': table,
+        'filter': filterset,
         'new_url':  reverse('forecasts:district_forecast_entry'),
         'back_url': reverse('forecasts:index'),
         'api_url':  reverse('district-forecast-list'),
@@ -3113,7 +3333,10 @@ def get_risk_color(level):
 def municipality_forecast_list(request, id=None):
     page_name = "Municipality Forecasts"
     qs = MunicipalityForecast.objects.all().order_by('-id')
-    table = MunicipalityForecastTable(qs)
+
+    filterset = ForecastMunicipalityFilter(request.GET, queryset=qs)
+
+    table = MunicipalityForecastTable(filterset.qs)
     table.empty_text = "No records available"
     RequestConfig(request).configure(table)
 
@@ -3128,6 +3351,7 @@ def municipality_forecast_list(request, id=None):
         'page_name': page_name,
         'prev_page': 'Weather Forecasts',
         'table': table,
+        "filter": filterset,
         'new_url':  reverse('forecasts:municipality_forecast_entry'),
         'back_url': reverse('forecasts:index'),
         #'api_url':  reverse('district-forecast-list'),
@@ -3304,6 +3528,45 @@ def municipality_forecast_inline_update(request):
 
     record.save()
     return JsonResponse({"success": True,"id": record.id,"field": field,"value": value, "values": values })
+
+def municipality_forecast_toggle_is_published(request, id):
+    record = get_object_or_404(MunicipalityForecast, id=id)
+
+    if not record.is_published:
+        # Unpublish ALL records first
+        MunicipalityForecast.objects.filter(is_published=True).update(is_published=False)
+
+        # Publish selected
+        record.is_published = True
+        status = "published"
+
+    else:
+        # If already published → unpublish it
+        record.is_published = False
+        status = "unpublished"
+
+    record.save(update_fields=["is_published"])
+
+    messages.success(request, f"Record {status} successfully.")
+    return redirect("forecasts:municipality_forecast_list")
+
+@require_POST
+def municipality_forecast_toggle_is_published_ajax(request, id):
+    record = get_object_or_404(MunicipalityForecast, id=id)
+
+    is_published = request.POST.get("is_published") == "true"
+
+    if is_published:
+        MunicipalityForecast.objects.exclude(id=record.id).update(is_published=False)
+
+    record.is_published = is_published
+    record.save(update_fields=["is_published"])
+
+    return JsonResponse({
+        "success": True,
+        "is_published": record.is_published
+    })
+
 
 def municipality_area_list(request, id=None):
     page_name = "Municipality Areas"

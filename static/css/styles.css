@@ -1,57 +1,68 @@
 :root{
-  --white: #FFFFFF;
-  --navy: #0b1e33;
-  --aqua-1: #229ebd;
-  --aqua-2: #63bbcf;
-  --teal-1: #013c58;
-  --teal-2: #001823;
-  --teal-3: #235558;
-  --blue-1: #00296B;
-  --tan: #E8DAA0;
-  --tan-2: #eadda9;
-  --yellow-1: #ffb702;
-  --yellow-2: #ffba42;
-  --orange-1: #fb8502;
-  --red: #A50E0E;
-  --rose: #bc4f5e;
+    --white: #FFFFFF;
+    --navy: #0b1e33;
+    --aqua-1: #229ebd;
+    --aqua-2: #63bbcf;
+    --teal-1: #013c58;
+    --teal-2: #001823;
+    --teal-3: #235558;
+    --blue-1: #00296B;
+    --tan: #E8DAA0;
+    --tan-2: #eadda9;
+    --yellow-1: #ffb702;
+    --yellow-2: #ffba42;
+    --orange-1: #fb8502;
+    --red: #A50E0E;
+    --rose: #bc4f5e;
 
-  --grey-1: #F1F3F4;
-  --grey-2: #9AA0A6;
-  --grey-3: #F2F3F4;
+    --grey-1: #F1F3F4;
+    --grey-2: #9AA0A6;
+    --grey-3: #F2F3F4;
 
-  --dark: #202124;
+    --dark: #202124;
 
-  --header: #0b1e33;
+    --header: #0b1e33;
 
-  --light-teal: #228791;
-	--emerald: #065739;
-	--teal-green: #226763;
+    --light-teal: #228791;
+    --emerald: #065739;
+    --teal-green: #226763;
 
-  --sidebar-width: 280px;
-  --sidebar-width-collapsed: 80px;
+    --sidebar-width: 280px;
+    --sidebar-width-collapsed: 80px;
 
-  /* WIMP3 Brand */
-  --wimp-navy:       #073B8C;
-  --wimp-dark-navy:  #05265F;
-  --wimp-blue:       #0868D7;
-  --wimp-sky-blue:   #08A9EE;
-  --wimp-teal:       #08A7A5;
-  --wimp-green:      #079B36;
-  --wimp-lime:       #4BCB0B;
+    /* WIMP3 Brand */
+    --wimp-navy:       #073B8C;
+    --wimp-dark-navy:  #05265F;
+    --wimp-blue:       #0868D7;
+    --wimp-sky-blue:   #08A9EE;
+    --wimp-teal:       #08A7A5;
+    --wimp-green:      #079B36;
+    --wimp-lime:       #4BCB0B;
 
-  /* Interface */
-  --wimp-dark:       #29333D;
-  --wimp-gray:       #6C7782;
-  --wimp-light:      #F3F6F8;
-  --wimp-border:     #DDE4EA;
-  --wimp-white:      #FFFFFF;
+    /* Interface */
+    --wimp-dark:       #29333D;
+    --wimp-gray:       #6C7782;
+    --wimp-light:      #F3F6F8;
+    --wimp-border:     #DDE4EA;
+    --wimp-white:      #FFFFFF;
 
-  /* Semantic */
-  --wimp-success:    #079B36;
-  --wimp-info:       #0868D7;
-  --wimp-warning:    #F5A623;
-  --wimp-danger:     #D9363E;
+    /* Semantic */
+    --wimp-success:    #079B36;
+    --wimp-info:       #0868D7;
+    --wimp-warning:    #F5A623;
+    --wimp-danger:     #D9363E;
 
+        /* Bootstrap semantic palette */
+    --primary: var(--dark-teal);
+    --primary-dark: var(--dark-teal-2);
+    --primary-darker: var(--dark-teal-3);
+
+    --secondary: var(--wimp-gray);
+    --success: var(--wimp-green);
+    --info: var(--wimp-teal);
+    --warning: var(--wimp-warning);
+    --danger: var(--wimp-danger);
+    --dark: var(--wimp-dark);
 }
 body{ 
    font-family: "Source Sans 3", sans-serif;
@@ -268,6 +279,10 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 
 .item_dashboard{ text-align: center;}
 #dashboard .item_dashboard .task_desc{ font-size: 18px; }
+
+.item_dashboard_large{ width:auto; height: 125px; }
+.item_dashboard_large img{ width: 100px; display: inline-block; }
+
 
 .item_dashboard_app{  padding: 5px; margin: 0 10px; overflow:auto; position: relative; text-align: center;  }
 .item_dashboard_app img{ width: 100px; display: inline-block; }
@@ -559,8 +574,6 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
   background-size: calc(.75em + .375rem) calc(.75em + .375rem);
 }
 
-.select2-results__option {
-}
 .select2-results__option img {
     vertical-align: middle;
 }
@@ -568,9 +581,11 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
     vertical-align: middle;
 }
 .select2-container--default .select2-selection--single {
-    height: 48px;
     display: flex;
     align-items: center;
+    padding: 18px 10px 18px 10px;
+    border-color: var(--bs-border-color) !important;
+    border-radius: var(--bs-border-radius) !important;
 }
 .select2-container--default
 .select2-selection--single
@@ -582,5 +597,5 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 .select2-container--default
 .select2-selection--single
 .select2-selection__arrow {
-    height: 46px;
+    height: 100%;
 }

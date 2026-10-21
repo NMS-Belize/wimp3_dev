@@ -4,7 +4,7 @@ import django_filters
 from django import forms
 
 from django.contrib.auth.models import User
-from .models import ForecastGeneral, ForescastGeneralCategory, ForecastMarine, ForecastMarineCategory
+from .models import ForecastGeneral, ForescastGeneralCategory, ForecastMarine, ForecastMarineCategory, DistrictForecast
 
 class UserChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, user):
@@ -16,20 +16,20 @@ class UserModelChoiceFilter(django_filters.ModelChoiceFilter):
     
 class ForecastGeneralFilter(django_filters.FilterSet):
 
-    forecast_date   = django_filters.DateFilter(lookup_expr="icontains", label="Forecast Date")
-    forecast_time   = django_filters.CharFilter(lookup_expr="icontains", label="Forecast Time")
+    forecast_date   = django_filters.DateFilter(lookup_expr="exact", label="Forecast Date",  widget=forms.DateInput(attrs={ "type": "date", "class": "form-control" }, format="%Y-%m-%d"))
     forecast_category = django_filters.ModelChoiceFilter(queryset=ForescastGeneralCategory.objects.all(), label="Forecast Category", empty_label="All Categories")
-    general_situation   = django_filters.CharFilter(lookup_expr="icontains", label="General Situation")
 
     created_by      = UserModelChoiceFilter(queryset=User.objects.filter(is_active=True).order_by("first_name","last_name","username"), label="Forecaster", empty_label="All Forecasters")
     updated_by      = UserModelChoiceFilter(queryset=User.objects.filter(is_active=True).order_by("first_name","last_name","username"), label="Forecaster", empty_label="All Forecasters")
 
     class Meta:
         model = ForecastGeneral
-        fields = ["forecast_date","forecast_time", "forecast_category", "general_situation", "created_by", "updated_by"]
+        fields = ["forecast_date","forecast_time", "forecast_category","created_by", "updated_by"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.form.fields["forecast_date"].input_formats = ["%d/%m/%Y","%Y-%m-%d"]
 
         for field in self.form.fields.values():
             if isinstance(field.widget, forms.Select):
@@ -37,26 +37,70 @@ class ForecastGeneralFilter(django_filters.FilterSet):
             else:
                 field.widget.attrs.update({ "class": "form-control", "placeholder":"" })
 
-
 class ForecastMarineFilter(django_filters.FilterSet):
 
-    forecast_date   = django_filters.DateFilter(lookup_expr="icontains", label="Forecast Date")
-    forecast_time   = django_filters.CharFilter(lookup_expr="icontains", label="Forecast Time")
+    forecast_date   = django_filters.DateFilter(lookup_expr="exact", label="Forecast Date",  widget=forms.DateInput(attrs={ "type": "date", "class": "form-control" }, format="%Y-%m-%d"))
     forecast_category = django_filters.ModelChoiceFilter(queryset=ForecastMarineCategory.objects.all(), label="Forecast Category", empty_label="All Categories")
-    synopsis        = django_filters.CharFilter(lookup_expr="icontains", label="Synopsis")
 
     created_by      = UserModelChoiceFilter(queryset=User.objects.filter(is_active=True).order_by("first_name","last_name","username"), label="Forecaster", empty_label="All Forecasters")
     updated_by      = UserModelChoiceFilter(queryset=User.objects.filter(is_active=True).order_by("first_name","last_name","username"), label="Forecaster", empty_label="All Forecasters")
 
     class Meta:
         model = ForecastMarine
-        fields = ["forecast_date","forecast_time", "forecast_category", "synopsis", "created_by", "updated_by"]
+        fields = ["forecast_date","forecast_time", "forecast_category", "created_by", "updated_by"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.form.fields["forecast_date"].input_formats = ["%d/%m/%Y","%Y-%m-%d"]
+
         for field in self.form.fields.values():
             if isinstance(field.widget, forms.Select):
-                field.widget.attrs.update({"class": "form-select" })
+                field.widget.attrs.update({ "class": "form-select" })
             else:
-                field.widget.attrs.update({ "class": "form-control", "placeholder":"" })
+                field.widget.attrs.update({ "class": "form-control", "placeholder": "" })
+
+class ForecastMunicipalityFilter(django_filters.FilterSet):
+
+    forecast_date   = django_filters.DateFilter(lookup_expr="exact", label="Forecast Date",  widget=forms.DateInput(attrs={ "type": "date", "class": "form-control" }, format="%Y-%m-%d"))
+    forecast_category = django_filters.ModelChoiceFilter(queryset=ForecastMarineCategory.objects.all(), label="Forecast Category", empty_label="All Categories")
+
+    created_by      = UserModelChoiceFilter(queryset=User.objects.filter(is_active=True).order_by("first_name","last_name","username"), label="Forecaster", empty_label="All Forecasters")
+    updated_by      = UserModelChoiceFilter(queryset=User.objects.filter(is_active=True).order_by("first_name","last_name","username"), label="Forecaster", empty_label="All Forecasters")
+
+    class Meta:
+        model = ForecastMarine
+        fields = ["forecast_date","forecast_time", "forecast_category", "created_by", "updated_by"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.form.fields["forecast_date"].input_formats = ["%d/%m/%Y","%Y-%m-%d"]
+
+        for field in self.form.fields.values():
+            if isinstance(field.widget, forms.Select):
+                field.widget.attrs.update({ "class": "form-select" })
+            else:
+                field.widget.attrs.update({ "class": "form-control", "placeholder": "" })
+
+class DistrictForecastFilter(django_filters.FilterSet):
+
+    forecast_date   = django_filters.DateFilter(lookup_expr="exact", label="Forecast Date",  widget=forms.DateInput(attrs={ "type": "date", "class": "form-control" }, format="%Y-%m-%d"))
+
+    created_by      = UserModelChoiceFilter(queryset=User.objects.filter(is_active=True).order_by("first_name","last_name","username"), label="Forecaster", empty_label="All Forecasters")
+    updated_by      = UserModelChoiceFilter(queryset=User.objects.filter(is_active=True).order_by("first_name","last_name","username"), label="Forecaster", empty_label="All Forecasters")
+
+    class Meta:
+        model = DistrictForecast
+        fields = ["forecast_date","created_by","updated_by"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.form.fields["forecast_date"].input_formats = ["%d/%m/%Y","%Y-%m-%d"]
+
+        for field in self.form.fields.values():
+            if isinstance(field.widget, forms.Select):
+                field.widget.attrs.update({ "class": "form-select" })
+            else:
+                field.widget.attrs.update({ "class": "form-control", "placeholder": "" })

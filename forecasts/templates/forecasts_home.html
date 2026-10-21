@@ -1,184 +1,71 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}{{ page_name }} | WIMP3{% endblock %}
 {% block content %}
-<div class="row mb-4">
+<div class="row mb-2">
     <div class="col-12 mb-3">
         <h3 class="dashboard_title">Forecast Modules</h3>
     </div>
-    <div class="col-12 d-flex flex-row mb-3">
-        {% if perms.forecasts.view_districtforecast %}
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:district_forecast_list' %}">
-                <img src="{% static 'button_icons/district-forecast.png' %}" alt="District Forecasts" />
-                <span class="task_desc">District Forecasts</span>
-            </a>
-        </div>
-        {% endif %}
-        {% if perms.view_municipalityforecast %}
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:municipality_forecast_list' %}">
-                <img src="{% static 'button_icons/municipality.png' %}" alt="District Forecasts" />
-                <span class="task_desc">Municipality Forecasts</span>
-            </a>
-        </div>
-        {% endif %}
-        {% if perms.forecasts.view_forecastgeneral %}
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:general_forecast_list' %}">
-                <img src="{% static 'button_icons/forecast.png' %}" alt="General Weather Forecasts" />
-                <span class="task_desc">General Weather Forecasts</span>
-            </a>
-        </div>
-        {% endif %}
-        {% if perms.forecasts.view_forecastmarine %}
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:marine_forecast_list' %}">
-                <img src="{% static 'button_icons/marine-forecast.png' %}" alt="Marine Forecasts" />
-                <span class="task_desc">Marine Forecasts</span>
-            </a>
-        </div>
-        {% endif %}
-        {% if perms.forecasts.view_forecastdiscussion %}
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:discussion_list' %}">
-                <img src="{% static 'button_icons/qa.png' %}" alt="Marine Forecasts" />
-                <span class="task_desc">Forecast Discussion</span>
-            </a>
-        </div>
-        {% endif %}
-    </div>
 </div>
-<div class="row mb-5">
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex align-items-center gap-2 mb-3">
+            {% for button in buttons_view %}
+                {% if button.has_permission_view %}
+                    <div class="d-flex align-items-center bg-light p-3 col">
+                        <div class="flex-shrink-0">
+                            <a href="{{ button.url_view }}" class="text-decoration-none"><img src="{{ button.image }}" alt="{{ button.text }}" class="img-fluid" width="90"></a>
+                        </div>
+                        <div class="flex-grow-1 ms-3 text-uppercase text-secondary">
+                            <a class="fw-bold text-decoration-none text-dark fs-5 mb-1 pb-1 d-block border-bottom border-secondary-subtle" href="{{ button.url_view }}">{{ button.text }}</a>
+                            <small class="text-secondary d-block">
+                                <a href="{{ button.url_view }}" class="btn btn-link text-decoration-none p-0 fw-medium text-success"><i class="fa-solid fa-list"></i> View List</a>
+                                {% if button.has_permission_add %}
+                                &nbsp;<a href="{{ button.url_add }}" class="btn btn-link text-decoration-none p-0 fw-medium text-primary"><i class="fa-solid fa-file"></i> New Entry</a>
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
     <div class="col-12 mb-3">
         <h3 class="dashboard_title">Forecast Parameters</h3>
     </div>
-    <div class="col-12 d-flex flex-row mb-5">
-        {% if perms.forecasts.view_districtforecast %}
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:instructions_list' %}">
-                <img src="{% static 'button_icons/productivity.png' %}" alt="District Forecast Instructions" />
-                <span class="task_desc">District Forecast Instructions</span>
-            </a>
-        </div>
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:instructions_category_list' %}">
-                <img src="{% static 'button_icons/options.png' %}" alt="Instructions Category" />
-                <span class="task_desc">Instructions Category</span>
-            </a>
-        </div>
+    <div class="col-12 d-flex flex-row mb-5 row">
+        {% for button_p in buttons_p_view %}
+        {% if button_p.has_permission_view %}
+            <div class="col-1 text-center text-uppercase">
+                <div class="mb-2 card shadow shadow-sm border-light">
+                    <div class="card-header">{% if button_p.text_cat %}<small class="d-block text-muted">{{ button_p.text_cat }}</small>{% endif %}</div>
+                    <a href="{{ button_p.url_view }}" class="text-decoration-none mt-2"><img src="{{ button_p.image }}" alt="{{ button_p.text }}" class="card-img-top" style="width: 55px; height: 55px;"></a>
+                    <div class="card-body border-top-light pt-2 pb-2">
+                        <a class="btn btn-link p-0 text-dark fw-bold fs-6 text-decoration-none" href="{{ button_p.url_view }}"><span class="card-title">{{ button_p.text }}</span></a>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><a href="{{ button_p.url_view }}" class="btn btn-sm btn-link fw-medium text-decoration-none p-0 "><small><i class="fa-solid fa-list"></i> View List</small></a></li>
+                        {% if button_p.has_permission_add and button_p.url_add  %}
+                            
+                        <li class="list-group-item"><a href="{{ button_p.url_add }}" class="btn btn-sm btn-link fw-medium text-decoration-none p-0"><small><i class="fa-solid fa-file"></i> New Entry</small></a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
         {% endif %}
-        {% if perms.view_municipalityforecast %}
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:municipality_area_list' %}">
-                <img src="{% static 'button_icons/district.png' %}" alt="General Forecast Category" />
-                <span class="task_desc">Municipality Area</span>
-            </a>
-        </div>
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:weather_conditions_list' %}">
-                <img src="{% static 'button_icons/meteorology.png' %}" alt="General Forecast Category" />
-                <span class="task_desc">Weather Conditions</span>
-            </a>
-        </div>
-        {% endif %}
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:general_forecast_category_list' %}">
-                <img src="{% static 'button_icons/time.png' %}" alt="General Forecast Category" />
-                <span class="task_desc">General Forecast Category</span>
-            </a>
-        </div>
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:wind_direction_list' %}">
-                <img src="{% static 'button_icons/compass.png' %}" alt="Wind Direction" />
-                <span class="task_desc">Wind Direction</span>
-            </a>
-        </div>
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:wind_speed_list' %}">
-                <img src="{% static 'button_icons/compass.png' %}" alt="Wind Direction" />
-                <span class="task_desc">Wind Speed</span>
-            </a>
-        </div>
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:wind_condition_list' %}">
-                <img src="{% static 'button_icons/wind.png' %}" alt="Wind Conditions" />
-                <span class="task_desc">Wind Conditions</span>
-            </a>
-        </div>
-    </div>
-    <div class="col-12 d-flex flex-row mb-3">
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:marine_forecast_category_list' %}">
-                <img src="{% static 'button_icons/day-and-night.png' %}" alt="Marine Category" />
-                <span class="task_desc">Marine Forecast Category</span>
-            </a>
-        </div>
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:marine_forecast_details_category_list' %}">
-                <img src="{% static 'button_icons/classification.png' %}" alt="Marine Category" />
-                <span class="task_desc">Marine Details Category</span>
-            </a>
-        </div>
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:sea_state_list' %}">
-                <img src="{% static 'button_icons/ocean.png' %}" alt="Sea State" />
-                <span class="task_desc">Sea State</span>
-            </a>
-        </div>
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:tide_day_category_list' %}">
-                <img src="{% static 'button_icons/tide.png' %}" alt="Sun Day/Time Category" />
-                <span class="task_desc">Tide<br />Day/Time Category</span>
-            </a>
-        </div>
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:tide_level_category_list' %}">
-                <img src="{% static 'button_icons/water-level.png' %}" alt="Sun Day/Time Category" />
-                <span class="task_desc">Tide<br />Level Category</span>
-            </a>
-        </div>
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:sun_day_category_list' %}">
-                <img src="{% static 'button_icons/sun.png' %}" alt="Sun Day/Time Category" />
-                <span class="task_desc">Sun<br />Day/Time Category</span>
-            </a>
-        </div>
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:sun_move_category_list' %}">
-                <img src="{% static 'button_icons/sun-move.png' %}" alt="Sun Movement Category" />
-                <span class="task_desc">Sun<br />Movement Category</span>
-            </a>
-        </div>
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:moon_day_category_list' %}">
-                <img src="{% static 'button_icons/moon.png' %}" alt="Moon Day/Time Category" />
-                <span class="task_desc">Moon<br />Day/Time Category</span>
-            </a>
-        </div>
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:moon_move_category_list' %}">
-                <img src="{% static 'button_icons/moonrise.png' %}" alt="Moon Movement Category" />
-                <span class="task_desc">Moon<br />Movement Category</span>
-            </a>
-        </div>
-    </div>
-</div>
-<div class="row mb-5">
+        {% endfor %}
+    <div>
+    {% if user.is_superuser %}
     <div class="col-12">
         <h3 class="dashboard_title">Get Data</h3>
     </div>
-    <div class="row">
-        <div class="col-12 d-flex flex-row mb-3 item_dashboard">
-            <form method="post" action="{% url 'forecasts:import_general_weather_forecast_categories' %}" onsubmit="return confirm('Import General Weather Forecast Categories now? Existing records may be updated.');">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-link">
-                    <img src="{% static 'button_icons/file-import.png' %}" alt="Effects" />
-                    <span class="task_desc">Import General Weather Forecast Categories</span>
-                </button>
-            </form>
-        </div>
+    <div class="col-12 d-flex flex-row mb-3 item_dashboard">
+        <form method="post" action="{% url 'forecasts:import_general_weather_forecast_categories' %}" onsubmit="return confirm('Import General Weather Forecast Categories now? Existing records may be updated.');">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-link">
+                <img src="{% static 'button_icons/file-import.png' %}" alt="Effects" />
+                <span class="task_desc">Import General Weather Forecast Categories</span>
+            </button>
+        </form>
     </div>
-    </div>
-</div>
+    {% endif %}
 {% endblock %}

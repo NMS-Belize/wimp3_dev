@@ -9,11 +9,11 @@
             <div class="row mb-3">
                 <div class="col-2">
                     <label class="form-label">Forecast Date:</label>
-                    {{ filter.form.general_forecast.forecast_date }}
+                    {{ filter.form.forecast_date }}
                 </div>
                 <div class="col-2">
                     <label class="form-label">Forecast Category:</label>
-                    {{ filter.form.general_forecast.forecast_category }}
+                    {{ filter.form.forecast_category }}
                 </div>
                 <div class="col-2">
                     <label class="form-label">Created By:</label>
@@ -25,7 +25,7 @@
                 </div>
                 <div class="col-3">
                     <br />
-                    <a href="{{ back_url }}" class="btn btn-secondary mt-2">Clear</a>
+                    <a href="{% url 'forecasts:marine_forecast_list' %}" class="btn btn-secondary mt-2">Clear</a>
                 </div>
             </div>
         </form>
@@ -48,8 +48,8 @@ $(document).ready(function () {
             type: "GET",
             data: form.serialize(),
             success: function (response) {
-                const newTable = $(response).find("#table_general_forecast").html();
-                $("#table_general_forecast").html(newTable);
+                const newTable = $(response).find("#table_marine_forecast").html();
+                $("#table_marine_forecast").html(newTable);
             },
             error: function (xhr) {
                 console.error("Filter error:", xhr.responseText);
@@ -58,7 +58,7 @@ $(document).ready(function () {
     }
 
     // Search as user types
-    $("#id_forecast_time").on("keyup", function () { clearTimeout(filterTimer);  filterTimer = setTimeout(function () { filterTable(); }, 300); });
+    //$("#id_forecast_time").on("keyup", function () { clearTimeout(filterTimer);  filterTimer = setTimeout(function () { filterTable(); }, 300); });
 
     $("#id_forecast_date").on("change", function () { filterTable(); });
     $("#id_created_by").on("change", function () { filterTable(); });

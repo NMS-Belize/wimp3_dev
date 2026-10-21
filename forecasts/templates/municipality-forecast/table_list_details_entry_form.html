@@ -1,10 +1,16 @@
-{% extends "base_blank.html" %}
+{% extends "base_table.html" %}
 {% load static %}
 {% block content %}
     <div class="row mt-2">
         <div class="col-6">
             <h4>Forecast Date: <strong>{{ entry.forecast_date }}</strong></h4>
         </div>
+        <div class="col-6 pt-2 ">
+            <div class="form-check form-switch">
+                {{ form.is_published }}
+                <label class="form-check-label" for="has_user_account">Is Published?</label>
+            </div>
+        </div>      
         <div class="col-6 d-flex flex-row-reverse">
         </div>
     </div>

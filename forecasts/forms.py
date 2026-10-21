@@ -411,11 +411,6 @@ class CAPAlertSelectMultiple(forms.SelectMultiple):
     
 class ForecastGeneralForm(forms.ModelForm):
 
-    '''wind_direction = forms.ModelMultipleChoiceField(
-                queryset    = WindDirection.objects.all(),
-                required    = False,
-                widget      = forms.SelectMultiple(attrs={"class": "form-select select2-multiple"})
-            )'''
     forecast_time           = forms.TimeField(input_formats=["%I:%M %p"], widget=forms.TimeInput(format="%I:%M %p", attrs={ "type": "text", "class": "form-control", "placeholder": "hh:mm AM/PM" }))
     
     wind_direction          = forms.CharField(label = "Wind Direction", required=False, disabled=True, widget=forms.TextInput(attrs={ "class": "form-control bg-secondary-subtle text-muted" }))
@@ -593,8 +588,7 @@ class MarineForecastDetailsCategoryForm(forms.ModelForm):
 
 class ForecastMarineForm(forms.ModelForm):
 
-    forecast_time   = forms.TimeField(input_formats=[
-                                            "%I:%M %p",   # 5:30 PM
+    forecast_time   = forms.TimeField(input_formats=["%I:%M %p",   # 5:30 PM
                                             "%I:%M%p",    # 5:30PM
                                             "%H:%M",      # 17:30
                                         ],
