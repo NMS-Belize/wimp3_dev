@@ -105,15 +105,15 @@ def index(request):
             "permission_delete": "forecasts.delete_forecastmarine",
         },
         {
-                "url_view": reverse("forecasts:district_forecast_list"),
-                "url_add": reverse("forecasts:district_forecast_entry"),
-                "image": static("/button_icons/district-forecast.png"),
-                "text": "District Forecast",
-                "permission_view": "forecasts.view_districtforecast",
-                "permission_add": "forecasts.add_districtforecast",
-                "permission_change": "forecasts.change_districtforecast",
-                "permission_delete": "forecasts.delete_districtforecast",
-            },
+            "url_view": reverse("forecasts:district_forecast_list"),
+            "url_add": reverse("forecasts:district_forecast_entry"),
+            "image": static("/button_icons/district-forecast.png"),
+            "text": "District Forecast",
+            "permission_view": "forecasts.view_districtforecast",
+            "permission_add": "forecasts.add_districtforecast",
+            "permission_change": "forecasts.change_districtforecast",
+            "permission_delete": "forecasts.delete_districtforecast",
+        },
         {
             "url_view": reverse("forecasts:municipality_forecast_list"),
             "url_add": reverse("forecasts:municipality_forecast_entry"),
@@ -308,10 +308,6 @@ def index(request):
         'buttons_p_view': buttons_parameters,
         'buttons_p_add': buttons_parameters
     }
-
-    #context["buttons_view"] = buttons_main
-    #context["buttons_add"] = buttons_main
-
     return render(request, 'forecasts_home.html', context)
 
 ############# GENERAL WEATHER FORECASTS: Main Entries #############

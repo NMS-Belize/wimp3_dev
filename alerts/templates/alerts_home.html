@@ -6,35 +6,50 @@
     <div class="col-12 mb-3">
         <h3 class="dashboard_title">Alert Modules</h3>
     </div>
-    <div class="col-12 d-flex flex-row mb-3">
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'alerts:cap_alerts_list' %}">
-                <img src="{% static 'button_icons/cap_logo.png' %}" alt="District Forecasts" />
-                <span class="task_desc">CAP Alerts</span>
-            </a>
-        </div>
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'alerts:tropical_alerts_list' %}">
-                <img src="{% static 'button_icons/storm.png' %}" alt="General Weather Forecasts" />
-                <span class="task_desc">Tropical Weather Alerts</span>
-            </a>
-        </div>
+    <div class="col-12 d-flex flex-row gap-3 mb-3">
+    {% for button in buttons_view %}
+        {% if button.has_permission_view %}
+            <div class="d-flex align-items-center bg-light p-3 col-2">
+                <div class="flex-shrink-0">
+                    <a href="{{ button.url_view }}" class="text-decoration-none"><img src="{{ button.image }}" alt="{{ button.text }}" class="img-fluid" width="90"></a>
+                </div>
+                <div class="flex-grow-1 ms-3 text-uppercase text-secondary">
+                    <a class="fw-bold text-decoration-none text-dark fs-5 mb-1 pb-1 d-block border-bottom border-secondary-subtle" href="{{ button.url_view }}">{{ button.text }}</a>
+                    <small class="text-secondary d-block">
+                        <a href="{{ button.url_view }}" class="btn btn-link text-decoration-none p-0 fw-medium text-success"><i class="fa-solid fa-list"></i> View List</a>
+                        {% if button.has_permission_add and button.url_add %}
+                        &nbsp;<a href="{{ button.url_add }}" class="btn btn-link text-decoration-none p-0 fw-medium text-primary"><i class="fa-solid fa-file"></i> New Entry</a>
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
     </div>
-</div>
-<div class="row">
     <div class="col-12 mb-3">
         <h3 class="dashboard_title">Alerts Parameters</h3>
     </div>
-    <div class="col-12 d-flex flex-row mb-3">
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'alerts:tropical_alerts_category_list' %}">
-                <img src="{% static 'button_icons/alert.png' %}" alt="Device Category" />
-                <span class="task_desc">Tropical Weather Alert Category</span>
-            </a>
-        </div>
-    </div>
-</div>
-<div class="row">
+    <div class="col-12 d-flex flex-row mb-5 row">
+        {% for button_p in buttons_p_view %}
+        {% if button_p.has_permission_view %}
+            <div class="col-1 text-center text-uppercase">
+                <div class="mb-2 card shadow shadow-sm border-light">
+                    <div class="card-header">{% if button_p.text_cat %}<small class="d-block text-muted">{{ button_p.text_cat }}</small>{% endif %}</div>
+                    <a href="{{ button_p.url_view }}" class="text-decoration-none mt-2"><img src="{{ button_p.image }}" alt="{{ button_p.text }}" class="card-img-top" style="width: 55px; height: 55px;"></a>
+                    <div class="card-body border-top-light pt-2 pb-2">
+                        <a class="btn btn-link p-0 text-dark fw-bold fs-6 text-decoration-none" href="{{ button_p.url_view }}"><span class="card-title">{{ button_p.text }}</span></a>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><a href="{{ button_p.url_view }}" class="btn btn-sm btn-link fw-medium text-decoration-none p-0 "><small><i class="fa-solid fa-list"></i> View List</small></a></li>
+                        {% if button_p.has_permission_add and button_p.url_add  %}
+                        <li class="list-group-item"><a href="{{ button_p.url_add }}" class="btn btn-sm btn-link fw-medium text-decoration-none p-0"><small><i class="fa-solid fa-file"></i> New Entry</small></a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+        {% endfor %}
+    <div>
     <div class="col-12 mb-3">
         <h3 class="dashboard_title">Get Data</h3>
     </div>

@@ -6,6 +6,7 @@ from django.core import serializers
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template import loader
+from django.templatetags.static import static
 from django.urls import reverse
 from django_tables2 import RequestConfig
 
@@ -26,8 +27,53 @@ from .serializers import  CAPAlertsSerializer, CAPAlertDetailsSerializer, CAPAle
 from rest_framework import viewsets
 
 def index(request):
+
+    buttons_main = [
+        {
+            "url_view": reverse("alerts:cap_alerts_list"),
+            #"url_add": reverse("alerts:cap_alerts_import_page"),
+            "image": static("/button_icons/cap_logo.png"),
+            "text": "CAP Alerts",
+            "permission_view": "alerts.view_capalerts",
+            "permission_add": "alerts.add_capalerts",
+        },
+        {
+            "url_view": reverse("alerts:tropical_alerts_list"),
+            "url_add": reverse("alerts:tropical_alerts_list"),
+            "image": static("/button_icons/storm.png"),
+            "text": "Tropical Weather Alerts",
+            "permission_view": "alerts.view_tropicalweatheralerts",
+            "permission_add": "alerts.add_tropicalweatheralerts",
+        }
+    ]
+
+    buttons_parameters = [
+        {
+            "url_view": reverse("alerts:tropical_alerts_category_list"),
+            "url_add": reverse("alerts:tropical_alerts_category_entry"),
+            "image": static("/button_icons/alert.png"),
+            "text_cat": "Tropical Weather",
+            "text": "Alert Category",
+            "permission_view": "alerts.view_tropicalweatheralertscategory",
+            "permission_add": "alerts.add_tropicalweatheralertscategory",
+        }
+    ]
+
+    # Add permission status to each button
+    for button in buttons_main:
+        button["has_permission_view"] = request.user.has_perm(button["permission_view"])
+        button["has_permission_add"] = request.user.has_perm(button["permission_add"])
+
+    for buttonp in buttons_parameters:
+        buttonp["has_permission_view"] = request.user.has_perm(buttonp["permission_view"])
+        buttonp["has_permission_add"] = request.user.has_perm(buttonp["permission_add"])
+
     context = {
         'page_name': "Alerts Dashboard",
+        'buttons_view': buttons_main,
+        'buttons_add':  buttons_main,
+        'buttons_p_view': buttons_parameters,
+        'buttons_p_add': buttons_parameters
     }
     return render(request, 'alerts_home.html', context)
 
