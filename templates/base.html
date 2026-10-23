@@ -24,17 +24,7 @@
         <main class="main-content">
             <div class="container-fluid pt-3 pb-0 ps-3 pe-3">
                 {% block header %}
-                <div id="header" class="header pt-4 ps-3 pb-0 mb-3">
-                    <div class="row">
-                        <div class="col-6">
-                            <h1 class="mb-0">{{ page_name }}</h1>
-                        </div>
-                        <div class="col-6 d-flex justify-content-end align-items-center">
-                            <!--<a class="me-4" href="{% url 'site_home' %}" id="logo"><img id="main_logo" src="{% static 'images/wimp3_logo_v2.png' %}" alt="WIMP3 Logo" style="width: 150px; margin-top:-6px;" /></a-->
-                            {% include "top_buttons.html" %}
-                        </div>
-                    </div>
-                </div>
+                {% include "header.html" %}
                 {% endblock %}
                 <div id="block_content" class="pt-0 ps-4 pe-3 pb-4">
                     {% include "messages.html" %} 

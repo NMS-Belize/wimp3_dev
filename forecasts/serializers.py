@@ -465,6 +465,8 @@ class MunicipalityForecastSerializer(serializers.ModelSerializer):
                 results.append({
                     "id": detail.municipality_area_id,
                     "area_name": detail.municipality_area.description,
+                    "latitude": detail.municipality_area.latitude,
+                    "longitude": detail.municipality_area.longitude,
                     "details": MunicipalityForecastDetailsSerializer(detail).data
                 })
 

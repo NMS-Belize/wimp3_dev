@@ -2,13 +2,13 @@
 {% load static %}
 {% block content %}
 <div class="row mb-2">
-    <div class="col-12 mb-3">
+    <div class="col-12">
         <h3 class="dashboard_title">Forecast Modules</h3>
     </div>
 </div>
 <div class="row mb-4">
     <div class="col-12">
-        <div class="d-flex align-items-center gap-2 mb-3">
+        <div class="d-flex align-items-stretch gap-2 mb-3">
             {% for button in buttons_view %}
                 {% if button.has_permission_view %}
                     <div class="d-flex align-items-center bg-light p-3 col">
@@ -29,14 +29,14 @@
             {% endfor %}
         </div>
     </div>
-    <div class="col-12 mb-3">
+    <div class="col-12 mb-2">
         <h3 class="dashboard_title">Forecast Parameters</h3>
     </div>
-    <div class="col-12 d-flex flex-row mb-5 row">
+    <div class="col-12 d-flex align-items-stretch gap-2 mb-5 row">
         {% for button_p in buttons_p_view %}
         {% if button_p.has_permission_view %}
-            <div class="col-1 text-center text-uppercase">
-                <div class="mb-2 card shadow shadow-sm border-light">
+            <div class="col text-center text-uppercase mb-2">
+                <div class="mb-2 card h-100 shadow shadow-sm border-light">
                     <div class="card-header">{% if button_p.text_cat %}<small class="d-block text-muted">{{ button_p.text_cat }}</small>{% endif %}</div>
                     <a href="{{ button_p.url_view }}" class="text-decoration-none mt-2"><img src="{{ button_p.image }}" alt="{{ button_p.text }}" class="card-img-top" style="width: 55px; height: 55px;"></a>
                     <div class="card-body border-top-light pt-2 pb-2">
@@ -52,7 +52,7 @@
             </div>
         {% endif %}
         {% endfor %}
-    <div>
+    </div>
     {% if user.is_superuser %}
     <div class="col-12">
         <h3 class="dashboard_title">Get Data</h3>

@@ -40,7 +40,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import Image, SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 
 from forecasts.forms import (DistrictForecastDetailsForm, DistrictForecastForm, DistrictForecastInstructionsCategoryForm, DistrictForecastInstructionsForm, DistrictForecastPublishForm, 
-                             MunicipalityForecastForm, MunicipalityZoneForm, 
+                             MunicipalityForecastForm, MunicipalityZoneForm, MunicipalityForecastPublishForm, 
                              SeverityForm, ProbabilityForm, WindDirectionForm, WindConditionForm, SeaStateForm, 
                              GeneralForecastCategoryForm, ForecastGeneralForm, ForecastDiscussionForm, 
                              ForecastMarineForm, MarineForecastDetailsCategoryForm, MarineForecastCategoryForm,
@@ -3383,17 +3383,17 @@ def municipality_forecast_entry(request, id=None):
             # If your form has many-to-many fields
             form.save_m2m()
 
+            messages.success(request, "Record saved successfully.")
+
             municipality_zones = MunicipalityZone.objects.all().order_by("id")[:6]
 
             for zone in municipality_zones:
-                MunicipalityForecastDetails.objects.get_or_create(
-                    municipality_forecast=saved_entry,
-                    municipality_area=zone
-                )
+                MunicipalityForecastDetails.objects.get_or_create(municipality_forecast=saved_entry,municipality_area=zone)
 
-            return redirect('forecasts:municipality_forecast_details_list',saved_entry.id)
+            return redirect('forecasts:municipality_forecast_details_entry',saved_entry.id)
 
         else:
+            messages.error(request, "Unable to save record.")
             print(form.errors)
 
     else:
@@ -3453,11 +3453,11 @@ def municipality_forecast_details_entry(request, id):
     RequestConfig(request).configure(table)
 
     if request.method == 'POST':
-        print(request.POST)
-        form = DistrictForecastPublishForm(request.POST, instance=entry)
+        #print(request.POST)
+        form = MunicipalityForecastPublishForm(request.POST, instance=entry)
 
         if form.is_valid():
-            saved_entry = form.save()    # Creates or updates
+            #saved_entry = form.save()    # Creates or updates
             messages.success(request, "Record saved successfully.")
             #return redirect('forecasts:district_forecast_details_entry', saved_entry.id)            
 
@@ -3466,13 +3466,13 @@ def municipality_forecast_details_entry(request, id):
             #   return redirect('forecasts:district_forecast_list')
 
             # Regular Save button
-            return redirect('forecasts:district_forecast_details_entry', saved_entry.id)  
+            #return redirect('forecasts:district_forecast_details_entry', saved_entry.id)  
             
         else:
             messages.error(request, "Please correct the errors below.")
             print(form.errors)  # check terminal
     else:
-        form = DistrictForecastPublishForm(instance=entry)
+        form = MunicipalityForecastPublishForm(instance=entry)
 
     return render(request, 'municipality-forecast/table_list_details_entry_form.html', {
         'page_name': page_name,
@@ -3486,6 +3486,27 @@ def municipality_forecast_details_entry(request, id):
         'entry': entry,
         'table':    table,
     })
+
+def municipality_forecast_delete(request, id):
+    
+    entry = get_object_or_404(MunicipalityForecast, id=id)
+
+    qs = MunicipalityForecast.objects.all().order_by('id')
+    qs = qs.order_by('id')
+    
+    page_name = "DELETE Municipality Forecast Entry"
+
+    if request.method == "POST":
+        entry.delete()
+        messages.success(request, f"Record {id} deleted successfully.")
+        return redirect('forecasts:municipality_forecast_list')  # redirect anywhere you prefer
+        
+    return render(request, "municipality-forecast/entry_delete.html", {
+        "entry": entry,
+        'page_name': page_name,
+        'details': qs
+    })
+
 
 @require_POST
 def municipality_forecast_inline_update(request):

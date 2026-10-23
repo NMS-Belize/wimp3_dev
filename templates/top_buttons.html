@@ -1,9 +1,12 @@
 {% load static %}
 <div class="d-flex align-items-center">
     <a class="me-4" href="{% url 'site_home' %}">
-        <img class="me-1" width="150" src="{% static 'images/WIMP3/logo-horizontal.png' %}" alt="WIMP3" />
+        <img class="me-1" src="{% static 'images/WIMP3/logo-horizontal.png' %}" alt="WIMP3" width="150px" />
     </a>
     <div id="top_buttons">
+        {% if entry.id %}
+            <!--<img class="me-1" width="100px" src="{% get_media_prefix %}/company/{{ entry.id }}/logo.png" alt="Company" />-->
+        {% endif %}
         <a class="me-4" href="{% url 'site_home' %}">
             <img class="me-1" src="{% static 'button_icons/layout.png' %}" alt="Dashboard" />&nbsp; Dashboard
         </a>

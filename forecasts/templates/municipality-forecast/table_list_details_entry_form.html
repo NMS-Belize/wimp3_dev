@@ -1,18 +1,16 @@
-{% extends "base_table.html" %}
+{% extends "base_form.html" %}
 {% load static %}
 {% block content %}
-    <div class="row mt-2">
-        <div class="col-6">
+    <div class="d-flex justify-content-between mt-2">
+        <div>
             <h4>Forecast Date: <strong>{{ entry.forecast_date }}</strong></h4>
         </div>
-        <div class="col-6 pt-2 ">
-            <div class="form-check form-switch">
+        <div class="pt-2">
+            <div class="form-check form-switch align-self-center">
                 {{ form.is_published }}
-                <label class="form-check-label" for="has_user_account">Is Published?</label>
+                <label id="label_switch" class="form-check-label" for="has_user_account">Is Published?</label>
             </div>
         </div>      
-        <div class="col-6 d-flex flex-row-reverse">
-        </div>
     </div>
     <div class="row mt-2">
         <div class="col-12">
@@ -30,6 +28,29 @@
 <script type="text/javascript">
 $(document).ready(function () {
 
+    document.getElementById("id_is_published").addEventListener("change", function () {
+        console.log("Checkbox changed: ", this.checked);
+        const checkbox = this;
+        const statusText = document.getElementById("label_switch");
+
+        fetch("{% url 'forecasts:municipality_forecast_toggle_is_published_ajax' entry.id %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: new URLSearchParams({
+                is_published: checkbox.checked ? "true" : "false"
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                statusText.innerText = data.is_published ? "Published successfully." : "Unpublished successfully.";
+            }
+        });
+    });
+    
     $('.wind-speed').select2({
         placeholder: 'Select Wind Speed',
         width: '100%',
@@ -102,6 +123,14 @@ $(document).ready(function () {
     $(document).on("change", ".inline-edit", function () {
 
         const input = $(this);
+
+        console.log("Inline update triggered");
+
+        console.log({
+            id: input.attr("data-id"),
+            field: input.attr("data-field"),
+            value: input.val()
+        });
 
         const data = {
             id: input.data("id"),

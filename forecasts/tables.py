@@ -1676,7 +1676,7 @@ class MunicipalityForecastTable(tables.Table):
     
     def render_delete(self, record):
         #link_html   = '<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>'
-        url         = reverse("forecasts:district_forecast_delete", args=[record.id])
+        url         = reverse("forecasts:municipality_forecast_delete", args=[record.id])
 
         if record.is_published:
             return format_html('<i class="fa-solid fa-ban text-secondary text-opacity-25 fa-lg"></i>')
@@ -1706,7 +1706,7 @@ class MunicipalityForecastDetailsTable(tables.Table):
         
         # Add table ID and class here
         attrs = {
-            "class": "tbl_wimp3 table table-striped table-condensed table-hover tbl_wimp3",
+            "class": "table table-striped table-condensed table-hover tbl_wimp3",
         }
 
     def render_temp_max(self, value, record):

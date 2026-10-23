@@ -383,6 +383,18 @@ class MunicipalityForecastForm(forms.ModelForm):
 
         return forecast_date
 
+class MunicipalityForecastPublishForm(forms.ModelForm):
+    class Meta:
+        model = MunicipalityForecast
+        fields = ['is_published']
+        labels = {   
+            # <-- add human-friendly labels here
+            'is_published': 'Is Published:'
+        }
+        widgets = {            
+            'is_published': forms.CheckboxInput(attrs={'class': 'form-check-input', 'role': 'switch'})
+        }
+        
 class CAPAlertSelectMultiple(forms.SelectMultiple):
 
     def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):
@@ -508,7 +520,6 @@ class ForecastGeneralForm(forms.ModelForm):
             "hills_low_c": forms.NumberInput(attrs={"class": "form-control"}),
 
             "is_published": forms.CheckboxInput(attrs={"class": "form-check-input"}),
-            
         }
 
     def clean_forecast_file(self):

@@ -18,12 +18,15 @@ def index(request):
 @login_required
 def dashboard(request):
 
-    '''if id:
+    id = 1
+
+    if id:
         entry = get_object_or_404(Company, id=id)
     else:
-        entry = None'''  
+        entry = None
             
     context = {
-        'page_name': 'Dashboard'
+        'page_name': 'Dashboard',
+        'entry': entry
     }
     return render(request, 'dashboard.html', context)
