@@ -52,10 +52,10 @@
     --wimp-warning:    #F5A623;
     --wimp-danger:     #D9363E;
 
-        /* Bootstrap semantic palette */
-    --primary: var(--dark-teal);
-    --primary-dark: var(--dark-teal-2);
-    --primary-darker: var(--dark-teal-3);
+    /* Bootstrap Semantic Palette */
+    --primary: var(--teal-1);
+    --primary-dark: var(--teal-2);
+    --primary-darker: var(--teal-3);
 
     --secondary: var(--wimp-gray);
     --success: var(--wimp-green);
@@ -102,6 +102,51 @@ h1{ font-weight: 300; font-size: 50px; }
 .cursor-block {
   cursor: not-allowed !important;
 }
+
+
+/* WIMP3 Brand Text Colors */
+.text-wimp-navy      { color: var(--wimp-navy) !important; }
+.text-wimp-dark-navy { color: var(--wimp-dark-navy) !important; }
+.text-wimp-blue      { color: var(--wimp-blue) !important; }
+.text-wimp-sky-blue  { color: var(--wimp-sky-blue) !important; }
+.text-wimp-teal      { color: var(--wimp-teal) !important; }
+.text-wimp-green     { color: var(--wimp-green) !important; }
+.text-wimp-lime      { color: var(--wimp-lime) !important; }
+
+/* Interface Colors */
+.text-wimp-dark      { color: var(--wimp-dark) !important; }
+.text-wimp-gray      { color: var(--wimp-gray) !important; }
+.text-wimp-light     { color: var(--wimp-light) !important; }
+.text-wimp-white     { color: var(--wimp-white) !important; }
+
+/* Semantic Colors */
+.text-wimp-success   { color: var(--wimp-success) !important; }
+.text-wimp-info      { color: var(--wimp-info) !important; }
+.text-wimp-warning   { color: var(--wimp-warning) !important; }
+.text-wimp-danger    { color: var(--wimp-danger) !important; }
+
+/* Additional Theme Colors */
+.text-navy           { color: var(--navy) !important; }
+.text-aqua-1         { color: var(--aqua-1) !important; }
+.text-aqua-2         { color: var(--aqua-2) !important; }
+.text-teal-1         { color: var(--teal-1) !important; }
+.text-teal-2         { color: var(--teal-2) !important; }
+.text-teal-3         { color: var(--teal-3) !important; }
+.text-blue-1         { color: var(--blue-1) !important; }
+.text-tan            { color: var(--tan) !important; }
+.text-tan-2          { color: var(--tan-2) !important; }
+.text-yellow-1       { color: var(--yellow-1) !important; }
+.text-yellow-2       { color: var(--yellow-2) !important; }
+.text-orange-1       { color: var(--orange-1) !important; }
+.text-red            { color: var(--red) !important; }
+.text-rose           { color: var(--rose) !important; }
+.text-grey-1         { color: var(--grey-1) !important; }
+.text-grey-2         { color: var(--grey-2) !important; }
+.text-grey-3         { color: var(--grey-3) !important; }
+.text-light-teal     { color: var(--light-teal) !important; }
+.text-emerald        { color: var(--emerald) !important; }
+.text-teal-green     { color: var(--teal-green) !important; }
+
 
 .text-white{ color: #fff !important; }
 #header a{ color: var(--wimp-dark-navy); }
@@ -598,4 +643,34 @@ a.btn_task, a.btn_task_main{ text-align: center; text-decoration: none; padding:
 .select2-selection--single
 .select2-selection__arrow {
     height: 100%;
+}
+
+
+.buttons-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.buttons-grid > div {
+    width: 100% !important;
+    min-width: 0;
+}
+
+@media (max-width: 1400px) {
+    .buttons-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .buttons-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .buttons-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }

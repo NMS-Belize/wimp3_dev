@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}{{ page_name }} | WIMP3{% endblock %}
 {% block content %}
 <div class="row mb-4">
     <div class="col-12 mb-3">
@@ -16,9 +15,9 @@
                 <div class="flex-grow-1 ms-3 text-uppercase text-secondary">
                     <a class="fw-bold text-decoration-none text-dark fs-5 mb-1 pb-1 d-block border-bottom border-secondary-subtle" href="{{ button.url_view }}">{{ button.text }}</a>
                     <small class="text-secondary d-block">
-                        <a href="{{ button.url_view }}" class="btn btn-link text-decoration-none p-0 fw-medium text-success"><i class="fa-solid fa-list"></i> View List</a>
+                        <a href="{{ button.url_view }}" class="btn btn-link text-decoration-none p-0 fw-medium text-wimp-teal"><i class="fa-solid fa-list"></i> View List</a>
                         {% if button.has_permission_add and button.url_add %}
-                        &nbsp;<a href="{{ button.url_add }}" class="btn btn-link text-decoration-none p-0 fw-medium text-primary"><i class="fa-solid fa-file"></i> New Entry</a>
+                        &nbsp;<a href="{{ button.url_add }}" class="btn btn-link text-decoration-none p-0 fw-medium text-wimp-navy"><i class="fa-solid fa-file"></i> New Entry</a>
                         {% endif %}
                     </small>
                 </div>
@@ -40,9 +39,9 @@
                         <a class="btn btn-link p-0 text-dark fw-bold fs-6 text-decoration-none" href="{{ button_p.url_view }}"><span class="card-title">{{ button_p.text }}</span></a>
                     </div>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><a href="{{ button_p.url_view }}" class="btn btn-sm btn-link fw-medium text-decoration-none p-0 "><small><i class="fa-solid fa-list"></i> View List</small></a></li>
+                        <li class="list-group-item"><a href="{{ button_p.url_view }}" class="btn btn-sm btn-link fw-medium text-decoration-none p-0 text-wimp-teal"><small><i class="fa-solid fa-list"></i> View List</small></a></li>
                         {% if button_p.has_permission_add and button_p.url_add  %}
-                        <li class="list-group-item"><a href="{{ button_p.url_add }}" class="btn btn-sm btn-link fw-medium text-decoration-none p-0"><small><i class="fa-solid fa-file"></i> New Entry</small></a></li>
+                        <li class="list-group-item"><a href="{{ button_p.url_add }}" class="btn btn-sm btn-link fw-medium text-decoration-none p-0 text-wimp-navy"><small><i class="fa-solid fa-file"></i> New Entry</small></a></li>
                         {% endif %}
                     </ul>
                 </div>
