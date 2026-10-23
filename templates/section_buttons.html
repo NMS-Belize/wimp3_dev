@@ -1,26 +1,15 @@
 {% load static %}
-<div class="form-group mb-3">
-    <div class="d-flex flex-row justify-content-end p-2 bg-light border border-light-subtle">
+<div class="d-flex justify-content-between bg-wimp-light gap-4 text-uppercase px-4 py-3 fw-bold mb-3">
+    <div>{{ page_name }}</div>
+    <div class="d-flex justify-content-end">
         {% if back_url %}
-        <div class="table_item_dashboard">
-            <a class="btn-link" href="{{ back_url }}">
-                <img src="{% static 'button_icons/previous.png' %}" alt="Inventory List" />&nbsp;<span class="task_desc">Back to {{ prev_page }}</span>
-            </a>
-        </div>
+        <a class="btn-link text-teal-1 px-2 text-decoration-none" href="{{ back_url }}"><i class="fa-solid fa-list"></i>&nbsp;{{ prev_page }} List</a>
         {% endif %}
         {% if new_url %}
-        <div class="table_item_dashboard">
-            <a class="btn-link" href="{{ new_url }}">
-                <img src="{% static 'button_icons/add-file.png' %}" alt="Inventory List" />&nbsp;<span class="task_desc">New Entry</span>
-            </a>
-        </div>
+        <a class="btn-link text-teal-1 px-2 text-decoration-none" href="{{ new_url }}"><i class="fa-regular fa-file"></i>&nbsp;New Entry</a>
         {% endif %}
         {% if weburl %}
-        <div class="table_item_dashboard">
-            <a class="btn-link" href="{{ back_url }}">
-                <img src="{% static 'button_icons/webpage.png' %}" alt="Inventory List" />&nbsp;<span class="task_desc">Go to Live Page</span>
-            </a>
-        </div>
+        <a class="btn-link text-teal-1 px-2 text-decoration-none" href="{{ back_url }}">Go to Live Page</a>
         {% endif %}
     </div>
 </div>

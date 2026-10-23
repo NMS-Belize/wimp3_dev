@@ -18,24 +18,21 @@
 
     <title>{{ page_name }} | {% if prev_page %}{{ prev_page }} | {% endif %}WIMP3 | NMS Belize</title>
 </head>
-<body>
     <div class="d-flex">
         {% include "sidebar.html" %}
-        <main class="main-content">
-            <div class="container-fluid pt-3 pb-0 ps-3 pe-3">
+        <main class="main-content position-relative">
+            <div class="container-fluid p-0">
                 {% block header %}
-                {% include "header.html" %}
+                    {% include "header_main.html" %}
                 {% endblock %}
                 <div id="block_content" class="pt-0 ps-4 pe-3 pb-4">
                     {% include "messages.html" %} 
                     {% block content %}{% endblock %}
                 </div>
-                {% block footer %}
-                <footer id="footer" class="footer p-4 text-center">
-                    <span>Copyright &copy; 2025 | All Rights Reserved. National Meteorological Service of Belize</span>
-                </footer>
-                {% endblock %}
             </div>
+            {% block footer %}
+                {% include "footer.html" %}
+            {% endblock %}
         </main>
     </div>
 </body>

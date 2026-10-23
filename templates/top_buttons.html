@@ -1,26 +1,24 @@
 {% load static %}
 <div class="d-flex align-items-center">
-    <a class="me-4" href="{% url 'site_home' %}">
-        <img class="me-1" src="{% static 'images/WIMP3/logo-horizontal.png' %}" alt="WIMP3" width="150px" />
-    </a>
-    <div id="top_buttons">
+    <div id="top_buttons" class="ps-3">
         {% if entry.id %}
             <!--<img class="me-1" width="100px" src="{% get_media_prefix %}/company/{{ entry.id }}/logo.png" alt="Company" />-->
         {% endif %}
-        <a class="me-4" href="{% url 'site_home' %}">
+        <a class="me-4 text-white" href="{% url 'site_home' %}">
             <img class="me-1" src="{% static 'button_icons/layout.png' %}" alt="Dashboard" />&nbsp; Dashboard
         </a>
         {% if user.is_superuser %}
-        <a class="me-4" href="{% url 'api-root' %}" target="_blank">
+        <a class="me-4 text-white" href="{% url 'api-root' %}" target="_blank">
             <img class="me-1" src="{% static 'button_icons/api.png' %}" alt="API Root" />&nbsp; Go to API Root
         </a>
-        <a class="me-4" href="{% url 'admin:index' %}" target="_blank">
+        <a class="me-4 text-white" href="{% url 'admin:index' %}" target="_blank">
             <img class="me-1" src="{% static 'button_icons/django-svgrepo-com.png' %}" alt="DJango Admin" />&nbsp; Admin
         </a>
         {% endif %}
     </div>
+    <div class="fw-medium fst-italics me-1 text-white">|&nbsp;&nbsp;&nbsp; {{ user.first_name }} {{ user.last_name }}</div>
     <form class="logout me-4" action="{% url 'logout' %}" method="post">
         {% csrf_token %}
-        <button class="btn btn-success" type="submit">Logout <i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+        <button class="btn btn-link text-wimp-lime text-decoration-none text-uppercase fw-bold" type="submit">Logout <i class="fa-solid fa-arrow-right-from-bracket"></i></button>
     </form>
 </div>

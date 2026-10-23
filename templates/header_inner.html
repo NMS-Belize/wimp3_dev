@@ -1,0 +1,11 @@
+{% load static %}
+<div id="header" class="header px-3 py-2 bg-wimp-navy border-bottom" >
+    <div class="d-flex justify-content-end align-items-center">
+        <!--<a class="me-4" href="{% url 'site_home' %}" id="logo"><img id="main_logo" src="{% static 'images/wimp3_logo_v2.png' %}" alt="WIMP3 Logo" style="width: 150px; margin-top:-6px;" /></a-->
+        {% include "top_buttons.html" %}
+    </div>
+</div>
+{% include "section_buttons.html" %}
+<div id="header-lower" class="px-4">
+    <h1 class="display-5 mb-3">{{ page_name }}</h1>
+</div>
