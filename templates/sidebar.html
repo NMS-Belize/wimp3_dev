@@ -5,36 +5,39 @@
     <img id="sidebar_logo" class="flex-shrink-0 mt-3 mb-5" src="{% static 'images/WIMP3/wimp3-logo.png' %}" alt="WIMP3 Logo" />
     <div id="sidebar_nav" class="nav flex-column">
         <a href="{% url 'site_home' %}" class="sidebar-link">
-            <i class="fa-solid fa-house me-3"></i>
+            <!--<i class="fa-solid fa-house me-3"></i>-->
+            <img class="me-3" src="{% static 'button_icons/layout-white.png' %}" alt="Dashboard" width="20px" />
             <span class="hide-on-collapse">Dashboard</span>
         </a>
         {% if perms.forecasts.view_districtforecast or user.is_superuser %}
         <a href="{% url 'forecasts:index' %}" class="sidebar-link">
-            <i class="fa-solid fa-sun me-3"></i>
+            <!--<i class="fa-solid fa-sun me-3"></i>-->
+            <img class="me-3" src="{% static 'button_icons/weather-white.png' %}" alt="Dashboard" width="20px" />
             <span class="hide-on-collapse">Weather Forecasts</span>
         </a>
         {% endif %}
         {% if perms.observations.view_observation or user.is_superuser %}
-        <a href="{% url 'observations:index' %}" class="sidebar-link" disabled>
-            <i class="fa-solid fa-cloud me-3"></i>
+        <a href="{% url 'observations:index' %}" class="sidebar-link">
+            <img class="me-3" src="{% static 'button_icons/cloud-white.png' %}" alt="Dashboard" width="20px" />
             <span class="hide-on-collapse">Weather Observations</span>
         </a>
         {% endif %}
         {% if perms.alerts.view_tropicalweatheralerts or user.is_superuser %}
-        <a href="{% url 'alerts:index' %}" class="sidebar-link hidden" disabled>
-            <i class="fa-solid fa-triangle-exclamation me-3"></i>
+        <a href="{% url 'alerts:index' %}" class="sidebar-link hidden">
+            <!--<i class="fa-solid fa-triangle-exclamation me-3"></i>-->
+            <img class="me-3" src="{% static 'button_icons/emergency-white.png' %}" alt="Dashboard" width="20px" />
             <span class="hide-on-collapse">Alerts</span>
         </a>
         {% endif %}
         {% if perms.agro.view_pestrisk or user.is_superuser %}
         <a href="{% url 'agro:index' %}" class="sidebar-link">
-            <i class="fa-solid fa-seedling me-3"></i>
+            <img class="me-3" src="{% static 'button_icons/harvest-white.png' %}" alt="Dashboard" width="20px" />
             <span class="hide-on-collapse">Agriculture Services</span>
         </a>
         {% endif %}
         {% if perms.radar.view_radarimages or user.is_superuser %}
         <a href="{% url 'radar:radar_images_list' %}" class="sidebar-link">
-            <i class="fa-solid fa-satellite-dish me-3"></i>
+            <img class="me-3" src="{% static 'button_icons/radar-white.png' %}" alt="Dashboard" width="20px" />
             <span class="hide-on-collapse">Radar</span>
         </a>
         {% endif %}
@@ -83,7 +86,7 @@
                         {% endif %}
                     </small>
                 </div>
-                <button id="btn_logout" class="btn btn-warning" type="submit"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+                <button id="btn_logout" class="btn btn-link text-warning text-decoration-none fw-bold" type="submit"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
             </form>
             {% else %}
                 <a id="btn_login" class="btn btn-warning" href="{% url 'login' %}"><i class="fa-solid fa-user"></i> Login</a>

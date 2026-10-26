@@ -99,7 +99,7 @@ class WeatherCodeForm(forms.ModelForm):
     @staticmethod
     def icon_label(icon):
 
-        filename = Path(icon.icon_file.name).name
+        filename = Path(icon.icon_day.name).name
         icon_url = static(f"weather_icons/{filename}")
 
         return format_html('<img src="{}" alt="{}" style="width:65px;height:65px;object-fit:contain;" /><small>{}</small>', icon_url,icon.name,icon.name)

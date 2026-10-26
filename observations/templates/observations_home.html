@@ -3,21 +3,26 @@
 {% block title %}{{ page_name }} | WIMP3{% endblock %}
 {% block content %}
 <div class="row mb-4">
-    <div class="col-12 mb-3">
-        <h3 class="dashboard_title">Weather Observation Modules</h3>
-    </div>
-    <div class="col-12 d-flex flex-row mb-3">
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'observations:weather_code_list' %}">
-                <img src="{% static 'button_icons/binary-code.png' %}" alt="Weather Codes" />
-                <span class="task_desc">Weather Codes</span>
-            </a>
-        </div>
-        <div class="item_dashboard position-relative">
-            <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'observations:weather_icon_list' %}">
-                <img src="{% static 'button_icons/cloudy2.png' %}" alt="Weather Icons" />
-                <span class="task_desc">Weather Icons</span>
-            </a>
+    <div class="col-12">
+        <div class="d-flex align-items-stretch gap-2 mb-3">
+            {% for button in buttons_view %}
+                {% if button.has_permission_view %}
+                    <div class="d-flex align-items-center bg-wimp-light p-3 col-2">
+                        <div class="flex-shrink-0">
+                            <a href="{{ button.url_view }}" class="text-decoration-none"><img src="{{ button.image }}" alt="{{ button.text }}" class="img-fluid" width="90"></a>
+                        </div>
+                        <div class="flex-grow-1 ms-3 text-uppercase text-secondary">
+                            <a class="fw-bold text-decoration-none text-dark fs-5 mb-1 pb-1 d-block border-bottom border-secondary-subtle" href="{{ button.url_view }}">{{ button.text }}</a>
+                            <small class="text-secondary d-block">
+                                <a href="{{ button.url_view }}" class="btn btn-link text-decoration-none p-0 fw-medium text-wimp-teal"><i class="fa-solid fa-list"></i> View List</a>
+                                {% if button.has_permission_add %}
+                                &nbsp;<a href="{{ button.url_add }}" class="btn btn-link text-decoration-none p-0 fw-medium text-wimp-navy"><i class="fa-solid fa-file"></i> New Entry</a>
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
         </div>
     </div>
 </div>

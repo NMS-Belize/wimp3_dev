@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django_tables2 import RequestConfig
 from django.contrib import messages
-
+from django.templatetags.static import static
 
 from pathlib import Path
 
@@ -20,14 +20,41 @@ from .serializers import WeatherCodeSerializer
 
 # Create your views here.
 def index(request):
+
+    buttons_main = [
+        {
+            "url_view": reverse("observations:weather_icon_list"),
+            "url_add": reverse("observations:weather_icon_entry"),
+            "image": static("/button_icons/cloudy2.png"),
+            "text": "Weather Icons",
+            "permission_view": "observations.view_weathericon",
+            "permission_add": "observations.add_weathericon",
+        },
+        {
+            "url_view": reverse("observations:weather_code_list"),
+            "url_add": reverse("observations:weather_code_entry"),
+            "image": static("/button_icons/binary-code.png"),
+            "text": "Weather Codes",
+            "permission_view": "observations.view_weathercode",
+            "permission_add": "observations.add_weathercode",
+        }
+    ]
+
+    # Add permission status to each button
+    for button in buttons_main:
+        button["has_permission_view"] = request.user.has_perm(button["permission_view"])
+        button["has_permission_add"] = request.user.has_perm(button["permission_add"])
+
     context = {
-        'page_name': 'Weather Observations',
+        'page_name': "Weather Observations",
+        'buttons_view': buttons_main,
+        'buttons_add':  buttons_main,
     }
-    return render(request, 'observations_home.html', context) 
+    return render(request, 'observations_home.html', context)
 
 ############# WEATHER ICONS
 def weather_code_list(request, id=None):
-    page_name = "Present Weather Codes"
+    page_name = "Weather Codes"
     qs = WeatherCodes.objects.all().order_by('id')
     table = WeatherCodesTable(qs)
     RequestConfig(request).configure(table)
