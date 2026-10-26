@@ -3,118 +3,99 @@
 {% load group_tags %}
 {% block content %}
 <div id="dashboard" class="container-full">
-    <div class="row mb-5 pt-3">
-        <div class="col-8">
-            <h3 class="dashboard_title">Quick Access to NMS Apps</h3>
-            <div class="d-flex flex-row mb-3">
-                <div class="item_dashboard_app">
-                    <a class=" top-50 start-50 translate-middle" href="https://wimp.nms.gov.bz" target="_blank" rel="noopener noreferrer">
-                        <img class="" src="{% static 'app_icons/wimp_thumb.png' %}" alt="NMS Website" />
-                        <span class="task_desc">WIMP2</span>
-                    </a>
-                </div>
-                <div class="item_dashboard_app">
-                    <a class=" top-50 start-50 translate-middle" href="https://nms.gov.bz" target="_blank" rel="noopener noreferrer">
-                        <img class="" src="{% static 'button_icons/world-wide-web.png' %}" alt="NMS Website" />
-                        <span class="task_desc">NMS Website [LIVE]</span>
-                    </a>
-                </div>
-                <div class="item_dashboard_app">
-                    <a class=" top-50 start-50 translate-middle" href="https://website.nmsapps.gov.bz" target="_blank" rel="noopener noreferrer">
-                        <img class="" src="{% static 'button_icons/world-wide-web.png' %}" alt="NMS Website" />
-                        <span class="task_desc">NMS Website [TEST]</span>
-                    </a>
-                </div>
-                <div class="item_dashboard_app">
-                    <a class="top-50 start-50 translate-middle" href="http://192.168.3.87/" target="_blank" rel="noopener noreferrer">
-                        <img class="" src="{% static 'app_icons/radar_thumb.png' %}" alt="Radar Imagery" />
-                        <span class="task_desc">Radar Imagery</span>
-                    </a>
-                </div>
-            </div>
 
-            <h3 class="dashboard_title">Let's Get Started</h3>
-
-            <div class="d-flex flex-row mb-3">
-                {% if perms.forecasts.view_districtforecast %}
-                <div class="item_dashboard position-relative">
-                    <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'forecasts:index' %}">
-                        <img src="{% static 'button_icons/meteorology.png' %}" alt="Forecasts" />
-                        <span class="task_desc">Forecasts</span>
-                    </a>
-                </div>
-                {% endif %}
-                {% if perms.observations.view_weathericons %}
-                <div class="item_dashboard position-relative">
-                    <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'observations:index' %}">
-                        <img src="{% static 'button_icons/cloudy.png' %}" alt="Weather Observations" />
-                        <span class="task_desc">Weather Observations</span>
-                    </a>
-                </div>
-                {% endif %}
-                {% if perms.agro.view_pestrisk %}
-                <div class="item_dashboard position-relative">
-                    <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'agro:index' %}">
-                        <img src="{% static 'button_icons/agriculture.png' %}" alt="Agricultural Services" />
-                        <span class="task_desc">Agricultural Services</span>
-                    </a>
-                </div>
-                {% endif %}
-                {% if perms.alerts.view_tropicalweatheralerts %}
-                <div class="item_dashboard position-relative">
-                    <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'alerts:index' %}">
-                        <img src="{% static 'button_icons/alert.png' %}" alt="Weather Alerts" />
-                        <span class="task_desc">Weather Alerts</span>
-                    </a>
-                </div>
-                {% endif %}
-                {% if perms.radar.view_radarimages %}
-                <div class="item_dashboard position-relative">
-                    <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'radar:radar_images_list' %}">
-                        <img src="{% static 'button_icons/radar.png' %}" alt="Radar Imagery" />
-                        <span class="task_desc">Radar Imagery</span>
-                    </a>
-                </div>
-                {% endif %}
-                {% if perms.inventory.view_inventoryitem %}
-                <div class="item_dashboard position-relative"></div>
-                {% endif %}
-            </div>
-            {% if request.user.is_superuser %}
-                <h3 class="dashboard_title">Administrative Management</h3>
-
-                <div class="d-flex flex-row mb-3">
-                    <div class="item_dashboard position-relative">
-                        <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'system_core:index' %}">
-                            <img src="{% static 'button_icons/settings.png' %}" alt="System Parameters" />
-                            <span class="task_desc">System Parameters</span>
-                        </a>
-                    </div>
-                    <div class="item_dashboard position-relative">
-                        <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'inventory:index' %}">
-                            <img src="{% static 'button_icons/inventory-management.png' %}" alt="Inventory Management" />
-                            <span class="task_desc">Inventory Management</span>
-                        </a>
-                    </div>
-                    <div class="item_dashboard position-relative">
-                        <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'users:index' %}">
-                            <img src="{% static 'button_icons/management.png' %}" alt="User Management" />
-                            <span class="task_desc">User Management</span>
-                        </a>
-                    </div>
-                </div>
-            {% endif %}
-        </div>
-        <div class="col-4">
-            <h3 class="dashboard_title">User Information</h3>
+    <div class="row mb-3">
+        <div class="col-12">
             <div class="alert alert-light">
-                <h4>Welcome, {{ user.first_name }} {{ user.last_name }}!</h4>
-                <p>Role: {{ user.groups.all|join:", " }}</p>
-                <p>User Activity:</p>
-                <p>Last Login: {{ user.last_login }}</p>
-                <p>User Role: {% if user.is_superuser %}Administrator{% else %}Standard User{% endif %}</p>
+                <p class="fw-bold fs-5 mb-2">Welcome, {{ user.first_name }} {{ user.last_name }}!</p>
+                <p class="m-0"><strong>User Group:</strong> {{ user.groups.all|join:", " }} | <strong>User Role:</strong> {% if user.is_superuser %}Administrator{% else %}Standard User{% endif %} | <strong>Last Login:</strong> {{ user.last_login }}</p>
             </div>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-12">
+            <h3 class="text-uppercase fs-4 fw-bold border-bottom border-2 border-secondary-subtle mb-3 pb-2 d-block">Quick Access to NMS Apps</h3>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="d-flex flex-row mb-3 gap-2">
+                {% for button in buttons_top %}
+                <div class="d-flex align-items-center bg-wimp-light p-3 col">
+                    <div class="flex-shrink-0">
+                        <a href="{{ button.url_view }}" target="_blank" class="text-decoration-none"><img src="{{ button.image }}" alt="{{ button.text }}" class="img-fluid" width="90"></a>
+                    </div>
+                    <div class="flex-grow-1 ms-3 text-uppercase text-secondary">
+                        <a class="fw-bold text-decoration-none text-dark fs-5 mb-1 pb-1 d-block border-bottom border-secondary-subtle" target="_blank" href="{{ button.url_view }}">{{ button.text }}</a>
+                        <small class="text-secondary d-block">
+                            <a href="{{ button.url_view }}" class="btn btn-link text-decoration-none p-0 fw-medium text-wimp-teal"><i class="fa-solid fa-arrow-up-right-from-square"></i> Go to Site</a>
+                        </small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12">
+            <h3 class="text-uppercase fs-4 fw-bold border-bottom border-2 border-secondary-subtle mb-3 pb-2 d-block">Let's Get Started</h3>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="d-flex align-items-stretch gap-2 mb-3">
+                {% for button in buttons_view %}
+                    {% if button.has_permission_view %}
+                        <div class="d-flex align-items-center bg-wimp-light p-3 col">
+                            <div class="flex-shrink-0">
+                                <a href="{{ button.url_view }}" class="text-decoration-none"><img src="{{ button.image }}" alt="{{ button.text }}" class="img-fluid" width="90"></a>
+                            </div>
+                            <div class="flex-grow-1 ms-3 text-uppercase text-secondary">
+                                <a class="fw-bold text-decoration-none text-dark fs-5 mb-1 pb-1 d-block border-bottom border-secondary-subtle" href="{{ button.url_view }}">{{ button.text }}</a>
+                                <small class="text-secondary d-block">
+                                    <a href="{{ button.url_view }}" class="btn btn-link text-decoration-none p-0 fw-medium text-wimp-teal">Module Dashboard</a>
+                                </small>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {% if request.user.is_superuser %}
+    <div class="row">
+        <div class="col-12">
+            <h3 class="text-uppercase fs-4 fw-bold border-bottom border-2 border-secondary-subtle mb-3 pb-2 d-block">Administrative Management</h3>
+        </div>
+    </div>
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="d-flex flex-row mb-3">
+                <div class="item_dashboard position-relative">
+                    <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'system_core:index' %}">
+                        <img src="{% static 'button_icons/settings.png' %}" alt="System Parameters" />
+                        <span class="task_desc">System Parameters</span>
+                    </a>
+                </div>
+                <div class="item_dashboard position-relative">
+                    <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'inventory:index' %}">
+                        <img src="{% static 'button_icons/inventory-management.png' %}" alt="Inventory Management" />
+                        <span class="task_desc">Inventory Management</span>
+                    </a>
+                </div>
+                <div class="item_dashboard position-relative">
+                    <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'users:index' %}">
+                        <img src="{% static 'button_icons/management.png' %}" alt="User Management" />
+                        <span class="task_desc">User Management</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

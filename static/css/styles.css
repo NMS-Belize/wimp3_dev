@@ -161,6 +161,8 @@ h1{ font-weight: 300; font-size: 50px; }
 .bg-wimp-green      { background-color: var(--wimp-green) !important; }
 .bg-wimp-lime       { background-color: var(--wimp-lime) !important; }
 
+.border-wimp-teal { border-color: var(--wimp-teal) !important; }
+
 /* WIMP3 Interface */
 .bg-wimp-dark       { background-color: var(--wimp-dark) !important; }
 .bg-wimp-gray       { background-color: var(--wimp-gray) !important; }

@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<!--<div class="row mb-2">
+<div class="row">
     <div class="col-12">
-        <h3 class="dashboard_title">Forecast Modules</h3>
+        <h3 class="text-uppercase fs-4 fw-bold border-bottom border-2 border-secondary-subtle mb-3 pb-2 d-block">Our Weather Forecasts</h3>
     </div>
-</div>-->
+</div>
 <div class="row mb-4">
     <div class="col-12">
         <div class="d-flex align-items-stretch gap-2 mb-3">
@@ -29,9 +29,19 @@
             {% endfor %}
         </div>
     </div>
-    <div class="col-12 mb-2">
-        <h3 class="dashboard_title">Forecast Parameters</h3>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <h3 class="text-uppercase fs-4 fw-bold border-bottom border-2 border-secondary-subtle mb-3 pb-2 d-block">Forecast Parameters</h3>
     </div>
+    <div class="col-12">
+        <div class="alert alert-info p-2" role="alert">
+        <p class="mb-1"><i class="fa-solid fa-circle-info me-2 mt-1"></i> <strong>Parameters Information</strong>: Items listed in this section populate the dropdown menus and selection fields within the entry modules. Adding, editing, or removing parameters may affect the available forecast options.</p>
+    </div>
+</div>
+
+<div class="row">
     <div class="col-12 buttons-grid mb-5">
         {% for button_p in buttons_p_view %}
         {% if button_p.has_permission_view %}
@@ -53,9 +63,12 @@
         {% endif %}
         {% endfor %}
     </div>
-    {% if user.is_superuser %}
+</div>
+
+{% if user.is_superuser %}
+<div class="row mb-5">
     <div class="col-12">
-        <h3 class="dashboard_title">Get Data</h3>
+        <h3 class="text-uppercase fs-4 fw-bold border-bottom border-2 border-secondary-subtle mb-3 pb-2 d-block">Get Data</h3>
     </div>
     <div class="col-12 d-flex flex-row mb-3 item_dashboard">
         <form method="post" action="{% url 'forecasts:import_general_weather_forecast_categories' %}" onsubmit="return confirm('Import General Weather Forecast Categories now? Existing records may be updated.');">
@@ -66,5 +79,6 @@
             </button>
         </form>
     </div>
-    {% endif %}
+</div>
+{% endif %}
 {% endblock %}

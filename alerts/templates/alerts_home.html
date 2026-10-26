@@ -1,10 +1,12 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
+<div class="row">
+    <div class="col-12">
+        <h3 class="text-uppercase fs-4 fw-bold border-bottom border-2 border-secondary-subtle mb-3 pb-2 d-block">Our Weather Alerts</h3>
+    </div>
+</div>
 <div class="row mb-4">
-    <!--<div class="col-12 mb-3">
-        <h3 class="dashboard_title">Alert Modules</h3>
-    </div>-->
     <div class="col-12 d-flex flex-row gap-3 mb-3">
     {% for button in buttons_view %}
         {% if button.has_permission_view %}
@@ -25,8 +27,17 @@
         {% endif %}
     {% endfor %}
     </div>
-    <div class="col-12 mb-3">
-        <h3 class="dashboard_title">Alerts Parameters</h3>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <h3 class="text-uppercase fs-4 fw-bold border-bottom border-2 border-secondary-subtle mb-3 pb-2 d-block">Weather Alert Parameters</h3>
+    </div>
+    <div class="col-12">
+        <div class="alert alert-info p-2" role="alert">
+        <p class="mb-1"><i class="fa-solid fa-circle-info me-2 mt-1"></i> <strong>Parameters Information</strong>: Items listed in this section populate the dropdown menus and selection fields within the entry modules. Adding, editing, or removing parameters may affect the available forecast options.</p>
+    </div>
+</div>
     </div>
     <div class="col-12 d-flex flex-row mb-5 row">
         {% for button_p in buttons_p_view %}
