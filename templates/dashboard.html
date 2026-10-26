@@ -44,7 +44,7 @@
                     </a>
                 </div>
                 {% endif %}
-                {% if perms.observations.view_observation %}
+                {% if perms.observations.view_weathericons %}
                 <div class="item_dashboard position-relative">
                     <a class="position-absolute top-50 start-50 translate-middle" href="{% url 'observations:index' %}">
                         <img src="{% static 'button_icons/cloudy.png' %}" alt="Weather Observations" />
