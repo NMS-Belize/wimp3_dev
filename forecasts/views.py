@@ -92,7 +92,7 @@ def index(request):
             "permission_view": "forecasts.view_forecastgeneral",
             "permission_add": "forecasts.add_forecastgeneral",
             "permission_change": "forecasts.change_forecastgeneral",
-            "permission_delete": "forecasts.delete_forecastgeneral",
+            "permission_delete": "forecasts.delete_forecastgeneral"
         },
         {
             "url_view": reverse("forecasts:marine_forecast_list"),
@@ -145,6 +145,7 @@ def index(request):
             "text": "Category",
             "permission_view": "forecasts.view_forescastgeneralcategory",
             "permission_add": "forecasts.add_forescastgeneralcategory",
+            "parameters_group": 1
         },
         {
             "url_view": reverse("forecasts:marine_forecast_category_list"),
@@ -154,6 +155,7 @@ def index(request):
             "text": "Category",
             "permission_view": "forecasts.view_forescastmarinecategory",
             "permission_add": "forecasts.add_forescastmarinecategory",
+            "parameters_group": 2
         },
         {
             "url_view": reverse("forecasts:marine_forecast_details_category_list"),
@@ -163,6 +165,7 @@ def index(request):
             "text": "Details Category",
             "permission_view": "forecasts.view_forecastmarinedetails",
             "permission_add": "forecasts.add_forecastmarinedetails",
+            "parameters_group": 2
         },
         {
             "url_view": reverse("forecasts:sea_state_list"),
@@ -172,6 +175,7 @@ def index(request):
             "text": "Sea State",
             "permission_view": "forecasts.view_seastates",
             "permission_add": "forecasts.add_seastate",
+            "parameters_group": 1
         },
         {
             "url_view": reverse("forecasts:instructions_list"),
@@ -181,6 +185,7 @@ def index(request):
             "text": "Instructions Category",
             "permission_view": "forecasts.view_districtforecastinstructions",
             "permission_add": "forecasts.add_districtforecastinstructions",
+            "parameters_group": 1
         },
         {
             "url_view": reverse("forecasts:instructions_category_list"),
@@ -190,6 +195,7 @@ def index(request):
             "text": "Instructions",
             "permission_view": "forecasts.view_districtforecastinstructionscategory",
             "permission_add": "forecasts.add_districtforecastinstructionscategory",
+            "parameters_group": 1
         },
         {
             "url_view": reverse("forecasts:municipality_area_list"),
@@ -199,6 +205,7 @@ def index(request):
             "text": "Area/Zone",
             "permission_view": "forecasts.view_municipalityzone",
             "permission_add": "forecasts.add_municipalityzone",
+            "parameters_group": 1
         },
         {
             "url_view": reverse("forecasts:wind_direction_list"),
@@ -208,6 +215,7 @@ def index(request):
             "text": "Wind Direction",
             "permission_view": "forecasts.view_winddirection",
             "permission_add": "forecasts.add_winddirection",
+            "parameters_group": 1
         },
         {
             "url_view": reverse("forecasts:wind_speed_list"),
@@ -217,6 +225,7 @@ def index(request):
             "text": "Wind Speed",
             "permission_view": "forecasts.view_windspeed",
             "permission_add": "forecasts.add_windspeed",
+            "parameters_group": 1
         },
         {
             "url_view": reverse("forecasts:wind_condition_list"),
@@ -226,6 +235,7 @@ def index(request):
             "text": "Wind Conditions",
             "permission_view": "forecasts.view_windcondition",
             "permission_add": "forecasts.add_windcondition",
+            "parameters_group": 1
         },
         {
             "url_view": reverse("forecasts:weather_conditions_list"),
@@ -235,6 +245,7 @@ def index(request):
             "text": "Weather Conditions",
             "permission_view": "forecasts.view_weatherconditions",
             "permission_add": "forecasts.add_weatherconditions",
+            "parameters_group": 1
         },
         {
             "url_view": reverse("forecasts:tide_day_category_list"),
@@ -244,6 +255,7 @@ def index(request):
             "text": "Day/Time Category",
             "permission_view": "forecasts.view_tides",
             "permission_add": "forecasts.add_tides",
+            "parameters_group": 1
         },
         {
             "url_view": reverse("forecasts:tide_level_category_list"),
@@ -253,6 +265,7 @@ def index(request):
             "text": "Level Category",
             "permission_view": "forecasts.view_tidelevelcategory",
             "permission_add": "forecasts.add_tidelevelcategory",
+            "parameters_group": 1
         },
         {
             "url_view": reverse("forecasts:sun_day_category_list"),
@@ -262,6 +275,7 @@ def index(request):
             "text": "Day/Time Category",
             "permission_view": "forecasts.view_sundaycategory",
             "permission_add": "forecasts.add_sundaycategory",
+            "parameters_group": 1
         },
         {
             "url_view": reverse("forecasts:sun_move_category_list"),
@@ -271,6 +285,7 @@ def index(request):
             "text": "Movement Category",
             "permission_view": "forecasts.view_sunmovementcategory",
             "permission_add": "forecasts.add_sunmovementcategory",
+            "parameters_group": 1
         },
         {
             "url_view": reverse("forecasts:moon_move_category_list"),
@@ -280,6 +295,7 @@ def index(request):
             "text": "Movement Category",
             "permission_view": "forecasts.view_moonmovementcategory",
             "permission_add": "forecasts.add_moonmovementcategory",
+            "parameters_group": 1
         },
         {
             "url_view": reverse("forecasts:moon_day_category_list"),
@@ -289,6 +305,7 @@ def index(request):
             "text": "Day/Time Category",
             "permission_view": "forecasts.view_moondaycategory",
             "permission_add": "forecasts.add_moondaycategory",
+            "parameters_group": 1
         },
     ]
     

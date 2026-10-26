@@ -10,7 +10,7 @@
     <div class="col-12 d-flex flex-row gap-3 mb-3">
     {% for button in buttons_view %}
         {% if button.has_permission_view %}
-            <div class="d-flex align-items-center bg-wimp-light p-3 col-2">
+            <div class="d-flex align-items-center bg-wimp-light rounded p-3 col-2">
                 <div class="flex-shrink-0">
                     <a href="{{ button.url_view }}" class="text-decoration-none"><img src="{{ button.image }}" alt="{{ button.text }}" class="img-fluid" width="90"></a>
                 </div>
@@ -38,40 +38,48 @@
         <p class="mb-1"><i class="fa-solid fa-circle-info me-2 mt-1"></i> <strong>Parameters Information</strong>: Items listed in this section populate the dropdown menus and selection fields within the entry modules. Adding, editing, or removing parameters may affect the available forecast options.</p>
     </div>
 </div>
-    </div>
-    <div class="col-12 d-flex flex-row mb-5 row">
-        {% for button_p in buttons_p_view %}
-        {% if button_p.has_permission_view %}
-            <div class="col-1 text-center text-uppercase">
-                <div class="mb-2 card shadow shadow-sm border-light">
-                    <div class="card-header">{% if button_p.text_cat %}<small class="d-block text-muted">{{ button_p.text_cat }}</small>{% endif %}</div>
-                    <a href="{{ button_p.url_view }}" class="text-decoration-none mt-2"><img src="{{ button_p.image }}" alt="{{ button_p.text }}" class="card-img-top" style="width: 55px; height: 55px;"></a>
-                    <div class="card-body border-top-light pt-2 pb-2">
-                        <a class="btn btn-link p-0 text-dark fw-bold fs-6 text-decoration-none" href="{{ button_p.url_view }}"><span class="card-title">{{ button_p.text }}</span></a>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><a href="{{ button_p.url_view }}" class="btn btn-sm btn-link fw-medium text-decoration-none p-0 text-wimp-teal"><small><i class="fa-solid fa-list"></i> View List</small></a></li>
-                        {% if button_p.has_permission_add and button_p.url_add  %}
-                        <li class="list-group-item"><a href="{{ button_p.url_add }}" class="btn btn-sm btn-link fw-medium text-decoration-none p-0 text-wimp-navy"><small><i class="fa-solid fa-file"></i> New Entry</small></a></li>
-                        {% endif %}
-                    </ul>
+
+<div class="row mb-5">
+    {% for button_p in buttons_p_view %}
+    {% if button_p.has_permission_view %}
+    <div class="col-3 ">
+        <div class="bg-light border border-secondary-subtle rounded mb-3 p-2 d-flex justify-content-between align-items-center">
+            <!--<div class="mb-2 card h-100 shadow shadow-sm border-light" >-->
+            <div class="d-flex">
+                <div class="border border-secondary-subtle me-3 rounded p-2 bg-white">
+                    <a href="{{ button_p.url_view }}" class="text-decoration-none mt-2"><img src="{{ button_p.image }}" alt="{{ button_p.text }}" class="card-img-top" style="width: 40px; height: 40px;"></a>
                 </div>
+                
+                <p class="border-top-light p-2 m-0">
+                    {% if button_p.text_cat %}<small class="d-block text-muted">{{ button_p.text_cat }}</small>{% endif %}
+                    <a class="btn btn-link p-0 text-dark fw-bold fs-6 text-decoration-none" href="{{ button_p.url_view }}"><span class="card-title">{{ button_p.text }}</span></a>
+                </p>
             </div>
-        {% endif %}
-        {% endfor %}
-    <div>
-    <div class="col-12 mb-3">
-        <h3 class="dashboard_title">Get Data</h3>
-    </div>
-    <div class="col-12 d-flex flex-row mb-3">
-        <div class="item_dashboard_import position-relative shadow-sm p-3 me-3">
-            <div class="position-absolute top-50 start-0 translate-middle-y p-3">
-                <a class="d-flex text-decoration-none" href="{% url 'alerts:cap_alerts_import_page' %}">
-                    <img src="{% static 'button_icons/file-import.png' %}" alt="Import CAP Alerts" />
-                    <span class="task_desc">Import CAP Alerts</span>
-                </a>
-            </div> 
+            <div class="d-flex justify-content-end">
+                <a href="{{ button_p.url_view }}" class="btn btn-sm bg-wimp-teal text-white fw-medium rounded-pill text-decoration-none ms-2 px-3 py-1"><small><i class="fa-solid fa-list"></i> View List</small></a>
+                {% if button_p.has_permission_add and button_p.url_add  %}
+                <a href="{{ button_p.url_add }}" class="btn btn-sm bg-wimp-navy text-white fw-medium rounded-pill text-decoration-none ms-2 px-3 py-1"><small><i class="fa-solid fa-file"></i> New Entry</small></a>
+                {% endif %}
+            </div>
         </div>
+        </div>
+    {% endif %}
+    {% endfor %}
+</div>
+    
+
+
+<div class="col-12 mb-3">
+    <h3 class="dashboard_title">Get Data</h3>
+</div>
+<div class="col-12 d-flex flex-row mb-3">
+    <div class="item_dashboard_import position-relative shadow-sm p-3 me-3">
+        <div class="position-absolute top-50 start-0 translate-middle-y p-3">
+            <a class="d-flex text-decoration-none" href="{% url 'alerts:cap_alerts_import_page' %}">
+                <img src="{% static 'button_icons/file-import.png' %}" alt="Import CAP Alerts" />
+                <span class="task_desc">Import CAP Alerts</span>
+            </a>
+        </div> 
     </div>
 </div>
 {% endblock %}
