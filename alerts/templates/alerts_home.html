@@ -10,7 +10,7 @@
     <div class="col-12 d-flex flex-row gap-3 mb-3">
     {% for button in buttons_view %}
         {% if button.has_permission_view %}
-            <div class="d-flex align-items-center bg-wimp-light rounded p-3 col-2">
+            <div class="d-flex align-items-center bg-wimp-light rounded p-3 col-2 shadow-sm">
                 <div class="flex-shrink-0">
                     <a href="{{ button.url_view }}" class="text-decoration-none"><img src="{{ button.image }}" alt="{{ button.text }}" class="img-fluid" width="90"></a>
                 </div>
@@ -42,11 +42,11 @@
 <div class="row mb-5">
     {% for button_p in buttons_p_view %}
     {% if button_p.has_permission_view %}
-    <div class="col-3 ">
-        <div class="bg-light border border-secondary-subtle rounded mb-3 p-2 d-flex justify-content-between align-items-center">
+    <div class="col-3">
+        <div class="bg-wimp-light rounded mb-3 p-2 d-flex justify-content-between align-items-center">
             <!--<div class="mb-2 card h-100 shadow shadow-sm border-light" >-->
             <div class="d-flex">
-                <div class="border border-secondary-subtle me-3 rounded p-2 bg-white">
+                <div class="me-3 rounded p-2 bg-white">
                     <a href="{{ button_p.url_view }}" class="text-decoration-none mt-2"><img src="{{ button_p.image }}" alt="{{ button_p.text }}" class="card-img-top" style="width: 40px; height: 40px;"></a>
                 </div>
                 
@@ -66,12 +66,17 @@
     {% endif %}
     {% endfor %}
 </div>
-    
 
-
-<div class="col-12 mb-3">
-    <h3 class="dashboard_title">Get Data</h3>
+<div class="row">
+    <div class="col-12">
+        <h3 class="text-uppercase fs-4 fw-bold border-bottom border-2 border-secondary-subtle mb-3 pb-2 d-block">Get Data</h3>
+    </div>
+    <div class="col-12">
+        <div class="alert alert-info p-2" role="alert">
+        <p class="mb-1"><i class="fa-solid fa-circle-info me-2 mt-1"></i> <strong>Import Information</strong>: The options below load default data from a JSON file. Please note that any existing entries will be overwritten.</p>
+    </div>
 </div>
+
 <div class="col-12 d-flex flex-row mb-3">
     <div class="item_dashboard_import position-relative shadow-sm p-3 me-3">
         <div class="position-absolute top-50 start-0 translate-middle-y p-3">

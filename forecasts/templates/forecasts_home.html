@@ -11,7 +11,7 @@
         <div class="d-flex align-items-stretch gap-2 mb-3">
             {% for button in buttons_view %}
                 {% if button.has_permission_view %}
-                    <div class="d-flex align-items-center bg-wimp-light p-3 col rounded">
+                    <div class="d-flex align-items-center bg-wimp-light p-3 col rounded shadow-sm">
                         <div class="flex-shrink-0">
                             <a href="{{ button.url_view }}" class="text-decoration-none"><img src="{{ button.image }}" alt="{{ button.text }}" class="img-fluid" width="90"></a>
                         </div>
@@ -46,10 +46,10 @@
     {% for button_p in buttons_p_view %}
         {% if button_p.has_permission_view %}
         <div style="width:24%;">
-            <div class="bg-wimp-light border border-secondary-subtle rounded mb-2 p-3 d-flex justify-content-between shadow-sm">
+            <div class="bg-wimp-light rounded mb-2 p-3 d-flex justify-content-between shadow-sm">
                 <!--<div class="mb-2 card h-100 shadow shadow-sm border-light" >-->
                 <div class="d-flex w-100 align-items-center ">
-                    <div class="border border-secondary-subtle me-3 rounded p-2 bg-white">
+                    <div class="me-3 rounded p-2 bg-white">
                         <a href="{{ button_p.url_view }}" class="text-decoration-none mt-2"><img src="{{ button_p.image }}" alt="{{ button_p.text }}" class="card-img-top" style="width: 40px; height: 40px; margin: 0 auto;"></a>
                     </div>
                     <div class="flex-fill text-start">
