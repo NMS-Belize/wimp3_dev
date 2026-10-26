@@ -16,7 +16,7 @@
             <span class="hide-on-collapse">Weather Forecasts</span>
         </a>
         {% endif %}
-        {% if perms.observations.view_observation or user.is_superuser %}
+        {% if perms.observations.view_weathericons or user.is_superuser %}
         <a href="{% url 'observations:index' %}" class="sidebar-link">
             <img class="me-3" src="{% static 'button_icons/cloud-white.png' %}" alt="Dashboard" width="20px" />
             <span class="hide-on-collapse">Weather Observations</span>

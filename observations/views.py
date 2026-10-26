@@ -27,16 +27,16 @@ def index(request):
             "url_add": reverse("observations:weather_icon_entry"),
             "image": static("/button_icons/cloudy2.png"),
             "text": "Weather Icons",
-            "permission_view": "observations.view_weathericon",
-            "permission_add": "observations.add_weathericon",
+            "permission_view": "observations.view_weathericons",
+            "permission_add": "observations.add_weathericons",
         },
         {
             "url_view": reverse("observations:weather_code_list"),
             "url_add": reverse("observations:weather_code_entry"),
             "image": static("/button_icons/binary-code.png"),
             "text": "Weather Codes",
-            "permission_view": "observations.view_weathercode",
-            "permission_add": "observations.add_weathercode",
+            "permission_view": "observations.view_weathercodes",
+            "permission_add": "observations.add_weathercodes",
         }
     ]
 
