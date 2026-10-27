@@ -3402,7 +3402,7 @@ def municipality_forecast_entry(request, id=None):
 
             messages.success(request, "Record saved successfully.")
 
-            municipality_zones = MunicipalityZone.objects.all().order_by("id")[:6]
+            municipality_zones = MunicipalityZone.objects.all().order_by("id")[:9]
 
             for zone in municipality_zones:
                 MunicipalityForecastDetails.objects.get_or_create(municipality_forecast=saved_entry,municipality_area=zone)
