@@ -1,190 +1,75 @@
 {% extends "base_form.html" %}
 {% load static %}
+{% load render_table from django_tables2 %}
+
 {% block content %}
+{# If the base already wraps this block in a form, use that form instead. #}
+<form method="post" action="{% url 'forecasts:municipality_forecast_details_entry' entry.pk %}" class="mb-5">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
     <div class="d-flex justify-content-between mt-2">
-        <div>
-            <h4>Forecast Date: <strong>{{ entry.forecast_date }}</strong></h4>
+        <h4>Forecast Date: <strong>{{ entry.forecast_date }}</strong></h4>
+        <div class="form-check form-switch pt-2">
+            {{ form.is_published }}
+            <label class="form-check-label" for="{{ form.is_published.id_for_label }}">
+                Is Published?
+            </label>
+            {{ form.is_published.errors }}
         </div>
-        <div class="pt-2">
-            <div class="form-check form-switch align-self-center">
-                {{ form.is_published }}
-                <label id="label_switch" class="form-check-label" for="has_user_account">Is Published?</label>
+    </div>
+    <div class="alert alert-info mt-2">
+        Click Save Changes to save your selections and publication status.
+    </div>
+    {% for row_form in detail_forms %}
+        <input type="hidden" name="detail_ids" value="{{ row_form.instance.pk }}">
+        {% if row_form.non_field_errors %}
+            <div class="alert alert-danger">
+                <strong>{{ row_form.instance.municipality_area }}</strong>
+                {{ row_form.non_field_errors }}
             </div>
-        </div>      
-    </div>
-    <div class="row mt-2">
-        <div class="col-12">
-            <div class="alert alert-info">The entries below are set to autosave</div>
-        </div>
-    </div>
-    <div class="row mt-1">
-        <div class="col-12">
-        {% load render_table from django_tables2 %}
+        {% endif %}
+    {% endfor %}
+    <div class="table-responsive">
         {% render_table table %}
-        </div>   
     </div>
+    <div class="d-flex gap-2 mt-3">
+        <button type="submit" name="btn_submit" id="btn_submit" class="btn btn-success me-2">Save Changes</button>
+        <button type="submit" name="btn_submit_close" id="btn_submit_close" class="btn btn-primary me-2">Save &amp; Close</button>
+        <a href="{{ back_url }}" class="btn btn-danger" id="btn_close" >Cancel</a>
+    </div>
+</form>
 {% endblock %}
+
 {% block extra_js %}
-<script type="text/javascript">
-$(document).ready(function () {
+<script>
+$(function () {
+    $('.wind-speed').select2({placeholder: 'Select Wind Speed', width: '100%'});
+    $('.wind-condition').select2({placeholder: 'Select Wind Condition', width: '100%'});
+    $('.weather-condition').select2({placeholder: 'Select Weather Condition', width: '100%'});
 
-    document.getElementById("id_is_published").addEventListener("change", function () {
-        console.log("Checkbox changed: ", this.checked);
-        const checkbox = this;
-        const statusText = document.getElementById("label_switch");
-
-        fetch("{% url 'forecasts:municipality_forecast_toggle_is_published_ajax' entry.id %}", {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: new URLSearchParams({
-                is_published: checkbox.checked ? "true" : "false"
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                statusText.innerText = data.is_published ? "Published successfully." : "Unpublished successfully.";
-            }
-        });
-    });
-    
-    $('.wind-speed').select2({
-        placeholder: 'Select Wind Speed',
-        width: '100%',
-        closeOnSelect: true,
-    });
-
-    $('.wind-condition').select2({
-        placeholder: 'Select Wind Condition',
-        width: '100%',
-        closeOnSelect: true,
-    });
-
-    $('.weather-condition').select2({
-        placeholder: 'Select Sea State',
-        width: '100%',
-        closeOnSelect: true,
-    });
-
-    function formatWeatherIcon(option) {
-
-        if (!option.id) {
-            return option.text;
-        }
-
-        const iconURL = "{% static 'weather_icons/' %}";
-        const image = $(option.element).data("image");
-
-        if (!image) {
-            return option.text;
-        }
-
-        // Remove weather_icons/ if already included
+    function formatWeatherIcon(option, size) {
+        if (!option.id) return option.text;
+        const image = $(option.element).attr('data-image');
+        if (!image) return option.text;
         const filename = image.replace(/^weather_icons\//, '');
-        const imageURL = iconURL + filename;
-
-        return $('<span class="d-flex align-items-center"><img src="' + imageURL  + '" style="width:35px; height:35px; object-fit:contain;"><span></span></span>').find('span:last').text(option.text).end();
-    }
-
-    function formatWeatherIconSelect(option) {
-
-        if (!option.id) {
-            return option.text;
-        }
-
-        const iconURL = "{% static 'weather_icons/' %}";
-        const image = $(option.element).data("image");
-
-        if (!image) {
-            return option.text;
-        }
-
-        // Remove weather_icons/ if already included
-        const filename = image.replace(/^weather_icons\//, '');
-        const imageURL = iconURL + filename;
-
-        return $('<span class="d-flex align-items-center"><img src="' + imageURL  + '" style="width:65px; height:65px; object-fit:contain;"><span></span></span>').find('span:last').text(option.text).end();
+        const container = $('<span>').addClass('d-flex align-items-center');
+        $('<img>').attr({
+            src: "{% static 'weather_icons/' %}" + filename,
+            alt: ''
+        }).css({width: size + 'px', height: size + 'px', objectFit: 'contain'})
+          .appendTo(container);
+        $('<span>').text(option.text).appendTo(container);
+        return container;
     }
 
     $('.weather-icon-select').select2({
         placeholder: 'Select Weather Icon',
         width: '100%',
         allowClear: true,
-        templateResult: formatWeatherIconSelect,
-        templateSelection: formatWeatherIcon,
-        escapeMarkup: function(markup) {
-            return markup;
-        }
+        templateResult: function (option) { return formatWeatherIcon(option, 65); },
+        templateSelection: function (option) { return formatWeatherIcon(option, 35); }
     });
-
-    $(document).on("change", ".inline-edit", function () {
-
-        const input = $(this);
-
-        console.log("Inline update triggered");
-
-        console.log({
-            id: input.attr("data-id"),
-            field: input.attr("data-field"),
-            value: input.val()
-        });
-
-        const data = {
-            id: input.data("id"),
-            field: input.data("field"),
-            csrfmiddlewaretoken: "{{ csrf_token }}"
-        };
-
-        if (input.data("field") === "wind_direction") {
-            const selectedValues = input.val() || [];
-            //console.log("Selected wind directions:", selectedValues);
-            data.values = selectedValues;
-        } 
-        else if (input.data("field") === "sea_state") {
-            const selectedValues = input.val() || [];
-            //console.log("Selected sea states:", selectedValues);
-            data.values = selectedValues;
-        } 
-        else {
-            data.value = input.val();
-        }
-
-        $.ajax({
-            url: "{% url 'forecasts:municipality_forecast_inline_update' %}",
-            type: "POST",
-            traditional: true,
-            data: data,
-            success: function (response) {
-                //console.log("Saved:", response);
-                if (input.hasClass("select2-hidden-accessible")) {
-                    const selection = input.next(".select2-container").find(".select2-selection");
-                    selection.addClass("is-valid");
-                    setTimeout(function () {
-                        selection.removeClass("is-valid");
-                    }, 1000);
-                }
-                else {
-                    input.addClass("is-valid");
-                    setTimeout(function () {
-                        input.removeClass("is-valid");
-                    }, 3000);
-                }
-            },
-            error: function (xhr) {
-                console.error(xhr.responseText);
-
-                if (input.hasClass("select2-hidden-accessible")) {
-                    input.next(".select2-container").find(".select2-selection").addClass("is-invalid");
-                } 
-                else {
-                    input.addClass("is-invalid");
-                }
-            }
-        });
-    });
+    // Saving happens only through the form's submit buttons.
 });
 </script>
 {% endblock %}

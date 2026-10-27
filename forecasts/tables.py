@@ -1684,6 +1684,60 @@ class MunicipalityForecastTable(tables.Table):
             return format_html('<a href="{}" class="btn_delete"><i class="fa-solid fa-solid fa-trash"></i></a>',url)
 
 class MunicipalityForecastDetailsTable(tables.Table):
+    municipality_area = tables.Column(verbose_name="Municipality")
+    temp_max = tables.Column(verbose_name="TEMP °F (MAX)", empty_values=())
+    temp_min = tables.Column(verbose_name="TEMP °F (MIN)", empty_values=())
+    wind_speed = tables.Column(verbose_name="Winds (Kts)", empty_values=())
+    wind_condition = tables.Column(verbose_name="Wind Condition", empty_values=())
+    weather_condition = tables.Column(verbose_name="Weather Conditions", empty_values=())
+    icon_day = tables.Column(verbose_name="Icon (Day)", empty_values=())
+    icon_night = tables.Column(verbose_name="Icon (Night)", empty_values=())
+
+    class Meta:
+        model = MunicipalityForecastDetails
+        template_name = "django_tables2/bootstrap5.html"
+        fields = (
+            "municipality_area", "temp_max", "temp_min", "wind_speed",
+            "wind_condition", "weather_condition", "icon_day", "icon_night",
+        )
+        attrs = {
+            "class": "table table-striped table-condensed table-hover tbl_wimp3",
+        }
+
+    def __init__(self, *args, detail_forms=None, **kwargs):
+        self.detail_forms = detail_forms
+        super().__init__(*args, **kwargs)
+
+    def render_field(self, record, name):
+        # The list view is read-only; the entry view supplies forms.
+        if self.detail_forms is None:
+            value = getattr(record, name)
+            return value if value is not None else ""
+        field = self.detail_forms[record.pk][name]
+        return format_html("{}{}", field, field.errors)
+
+    def render_temp_max(self, record):
+        return self.render_field(record, "temp_max")
+
+    def render_temp_min(self, record):
+        return self.render_field(record, "temp_min")
+
+    def render_wind_speed(self, record):
+        return self.render_field(record, "wind_speed")
+
+    def render_wind_condition(self, record):
+        return self.render_field(record, "wind_condition")
+
+    def render_weather_condition(self, record):
+        return self.render_field(record, "weather_condition")
+
+    def render_icon_day(self, record):
+        return self.render_field(record, "icon_day")
+
+    def render_icon_night(self, record):
+        return self.render_field(record, "icon_night")
+    
+'''class MunicipalityForecastDetailsTable(tables.Table):
 
     #edit            = tables.Column(empty_values=(), verbose_name="Edit",attrs={"th": {"style": "width:60px;","class": "col_edit text-center"},"td": {"style": "","class": "col_edit text-center"}})
     
@@ -1790,4 +1844,4 @@ class MunicipalityForecastDetailsTable(tables.Table):
 
         options_html = format_html_join("", "{}",((option,) for option in options))
 
-        return format_html('<select class="form-select image-night weather-icon-select inline-edit" data-id="{}" data-field="image_night" style="width:100%;">{}</select>', record.id, options_html)
+        return format_html('<select class="form-select image-night weather-icon-select inline-edit" data-id="{}" data-field="image_night" style="width:100%;">{}</select>', record.id, options_html)'''

@@ -40,7 +40,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import Image, SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 
 from forecasts.forms import (DistrictForecastDetailsForm, DistrictForecastForm, DistrictForecastInstructionsCategoryForm, DistrictForecastInstructionsForm, DistrictForecastPublishForm, 
-                             MunicipalityForecastForm, MunicipalityZoneForm, MunicipalityForecastPublishForm, 
+                             MunicipalityForecastForm, MunicipalityZoneForm, MunicipalityForecastPublishForm, MunicipalityForecastDetailEditForm, 
                              SeverityForm, ProbabilityForm, WindDirectionForm, WindConditionForm, SeaStateForm, 
                              GeneralForecastCategoryForm, ForecastGeneralForm, ForecastDiscussionForm, 
                              ForecastMarineForm, MarineForecastDetailsCategoryForm, MarineForecastCategoryForm,
@@ -3455,6 +3455,69 @@ def municipality_forecast_details_list(request, id=None, fk=None):
     })
 
 def municipality_forecast_details_entry(request, id):
+    entry = get_object_or_404(MunicipalityForecast, id=id)
+    details = list(
+        MunicipalityForecastDetails.objects
+        .filter(municipality_forecast_id=entry.pk)
+        .order_by("id")
+    )
+    data = request.POST if request.method == "POST" else None
+    form = MunicipalityForecastPublishForm(data, instance=entry)
+    detail_forms = {
+        detail.pk: MunicipalityForecastDetailEditForm(
+            data, instance=detail, prefix=f"detail-{detail.pk}"
+        )
+        for detail in details
+    }
+
+    if request.method == "POST":
+        # Evaluate every form so all errors appear at once.
+        parent_valid = form.is_valid()
+        row_results = [row_form.is_valid() for row_form in detail_forms.values()]
+        expected_ids = {str(detail.pk) for detail in details}
+        submitted_ids = request.POST.getlist("detail_ids")
+        complete_submission = (
+            set(submitted_ids) == expected_ids
+            and len(submitted_ids) == len(expected_ids)
+        )
+        if not complete_submission:
+            form.add_error(
+                None,
+                "The submitted rows do not match this forecast. "
+                "Reload the page and try again.",
+            )
+
+        if parent_valid and all(row_results) and complete_submission:
+            with transaction.atomic():
+                form.save()
+                for row_form in detail_forms.values():
+                    row_form.save()
+            messages.success(request, "Forecast changes saved successfully.")
+            if "btn_submit_close" in request.POST:
+                return redirect("forecasts:municipality_forecast_list")
+            return redirect("forecasts:municipality_forecast_details_entry", id=entry.pk)
+
+        messages.error(request, "Please correct the errors below. Changes were not saved.")
+
+    # Render every row; do not apply RequestConfig pagination here.
+    table = MunicipalityForecastDetailsTable(
+        details, detail_forms=detail_forms, orderable=False
+    )
+    table.empty_text = "No records available"
+    return render(request, "municipality-forecast/table_list_details_entry_form.html", {
+        "page_name": "Municipality Forecast Details",
+        "forecast_id": entry.pk,
+        "new_url": reverse("forecasts:municipality_forecast_entry"),
+        "prev_page": "Municipality Forecasts",
+        "back_url": reverse("forecasts:municipality_forecast_list"),
+        "form": form,
+        "entry": entry,
+        "table": table,
+        "detail_forms": list(detail_forms.values()),
+    })
+
+
+'''def municipality_forecast_details_entry(request, id):
 
     page_name = "Municipality Forecast Details"
     qs = MunicipalityForecastDetails.objects.filter(municipality_forecast_id=id).order_by('id')
@@ -3502,7 +3565,7 @@ def municipality_forecast_details_entry(request, id):
         'form': form,
         'entry': entry,
         'table':    table,
-    })
+    })'''
 
 def municipality_forecast_delete(request, id):
     

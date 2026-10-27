@@ -3,11 +3,10 @@ from unicodedata import category
 
 from django_ckeditor_5.widgets import CKEditor5Widget
 
-
 from click import option
 from django import forms
 from pytz import timezone
-from .models import (DistrictForecast, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, MunicipalityForecast, MunicipalityZone, 
+from .models import (DistrictForecast, DistrictForecastDetails, DistrictForecastInstructions, DistrictForecastInstructionsCategory, MunicipalityForecast, MunicipalityZone, MunicipalityForecastDetails, 
                      Probability, Severity, ForecastGeneral, ForescastGeneralCategory, ForecastDiscussion,
                      WindCondition, WindDirection, SeaState,
                      MoonMovementCategory, MoonDayCategory,
@@ -394,7 +393,55 @@ class MunicipalityForecastPublishForm(forms.ModelForm):
         widgets = {            
             'is_published': forms.CheckboxInput(attrs={'class': 'form-check-input', 'role': 'switch'})
         }
-        
+
+class WeatherIconSelect(forms.Select):
+    def __init__(self, image_field, *args, **kwargs):
+        self.image_field = image_field
+        super().__init__(*args, **kwargs)
+
+    def create_option(self, name, value, label, selected, index,
+                      subindex=None, attrs=None):
+        option = super().create_option(
+            name, value, label, selected, index, subindex, attrs
+        )
+        if hasattr(value, "instance"):
+            image = getattr(value.instance, self.image_field, "")
+            option["attrs"]["data-image"] = str(image or "")
+        return option
+    
+class MunicipalityForecastDetailEditForm(forms.ModelForm):
+    class Meta:
+        model = MunicipalityForecastDetails
+        fields = (
+            "temp_max", "temp_min", "wind_speed", "wind_condition",
+            "weather_condition", "icon_day", "icon_night",
+        )
+        widgets = {
+            "icon_day": WeatherIconSelect("image_day"),
+            "icon_night": WeatherIconSelect("image_night"),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        select_classes = {
+            "wind_speed": "wind-speed",
+            "wind_condition": "wind-condition",
+            "weather_condition": "weather-condition",
+            "icon_day": "weather-icon-select",
+            "icon_night": "weather-icon-select",
+        }
+        for name, field in self.fields.items():
+            field.widget.attrs["class"] = (
+                f"form-select {select_classes[name]}"
+                if name in select_classes else "form-control"
+            )
+            if isinstance(field, forms.ModelChoiceField):
+                label_attribute = "name" if name.startswith("icon_") else "description"
+                field.label_from_instance = (
+                    lambda obj, attr=label_attribute: str(getattr(obj, attr, obj))
+                )
+
+
 class CAPAlertSelectMultiple(forms.SelectMultiple):
 
     def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):
