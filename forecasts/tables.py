@@ -354,14 +354,14 @@ class ForecastDiscussionTable(tables.Table):
     updated_by          = tables.Column(verbose_name="Updated By",attrs={"th": {"style": "width:120px;",},"td": {},},)
     updated_datetime    = tables.DateTimeColumn(verbose_name="Updated Date", format="M d, Y h:i A", attrs={ "th": { "style": "width:160px;", }, "td": {"class": "fst-italic",} })
 
-    #pdf_file        = tables.Column(empty_values=(),verbose_name="PDF",orderable=False, attrs={"th": {"style": "width:40px; text-align:center;","class": ""},"td": {"style": "text-align:center;","class": "col_pdf"}})
+    view        = tables.Column(empty_values=(),verbose_name="View",orderable=False, attrs={"th": {"style": "width:80px; text-align:center;","class": ""},"td": {"style": "text-align:center;","class": "col_pdf"}})
 
     id              = tables.Column(verbose_name="ID", attrs={"th": {"style": "width:80px;","class": "text-end",},"td": {"class": "text-end",},},)
     delete          = tables.Column(empty_values=(),verbose_name="Delete",orderable=False,attrs={"th": {"style": "width:65px;","class": "text-center col_edit",},"td": {"class": "text-center col_delete",},},)
 
     class Meta:
         model = ForecastDiscussion
-        fields = ("edit","forecast_date","forecast_time","forecast_category","created_by","created_datetime","updated_by","updated_datetime","id","delete")
+        fields = ("edit","forecast_date","forecast_time","forecast_category","view","created_by","created_datetime","updated_by","updated_datetime","id","delete")
         sequence = fields
         template_name = "django_tables2/bootstrap5.html"  # or bootstrap5
         # Add table HTML id and CSS classes here
@@ -417,6 +417,13 @@ class ForecastDiscussionTable(tables.Table):
 
         return forecast_category
 
+    def render_view(self, record):
+    
+        link_html   = '<a href="{}" class="btn_delete"><i class="fa-solid fa-eye"></i></a>'
+        url = reverse("forecasts:discussion_entry_view", args=[record.id])
+
+        return format_html(link_html, url)
+    
     def render_created_by(self, record):
         if not record:
             return ""
@@ -442,8 +449,16 @@ class ForecastDiscussionTable(tables.Table):
         return record.updated_by
     
     def render_delete(self, record):
-        link_html   = '<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>'
-        url         = reverse("forecasts:discussion_delete", args=[record.id])
+
+        user = self.request.user
+
+        link_html = '<a href="{}" class="btn_delete"><i class="fa-solid fa-trash"></i></a>'
+        url = reverse("forecasts:discussion_delete", args=[record.id])
+
+        if not user.has_perm("forecasts.delete_forecastdiscussion"):
+            link_html = '<span class="text-secondary text-opacity-25 cursor-block"><i class="fa-solid fa-ban"></i></span>'
+            url = 'javascript:void(0)'
+
         return format_html(link_html, url)
 
 class SeaStateTable(tables.Table):

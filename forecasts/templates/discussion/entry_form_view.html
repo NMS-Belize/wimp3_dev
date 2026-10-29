@@ -1,0 +1,18 @@
+{% extends "base_form.html" %}
+{% load static %}
+{% block content %}
+
+<div class="row">
+    <div class="col-12 mb-3">
+        <label class="form-label mb-3">General Weather Forecast: </label>
+        <span class="fw-bold form-control w-50 mb-3" style="max-width: 1200px;">{{ entry.general_forecast.forecast_date|date:"d M Y" }}<span> | Forecast: ({{ entry.general_forecast.id }})</span>
+</span>
+        <div class="form-control" style="max-width: 1200px;">
+            {{ entry.forecast_discussion | safe }}
+        </div>
+    </div>
+</div>
+<div class="col-12 mt-3">
+    <a id="btn_close" class="btn btn-danger" href="{{ back_url }}">Back to Entries</a>
+</div>
+{% endblock %}

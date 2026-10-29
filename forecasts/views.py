@@ -1072,6 +1072,26 @@ def discussion_entry(request, id=None):
         'entry': entry
     })
 
+def discussion_entry_view(request, id=None):
+
+    page_name = "Forecast Discussion"
+
+    # If id exists => update, else => create new
+    if id:
+        entry = get_object_or_404(ForecastDiscussion, id=id)
+        forecast_date = entry.general_forecast
+    else:
+        entry = None
+        forecast_date = None
+        
+    return render(request, 'discussion/entry_form_view.html', {
+        'page_name':    page_name,
+        'prev_page':    'Forecast Discussions',
+        'new_url':      reverse('forecasts:discussion_entry'),
+        'back_url':     reverse('forecasts:discussion_list'),
+        'entry': entry
+    })
+
 def discussion_delete(request, id):
     
     entry = get_object_or_404(ForecastDiscussion, id=id)

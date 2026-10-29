@@ -218,6 +218,7 @@ urlpatterns = [
     path('forecast-discussion/list/', views.discussion_list, name="discussion_list"),
     path('forecast-discussion/entry/', views.discussion_entry, name="discussion_entry"),
     path('forecast-discussion/entry/<int:id>/', views.discussion_entry, name="discussion_entry"),
+    path('forecast-discussion/entry/<int:id>/view-only/', views.discussion_entry_view, name="discussion_entry_view"),
     path('forecast-discussion/entry/<int:id>/delete/', views.discussion_delete, name='discussion_delete'),
 
     #path('district-forecast/forecast-entry/<int:fk>/details/entry/',views.district_forecast_details_entry,name='district_forecast_details_entry'),
