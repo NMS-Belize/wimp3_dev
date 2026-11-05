@@ -57,7 +57,7 @@ class PestRiskEntryDetailsSerializer(serializers.ModelSerializer):
         return f"{obj.district_id.district_name}" if obj.district_id is not None else "N/A"
     
     def get_pest_alert(self, obj): 
-        return f"{obj.pest_alert_lvl_id.description}" if obj.pest_alert_lvl_id is not None else "N/A"
+        return f"{obj.pest_alert_lvl_id.description}" if obj.pest_alert_lvl_id is not None else None
     
     def get_pest_alert_color_hex(self, obj): 
         return f"{obj.pest_alert_lvl_id.color}" if obj.pest_alert_lvl_id is not None else "N/A"
