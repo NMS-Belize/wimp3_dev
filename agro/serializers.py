@@ -54,31 +54,31 @@ class PestRiskEntryDetailsSerializer(serializers.ModelSerializer):
             return f"{obj.commodity_id.description}" if obj.commodity_id is not None else "N/A"'''
     
     def get_zone(self, obj): 
-        return f"{obj.district_id.district_name}" if obj.district_id is not None else "N/A"
+        return f"{obj.district_id.district_name}" if obj.district_id is not None else None
     
     def get_pest_alert(self, obj): 
         return f"{obj.pest_alert_lvl_id.description}" if obj.pest_alert_lvl_id is not None else None
     
     def get_pest_alert_color_hex(self, obj): 
-        return f"{obj.pest_alert_lvl_id.color}" if obj.pest_alert_lvl_id is not None else "N/A"
+        return f"{obj.pest_alert_lvl_id.color}" if obj.pest_alert_lvl_id is not None else None
     
     def get_drought_alert(self, obj): 
-        return f"{obj.drought_alert_lvl_id.description}" if obj.drought_alert_lvl_id is not None else "N/A"
+        return f"{obj.drought_alert_lvl_id.description}" if obj.drought_alert_lvl_id is not None else None
     
     def get_drought_alert_color_hex(self, obj): 
-        return f"{obj.drought_alert_lvl_id.color_hex}" if obj.drought_alert_lvl_id is not None else "N/A"
+        return f"{obj.drought_alert_lvl_id.color_hex}" if obj.drought_alert_lvl_id is not None else None
     
     def get_temp_min(self, obj): 
-        return f"{obj.temp_min:.1f} °F" if obj.temp_min is not None else "N/A"
+        return f"{obj.temp_min:.1f} °F" if obj.temp_min is not None else None
     
     def get_temp_max(self, obj): 
-        return f"{obj.temp_min:.1f} °F" if obj.temp_min is not None else "N/A"
+        return f"{obj.temp_min:.1f} °F" if obj.temp_min is not None else None
     
     def get_precip_min(self, obj): 
-        return f"{obj.precip_min:.1f} mm" if obj.precip_min is not None else "N/A"
+        return f"{obj.precip_min:.1f} mm" if obj.precip_min is not None else None
     
     def get_precip_max(self, obj): 
-        return f"{obj.precip_max:.1f} mm" if obj.precip_max is not None else "N/A"
+        return f"{obj.precip_max:.1f} mm" if obj.precip_max is not None else None
     
     def get_effect(self, obj): 
         effects = obj.effect.all()
@@ -113,7 +113,7 @@ class PestRiskEntryDetailsSerializer(serializers.ModelSerializer):
         ]
 
     def get_is_published(self, obj): 
-            return f"{obj.is_published}" if obj.is_published is not None else "N/A"
+            return f"{obj.is_published}" if obj.is_published is not None else None
     
 class PestRiskSerializer(serializers.ModelSerializer):
 
