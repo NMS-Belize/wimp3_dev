@@ -118,6 +118,7 @@ class PestRiskEntryDetailsSerializer(serializers.ModelSerializer):
 class PestRiskSerializer(serializers.ModelSerializer):
 
     months = serializers.SerializerMethodField()
+    month_names = serializers.SerializerMethodField()
     sector = serializers.SerializerMethodField()
     '''pest_risk_details = PestRiskEntryDetailsSerializer(
         many=True,
@@ -127,20 +128,24 @@ class PestRiskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PestRisk
-        fields = ['id', 'months', 'year', 'sector' ]
+        fields = ['id', 'months', 'month_names', 'year', 'sector' ]
 
     #def get_commodity(self, obj): 
     #    return f"{obj.commodity.description}" if obj.commodity is not None else "N/A"
     
     def get_months(self, obj):
+        return [int(m) for m in (obj.months or [])]
+
+    def get_month_names(self, obj):
         month_map = {
             "1": "JAN", "2": "FEB", "3": "MAR", "4": "APR",
             "5": "MAY", "6": "JUN", "7": "JUL", "8": "AUG",
             "9": "SEP", "10": "OCT", "11": "NOV", "12": "DEC"
         }
-        if obj.months:
-            return ", ".join([month_map.get(str(m), f"Unknown({m})") for m in obj.months])
-        return ""
+        return [
+            month_map.get(str(m), f"Unknown({m})")
+            for m in (obj.months or [])
+        ]
 
     def get_sector(self, obj):
 
